@@ -1,0 +1,233 @@
+   1               		.file	"cbuff.c"
+   2               	__SP_H__ = 0x3e
+   3               	__SP_L__ = 0x3d
+   4               	__SREG__ = 0x3f
+   5               	__tmp_reg__ = 0
+   6               	__zero_reg__ = 1
+   9               		.text
+  10               	.Ltext0:
+  42               	.global	c_buffer_init
+  44               	c_buffer_init:
+  45               		.stabd	46,0,0
+   1:cbuff.c       **** /*
+   2:cbuff.c       ****  * File:	circular_buf.c
+   3:cbuff.c       ****  * Author:	James Letendre
+   4:cbuff.c       ****  *
+   5:cbuff.c       ****  * Implementation of a circular buffer
+   6:cbuff.c       ****  */
+   7:cbuff.c       **** #include "cbuff.h"
+   8:cbuff.c       **** 
+   9:cbuff.c       **** /*
+  10:cbuff.c       ****  * c_buffer_init
+  11:cbuff.c       ****  * 	buffer:			The buffer to store data in
+  12:cbuff.c       ****  * 	buffer_size:	The size of the data buffer
+  13:cbuff.c       ****  *
+  14:cbuff.c       ****  * 	return:	buffer struct
+  15:cbuff.c       ****  */
+  16:cbuff.c       **** c_buffer_t c_buffer_init( char *buffer, size_t buffer_size )
+  17:cbuff.c       **** {
+  47               	.LM0:
+  48               	.LFBB1:
+  49               	/* prologue: function */
+  50               	/* frame size = 0 */
+  51               	/* stack size = 0 */
+  52               	.L__stack_usage = 0
+  53 0000 FC01      		movw r30,r24
+  18:cbuff.c       **** 	c_buffer_t buf_struct;
+  19:cbuff.c       **** 
+  20:cbuff.c       **** 	buf_struct.buffer = buffer;
+  21:cbuff.c       **** 	buf_struct.buf_size = buffer_size;
+  22:cbuff.c       **** 	buf_struct.head = 0;
+  23:cbuff.c       **** 	buf_struct.tail = 0;
+  24:cbuff.c       **** 	buf_struct.size = 0;
+  25:cbuff.c       **** 
+  26:cbuff.c       **** 	return buf_struct;
+  55               	.LM1:
+  56 0002 7183      		std Z+1,r23
+  57 0004 6083      		st Z,r22
+  58 0006 5383      		std Z+3,r21
+  59 0008 4283      		std Z+2,r20
+  60 000a 1582      		std Z+5,__zero_reg__
+  61 000c 1482      		std Z+4,__zero_reg__
+  62 000e 1782      		std Z+7,__zero_reg__
+  63 0010 1682      		std Z+6,__zero_reg__
+  64 0012 1186      		std Z+9,__zero_reg__
+  65 0014 1086      		std Z+8,__zero_reg__
+  27:cbuff.c       **** }
+  67               	.LM2:
+  68 0016 0895      		ret
+  70               	.Lscope1:
+  72               		.stabd	78,0,0
+  76               	.global	c_buffer_write
+  78               	c_buffer_write:
+  79               		.stabd	46,0,0
+  28:cbuff.c       **** 
+  29:cbuff.c       **** /*
+  30:cbuff.c       ****  * c_buffer_write
+  31:cbuff.c       ****  * 	buffer:			The buffer struct
+  32:cbuff.c       ****  * 	c:				The character to add to the buffer
+  33:cbuff.c       ****  *
+  34:cbuff.c       ****  * return:
+  35:cbuff.c       ****  *	0:				The character was written to the buffer
+  36:cbuff.c       ****  *	other:			The buffer is full
+  37:cbuff.c       ****  */
+  38:cbuff.c       **** int c_buffer_write( c_buffer_t *buf, char c )
+  39:cbuff.c       **** {
+  81               	.LM3:
+  82               	.LFBB2:
+  83               	/* prologue: function */
+  84               	/* frame size = 0 */
+  85               	/* stack size = 0 */
+  86               	.L__stack_usage = 0
+  87 0018 FC01      		movw r30,r24
+  40:cbuff.c       **** 	if( buf->size == buf->buf_size )
+  89               	.LM4:
+  90 001a 2085      		ldd r18,Z+8
+  91 001c 3185      		ldd r19,Z+9
+  92 001e 8281      		ldd r24,Z+2
+  93 0020 9381      		ldd r25,Z+3
+  94 0022 2817      		cp r18,r24
+  95 0024 3907      		cpc r19,r25
+  96 0026 01F0      		breq .L4
+  41:cbuff.c       **** 	{
+  42:cbuff.c       **** 		return -1;
+  43:cbuff.c       **** 	}
+  44:cbuff.c       **** 	else
+  45:cbuff.c       **** 	{
+  46:cbuff.c       **** 		buf->buffer[buf->tail++] = c;
+  98               	.LM5:
+  99 0028 8681      		ldd r24,Z+6
+ 100 002a 9781      		ldd r25,Z+7
+ 101 002c A081      		ld r26,Z
+ 102 002e B181      		ldd r27,Z+1
+ 103 0030 A80F      		add r26,r24
+ 104 0032 B91F      		adc r27,r25
+ 105 0034 6C93      		st X,r22
+ 106 0036 0196      		adiw r24,1
+  47:cbuff.c       **** 		
+  48:cbuff.c       **** 		buf->tail = buf->tail % buf->buf_size;
+ 108               	.LM6:
+ 109 0038 6281      		ldd r22,Z+2
+ 110 003a 7381      		ldd r23,Z+3
+ 111 003c 0E94 0000 		call __udivmodhi4
+ 112 0040 9783      		std Z+7,r25
+ 113 0042 8683      		std Z+6,r24
+  49:cbuff.c       **** 		buf->size++;
+ 115               	.LM7:
+ 116 0044 8085      		ldd r24,Z+8
+ 117 0046 9185      		ldd r25,Z+9
+ 118 0048 0196      		adiw r24,1
+ 119 004a 9187      		std Z+9,r25
+ 120 004c 8087      		std Z+8,r24
+  50:cbuff.c       **** 
+  51:cbuff.c       **** 	}
+  52:cbuff.c       **** 	return 0;
+ 122               	.LM8:
+ 123 004e 20E0      		ldi r18,0
+ 124 0050 30E0      		ldi r19,0
+ 125 0052 00C0      		rjmp .L3
+ 126               	.L4:
+  42:cbuff.c       **** 		return -1;
+ 128               	.LM9:
+ 129 0054 2FEF      		ldi r18,lo8(-1)
+ 130 0056 3FEF      		ldi r19,lo8(-1)
+ 131               	.L3:
+  53:cbuff.c       **** }
+ 133               	.LM10:
+ 134 0058 C901      		movw r24,r18
+ 135 005a 0895      		ret
+ 137               	.Lscope2:
+ 139               		.stabd	78,0,0
+ 143               	.global	c_buffer_read
+ 145               	c_buffer_read:
+ 146               		.stabd	46,0,0
+  54:cbuff.c       **** 
+  55:cbuff.c       **** /*
+  56:cbuff.c       ****  * c_buffer_read
+  57:cbuff.c       ****  * 	buffer:			The buffer struct
+  58:cbuff.c       ****  * 	c:				The pointer to store the character in
+  59:cbuff.c       ****  *
+  60:cbuff.c       ****  * return:
+  61:cbuff.c       ****  *	0:				The character was read from the buffer
+  62:cbuff.c       ****  *	other:			The buffer is empty
+  63:cbuff.c       ****  */
+  64:cbuff.c       **** int c_buffer_read( c_buffer_t *buf, char *c )
+  65:cbuff.c       **** {
+ 148               	.LM11:
+ 149               	.LFBB3:
+ 150               	/* prologue: function */
+ 151               	/* frame size = 0 */
+ 152               	/* stack size = 0 */
+ 153               	.L__stack_usage = 0
+ 154 005c FC01      		movw r30,r24
+  66:cbuff.c       **** 	if( buf->size == 0 )
+ 156               	.LM12:
+ 157 005e 8085      		ldd r24,Z+8
+ 158 0060 9185      		ldd r25,Z+9
+ 159 0062 892B      		or r24,r25
+ 160 0064 01F0      		breq .L7
+  67:cbuff.c       **** 	{
+  68:cbuff.c       **** 		return -1;
+  69:cbuff.c       **** 	}
+  70:cbuff.c       **** 	else
+  71:cbuff.c       **** 	{
+  72:cbuff.c       **** 		*c = buf->buffer[buf->head++];
+ 162               	.LM13:
+ 163 0066 8481      		ldd r24,Z+4
+ 164 0068 9581      		ldd r25,Z+5
+ 165 006a A081      		ld r26,Z
+ 166 006c B181      		ldd r27,Z+1
+ 167 006e A80F      		add r26,r24
+ 168 0070 B91F      		adc r27,r25
+ 169 0072 2C91      		ld r18,X
+ 170 0074 DB01      		movw r26,r22
+ 171 0076 2C93      		st X,r18
+ 172 0078 0196      		adiw r24,1
+  73:cbuff.c       **** 
+  74:cbuff.c       **** 		buf->head = buf->head % buf->buf_size;
+ 174               	.LM14:
+ 175 007a 6281      		ldd r22,Z+2
+ 176 007c 7381      		ldd r23,Z+3
+ 177 007e 0E94 0000 		call __udivmodhi4
+ 178 0082 9583      		std Z+5,r25
+ 179 0084 8483      		std Z+4,r24
+  75:cbuff.c       **** 		buf->size--;
+ 181               	.LM15:
+ 182 0086 8085      		ldd r24,Z+8
+ 183 0088 9185      		ldd r25,Z+9
+ 184 008a 0197      		sbiw r24,1
+ 185 008c 9187      		std Z+9,r25
+ 186 008e 8087      		std Z+8,r24
+  76:cbuff.c       **** 	}
+  77:cbuff.c       **** 	return 0;
+ 188               	.LM16:
+ 189 0090 20E0      		ldi r18,0
+ 190 0092 30E0      		ldi r19,0
+ 191 0094 00C0      		rjmp .L6
+ 192               	.L7:
+  68:cbuff.c       **** 		return -1;
+ 194               	.LM17:
+ 195 0096 2FEF      		ldi r18,lo8(-1)
+ 196 0098 3FEF      		ldi r19,lo8(-1)
+ 197               	.L6:
+  78:cbuff.c       **** }
+ 199               	.LM18:
+ 200 009a C901      		movw r24,r18
+ 201 009c 0895      		ret
+ 203               	.Lscope3:
+ 205               		.stabd	78,0,0
+ 207               	.Letext0:
+ 208               		.ident	"GCC: (GNU) 4.7.2"
+DEFINED SYMBOLS
+                            *ABS*:0000000000000000 cbuff.c
+     /tmp/ccQIVgYI.s:2      *ABS*:000000000000003e __SP_H__
+     /tmp/ccQIVgYI.s:3      *ABS*:000000000000003d __SP_L__
+     /tmp/ccQIVgYI.s:4      *ABS*:000000000000003f __SREG__
+     /tmp/ccQIVgYI.s:5      *ABS*:0000000000000000 __tmp_reg__
+     /tmp/ccQIVgYI.s:6      *ABS*:0000000000000001 __zero_reg__
+     /tmp/ccQIVgYI.s:44     .text:0000000000000000 c_buffer_init
+     /tmp/ccQIVgYI.s:78     .text:0000000000000018 c_buffer_write
+     /tmp/ccQIVgYI.s:145    .text:000000000000005c c_buffer_read
+
+UNDEFINED SYMBOLS
+__udivmodhi4

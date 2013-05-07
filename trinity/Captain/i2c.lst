@@ -1,0 +1,1525 @@
+   1               		.file	"i2c.c"
+   2               	__SREG__ = 0x3f
+   3               	__SP_H__ = 0x3e
+   4               	__SP_L__ = 0x3d
+   5               	__tmp_reg__ = 0
+   6               	__zero_reg__ = 1
+   7               		.global __do_copy_data
+   8               		.global __do_clear_bss
+  11               		.text
+  12               	.Ltext0:
+  99               	.global	__vector_24
+ 101               	__vector_24:
+ 102               		.stabd	46,0,0
+   0:i2c.c         **** /* Captain - i2c.c */
+   1:i2c.c         **** 
+   2:i2c.c         **** #include <avr/io.h>
+   3:i2c.c         **** //#include <avr/iom328p.h>
+   4:i2c.c         **** #include <avr/interrupt.h>
+   5:i2c.c         **** #include <util/twi.h>
+   6:i2c.c         **** #include "i2c.h"
+   7:i2c.c         **** #include "util.h"
+   8:i2c.c         **** #include "lcd.h"
+   9:i2c.c         **** 
+  10:i2c.c         **** extern char buffer[7];
+  11:i2c.c         **** 
+  12:i2c.c         **** uint8_t i2cMode = 0; // Var to let the data functions know what to do.
+  13:i2c.c         **** 					/* Master I2C command code list:
+  14:i2c.c         **** 					 * ---------------------
+  15:i2c.c         **** 					 * 0  = Idle
+  16:i2c.c         **** 					 * 1  = System mode announce 
+  17:i2c.c         **** 					 * 9  = Slave next TX mode
+  18:i2c.c         **** 					 * 21 = Set servo 1 (pilot)
+  19:i2c.c         **** 					 * 22 = Set servo 2 (pilot)
+  20:i2c.c         **** 					 * 23 = Wheel command Left (mm) (copilot)
+  21:i2c.c         **** 					** 53 = Wheel command Left high-byte (LShift-8)
+  22:i2c.c         **** 					 * 24 = Wheel command Right (mm) (copilot)
+  23:i2c.c         **** 					** 54 = Wheel command Right high-byte (LShift-8)
+  24:i2c.c         **** 					 * 25 = Linear movement command (cm, direction) (copilit)
+  25:i2c.c         **** 					 * 26 = Rotational movement command (degrees, direction) (copilot)
+  26:i2c.c         **** 					 * 27 = Set stepper speed (copilot)
+  27:i2c.c         **** 	DO NOT USE! ->	 * 29 = Activate CO2 burst (data byte = no. of bursts) (pilot)
+  28:i2c.c         **** 					 * 30 = Request map confidence (navigator)
+  29:i2c.c         **** 					 * 31 = Request destination direction (navigator)
+  30:i2c.c         **** 					 * 40 = Request IR ranger data  (navigator)
+  31:i2c.c         **** 					 * 41 = Request IR proximity sensor data (navigator)
+  32:i2c.c         **** 					 * 42 = Request IR arch data 1-3 (pilot) (6 byets)
+  33:i2c.c         **** 					 * 43 = Request IR arch data 4-7 (copilot) (8 bytes)
+  34:i2c.c         **** 					 * 44 = Request UVTron data [optional]
+  35:i2c.c         **** 					 * 90 = Battery voltage request (2 bytes)
+  36:i2c.c         **** 					 * 95 = TEST DATA ONLY
+  37:i2c.c         **** 					 * 97 = Error request Navigator
+  38:i2c.c         **** 					 * 98 = Error request Copilot
+  39:i2c.c         **** 					 * 99 = Error request Pilot
+  40:i2c.c         **** 					 */
+  41:i2c.c         **** uint8_t i2cByteIndex = 0; // Which byte are we on!? WHAT YEAR IS IT!!?? OH GOD HOW DID THIS GET HER
+  42:i2c.c         **** uint8_t dataSent = 0;
+  43:i2c.c         **** uint8_t rxMode = 0; // Which mode to use when RX'ing.
+  44:i2c.c         **** 
+  45:i2c.c         **** ISR(TWI_vect)
+  46:i2c.c         **** {
+ 104               	.LM0:
+ 105               	.LFBB1:
+ 106 0000 1F92      		push r1
+ 107 0002 0F92      		push r0
+ 108 0004 0FB6      		in r0,__SREG__
+ 109 0006 0F92      		push r0
+ 110 0008 1124      		clr __zero_reg__
+ 111 000a 2F93      		push r18
+ 112 000c 3F93      		push r19
+ 113 000e 4F93      		push r20
+ 114 0010 5F93      		push r21
+ 115 0012 6F93      		push r22
+ 116 0014 7F93      		push r23
+ 117 0016 8F93      		push r24
+ 118 0018 9F93      		push r25
+ 119 001a AF93      		push r26
+ 120 001c BF93      		push r27
+ 121 001e EF93      		push r30
+ 122 0020 FF93      		push r31
+ 123               	/* prologue: Signal */
+ 124               	/* frame size = 0 */
+ 125               	/* stack size = 15 */
+ 126               	.L__stack_usage = 15
+  47:i2c.c         **** 	uint8_t status = TW_STATUS; // Get status register.
+ 128               	.LM1:
+ 129 0022 8091 B900 		lds r24,185
+ 130 0026 887F      		andi r24,lo8(-8)
+  48:i2c.c         **** 	switch (i2cMode)
+ 132               	.LM2:
+ 133 0028 9091 0000 		lds r25,i2cMode
+ 134 002c 9931      		cpi r25,lo8(25)
+ 135 002e 01F4      		brne .+2
+ 136 0030 00C0      		rjmp .L7
+ 137 0032 9A31      		cpi r25,lo8(26)
+ 138 0034 00F4      		brsh .L13
+ 139 0036 9731      		cpi r25,lo8(23)
+ 140 0038 00F0      		brlo .+2
+ 141 003a 00C0      		rjmp .L6
+ 142 003c 9531      		cpi r25,lo8(21)
+ 143 003e 00F0      		brlo .+2
+ 144 0040 00C0      		rjmp .L5
+ 145 0042 9130      		cpi r25,lo8(1)
+ 146 0044 01F0      		breq .L3
+ 147 0046 9930      		cpi r25,lo8(9)
+ 148 0048 01F0      		breq .+2
+ 149 004a 00C0      		rjmp .L2
+ 150 004c 00C0      		rjmp .L133
+ 151               	.L13:
+ 152 004e 9733      		cpi r25,lo8(55)
+ 153 0050 00F4      		brsh .L14
+ 154 0052 9533      		cpi r25,lo8(53)
+ 155 0054 00F0      		brlo .+2
+ 156 0056 00C0      		rjmp .L6
+ 157 0058 9A32      		cpi r25,lo8(42)
+ 158 005a 01F4      		brne .+2
+ 159 005c 00C0      		rjmp .L9
+ 160 005e 9B32      		cpi r25,lo8(43)
+ 161 0060 01F4      		brne .+2
+ 162 0062 00C0      		rjmp .L10
+ 163 0064 9D31      		cpi r25,lo8(29)
+ 164 0066 01F0      		breq .+2
+ 165 0068 00C0      		rjmp .L2
+ 166 006a 00C0      		rjmp .L134
+ 167               	.L14:
+ 168 006c 9A35      		cpi r25,lo8(90)
+ 169 006e 01F4      		brne .+2
+ 170 0070 00C0      		rjmp .L11
+ 171 0072 9F35      		cpi r25,lo8(95)
+ 172 0074 01F0      		breq .+2
+ 173 0076 00C0      		rjmp .L2
+ 174 0078 00C0      		rjmp .L135
+ 175               	.L3:
+  49:i2c.c         **** 	{
+  50:i2c.c         **** 		case 1: // System mode announce.
+  51:i2c.c         **** 			if(status == TW_START) // Start sent.
+ 177               	.LM3:
+ 178 007a 8830      		cpi r24,lo8(8)
+ 179 007c 01F4      		brne .L15
+  52:i2c.c         **** 			{
+  53:i2c.c         **** 				if(i2cByteIndex == 0) // Send to nav.
+ 181               	.LM4:
+ 182 007e 8091 0000 		lds r24,i2cByteIndex
+ 183 0082 8823      		tst r24
+ 184 0084 01F0      		breq .L29
+ 185               	.L16:
+  54:i2c.c         **** 				{
+  55:i2c.c         **** 					TWDR = (I2C_ADDR_NAVIGATOR & ~0x01); // Write = 0.
+  56:i2c.c         **** 				}
+  57:i2c.c         **** 				else if(i2cByteIndex == 1) // Send to pilot.
+ 187               	.LM5:
+ 188 0086 8130      		cpi r24,lo8(1)
+ 189 0088 01F4      		brne .L18
+ 190               	.L127:
+  58:i2c.c         **** 				{
+  59:i2c.c         **** 					TWDR = (I2C_ADDR_PILOT & ~0x01);
+ 192               	.LM6:
+ 193 008a 86E4      		ldi r24,lo8(70)
+ 194 008c 00C0      		rjmp .L105
+ 195               	.L18:
+  60:i2c.c         **** 				}
+  61:i2c.c         **** 				else if(i2cByteIndex == 2) // Send to copilot.
+ 197               	.LM7:
+ 198 008e 8230      		cpi r24,lo8(2)
+ 199 0090 01F0      		breq .L28
+ 200               	.L19:
+  62:i2c.c         **** 				{
+  63:i2c.c         **** 					TWDR = (I2C_ADDR_COPILOT & ~0x01);
+  64:i2c.c         **** 				}
+  65:i2c.c         **** 				else
+  66:i2c.c         **** 				{
+  67:i2c.c         **** 					errorCode = 1; // We've set an invalid byte index. Bad!
+ 202               	.LM8:
+ 203 0092 9093 0000 		sts errorCode,r25
+ 204 0096 00C0      		rjmp .L110
+ 205               	.L15:
+  68:i2c.c         **** 				}
+  69:i2c.c         **** 				TWCR |= (1<<TWINT); // Start address transmission.
+  70:i2c.c         **** 			}
+  71:i2c.c         **** 			else if((status == TW_MT_SLA_NACK) || (status == TW_MT_DATA_NACK)) // If we don't get an ACK, th
+ 207               	.LM9:
+ 208 0098 8032      		cpi r24,lo8(32)
+ 209 009a 01F0      		breq .L21
+ 211               	.LM10:
+ 212 009c 8033      		cpi r24,lo8(48)
+ 213 009e 01F4      		brne .L22
+ 214               	.L21:
+  72:i2c.c         **** 			{
+  73:i2c.c         **** 				errorCode = 2 + i2cByteIndex; // Error! Oh god!
+ 216               	.LM11:
+ 217 00a0 8091 0000 		lds r24,i2cByteIndex
+ 218 00a4 8E5F      		subi r24,lo8(-(2))
+ 219 00a6 8093 0000 		sts errorCode,r24
+ 220 00aa 00C0      		rjmp .L120
+ 221               	.L22:
+  74:i2c.c         **** 				TWCR |= (1<<TWINT)|(1<<TWSTO); // Send stop command.
+  75:i2c.c         **** 			}
+  76:i2c.c         **** 			else if(status == TW_MT_SLA_ACK) // The slave is ready to recieve.
+ 223               	.LM12:
+ 224 00ac 8831      		cpi r24,lo8(24)
+ 225 00ae 01F4      		brne .L23
+  77:i2c.c         **** 			{ // First data byte is command.
+  78:i2c.c         **** 				TWDR = 0x01; // System mode announce.
+ 227               	.LM13:
+ 228 00b0 9093 BB00 		sts 187,r25
+ 229 00b4 00C0      		rjmp .L110
+ 230               	.L23:
+  79:i2c.c         **** 				TWCR |= (1<<TWINT); // Go go go!
+  80:i2c.c         **** 			}
+  81:i2c.c         **** 			else if(status == TW_MT_DATA_ACK) // Command ack'd, send system mode.
+ 232               	.LM14:
+ 233 00b6 8832      		cpi r24,lo8(40)
+ 234 00b8 01F0      		breq .+2
+ 235 00ba 00C0      		rjmp .L1
+  82:i2c.c         **** 			{
+  83:i2c.c         **** 				if(dataSent == 0)
+ 237               	.LM15:
+ 238 00bc 8091 0000 		lds r24,dataSent
+ 239 00c0 8823      		tst r24
+ 240 00c2 01F0      		breq .+2
+ 241 00c4 00C0      		rjmp .L66
+  84:i2c.c         **** 				{
+  85:i2c.c         **** 					TWDR = gState; // Global state
+ 243               	.LM16:
+ 244 00c6 8091 0000 		lds r24,gState
+ 245 00ca 00C0      		rjmp .L106
+ 246               	.L133:
+  86:i2c.c         **** 					dataSent = 1;
+  87:i2c.c         **** 					TWCR |= (1<<TWINT); // Go go go!
+  88:i2c.c         **** 				}
+  89:i2c.c         **** 				else
+  90:i2c.c         **** 				{
+  91:i2c.c         **** 					TWCR |= (1<<TWINT)|(1<<TWSTO); // Send stop command.
+  92:i2c.c         **** 					dataSent = 0;
+  93:i2c.c         **** 					i2cMode = 0; // Back to idle.
+  94:i2c.c         **** 				}
+  95:i2c.c         **** 			}
+  96:i2c.c         **** 			break;
+  97:i2c.c         **** 		case 9: // RX from slave. Runs a TX first...
+  98:i2c.c         **** 			if(status == TW_START) // Start sent.
+ 248               	.LM17:
+ 249 00cc 8830      		cpi r24,lo8(8)
+ 250 00ce 01F4      		brne .L25
+  99:i2c.c         **** 			{
+ 100:i2c.c         **** 				switch (rxMode) 
+ 252               	.LM18:
+ 253 00d0 8091 0000 		lds r24,rxMode
+ 254 00d4 8A35      		cpi r24,lo8(90)
+ 255 00d6 01F0      		breq .L127
+ 256 00d8 8B35      		cpi r24,lo8(91)
+ 257 00da 00F4      		brsh .L30
+ 258 00dc 8A32      		cpi r24,lo8(42)
+ 259 00de 01F0      		breq .L127
+ 260 00e0 8B32      		cpi r24,lo8(43)
+ 261 00e2 01F4      		brne .L26
+ 262 00e4 00C0      		rjmp .L28
+ 263               	.L30:
+ 264 00e6 8F35      		cpi r24,lo8(95)
+ 265 00e8 01F4      		brne .L26
+ 266 00ea 00C0      		rjmp .L29
+ 267               	.L28:
+ 101:i2c.c         **** 				{
+ 102:i2c.c         **** 					case 90: // Battery
+ 103:i2c.c         **** 					case 42: // IR 1-3
+ 104:i2c.c         **** 						TWDR = (I2C_ADDR_PILOT & ~0x01); // Write to slave Pilot.
+ 105:i2c.c         **** 						break;
+ 106:i2c.c         **** 					case 43: // IR 4-7
+ 107:i2c.c         **** 						TWDR = (I2C_ADDR_COPILOT & ~0x01); // Write to slave Co-Pilot.
+ 269               	.LM19:
+ 270 00ec 88E4      		ldi r24,lo8(72)
+ 271               	.L105:
+ 272 00ee 8093 BB00 		sts 187,r24
+ 108:i2c.c         **** 						break;
+ 274               	.LM20:
+ 275 00f2 00C0      		rjmp .L110
+ 276               	.L29:
+ 109:i2c.c         **** 					case 95: // testData
+ 110:i2c.c         **** 						TWDR = (I2C_ADDR_NAVIGATOR & ~0x01); // Write to slave Navigator.
+ 278               	.LM21:
+ 279 00f4 8AE4      		ldi r24,lo8(74)
+ 280 00f6 00C0      		rjmp .L105
+ 281               	.L26:
+ 111:i2c.c         **** 						break;
+ 112:i2c.c         **** 					default:
+ 113:i2c.c         **** 						errorCode = 12;
+ 283               	.LM22:
+ 284 00f8 8CE0      		ldi r24,lo8(12)
+ 285 00fa 8093 0000 		sts errorCode,r24
+ 114:i2c.c         **** 						TWDR = 0x00;
+ 287               	.LM23:
+ 288 00fe 1092 BB00 		sts 187,__zero_reg__
+ 115:i2c.c         **** 						i2cMode = 0;
+ 290               	.LM24:
+ 291 0102 1092 0000 		sts i2cMode,__zero_reg__
+ 292 0106 00C0      		rjmp .L110
+ 293               	.L25:
+ 116:i2c.c         **** 				}
+ 117:i2c.c         **** 				TWCR |= (1<<TWINT); // Start transmission.
+ 118:i2c.c         **** 				//errorCode = 6;
+ 119:i2c.c         **** 			}
+ 120:i2c.c         **** 			else if((status == TW_MT_SLA_NACK) || (status == TW_MT_DATA_NACK)) // If we don't get an ACK, th
+ 295               	.LM25:
+ 296 0108 8032      		cpi r24,lo8(32)
+ 297 010a 01F0      		breq .L32
+ 299               	.LM26:
+ 300 010c 8033      		cpi r24,lo8(48)
+ 301 010e 01F4      		brne .L33
+ 302               	.L32:
+ 121:i2c.c         **** 			{
+ 122:i2c.c         **** 				errorCode = 5; // Error! Oh god!
+ 304               	.LM27:
+ 305 0110 85E0      		ldi r24,lo8(5)
+ 306               	.L122:
+ 307 0112 8093 0000 		sts errorCode,r24
+ 123:i2c.c         **** 				TWCR &= ~(1<<TWSTA); // Clear start bit.
+ 309               	.LM28:
+ 310 0116 8091 BC00 		lds r24,188
+ 311 011a 8F7D      		andi r24,lo8(-33)
+ 312 011c 8093 BC00 		sts 188,r24
+ 313               	.L120:
+ 124:i2c.c         **** 				TWCR |= (1<<TWINT)|(1<<TWSTO); // Send stop command.
+ 315               	.LM29:
+ 316 0120 8091 BC00 		lds r24,188
+ 317 0124 8069      		ori r24,lo8(-112)
+ 318 0126 00C0      		rjmp .L111
+ 319               	.L33:
+ 125:i2c.c         **** 			}
+ 126:i2c.c         **** 			else if(status == TW_MT_SLA_ACK) // The slave is ready to recieve.
+ 321               	.LM30:
+ 322 0128 8831      		cpi r24,lo8(24)
+ 323 012a 01F4      		brne .L34
+ 127:i2c.c         **** 			{ // Data byte is TX command.
+ 128:i2c.c         **** 				TWDR = 9;
+ 325               	.LM31:
+ 326 012c 89E0      		ldi r24,lo8(9)
+ 327 012e 8093 BB00 		sts 187,r24
+ 129:i2c.c         **** 				dataSent = 0;
+ 329               	.LM32:
+ 330 0132 1092 0000 		sts dataSent,__zero_reg__
+ 331 0136 00C0      		rjmp .L129
+ 332               	.L34:
+ 130:i2c.c         **** 				TWCR &= ~(1<<TWSTA); // Clear start bit.
+ 131:i2c.c         **** 				TWCR |= (1<<TWINT); // Go go go!
+ 132:i2c.c         **** 			}
+ 133:i2c.c         **** 			else if(status == TW_MT_DATA_ACK)
+ 334               	.LM33:
+ 335 0138 8832      		cpi r24,lo8(40)
+ 336 013a 01F0      		breq .+2
+ 337 013c 00C0      		rjmp .L115
+ 134:i2c.c         **** 			{
+ 135:i2c.c         **** 				if(!dataSent)
+ 339               	.LM34:
+ 340 013e 8091 0000 		lds r24,dataSent
+ 341 0142 8823      		tst r24
+ 342 0144 01F4      		brne .L36
+ 136:i2c.c         **** 				{
+ 137:i2c.c         **** 					TWDR = rxMode;
+ 344               	.LM35:
+ 345 0146 8091 0000 		lds r24,rxMode
+ 346 014a 00C0      		rjmp .L106
+ 347               	.L36:
+ 138:i2c.c         **** 					dataSent = 1;
+ 139:i2c.c         **** 					TWCR |= (1<<TWINT);
+ 140:i2c.c         **** 				}
+ 141:i2c.c         **** 				else
+ 142:i2c.c         **** 				{
+ 143:i2c.c         **** 					//errorCode = 10;
+ 144:i2c.c         **** 					TWCR |= (1<<TWINT)|(1<<TWSTO); // Send stop command.
+ 349               	.LM36:
+ 350 014c 8091 BC00 		lds r24,188
+ 351 0150 8069      		ori r24,lo8(-112)
+ 352 0152 8093 BC00 		sts 188,r24
+ 145:i2c.c         **** 					dataSent = 0;
+ 354               	.LM37:
+ 355 0156 1092 0000 		sts dataSent,__zero_reg__
+ 146:i2c.c         **** 					delay_us(40);
+ 357               	.LM38:
+ 358 015a 88E2      		ldi r24,lo8(40)
+ 359 015c 90E0      		ldi r25,hi8(40)
+ 360 015e 0E94 0000 		call delay_us
+ 147:i2c.c         **** 					i2cMode = rxMode; // Go straight on to RX'ing the data.
+ 362               	.LM39:
+ 363 0162 8091 0000 		lds r24,rxMode
+ 364 0166 8093 0000 		sts i2cMode,r24
+ 148:i2c.c         **** 					TWCR |= (1<<TWSTA)|(1<<TWINT); // Send start signal.
+ 366               	.LM40:
+ 367 016a 8091 BC00 		lds r24,188
+ 368 016e 806A      		ori r24,lo8(-96)
+ 369 0170 00C0      		rjmp .L111
+ 370               	.L5:
+ 149:i2c.c         **** 				}
+ 150:i2c.c         **** 			}
+ 151:i2c.c         **** 			else errorCode = status;
+ 152:i2c.c         **** 			break;
+ 153:i2c.c         **** 		case 21: // Servo 1.
+ 154:i2c.c         **** 		case 22: // Servo 2.
+ 155:i2c.c         **** 			if(status == TW_START) // Start sent.
+ 372               	.LM41:
+ 373 0172 8830      		cpi r24,lo8(8)
+ 374 0174 01F4      		brne .+2
+ 375 0176 00C0      		rjmp .L127
+ 376               	.L37:
+ 156:i2c.c         **** 			{
+ 157:i2c.c         **** 				TWDR = (I2C_ADDR_PILOT & ~0x01); // Write to slave Pilot.
+ 158:i2c.c         **** 				//TWDR = 0x00;
+ 159:i2c.c         **** 				TWCR |= (1<<TWINT); // Start transmission.
+ 160:i2c.c         **** 				//errorCode = 6;
+ 161:i2c.c         **** 			}
+ 162:i2c.c         **** 			else if((status == TW_MT_SLA_NACK) || (status == TW_MT_DATA_NACK)) // If we don't get an ACK, th
+ 378               	.LM42:
+ 379 0178 8032      		cpi r24,lo8(32)
+ 380 017a 01F0      		breq .L32
+ 382               	.LM43:
+ 383 017c 8033      		cpi r24,lo8(48)
+ 384 017e 01F0      		breq .L32
+ 385               	.L39:
+ 163:i2c.c         **** 			{
+ 164:i2c.c         **** 				errorCode = 5; // Error! Oh god!
+ 165:i2c.c         **** 				TWCR &= ~(1<<TWSTA); // Clear start bit.
+ 166:i2c.c         **** 				TWCR |= (1<<TWINT)|(1<<TWSTO); // Send stop command.
+ 167:i2c.c         **** 			}
+ 168:i2c.c         **** 			else if(status == TW_MT_SLA_ACK) // The slave is ready to recieve.
+ 387               	.LM44:
+ 388 0180 8831      		cpi r24,lo8(24)
+ 389 0182 01F4      		brne .+2
+ 390 0184 00C0      		rjmp .L131
+ 391               	.L40:
+ 169:i2c.c         **** 			{ // First data byte is command.
+ 170:i2c.c         **** 				TWDR = i2cMode; // Servo position command.
+ 171:i2c.c         **** 				//TWDR = 0xff;
+ 172:i2c.c         **** 				TWCR &= ~(1<<TWSTA); // Clear start bit.
+ 173:i2c.c         **** 				//if(TWCR & (1<<TWINT)) errorCode = 30;
+ 174:i2c.c         **** 				//errorCode = TWCR;
+ 175:i2c.c         **** 				TWCR |= (1<<TWINT); // Go go go!
+ 176:i2c.c         **** 			}
+ 177:i2c.c         **** 			else if(status == TW_MT_DATA_ACK)
+ 393               	.LM45:
+ 394 0186 8832      		cpi r24,lo8(40)
+ 395 0188 01F0      		breq .+2
+ 396 018a 00C0      		rjmp .L115
+ 178:i2c.c         **** 			{
+ 179:i2c.c         **** 				if(dataSent == 0)
+ 398               	.LM46:
+ 399 018c 8091 0000 		lds r24,dataSent
+ 400 0190 8823      		tst r24
+ 401 0192 01F0      		breq .+2
+ 402 0194 00C0      		rjmp .L66
+ 180:i2c.c         **** 				{
+ 181:i2c.c         **** 					if(i2cMode == 21) TWDR = servoPos1;
+ 404               	.LM47:
+ 405 0196 9531      		cpi r25,lo8(21)
+ 406 0198 01F4      		brne .L43
+ 408               	.LM48:
+ 409 019a 8091 0000 		lds r24,servoPos1
+ 410 019e 00C0      		rjmp .L106
+ 411               	.L43:
+ 182:i2c.c         **** 					else TWDR = servoPos2;
+ 413               	.LM49:
+ 414 01a0 8091 0000 		lds r24,servoPos2
+ 415               	.L106:
+ 416 01a4 8093 BB00 		sts 187,r24
+ 417               	.L128:
+ 183:i2c.c         **** 					dataSent = 1;
+ 419               	.LM50:
+ 420 01a8 81E0      		ldi r24,lo8(1)
+ 421               	.L126:
+ 422 01aa 8093 0000 		sts dataSent,r24
+ 423 01ae 00C0      		rjmp .L110
+ 424               	.L6:
+ 184:i2c.c         **** 					TWCR |= (1<<TWINT); // Go go go!
+ 185:i2c.c         **** 				}
+ 186:i2c.c         **** 				else
+ 187:i2c.c         **** 				{
+ 188:i2c.c         **** 					//errorCode = 10;
+ 189:i2c.c         **** 					TWCR |= (1<<TWINT)|(1<<TWSTO); // Send stop command.
+ 190:i2c.c         **** 					dataSent = 0;
+ 191:i2c.c         **** 					//lcd_clrscr(); itoa(errorCode, buffer, 10); lcd_puts(buffer);
+ 192:i2c.c         **** 					//delay_ms(500);
+ 193:i2c.c         **** 					//errorCode = 0;
+ 194:i2c.c         **** 					i2cMode = 0; // Back to idle.
+ 195:i2c.c         **** 				}
+ 196:i2c.c         **** 			}
+ 197:i2c.c         **** 			else errorCode = status;
+ 198:i2c.c         **** 			
+ 199:i2c.c         **** 			break;
+ 200:i2c.c         **** 		case 23: // Stepper left (mm).
+ 201:i2c.c         **** 		case 24: // Stepper right (mm).
+ 202:i2c.c         **** 		case 53:
+ 203:i2c.c         **** 		case 54:
+ 204:i2c.c         **** 			if(status == TW_START) // Start sent.
+ 426               	.LM51:
+ 427 01b0 8830      		cpi r24,lo8(8)
+ 428 01b2 01F4      		brne .+2
+ 429 01b4 00C0      		rjmp .L28
+ 430               	.L45:
+ 205:i2c.c         **** 			{
+ 206:i2c.c         **** 				TWDR = (I2C_ADDR_COPILOT & ~0x01); // Write to slave Co-Pilot.
+ 207:i2c.c         **** 				//TWDR = 0x00;
+ 208:i2c.c         **** 				TWCR |= (1<<TWINT); // Start transmission.
+ 209:i2c.c         **** 				//errorCode = 6;
+ 210:i2c.c         **** 			}
+ 211:i2c.c         **** 			else if((status == TW_MT_SLA_NACK) || (status == TW_MT_DATA_NACK)) // If we don't get an ACK, th
+ 432               	.LM52:
+ 433 01b6 8032      		cpi r24,lo8(32)
+ 434 01b8 01F0      		breq .L56
+ 436               	.LM53:
+ 437 01ba 8033      		cpi r24,lo8(48)
+ 438 01bc 01F0      		breq .L56
+ 439               	.L47:
+ 212:i2c.c         **** 			{
+ 213:i2c.c         **** 				errorCode = 6; // Error! Oh god!
+ 214:i2c.c         **** 				TWCR &= ~(1<<TWSTA); // Clear start bit.
+ 215:i2c.c         **** 				TWCR |= (1<<TWINT)|(1<<TWSTO); // Send stop command.
+ 216:i2c.c         **** 			}
+ 217:i2c.c         **** 			else if(status == TW_MT_SLA_ACK) // The slave is ready to recieve.
+ 441               	.LM54:
+ 442 01be 8831      		cpi r24,lo8(24)
+ 443 01c0 01F0      		breq .L131
+ 444               	.L48:
+ 218:i2c.c         **** 			{ // First data byte is command.
+ 219:i2c.c         **** 				//errorCode = 7;
+ 220:i2c.c         **** 				TWDR = i2cMode; // Servo position command.
+ 221:i2c.c         **** 				//TWDR = 0xff;
+ 222:i2c.c         **** 				TWCR &= ~(1<<TWSTA); // Clear start bit.
+ 223:i2c.c         **** 				//if(TWCR & (1<<TWINT)) errorCode = 30;
+ 224:i2c.c         **** 				//errorCode = TWCR;
+ 225:i2c.c         **** 				TWCR |= (1<<TWINT); // Go go go!
+ 226:i2c.c         **** 			}
+ 227:i2c.c         **** 			else if(status == TW_MT_DATA_ACK)
+ 446               	.LM55:
+ 447 01c2 8832      		cpi r24,lo8(40)
+ 448 01c4 01F0      		breq .+2
+ 449 01c6 00C0      		rjmp .L115
+ 228:i2c.c         **** 			{
+ 229:i2c.c         **** 				if(dataSent == 0)
+ 451               	.LM56:
+ 452 01c8 8091 0000 		lds r24,dataSent
+ 453 01cc 8823      		tst r24
+ 454 01ce 01F4      		brne .L50
+ 230:i2c.c         **** 				{
+ 231:i2c.c         **** 					if(i2cMode == 23) TWDR = stepperCountTempL;
+ 456               	.LM57:
+ 457 01d0 9731      		cpi r25,lo8(23)
+ 458 01d2 01F4      		brne .L51
+ 460               	.LM58:
+ 461 01d4 8091 0000 		lds r24,stepperCountTempL
+ 462 01d8 00C0      		rjmp .L106
+ 463               	.L51:
+ 232:i2c.c         **** 					else if(i2cMode == 24) TWDR = stepperCountTempR;
+ 465               	.LM59:
+ 466 01da 9831      		cpi r25,lo8(24)
+ 467 01dc 01F4      		brne .L128
+ 469               	.LM60:
+ 470 01de 8091 0000 		lds r24,stepperCountTempR
+ 471 01e2 00C0      		rjmp .L106
+ 472               	.L50:
+ 233:i2c.c         **** 					dataSent = 1;
+ 234:i2c.c         **** 					TWCR |= (1<<TWINT); // Go go go!
+ 235:i2c.c         **** 				}
+ 236:i2c.c         **** 				else
+ 237:i2c.c         **** 				{
+ 238:i2c.c         **** 					//errorCode = 10;
+ 239:i2c.c         **** 					TWCR |= (1<<TWINT)|(1<<TWSTO); // Send stop command.
+ 474               	.LM61:
+ 475 01e4 8091 BC00 		lds r24,188
+ 476 01e8 8069      		ori r24,lo8(-112)
+ 477 01ea 8093 BC00 		sts 188,r24
+ 240:i2c.c         **** 					dataSent = 0;
+ 479               	.LM62:
+ 480 01ee 1092 0000 		sts dataSent,__zero_reg__
+ 241:i2c.c         **** 					//lcd_clrscr(); itoa(errorCode, buffer, 10); lcd_puts(buffer);
+ 242:i2c.c         **** 					//delay_ms(500);
+ 243:i2c.c         **** 					//errorCode = 0;
+ 244:i2c.c         **** 					if(i2cMode == 23) stepperCountTempL = 0;
+ 482               	.LM63:
+ 483 01f2 8091 0000 		lds r24,i2cMode
+ 484 01f6 8731      		cpi r24,lo8(23)
+ 485 01f8 01F4      		brne .L53
+ 487               	.LM64:
+ 488 01fa 1092 0000 		sts stepperCountTempL,__zero_reg__
+ 489 01fe 00C0      		rjmp .L113
+ 490               	.L53:
+ 245:i2c.c         **** 					else stepperCountTempR = 0;
+ 492               	.LM65:
+ 493 0200 1092 0000 		sts stepperCountTempR,__zero_reg__
+ 494 0204 00C0      		rjmp .L113
+ 495               	.L7:
+ 246:i2c.c         **** 					i2cMode = 0; // Back to idle.
+ 247:i2c.c         **** 				}
+ 248:i2c.c         **** 			}
+ 249:i2c.c         **** 			else errorCode = status;
+ 250:i2c.c         **** 			break;
+ 251:i2c.c         **** 		case 25: // Linear movement, in cm.
+ 252:i2c.c         **** 			if(status == TW_START) // Start sent.
+ 497               	.LM66:
+ 498 0206 8830      		cpi r24,lo8(8)
+ 499 0208 01F4      		brne .+2
+ 500 020a 00C0      		rjmp .L28
+ 501               	.L55:
+ 253:i2c.c         **** 			{
+ 254:i2c.c         **** 				TWDR = (I2C_ADDR_COPILOT & ~0x01); // Write to slave Co-Pilot.
+ 255:i2c.c         **** 				//TWDR = 0x00;
+ 256:i2c.c         **** 				TWCR |= (1<<TWINT); // Start transmission.
+ 257:i2c.c         **** 				//errorCode = 6;
+ 258:i2c.c         **** 			}
+ 259:i2c.c         **** 			else if((status == TW_MT_SLA_NACK) || (status == TW_MT_DATA_NACK)) // If we don't get an ACK, th
+ 503               	.LM67:
+ 504 020c 8032      		cpi r24,lo8(32)
+ 505 020e 01F0      		breq .L56
+ 507               	.LM68:
+ 508 0210 8033      		cpi r24,lo8(48)
+ 509 0212 01F4      		brne .L57
+ 510               	.L56:
+ 260:i2c.c         **** 			{
+ 261:i2c.c         **** 				errorCode = 6; // Error! Oh god!
+ 512               	.LM69:
+ 513 0214 86E0      		ldi r24,lo8(6)
+ 514 0216 00C0      		rjmp .L122
+ 515               	.L57:
+ 262:i2c.c         **** 				TWCR &= ~(1<<TWSTA); // Clear start bit.
+ 263:i2c.c         **** 				TWCR |= (1<<TWINT)|(1<<TWSTO); // Send stop command.
+ 264:i2c.c         **** 			}
+ 265:i2c.c         **** 			else if(status == TW_MT_SLA_ACK) // The slave is ready to recieve.
+ 517               	.LM70:
+ 518 0218 8831      		cpi r24,lo8(24)
+ 519 021a 01F4      		brne .L58
+ 520               	.L131:
+ 266:i2c.c         **** 			{ // First data byte is command.
+ 267:i2c.c         **** 				//errorCode = 7;
+ 268:i2c.c         **** 				TWDR = i2cMode; // Servo position command.
+ 522               	.LM71:
+ 523 021c 9093 BB00 		sts 187,r25
+ 524 0220 00C0      		rjmp .L129
+ 525               	.L58:
+ 269:i2c.c         **** 				//TWDR = 0xff;
+ 270:i2c.c         **** 				TWCR &= ~(1<<TWSTA); // Clear start bit.
+ 271:i2c.c         **** 				//if(TWCR & (1<<TWINT)) errorCode = 30;
+ 272:i2c.c         **** 				//errorCode = TWCR;
+ 273:i2c.c         **** 				TWCR |= (1<<TWINT); // Go go go!
+ 274:i2c.c         **** 			}
+ 275:i2c.c         **** 			else if(status == TW_MT_DATA_ACK)
+ 527               	.LM72:
+ 528 0222 8832      		cpi r24,lo8(40)
+ 529 0224 01F0      		breq .+2
+ 530 0226 00C0      		rjmp .L115
+ 276:i2c.c         **** 			{
+ 277:i2c.c         **** 				if(dataSent == 0)
+ 532               	.LM73:
+ 533 0228 8091 0000 		lds r24,dataSent
+ 534 022c 8823      		tst r24
+ 535 022e 01F4      		brne .L60
+ 278:i2c.c         **** 				{
+ 279:i2c.c         **** 					TWDR = linearMotion;
+ 537               	.LM74:
+ 538 0230 8091 0000 		lds r24,linearMotion
+ 539 0234 00C0      		rjmp .L106
+ 540               	.L60:
+ 280:i2c.c         **** 					dataSent = 1;
+ 281:i2c.c         **** 					TWCR |= (1<<TWINT); // Go go go!
+ 282:i2c.c         **** 				}
+ 283:i2c.c         **** 				else
+ 284:i2c.c         **** 				{
+ 285:i2c.c         **** 					//errorCode = 10;
+ 286:i2c.c         **** 					TWCR |= (1<<TWINT)|(1<<TWSTO); // Send stop command.
+ 542               	.LM75:
+ 543 0236 8091 BC00 		lds r24,188
+ 544 023a 8069      		ori r24,lo8(-112)
+ 545 023c 8093 BC00 		sts 188,r24
+ 287:i2c.c         **** 					dataSent = 0;
+ 547               	.LM76:
+ 548 0240 1092 0000 		sts dataSent,__zero_reg__
+ 288:i2c.c         **** 					linearMotion = 0;
+ 550               	.LM77:
+ 551 0244 1092 0000 		sts linearMotion,__zero_reg__
+ 552 0248 00C0      		rjmp .L113
+ 553               	.L134:
+ 289:i2c.c         **** 					i2cMode = 0; // Back to idle.
+ 290:i2c.c         **** 				}
+ 291:i2c.c         **** 			}
+ 292:i2c.c         **** 			else errorCode = status;
+ 293:i2c.c         **** 			break;
+ 294:i2c.c         **** 		case 29: // CO2 burst!
+ 295:i2c.c         **** 			if(status == TW_START) // Start sent.
+ 555               	.LM78:
+ 556 024a 8830      		cpi r24,lo8(8)
+ 557 024c 01F4      		brne .+2
+ 558 024e 00C0      		rjmp .L127
+ 559               	.L61:
+ 296:i2c.c         **** 			{
+ 297:i2c.c         **** 				TWDR = (I2C_ADDR_PILOT & ~0x01); // Write to slave Pilot.
+ 298:i2c.c         **** 				//TWDR = 0x00;
+ 299:i2c.c         **** 				TWCR |= (1<<TWINT); // Start transmission.
+ 300:i2c.c         **** 				//errorCode = 6;
+ 301:i2c.c         **** 			}
+ 302:i2c.c         **** 			else if((status == TW_MT_SLA_NACK) || (status == TW_MT_DATA_NACK)) // If we don't get an ACK, th
+ 561               	.LM79:
+ 562 0250 8032      		cpi r24,lo8(32)
+ 563 0252 01F4      		brne .+2
+ 564 0254 00C0      		rjmp .L32
+ 566               	.LM80:
+ 567 0256 8033      		cpi r24,lo8(48)
+ 568 0258 01F4      		brne .+2
+ 569 025a 00C0      		rjmp .L32
+ 570               	.L63:
+ 303:i2c.c         **** 			{
+ 304:i2c.c         **** 				errorCode = 5; // Error! Oh god!
+ 305:i2c.c         **** 				TWCR &= ~(1<<TWSTA); // Clear start bit.
+ 306:i2c.c         **** 				TWCR |= (1<<TWINT)|(1<<TWSTO); // Send stop command.
+ 307:i2c.c         **** 			}
+ 308:i2c.c         **** 			else if(status == TW_MT_SLA_ACK) // The slave is ready to recieve.
+ 572               	.LM81:
+ 573 025c 8831      		cpi r24,lo8(24)
+ 574 025e 01F4      		brne .L64
+ 309:i2c.c         **** 			{ // First data byte is command.
+ 310:i2c.c         **** 				TWDR = i2cMode; // Servo position command.
+ 576               	.LM82:
+ 577 0260 8DE1      		ldi r24,lo8(29)
+ 578 0262 8093 BB00 		sts 187,r24
+ 579               	.L129:
+ 311:i2c.c         **** 				TWCR &= ~(1<<TWSTA); // Clear start bit.
+ 581               	.LM83:
+ 582 0266 8091 BC00 		lds r24,188
+ 583 026a 8F7D      		andi r24,lo8(-33)
+ 584 026c 00C0      		rjmp .L125
+ 585               	.L64:
+ 312:i2c.c         **** 				TWCR |= (1<<TWINT); // Go go go!
+ 313:i2c.c         **** 			}
+ 314:i2c.c         **** 			else if(status == TW_MT_DATA_ACK)
+ 587               	.LM84:
+ 588 026e 8832      		cpi r24,lo8(40)
+ 589 0270 01F0      		breq .+2
+ 590 0272 00C0      		rjmp .L115
+ 315:i2c.c         **** 			{
+ 316:i2c.c         **** 				if(dataSent == 0)
+ 592               	.LM85:
+ 593 0274 8091 0000 		lds r24,dataSent
+ 594 0278 8823      		tst r24
+ 595 027a 01F4      		brne .L66
+ 317:i2c.c         **** 				{
+ 318:i2c.c         **** 					TWDR = BURST_COUNT;
+ 597               	.LM86:
+ 598 027c 81E0      		ldi r24,lo8(1)
+ 599 027e 8093 BB00 		sts 187,r24
+ 600 0282 00C0      		rjmp .L126
+ 601               	.L66:
+ 319:i2c.c         **** 					dataSent = 1;
+ 320:i2c.c         **** 					TWCR |= (1<<TWINT); // Go go go!
+ 321:i2c.c         **** 				}
+ 322:i2c.c         **** 				else
+ 323:i2c.c         **** 				{
+ 324:i2c.c         **** 					TWCR |= (1<<TWINT)|(1<<TWSTO); // Send stop command.
+ 603               	.LM87:
+ 604 0284 8091 BC00 		lds r24,188
+ 605 0288 8069      		ori r24,lo8(-112)
+ 606 028a 8093 BC00 		sts 188,r24
+ 325:i2c.c         **** 					dataSent = 0;
+ 608               	.LM88:
+ 609 028e 1092 0000 		sts dataSent,__zero_reg__
+ 610 0292 00C0      		rjmp .L113
+ 611               	.L9:
+ 326:i2c.c         **** 					i2cMode = 0; // Back to idle.
+ 327:i2c.c         **** 				}
+ 328:i2c.c         **** 			}
+ 329:i2c.c         **** 			else errorCode = status;
+ 330:i2c.c         **** 			
+ 331:i2c.c         **** 			break;
+ 332:i2c.c         **** 		case 42: // Get arch IR 1-3.
+ 333:i2c.c         **** 			if(status == TW_START) // Start sent.
+ 613               	.LM89:
+ 614 0294 8830      		cpi r24,lo8(8)
+ 615 0296 01F4      		brne .L67
+ 334:i2c.c         **** 			{
+ 335:i2c.c         **** 				TWDR = (I2C_ADDR_PILOT | 0x01); // Read from slave Pilot.
+ 617               	.LM90:
+ 618 0298 87E4      		ldi r24,lo8(71)
+ 619 029a 00C0      		rjmp .L118
+ 620               	.L67:
+ 336:i2c.c         **** 				TWCR |= (1<<TWINT); // Start RX, ACK bytes.
+ 337:i2c.c         **** 				i2cByteIndex = 0; // We'll use this to keep track of the 6 bytes coming in.
+ 338:i2c.c         **** 			}
+ 339:i2c.c         **** 			else if(status == TW_MR_SLA_ACK) // Slave ack'd.
+ 622               	.LM91:
+ 623 029c 8034      		cpi r24,lo8(64)
+ 624 029e 01F4      		brne .+2
+ 625 02a0 00C0      		rjmp .L121
+ 626               	.L68:
+ 340:i2c.c         **** 			{
+ 341:i2c.c         **** 				TWCR &= ~(1<<TWSTA); // Clear start bit.
+ 342:i2c.c         **** 				TWCR |= (1<<TWINT)|(1<<TWEA); // Receive and ACK the next byte.
+ 343:i2c.c         **** 			}
+ 344:i2c.c         **** 			else if(status == TW_MR_SLA_NACK) // ERROR.
+ 628               	.LM92:
+ 629 02a2 8834      		cpi r24,lo8(72)
+ 630 02a4 01F4      		brne .L69
+ 345:i2c.c         **** 			{
+ 346:i2c.c         **** 				errorCode = 8; // Error! Oh god!
+ 632               	.LM93:
+ 633 02a6 88E0      		ldi r24,lo8(8)
+ 634 02a8 00C0      		rjmp .L122
+ 635               	.L69:
+ 347:i2c.c         **** 				TWCR &= ~(1<<TWSTA); // Clear start bit.
+ 348:i2c.c         **** 				TWCR |= (1<<TWINT)|(1<<TWSTO); // Send stop command.
+ 349:i2c.c         **** 			}
+ 350:i2c.c         **** 			else if(status == TW_MR_DATA_ACK)
+ 637               	.LM94:
+ 638 02aa 8035      		cpi r24,lo8(80)
+ 639 02ac 01F0      		breq .+2
+ 640 02ae 00C0      		rjmp .L70
+ 351:i2c.c         **** 			{
+ 352:i2c.c         **** 				switch (i2cByteIndex)
+ 642               	.LM95:
+ 643 02b0 8091 0000 		lds r24,i2cByteIndex
+ 644 02b4 8230      		cpi r24,lo8(2)
+ 645 02b6 01F0      		breq .L74
+ 646 02b8 8330      		cpi r24,lo8(3)
+ 647 02ba 00F4      		brsh .L77
+ 648 02bc 8823      		tst r24
+ 649 02be 01F0      		breq .L72
+ 650 02c0 8130      		cpi r24,lo8(1)
+ 651 02c2 01F0      		breq .+2
+ 652 02c4 00C0      		rjmp .L84
+ 653 02c6 00C0      		rjmp .L136
+ 654               	.L77:
+ 655 02c8 8330      		cpi r24,lo8(3)
+ 656 02ca 01F0      		breq .L75
+ 657 02cc 8430      		cpi r24,lo8(4)
+ 658 02ce 01F0      		breq .+2
+ 659 02d0 00C0      		rjmp .L84
+ 660 02d2 00C0      		rjmp .L137
+ 661               	.L72:
+ 353:i2c.c         **** 				{
+ 354:i2c.c         **** 					case 0:
+ 355:i2c.c         **** 						arcIR1 = TWDR;
+ 663               	.LM96:
+ 664 02d4 8091 BB00 		lds r24,187
+ 356:i2c.c         **** 						arcIR1 <<= 8;
+ 666               	.LM97:
+ 667 02d8 1092 0000 		sts arcIR1,__zero_reg__
+ 668 02dc 8093 0000 		sts arcIR1+1,r24
+ 669 02e0 00C0      		rjmp .L117
+ 670               	.L136:
+ 357:i2c.c         **** 						TWCR |= (1<<TWINT)|(1<<TWEA); // Receive and ACK the next byte.
+ 358:i2c.c         **** 						break;
+ 359:i2c.c         **** 					case 1:
+ 360:i2c.c         **** 						arcIR1 |= TWDR;
+ 672               	.LM98:
+ 673 02e2 2091 BB00 		lds r18,187
+ 674 02e6 30E0      		ldi r19,lo8(0)
+ 675 02e8 8091 0000 		lds r24,arcIR1
+ 676 02ec 9091 0000 		lds r25,arcIR1+1
+ 677 02f0 822B      		or r24,r18
+ 678 02f2 932B      		or r25,r19
+ 679 02f4 9093 0000 		sts arcIR1+1,r25
+ 680 02f8 8093 0000 		sts arcIR1,r24
+ 681 02fc 00C0      		rjmp .L117
+ 682               	.L74:
+ 361:i2c.c         **** 						TWCR |= (1<<TWINT)|(1<<TWEA); 
+ 362:i2c.c         **** 						break;
+ 363:i2c.c         **** 					case 2:
+ 364:i2c.c         **** 						arcIR2 = TWDR;
+ 684               	.LM99:
+ 685 02fe 8091 BB00 		lds r24,187
+ 365:i2c.c         **** 						arcIR2 <<= 8;
+ 687               	.LM100:
+ 688 0302 1092 0000 		sts arcIR2,__zero_reg__
+ 689 0306 8093 0000 		sts arcIR2+1,r24
+ 690 030a 00C0      		rjmp .L117
+ 691               	.L75:
+ 366:i2c.c         **** 						TWCR |= (1<<TWINT)|(1<<TWEA); 
+ 367:i2c.c         **** 						break;
+ 368:i2c.c         **** 					case 3:
+ 369:i2c.c         **** 						arcIR2 |= TWDR;
+ 693               	.LM101:
+ 694 030c 2091 BB00 		lds r18,187
+ 695 0310 30E0      		ldi r19,lo8(0)
+ 696 0312 8091 0000 		lds r24,arcIR2
+ 697 0316 9091 0000 		lds r25,arcIR2+1
+ 698 031a 822B      		or r24,r18
+ 699 031c 932B      		or r25,r19
+ 700 031e 9093 0000 		sts arcIR2+1,r25
+ 701 0322 8093 0000 		sts arcIR2,r24
+ 702 0326 00C0      		rjmp .L117
+ 703               	.L137:
+ 370:i2c.c         **** 						TWCR |= (1<<TWINT)|(1<<TWEA); 
+ 371:i2c.c         **** 						break;
+ 372:i2c.c         **** 					case 4:
+ 373:i2c.c         **** 						arcIR3 = TWDR;
+ 705               	.LM102:
+ 706 0328 8091 BB00 		lds r24,187
+ 374:i2c.c         **** 						arcIR3 <<= 8;
+ 708               	.LM103:
+ 709 032c 1092 0000 		sts arcIR3,__zero_reg__
+ 710 0330 8093 0000 		sts arcIR3+1,r24
+ 711 0334 00C0      		rjmp .L132
+ 712               	.L70:
+ 375:i2c.c         **** 						TWCR &= ~(1<<TWEA); // Don't ACK!
+ 376:i2c.c         **** 						break;
+ 377:i2c.c         **** 				}
+ 378:i2c.c         **** 				i2cByteIndex++;
+ 379:i2c.c         **** 				TWCR |= (1<<TWINT); // Go on...
+ 380:i2c.c         **** 			}
+ 381:i2c.c         **** 			else if(status == TW_MR_DATA_NACK)
+ 714               	.LM104:
+ 715 0336 8835      		cpi r24,lo8(88)
+ 716 0338 01F0      		breq .+2
+ 717 033a 00C0      		rjmp .L1
+ 382:i2c.c         **** 			{
+ 383:i2c.c         **** 				if(i2cByteIndex == 5)
+ 719               	.LM105:
+ 720 033c 8091 0000 		lds r24,i2cByteIndex
+ 721 0340 8530      		cpi r24,lo8(5)
+ 722 0342 01F4      		brne .L78
+ 384:i2c.c         **** 					arcIR3 |= TWDR;
+ 724               	.LM106:
+ 725 0344 2091 BB00 		lds r18,187
+ 726 0348 30E0      		ldi r19,lo8(0)
+ 727 034a 8091 0000 		lds r24,arcIR3
+ 728 034e 9091 0000 		lds r25,arcIR3+1
+ 729 0352 822B      		or r24,r18
+ 730 0354 932B      		or r25,r19
+ 731 0356 9093 0000 		sts arcIR3+1,r25
+ 732 035a 8093 0000 		sts arcIR3,r24
+ 733 035e 00C0      		rjmp .L94
+ 734               	.L78:
+ 385:i2c.c         **** 				else errorCode = 9;
+ 736               	.LM107:
+ 737 0360 89E0      		ldi r24,lo8(9)
+ 738 0362 00C0      		rjmp .L123
+ 739               	.L10:
+ 386:i2c.c         **** 				TWCR |= (1<<TWINT)|(1<<TWSTO); // Send stop command.
+ 387:i2c.c         **** 				i2cMode = 0;
+ 388:i2c.c         **** 				rxMode = 0;
+ 389:i2c.c         **** 				i2cByteIndex = 0;
+ 390:i2c.c         **** 			}
+ 391:i2c.c         **** 			break;
+ 392:i2c.c         **** 		case 43: // Get arch IR 4-7.
+ 393:i2c.c         **** 			if(status == TW_START) // Start sent.
+ 741               	.LM108:
+ 742 0364 8830      		cpi r24,lo8(8)
+ 743 0366 01F4      		brne .L80
+ 394:i2c.c         **** 			{
+ 395:i2c.c         **** 				TWDR = (I2C_ADDR_COPILOT | 0x01); // Read from slave Pilot.
+ 745               	.LM109:
+ 746 0368 89E4      		ldi r24,lo8(73)
+ 747               	.L118:
+ 748 036a 8093 BB00 		sts 187,r24
+ 396:i2c.c         **** 				TWCR |= (1<<TWINT); // Start RX, ACK bytes.
+ 750               	.LM110:
+ 751 036e 8091 BC00 		lds r24,188
+ 752 0372 8068      		ori r24,lo8(-128)
+ 753 0374 8093 BC00 		sts 188,r24
+ 754 0378 00C0      		rjmp .L114
+ 755               	.L80:
+ 397:i2c.c         **** 				i2cByteIndex = 0; // We'll use this to keep track of the 6 bytes coming in.
+ 398:i2c.c         **** 			}
+ 399:i2c.c         **** 			else if(status == TW_MR_SLA_ACK) // Slave ack'd.
+ 757               	.LM111:
+ 758 037a 8034      		cpi r24,lo8(64)
+ 759 037c 01F4      		brne .+2
+ 760 037e 00C0      		rjmp .L121
+ 761               	.L81:
+ 400:i2c.c         **** 			{
+ 401:i2c.c         **** 				TWCR &= ~(1<<TWSTA); // Clear start bit.
+ 402:i2c.c         **** 				TWCR |= (1<<TWINT)|(1<<TWEA); // Receive and ACK the next byte.
+ 403:i2c.c         **** 			}
+ 404:i2c.c         **** 			else if(status == TW_MR_SLA_NACK) // ERROR.
+ 763               	.LM112:
+ 764 0380 8834      		cpi r24,lo8(72)
+ 765 0382 01F4      		brne .L82
+ 405:i2c.c         **** 			{
+ 406:i2c.c         **** 				errorCode = 10; // Error! Oh god!
+ 767               	.LM113:
+ 768 0384 8AE0      		ldi r24,lo8(10)
+ 769 0386 00C0      		rjmp .L122
+ 770               	.L82:
+ 407:i2c.c         **** 				TWCR &= ~(1<<TWSTA); // Clear start bit.
+ 408:i2c.c         **** 				TWCR |= (1<<TWINT)|(1<<TWSTO); // Send stop command.
+ 409:i2c.c         **** 			}
+ 410:i2c.c         **** 			else if(status == TW_MR_DATA_ACK)
+ 772               	.LM114:
+ 773 0388 8035      		cpi r24,lo8(80)
+ 774 038a 01F0      		breq .+2
+ 775 038c 00C0      		rjmp .L83
+ 411:i2c.c         **** 			{
+ 412:i2c.c         **** 				switch (i2cByteIndex)
+ 777               	.LM115:
+ 778 038e 8091 0000 		lds r24,i2cByteIndex
+ 779 0392 8330      		cpi r24,lo8(3)
+ 780 0394 01F0      		breq .L88
+ 781 0396 8430      		cpi r24,lo8(4)
+ 782 0398 00F4      		brsh .L92
+ 783 039a 8130      		cpi r24,lo8(1)
+ 784 039c 01F0      		breq .L86
+ 785 039e 8230      		cpi r24,lo8(2)
+ 786 03a0 00F4      		brsh .L87
+ 787 03a2 00C0      		rjmp .L138
+ 788               	.L92:
+ 789 03a4 8530      		cpi r24,lo8(5)
+ 790 03a6 01F0      		breq .L90
+ 791 03a8 8530      		cpi r24,lo8(5)
+ 792 03aa 00F0      		brlo .L89
+ 793 03ac 8630      		cpi r24,lo8(6)
+ 794 03ae 01F0      		breq .+2
+ 795 03b0 00C0      		rjmp .L84
+ 796 03b2 00C0      		rjmp .L139
+ 797               	.L138:
+ 413:i2c.c         **** 				{
+ 414:i2c.c         **** 					case 0:
+ 415:i2c.c         **** 						arcIR4 = TWDR;
+ 799               	.LM116:
+ 800 03b4 8091 BB00 		lds r24,187
+ 416:i2c.c         **** 						arcIR4 <<= 8;
+ 802               	.LM117:
+ 803 03b8 1092 0000 		sts arcIR4,__zero_reg__
+ 804 03bc 8093 0000 		sts arcIR4+1,r24
+ 805 03c0 00C0      		rjmp .L117
+ 806               	.L86:
+ 417:i2c.c         **** 						TWCR |= (1<<TWINT)|(1<<TWEA); // Receive and ACK the next byte.
+ 418:i2c.c         **** 						break;
+ 419:i2c.c         **** 					case 1:
+ 420:i2c.c         **** 						arcIR4 |= TWDR;
+ 808               	.LM118:
+ 809 03c2 2091 BB00 		lds r18,187
+ 810 03c6 30E0      		ldi r19,lo8(0)
+ 811 03c8 8091 0000 		lds r24,arcIR4
+ 812 03cc 9091 0000 		lds r25,arcIR4+1
+ 813 03d0 822B      		or r24,r18
+ 814 03d2 932B      		or r25,r19
+ 815 03d4 9093 0000 		sts arcIR4+1,r25
+ 816 03d8 8093 0000 		sts arcIR4,r24
+ 817 03dc 00C0      		rjmp .L117
+ 818               	.L87:
+ 421:i2c.c         **** 						TWCR |= (1<<TWINT)|(1<<TWEA); 
+ 422:i2c.c         **** 						break;
+ 423:i2c.c         **** 					case 2:
+ 424:i2c.c         **** 						arcIR5 = TWDR;
+ 820               	.LM119:
+ 821 03de 8091 BB00 		lds r24,187
+ 425:i2c.c         **** 						arcIR5 <<= 8;
+ 823               	.LM120:
+ 824 03e2 1092 0000 		sts arcIR5,__zero_reg__
+ 825 03e6 8093 0000 		sts arcIR5+1,r24
+ 826 03ea 00C0      		rjmp .L117
+ 827               	.L88:
+ 426:i2c.c         **** 						TWCR |= (1<<TWINT)|(1<<TWEA); 
+ 427:i2c.c         **** 						break;
+ 428:i2c.c         **** 					case 3:
+ 429:i2c.c         **** 						arcIR5 |= TWDR;
+ 829               	.LM121:
+ 830 03ec 2091 BB00 		lds r18,187
+ 831 03f0 30E0      		ldi r19,lo8(0)
+ 832 03f2 8091 0000 		lds r24,arcIR5
+ 833 03f6 9091 0000 		lds r25,arcIR5+1
+ 834 03fa 822B      		or r24,r18
+ 835 03fc 932B      		or r25,r19
+ 836 03fe 9093 0000 		sts arcIR5+1,r25
+ 837 0402 8093 0000 		sts arcIR5,r24
+ 838 0406 00C0      		rjmp .L117
+ 839               	.L89:
+ 430:i2c.c         **** 						TWCR |= (1<<TWINT)|(1<<TWEA); 
+ 431:i2c.c         **** 						break;
+ 432:i2c.c         **** 					case 4:
+ 433:i2c.c         **** 						arcIR6 = TWDR;
+ 841               	.LM122:
+ 842 0408 8091 BB00 		lds r24,187
+ 434:i2c.c         **** 						arcIR6 <<= 8;
+ 844               	.LM123:
+ 845 040c 1092 0000 		sts arcIR6,__zero_reg__
+ 846 0410 8093 0000 		sts arcIR6+1,r24
+ 847 0414 00C0      		rjmp .L117
+ 848               	.L90:
+ 435:i2c.c         **** 						TWCR |= (1<<TWINT)|(1<<TWEA); 
+ 436:i2c.c         **** 						break;
+ 437:i2c.c         **** 					case 5:
+ 438:i2c.c         **** 						arcIR6 |= TWDR;
+ 850               	.LM124:
+ 851 0416 2091 BB00 		lds r18,187
+ 852 041a 30E0      		ldi r19,lo8(0)
+ 853 041c 8091 0000 		lds r24,arcIR6
+ 854 0420 9091 0000 		lds r25,arcIR6+1
+ 855 0424 822B      		or r24,r18
+ 856 0426 932B      		or r25,r19
+ 857 0428 9093 0000 		sts arcIR6+1,r25
+ 858 042c 8093 0000 		sts arcIR6,r24
+ 859               	.L117:
+ 439:i2c.c         **** 						TWCR |= (1<<TWINT)|(1<<TWEA); 
+ 861               	.LM125:
+ 862 0430 8091 BC00 		lds r24,188
+ 863 0434 806C      		ori r24,lo8(-64)
+ 864 0436 00C0      		rjmp .L109
+ 865               	.L139:
+ 440:i2c.c         **** 						break;
+ 441:i2c.c         **** 					case 6:
+ 442:i2c.c         **** 						arcIR7 = TWDR;
+ 867               	.LM126:
+ 868 0438 8091 BB00 		lds r24,187
+ 443:i2c.c         **** 						arcIR7 <<= 8;
+ 870               	.LM127:
+ 871 043c 1092 0000 		sts arcIR7,__zero_reg__
+ 872 0440 8093 0000 		sts arcIR7+1,r24
+ 873               	.L132:
+ 444:i2c.c         **** 						TWCR &= ~(1<<TWEA); // Don't ACK!
+ 875               	.LM128:
+ 876 0444 8091 BC00 		lds r24,188
+ 877 0448 8F7B      		andi r24,lo8(-65)
+ 878               	.L109:
+ 879 044a 8093 BC00 		sts 188,r24
+ 880               	.L84:
+ 445:i2c.c         **** 						break;
+ 446:i2c.c         **** 				}
+ 447:i2c.c         **** 				i2cByteIndex++;
+ 882               	.LM129:
+ 883 044e 8091 0000 		lds r24,i2cByteIndex
+ 884 0452 8F5F      		subi r24,lo8(-(1))
+ 885 0454 8093 0000 		sts i2cByteIndex,r24
+ 886 0458 00C0      		rjmp .L110
+ 887               	.L83:
+ 448:i2c.c         **** 				TWCR |= (1<<TWINT); // Go on...
+ 449:i2c.c         **** 			}
+ 450:i2c.c         **** 			else if(status == TW_MR_DATA_NACK)
+ 889               	.LM130:
+ 890 045a 8835      		cpi r24,lo8(88)
+ 891 045c 01F0      		breq .+2
+ 892 045e 00C0      		rjmp .L1
+ 451:i2c.c         **** 			{
+ 452:i2c.c         **** 				if(i2cByteIndex == 7)
+ 894               	.LM131:
+ 895 0460 8091 0000 		lds r24,i2cByteIndex
+ 896 0464 8730      		cpi r24,lo8(7)
+ 897 0466 01F4      		brne .L93
+ 453:i2c.c         **** 					arcIR7 |= TWDR;
+ 899               	.LM132:
+ 900 0468 2091 BB00 		lds r18,187
+ 901 046c 30E0      		ldi r19,lo8(0)
+ 902 046e 8091 0000 		lds r24,arcIR7
+ 903 0472 9091 0000 		lds r25,arcIR7+1
+ 904 0476 822B      		or r24,r18
+ 905 0478 932B      		or r25,r19
+ 906 047a 9093 0000 		sts arcIR7+1,r25
+ 907 047e 8093 0000 		sts arcIR7,r24
+ 908 0482 00C0      		rjmp .L94
+ 909               	.L93:
+ 454:i2c.c         **** 				else errorCode = 11;
+ 911               	.LM133:
+ 912 0484 8BE0      		ldi r24,lo8(11)
+ 913               	.L123:
+ 914 0486 8093 0000 		sts errorCode,r24
+ 915               	.L94:
+ 455:i2c.c         **** 				TWCR |= (1<<TWINT)|(1<<TWSTO); // Send stop command.
+ 917               	.LM134:
+ 918 048a 8091 BC00 		lds r24,188
+ 919 048e 8069      		ori r24,lo8(-112)
+ 920 0490 8093 BC00 		sts 188,r24
+ 456:i2c.c         **** 				i2cMode = 0;
+ 922               	.LM135:
+ 923 0494 1092 0000 		sts i2cMode,__zero_reg__
+ 457:i2c.c         **** 				rxMode = 0;
+ 925               	.LM136:
+ 926 0498 1092 0000 		sts rxMode,__zero_reg__
+ 927               	.L114:
+ 458:i2c.c         **** 				i2cByteIndex = 0;
+ 929               	.LM137:
+ 930 049c 1092 0000 		sts i2cByteIndex,__zero_reg__
+ 931 04a0 00C0      		rjmp .L1
+ 932               	.L11:
+ 459:i2c.c         **** 			}
+ 460:i2c.c         **** 			break;
+ 461:i2c.c         **** 		case 90: // Get battery voltage (2 bytes).
+ 462:i2c.c         **** 			if(status == TW_START) // Start sent.
+ 934               	.LM138:
+ 935 04a2 8830      		cpi r24,lo8(8)
+ 936 04a4 01F4      		brne .L95
+ 463:i2c.c         **** 			{
+ 464:i2c.c         **** 				TWDR = (I2C_ADDR_PILOT | 0x01); // Read from slave Pilot.
+ 938               	.LM139:
+ 939 04a6 87E4      		ldi r24,lo8(71)
+ 940 04a8 00C0      		rjmp .L105
+ 941               	.L95:
+ 465:i2c.c         **** 				TWCR |= (1<<TWINT); // Start RX, ACK bytes.
+ 466:i2c.c         **** 			}
+ 467:i2c.c         **** 			else if(status == TW_MR_SLA_ACK) // Slave ack'd.
+ 943               	.LM140:
+ 944 04aa 8034      		cpi r24,lo8(64)
+ 945 04ac 01F0      		breq .L121
+ 946               	.L96:
+ 468:i2c.c         **** 			{
+ 469:i2c.c         **** 				TWCR &= ~(1<<TWSTA); // Clear start bit.
+ 470:i2c.c         **** 				TWCR |= (1<<TWINT)|(1<<TWEA); // Receive and ACK the next byte.
+ 471:i2c.c         **** 			}
+ 472:i2c.c         **** 			else if(status == TW_MR_SLA_NACK) // ERROR.
+ 948               	.LM141:
+ 949 04ae 8834      		cpi r24,lo8(72)
+ 950 04b0 01F0      		breq .L119
+ 951               	.L97:
+ 473:i2c.c         **** 			{
+ 474:i2c.c         **** 				errorCode = 7; // Error! Oh god!
+ 475:i2c.c         **** 				TWCR &= ~(1<<TWSTA); // Clear start bit.
+ 476:i2c.c         **** 				TWCR |= (1<<TWINT)|(1<<TWSTO); // Send stop command.
+ 477:i2c.c         **** 				i2cMode = 0;
+ 478:i2c.c         **** 			}
+ 479:i2c.c         **** 			else if(status == TW_MR_DATA_ACK)
+ 953               	.LM142:
+ 954 04b2 8035      		cpi r24,lo8(80)
+ 955 04b4 01F4      		brne .L98
+ 480:i2c.c         **** 			{
+ 481:i2c.c         **** 				batteryADC = TWDR;
+ 957               	.LM143:
+ 958 04b6 8091 BB00 		lds r24,187
+ 482:i2c.c         **** 				batteryADC <<= 8;
+ 960               	.LM144:
+ 961 04ba 1092 0000 		sts batteryADC,__zero_reg__
+ 962 04be 8093 0000 		sts batteryADC+1,r24
+ 963 04c2 00C0      		rjmp .L124
+ 964               	.L98:
+ 483:i2c.c         **** 				TWCR &= ~(1<<TWEA); // Don't ACK!
+ 484:i2c.c         **** 				TWCR |= (1<<TWINT); // Receive and NACK the next byte.
+ 485:i2c.c         **** 			}
+ 486:i2c.c         **** 			else if(status == TW_MR_DATA_NACK)
+ 966               	.LM145:
+ 967 04c4 8835      		cpi r24,lo8(88)
+ 968 04c6 01F0      		breq .+2
+ 969 04c8 00C0      		rjmp .L1
+ 487:i2c.c         **** 			{
+ 488:i2c.c         **** 				batteryADC |= TWDR;
+ 971               	.LM146:
+ 972 04ca 2091 BB00 		lds r18,187
+ 973 04ce 30E0      		ldi r19,lo8(0)
+ 974 04d0 8091 0000 		lds r24,batteryADC
+ 975 04d4 9091 0000 		lds r25,batteryADC+1
+ 976 04d8 822B      		or r24,r18
+ 977 04da 932B      		or r25,r19
+ 978 04dc 9093 0000 		sts batteryADC+1,r25
+ 979 04e0 8093 0000 		sts batteryADC,r24
+ 980 04e4 00C0      		rjmp .L112
+ 981               	.L135:
+ 489:i2c.c         **** 				TWCR |= (1<<TWINT)|(1<<TWSTO); // Send stop command.
+ 490:i2c.c         **** 				i2cMode = 0;
+ 491:i2c.c         **** 				rxMode = 0;
+ 492:i2c.c         **** 			}
+ 493:i2c.c         **** 			break;
+ 494:i2c.c         **** 		case 95: // RX text data.
+ 495:i2c.c         **** 			if(status == TW_START) // Start sent.
+ 983               	.LM147:
+ 984 04e6 8830      		cpi r24,lo8(8)
+ 985 04e8 01F4      		brne .L99
+ 496:i2c.c         **** 			{
+ 497:i2c.c         **** 				TWDR = (I2C_ADDR_NAVIGATOR | 0x01); // Read from slave Navigator.
+ 987               	.LM148:
+ 988 04ea 8BE4      		ldi r24,lo8(75)
+ 989 04ec 00C0      		rjmp .L105
+ 990               	.L99:
+ 498:i2c.c         **** 				TWCR |= (1<<TWINT); // Start RX, ACK bytes.
+ 499:i2c.c         **** 			}
+ 500:i2c.c         **** 			else if(status == TW_MR_SLA_ACK) // Slave ack'd.
+ 992               	.LM149:
+ 993 04ee 8034      		cpi r24,lo8(64)
+ 994 04f0 01F4      		brne .L100
+ 995               	.L121:
+ 501:i2c.c         **** 			{
+ 502:i2c.c         **** 				TWCR &= ~(1<<TWSTA); // Clear start bit.
+ 997               	.LM150:
+ 998 04f2 8091 BC00 		lds r24,188
+ 999 04f6 8F7D      		andi r24,lo8(-33)
+ 1000 04f8 8093 BC00 		sts 188,r24
+ 503:i2c.c         **** 				TWCR |= (1<<TWINT)|(1<<TWEA); // Receive and ACK the next byte.
+ 1002               	.LM151:
+ 1003 04fc 8091 BC00 		lds r24,188
+ 1004 0500 806C      		ori r24,lo8(-64)
+ 1005 0502 00C0      		rjmp .L111
+ 1006               	.L100:
+ 504:i2c.c         **** 			}
+ 505:i2c.c         **** 			else if(status == TW_MR_SLA_NACK) // ERROR.
+ 1008               	.LM152:
+ 1009 0504 8834      		cpi r24,lo8(72)
+ 1010 0506 01F4      		brne .L101
+ 1011               	.L119:
+ 506:i2c.c         **** 			{
+ 507:i2c.c         **** 				errorCode = 7; // Error! Oh god!
+ 1013               	.LM153:
+ 1014 0508 87E0      		ldi r24,lo8(7)
+ 1015 050a 8093 0000 		sts errorCode,r24
+ 508:i2c.c         **** 				TWCR &= ~(1<<TWSTA); // Clear start bit.
+ 1017               	.LM154:
+ 1018 050e 8091 BC00 		lds r24,188
+ 1019 0512 8F7D      		andi r24,lo8(-33)
+ 1020 0514 8093 BC00 		sts 188,r24
+ 509:i2c.c         **** 				TWCR |= (1<<TWINT)|(1<<TWSTO); // Send stop command.
+ 1022               	.LM155:
+ 1023 0518 8091 BC00 		lds r24,188
+ 1024 051c 8069      		ori r24,lo8(-112)
+ 1025 051e 8093 BC00 		sts 188,r24
+ 1026               	.L113:
+ 510:i2c.c         **** 				i2cMode = 0;
+ 1028               	.LM156:
+ 1029 0522 1092 0000 		sts i2cMode,__zero_reg__
+ 1030 0526 00C0      		rjmp .L1
+ 1031               	.L101:
+ 511:i2c.c         **** 			}
+ 512:i2c.c         **** 			else if(status == TW_MR_DATA_ACK)
+ 1033               	.LM157:
+ 1034 0528 8035      		cpi r24,lo8(80)
+ 1035 052a 01F4      		brne .L102
+ 513:i2c.c         **** 			{
+ 514:i2c.c         **** 				tempData = TWDR;
+ 1037               	.LM158:
+ 1038 052c 8091 BB00 		lds r24,187
+ 515:i2c.c         **** 				tempData <<= 8;
+ 1040               	.LM159:
+ 1041 0530 1092 0000 		sts tempData,__zero_reg__
+ 1042 0534 8093 0000 		sts tempData+1,r24
+ 1043               	.L124:
+ 516:i2c.c         **** 				TWCR &= ~(1<<TWEA); // Don't ACK!
+ 1045               	.LM160:
+ 1046 0538 8091 BC00 		lds r24,188
+ 1047 053c 8F7B      		andi r24,lo8(-65)
+ 1048               	.L125:
+ 1049 053e 8093 BC00 		sts 188,r24
+ 1050               	.L110:
+ 517:i2c.c         **** 				TWCR |= (1<<TWINT); // Receive and NACK the next byte.
+ 1052               	.LM161:
+ 1053 0542 8091 BC00 		lds r24,188
+ 1054 0546 8068      		ori r24,lo8(-128)
+ 1055               	.L111:
+ 1056 0548 8093 BC00 		sts 188,r24
+ 1057 054c 00C0      		rjmp .L1
+ 1058               	.L102:
+ 518:i2c.c         **** 			}
+ 519:i2c.c         **** 			else if(status == TW_MR_DATA_NACK)
+ 1060               	.LM162:
+ 1061 054e 8835      		cpi r24,lo8(88)
+ 1062 0550 01F4      		brne .L1
+ 520:i2c.c         **** 			{
+ 521:i2c.c         **** 				tempData |= TWDR;
+ 1064               	.LM163:
+ 1065 0552 2091 BB00 		lds r18,187
+ 1066 0556 30E0      		ldi r19,lo8(0)
+ 1067 0558 8091 0000 		lds r24,tempData
+ 1068 055c 9091 0000 		lds r25,tempData+1
+ 1069 0560 822B      		or r24,r18
+ 1070 0562 932B      		or r25,r19
+ 1071 0564 9093 0000 		sts tempData+1,r25
+ 1072 0568 8093 0000 		sts tempData,r24
+ 1073               	.L112:
+ 522:i2c.c         **** 				TWCR |= (1<<TWINT)|(1<<TWSTO); // Send stop command.
+ 1075               	.LM164:
+ 1076 056c 8091 BC00 		lds r24,188
+ 1077 0570 8069      		ori r24,lo8(-112)
+ 1078 0572 8093 BC00 		sts 188,r24
+ 523:i2c.c         **** 				i2cMode = 0;
+ 1080               	.LM165:
+ 1081 0576 1092 0000 		sts i2cMode,__zero_reg__
+ 524:i2c.c         **** 				rxMode = 0;
+ 1083               	.LM166:
+ 1084 057a 1092 0000 		sts rxMode,__zero_reg__
+ 1085 057e 00C0      		rjmp .L1
+ 1086               	.L2:
+ 525:i2c.c         **** 			}
+ 526:i2c.c         **** 			break;
+ 527:i2c.c         **** 		case 0: // Idle.
+ 528:i2c.c         **** 		default: 
+ 529:i2c.c         **** 			errorCode = 1; // I2C fault.
+ 1088               	.LM167:
+ 1089 0580 81E0      		ldi r24,lo8(1)
+ 1090               	.L115:
+ 1091 0582 8093 0000 		sts errorCode,r24
+ 1092               	.L1:
+ 1093               	/* epilogue start */
+ 530:i2c.c         **** 			break;
+ 531:i2c.c         **** 	}
+ 532:i2c.c         **** }
+ 1095               	.LM168:
+ 1096 0586 FF91      		pop r31
+ 1097 0588 EF91      		pop r30
+ 1098 058a BF91      		pop r27
+ 1099 058c AF91      		pop r26
+ 1100 058e 9F91      		pop r25
+ 1101 0590 8F91      		pop r24
+ 1102 0592 7F91      		pop r23
+ 1103 0594 6F91      		pop r22
+ 1104 0596 5F91      		pop r21
+ 1105 0598 4F91      		pop r20
+ 1106 059a 3F91      		pop r19
+ 1107 059c 2F91      		pop r18
+ 1108 059e 0F90      		pop r0
+ 1109 05a0 0FBE      		out __SREG__,r0
+ 1110 05a2 0F90      		pop r0
+ 1111 05a4 1F90      		pop r1
+ 1112 05a6 1895      		reti
+ 1117               	.Lscope1:
+ 1119               		.stabd	78,0,0
+ 1121               	.global	i2cInit
+ 1123               	i2cInit:
+ 1124               		.stabd	46,0,0
+ 533:i2c.c         **** 
+ 534:i2c.c         **** void i2cInit(void)
+ 535:i2c.c         **** {
+ 1126               	.LM169:
+ 1127               	.LFBB2:
+ 1128               	/* prologue: function */
+ 1129               	/* frame size = 0 */
+ 1130               	/* stack size = 0 */
+ 1131               	.L__stack_usage = 0
+ 536:i2c.c         **** 	// Set control registers.
+ 537:i2c.c         **** 	TWBR = I2C_TWBR;
+ 1133               	.LM170:
+ 1134 05a8 82E0      		ldi r24,lo8(2)
+ 1135 05aa 8093 B800 		sts 184,r24
+ 538:i2c.c         **** 	TWSR = I2C_TWSR;
+ 1137               	.LM171:
+ 1138 05ae 81E0      		ldi r24,lo8(1)
+ 1139 05b0 8093 B900 		sts 185,r24
+ 539:i2c.c         **** 	TWCR = I2C_TWCR;
+ 1141               	.LM172:
+ 1142 05b4 85E4      		ldi r24,lo8(69)
+ 1143 05b6 8093 BC00 		sts 188,r24
+ 540:i2c.c         **** 
+ 541:i2c.c         **** 	sei(); // Enable interrupts.
+ 1145               	.LM173:
+ 1146               	/* #APP */
+ 1147               	 ;  542 "i2c.c" 1
+ 1148 05ba 7894      		sei
+ 1149               	 ;  0 "" 2
+ 1150               	/* epilogue start */
+ 542:i2c.c         **** }
+ 1152               	.LM174:
+ 1153               	/* #NOAPP */
+ 1154 05bc 0895      		ret
+ 1156               	.Lscope2:
+ 1158               		.stabd	78,0,0
+ 1161               	.global	i2cStart
+ 1163               	i2cStart:
+ 1164               		.stabd	46,0,0
+ 543:i2c.c         **** 
+ 544:i2c.c         **** void i2cStart(uint8_t type) // Send an i2c start command.
+ 545:i2c.c         **** {
+ 1166               	.LM175:
+ 1167               	.LFBB3:
+ 1168 05be 1F93      		push r17
+ 1169               	/* prologue: function */
+ 1170               	/* frame size = 0 */
+ 1171               	/* stack size = 1 */
+ 1172               	.L__stack_usage = 1
+ 1173 05c0 182F      		mov r17,r24
+ 546:i2c.c         **** 	while(i2cMode) delay_ms(1); // Wait until previous i2c transmission finishes.
+ 1175               	.LM176:
+ 1176 05c2 00C0      		rjmp .L142
+ 1177               	.L143:
+ 1179               	.LM177:
+ 1180 05c4 81E0      		ldi r24,lo8(1)
+ 1181 05c6 90E0      		ldi r25,hi8(1)
+ 1182 05c8 0E94 0000 		call delay_ms
+ 1183               	.L142:
+ 1185               	.LM178:
+ 1186 05cc 8091 0000 		lds r24,i2cMode
+ 1187 05d0 8823      		tst r24
+ 1188 05d2 01F4      		brne .L143
+ 547:i2c.c         **** 	i2cMode = type; // And set transmission type. The interrupt will handle things from here.
+ 1190               	.LM179:
+ 1191 05d4 1093 0000 		sts i2cMode,r17
+ 548:i2c.c         **** 	TWCR |= (1<<TWSTA)|(1<<TWINT); // Send start signal.	
+ 1193               	.LM180:
+ 1194 05d8 8091 BC00 		lds r24,188
+ 1195 05dc 806A      		ori r24,lo8(-96)
+ 1196 05de 8093 BC00 		sts 188,r24
+ 1197               	/* epilogue start */
+ 549:i2c.c         **** }...
+ 1199               	.LM181:
+ 1200 05e2 1F91      		pop r17
+ 1201 05e4 0895      		ret
+ 1203               	.Lscope3:
+ 1205               		.stabd	78,0,0
+ 1206               	.global	rxMode
+ 1207               	.global	rxMode
+ 1208               		.section .bss
+ 1211               	rxMode:
+ 1212 0000 00        		.skip 1,0
+ 1213               	.global	dataSent
+ 1214               	.global	dataSent
+ 1217               	dataSent:
+ 1218 0001 00        		.skip 1,0
+ 1219               	.global	i2cByteIndex
+ 1220               	.global	i2cByteIndex
+ 1223               	i2cByteIndex:
+ 1224 0002 00        		.skip 1,0
+ 1225               	.global	i2cMode
+ 1226               	.global	i2cMode
+ 1229               	i2cMode:
+ 1230 0003 00        		.skip 1,0
+ 1235               		.text
+ 1237               	.Letext0:
+DEFINED SYMBOLS
+                            *ABS*:00000000 i2c.c
+     /tmp/ccMnQYjO.s:2      *ABS*:0000003f __SREG__
+     /tmp/ccMnQYjO.s:3      *ABS*:0000003e __SP_H__
+     /tmp/ccMnQYjO.s:4      *ABS*:0000003d __SP_L__
+     /tmp/ccMnQYjO.s:5      *ABS*:00000000 __tmp_reg__
+     /tmp/ccMnQYjO.s:6      *ABS*:00000001 __zero_reg__
+     /tmp/ccMnQYjO.s:101    .text:00000000 __vector_24
+     /tmp/ccMnQYjO.s:1229   .bss:00000003 i2cMode
+     /tmp/ccMnQYjO.s:1223   .bss:00000002 i2cByteIndex
+     /tmp/ccMnQYjO.s:1217   .bss:00000001 dataSent
+     /tmp/ccMnQYjO.s:1211   .bss:00000000 rxMode
+     /tmp/ccMnQYjO.s:1123   .text:000005a8 i2cInit
+     /tmp/ccMnQYjO.s:1163   .text:000005be i2cStart
+
+UNDEFINED SYMBOLS
+__do_copy_data
+__do_clear_bss
+errorCode
+gState
+delay_us
+servoPos1
+servoPos2
+stepperCountTempL
+stepperCountTempR
+linearMotion
+arcIR1
+arcIR2
+arcIR3
+arcIR4
+arcIR5
+arcIR6
+arcIR7
+batteryADC
+tempData
+delay_ms

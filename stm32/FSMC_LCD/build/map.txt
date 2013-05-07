@@ -1,0 +1,955 @@
+Archive member included because of file (symbol)
+
+/usr/arm-none-eabi/lib/thumb2/libc.a(lib_a-sprintf.o)
+                              src/menu.o (sprintf)
+/usr/arm-none-eabi/lib/thumb2/libc.a(lib_a-svfprintf.o)
+                              /usr/arm-none-eabi/lib/thumb2/libc.a(lib_a-sprintf.o) (_svfprintf_r)
+/usr/arm-none-eabi/lib/thumb2/libc.a(lib_a-dtoa.o)
+                              /usr/arm-none-eabi/lib/thumb2/libc.a(lib_a-svfprintf.o) (_dtoa_r)
+/usr/arm-none-eabi/lib/thumb2/libc.a(lib_a-impure.o)
+                              /usr/arm-none-eabi/lib/thumb2/libc.a(lib_a-sprintf.o) (_impure_ptr)
+/usr/arm-none-eabi/lib/thumb2/libc.a(lib_a-locale.o)
+                              /usr/arm-none-eabi/lib/thumb2/libc.a(lib_a-svfprintf.o) (_localeconv_r)
+/usr/arm-none-eabi/lib/thumb2/libc.a(lib_a-malloc.o)
+                              /usr/arm-none-eabi/lib/thumb2/libc.a(lib_a-dtoa.o) (malloc)
+/usr/arm-none-eabi/lib/thumb2/libc.a(lib_a-mallocr.o)
+                              /usr/arm-none-eabi/lib/thumb2/libc.a(lib_a-svfprintf.o) (_malloc_r)
+/usr/arm-none-eabi/lib/thumb2/libc.a(lib_a-memchr.o)
+                              /usr/arm-none-eabi/lib/thumb2/libc.a(lib_a-svfprintf.o) (memchr)
+/usr/arm-none-eabi/lib/thumb2/libc.a(lib_a-memcpy.o)
+                              /usr/arm-none-eabi/lib/thumb2/libc.a(lib_a-dtoa.o) (memcpy)
+/usr/arm-none-eabi/lib/thumb2/libc.a(lib_a-mlock.o)
+                              /usr/arm-none-eabi/lib/thumb2/libc.a(lib_a-mallocr.o) (__malloc_lock)
+/usr/arm-none-eabi/lib/thumb2/libc.a(lib_a-mprec.o)
+                              /usr/arm-none-eabi/lib/thumb2/libc.a(lib_a-dtoa.o) (_Balloc)
+/usr/arm-none-eabi/lib/thumb2/libc.a(lib_a-s_fpclassify.o)
+                              /usr/arm-none-eabi/lib/thumb2/libc.a(lib_a-svfprintf.o) (__fpclassifyd)
+/usr/arm-none-eabi/lib/thumb2/libc.a(lib_a-sbrkr.o)
+                              /usr/arm-none-eabi/lib/thumb2/libc.a(lib_a-mallocr.o) (_sbrk_r)
+/usr/arm-none-eabi/lib/thumb2/libc.a(lib_a-strcmp.o)
+                              /usr/arm-none-eabi/lib/thumb2/libc.a(lib_a-locale.o) (strcmp)
+/usr/arm-none-eabi/lib/thumb2/libc.a(lib_a-strlen.o)
+                              /usr/arm-none-eabi/lib/thumb2/libc.a(lib_a-svfprintf.o) (strlen)
+/usr/arm-none-eabi/lib/thumb2/libc.a(lib_a-svfiprintf.o)
+                              /usr/arm-none-eabi/lib/thumb2/libc.a(lib_a-svfprintf.o) (__ssprint_r)
+/usr/arm-none-eabi/lib/thumb2/libc.a(lib_a-callocr.o)
+                              /usr/arm-none-eabi/lib/thumb2/libc.a(lib_a-mprec.o) (_calloc_r)
+/usr/arm-none-eabi/lib/thumb2/libc.a(lib_a-freer.o)
+                              /usr/arm-none-eabi/lib/thumb2/libc.a(lib_a-malloc.o) (_free_r)
+/usr/arm-none-eabi/lib/thumb2/libc.a(lib_a-memmove.o)
+                              /usr/arm-none-eabi/lib/thumb2/libc.a(lib_a-svfiprintf.o) (memmove)
+/usr/arm-none-eabi/lib/thumb2/libc.a(lib_a-memset.o)
+                              /usr/arm-none-eabi/lib/thumb2/libc.a(lib_a-callocr.o) (memset)
+/usr/arm-none-eabi/lib/thumb2/libc.a(lib_a-reallocr.o)
+                              /usr/arm-none-eabi/lib/thumb2/libc.a(lib_a-svfiprintf.o) (_realloc_r)
+/usr/arm-none-eabi/lib/thumb2/libc.a(lib_a-reent.o)
+                              /usr/arm-none-eabi/lib/thumb2/libc.a(lib_a-sbrkr.o) (errno)
+/usr/lib/gcc/arm-none-eabi/4.6.3/thumb2/libgcc.a(_udivsi3.o)
+                              /usr/arm-none-eabi/lib/thumb2/libc.a(lib_a-dtoa.o) (__aeabi_uidiv)
+/usr/lib/gcc/arm-none-eabi/4.6.3/thumb2/libgcc.a(_dvmd_tls.o)
+                              /usr/lib/gcc/arm-none-eabi/4.6.3/thumb2/libgcc.a(_udivsi3.o) (__aeabi_idiv0)
+/usr/lib/gcc/arm-none-eabi/4.6.3/thumb2/libgcc.a(_arm_addsubdf3.o)
+                              /usr/arm-none-eabi/lib/thumb2/libc.a(lib_a-dtoa.o) (__aeabi_dsub)
+/usr/lib/gcc/arm-none-eabi/4.6.3/thumb2/libgcc.a(_arm_muldivdf3.o)
+                              /usr/arm-none-eabi/lib/thumb2/libc.a(lib_a-dtoa.o) (__aeabi_dmul)
+/usr/lib/gcc/arm-none-eabi/4.6.3/thumb2/libgcc.a(_arm_cmpdf2.o)
+                              /usr/arm-none-eabi/lib/thumb2/libc.a(lib_a-svfprintf.o) (__aeabi_dcmpeq)
+/usr/lib/gcc/arm-none-eabi/4.6.3/thumb2/libgcc.a(_arm_fixdfsi.o)
+                              /usr/arm-none-eabi/lib/thumb2/libc.a(lib_a-dtoa.o) (__aeabi_d2iz)
+/usr/lib/gcc/arm-none-eabi/4.6.3/thumb2/libgcc.a(_aeabi_uldivmod.o)
+                              /usr/arm-none-eabi/lib/thumb2/libc.a(lib_a-svfprintf.o) (__aeabi_uldivmod)
+/usr/lib/gcc/arm-none-eabi/4.6.3/thumb2/libgcc.a(bpabi.o)
+                              /usr/lib/gcc/arm-none-eabi/4.6.3/thumb2/libgcc.a(_aeabi_uldivmod.o) (__gnu_uldivmod_helper)
+/usr/lib/gcc/arm-none-eabi/4.6.3/thumb2/libgcc.a(_divdi3.o)
+                              /usr/lib/gcc/arm-none-eabi/4.6.3/thumb2/libgcc.a(bpabi.o) (__divdi3)
+/usr/lib/gcc/arm-none-eabi/4.6.3/thumb2/libgcc.a(_udivdi3.o)
+                              /usr/lib/gcc/arm-none-eabi/4.6.3/thumb2/libgcc.a(bpabi.o) (__udivdi3)
+
+Allocating common symbols
+Common symbol       size              file
+
+SDIO_CmdInitStructure
+                    0x14              src/sdcard.o
+psCurrentMenu       0x4               src/menu.o
+errno               0x4               /usr/arm-none-eabi/lib/thumb2/libc.a(lib_a-reent.o)
+psPrevMenu          0x10              src/menu.o
+DestBuffer          0x4               src/sdcard.o
+SDCardInfo          0x50              src/menu.o
+SDIO_InitStructure  0x18              src/sdcard.o
+ItemNumb            0x4               src/menu.o
+SDIO_DataInitStructure
+                    0x18              src/sdcard.o
+Buffer_Block_Rx     0x2800            src/menu.o
+psMenuItem          0x4               src/menu.o
+SrcBuffer           0x4               src/sdcard.o
+NOR_ID              0x8               src/menu.o
+psCurrentMenuItem   0x4               src/menu.o
+TxBuffer            0x100             src/menu.o
+wAddress            0x6               src/menu.o
+pBuffer             0x4000            src/menu.o
+
+Memory Configuration
+
+Name             Origin             Length             Attributes
+RAM              0x20000000         0x0000c000         xrw
+FLASH            0x08000000         0x00040000         xr
+*default*        0x00000000         0xffffffff
+
+Linker script and memory map
+
+                0x2000c000                _estack = 0x2000c000
+
+.isr_vector     0x08000000      0x1e4
+                0x08000000                . = ALIGN (0x4)
+ *(.isr_vector)
+ .isr_vector    0x08000000      0x1e4 build/crt0.o
+                0x08000000                g_pfnVectors
+                0x080001e4                . = ALIGN (0x4)
+
+.ARM.extab      0x080001e4        0x0
+ .ARM.extab     0x080001e4        0x0 /usr/lib/gcc/arm-none-eabi/4.6.3/thumb2/libgcc.a(_divdi3.o)
+ .ARM.extab     0x080001e4        0x0 /usr/lib/gcc/arm-none-eabi/4.6.3/thumb2/libgcc.a(_udivdi3.o)
+
+.ARM.exidx      0x080001e4        0x8
+ .ARM.exidx     0x080001e4        0x8 /usr/lib/gcc/arm-none-eabi/4.6.3/thumb2/libgcc.a(_divdi3.o)
+ .ARM.exidx     0x080001ec        0x0 /usr/lib/gcc/arm-none-eabi/4.6.3/thumb2/libgcc.a(_udivdi3.o)
+                                  0x8 (size before relaxing)
+
+.text           0x080001f0    0x14f8c
+                0x080001f0                . = ALIGN (0x4)
+ *(.text)
+ .text          0x080001f0       0x14 build/crt0.o
+ .text          0x08000204      0x650 src/fsmc_nor.o
+                0x08000204                FSMC_NOR_Init
+                0x08000380                FSMC_NOR_ReadID
+                0x080003f8                FSMC_NOR_EraseBlock
+                0x08000468                FSMC_NOR_EraseChip
+                0x080004d0                FSMC_NOR_WriteHalfWord
+                0x08000524                FSMC_NOR_WriteBuffer
+                0x08000578                FSMC_NOR_ProgramBuffer
+                0x08000640                FSMC_NOR_ReadHalfWord
+                0x08000688                FSMC_NOR_ReadBuffer
+                0x080006f4                FSMC_NOR_ReturnToReadMode
+                0x08000714                FSMC_NOR_Reset
+                0x08000750                FSMC_NOR_GetStatus
+ .text          0x08000854     0x1010 src/stm3210e_lcd.o
+                0x08000854                STM3210E_LCD_Init
+                0x08000e0c                LCD_SetTextColor
+                0x08000e30                LCD_SetBackColor
+                0x08000e54                LCD_ClearLine
+                0x08000e78                LCD_Clear
+                0x08000ec8                LCD_SetCursor
+                0x08000ef8                LCD_DrawChar
+                0x08000fb8                LCD_DisplayChar
+                0x08001004                LCD_DisplayStringLine
+                0x08001074                LCD_SetDisplayWindow
+                0x08001110                LCD_WindowModeDisable
+                0x08001138                LCD_DrawLine
+                0x080011d8                LCD_DrawRect
+                0x08001254                LCD_DrawCircle
+                0x0800145c                LCD_DrawMonoPict
+                0x080014fc                LCD_WriteBMP
+                0x080015b4                LCD_WriteReg
+                0x080015e4                LCD_ReadReg
+                0x08001610                LCD_WriteRAM_Prepare
+                0x08001628                LCD_WriteRAM
+                0x08001644                LCD_ReadRAM
+                0x08001668                LCD_PowerOn
+                0x08001708                LCD_DisplayOn
+                0x0800171c                LCD_DisplayOff
+                0x08001730                LCD_CtrlLinesConfig
+                0x080017c4                LCD_FSMCConfig
+ .text          0x08001864      0x1d8 src/stm32f10x_it.o
+                0x08001864                NMI_Handler
+                0x08001870                HardFault_Handler
+                0x08001878                MemManage_Handler
+                0x08001880                BusFault_Handler
+                0x08001888                UsageFault_Handler
+                0x08001890                SVC_Handler
+                0x0800189c                DebugMon_Handler
+                0x080018a8                PendSV_Handler
+                0x080018b4                SysTick_Handler
+                0x080018c0                EXTI3_IRQHandler
+                0x080018e0                DMA1_Channel3_IRQHandler
+                0x080019d8                EXTI9_5_IRQHandler
+                0x08001a10                EXTI15_10_IRQHandler
+                0x08001a30                SDIO_IRQHandler
+ .text          0x08001a3c     0x4468 src/menu.o
+                0x08001a3c                Menu_Init
+                0x08001a8c                DisplayMenu
+                0x08001ba4                SelFunc
+                0x08001c68                UpFunc
+                0x08001da4                DownFunc
+                0x08001ee4                ReturnFunc
+                0x08001fb4                ReadKey
+                0x080020f8                IdleFunc
+                0x08002104                DisplayIcons
+                0x080021d4                ShowMenuIcons
+                0x08002844                LCD_NORDisplay
+                0x0800287c                STM32_LCD_DemoIntro
+                0x080028d0                InternalFlashToLCD
+                0x08002bbc                InternalFlashToLCD_DMA
+                0x08002ea8                InternalFlashToLCD_Speed
+                0x08003154                NORFlashToLCD
+                0x080033b4                NORFlashToLCD_DMA
+                0x08003614                NORFlashToLCD_Speed
+                0x0800385c                NANDFlashToLCD
+                0x08003a9c                NANDFlashToLCD_Speed
+                0x08003c94                ExternalSRAMToLCD
+                0x08003f80                ExternalSRAMToLCD_DMA
+                0x0800426c                ExternalSRAMToLCD_Speed
+                0x08004518                SDCardToLCD
+                0x08004808                SDCardToLCD_Speed
+                0x08004e14                CheckBitmapFiles
+                0x08005020                TimingMeasurement_Config
+                0x0800508c                DisplayTimingCompute
+                0x080050e4                CopyToInternalFlash
+                0x08005330                CopyToExternalSRAM
+                0x080054bc                CopyToSDCard
+                0x08005748                CopyToNANDFlash
+                0x08005944                NAND_PhysicalErase
+ .text          0x08005ea4      0x5e0 src/main.o
+                0x08005f64                main
+                0x08005fa4                STM32_LCD_Demo
+                0x0800600c                InterruptConfig
+                0x080060e4                SysTick_Configuration
+                0x08006114                IntExtOnOffConfig
+                0x08006178                GPIO_Config
+                0x0800627c                Delay
+                0x080062ac                DelayJoyStick
+                0x080062f8                Decrement_TimingDelay
+                0x08006328                CheckBitmapFilesStatus
+                0x080063f0                ADC_Config
+                0x0800646c                Set_SELStatus
+ .text          0x08006484      0x8b8 src/fsmc_nand.o
+                0x08006484                FSMC_NAND_Init
+                0x08006580                FSMC_NAND_ReadID
+                0x080065f0                FSMC_NAND_WriteSmallPage
+                0x08006754                FSMC_NAND_ReadSmallPage
+                0x08006898                FSMC_NAND_WriteSpareArea
+                0x080069fc                FSMC_NAND_ReadSpareArea
+                0x08006b40                FSMC_NAND_EraseBlock
+                0x08006bf4                FSMC_NAND_Reset
+                0x08006c14                FSMC_NAND_GetStatus
+                0x08006c60                FSMC_NAND_ReadStatus
+                0x08006cc4                FSMC_NAND_AddressIncrement
+ .text          0x08006d3c      0x204 src/fsmc_sram.o
+                0x08006d3c                FSMC_SRAM_Init
+                0x08006eb8                FSMC_SRAM_WriteBuffer
+                0x08006efc                FSMC_SRAM_ReadBuffer
+ .text          0x08006f40     0x40d8 src/sdcard.o
+                0x08006f40                SD_Init
+                0x08006ffc                SD_PowerON
+                0x08007378                SD_PowerOFF
+                0x08007398                SD_InitializeCards
+                0x0800760c                SD_GetCardInfo
+                0x08007cec                SD_EnableWideBusOperation
+                0x08007e48                SD_SetDeviceMode
+                0x08007e8c                SD_SelectDeselect
+                0x08007f04                SD_ReadBlock
+                0x08008344                SD_ReadMultiBlocks
+                0x08008898                SD_WriteBlock
+                0x08008f34                SD_WriteMultiBlocks
+                0x080096fc                SD_GetTransferState
+                0x08009724                SD_StopTransfer
+                0x0800979c                SD_Erase
+                0x080099e8                SD_SendStatus
+                0x08009a94                SD_SendSDStatus
+                0x08009df0                SD_ProcessIRQSrc
+ .text          0x0800b018     0x1448 src/stm32f10x_fsmc.o
+                0x0800b018                FSMC_NORSRAMDeInit
+                0x0800b09c                FSMC_NANDDeInit
+                0x0800b144                FSMC_PCCARDDeInit
+                0x0800b194                FSMC_NORSRAMInit
+                0x0800b630                FSMC_NANDInit
+                0x0800b8bc                FSMC_PCCARDInit
+                0x0800bac4                FSMC_NORSRAMStructInit
+                0x0800bbcc                FSMC_NANDStructInit
+                0x0800bc68                FSMC_PCCARDStructInit
+                0x0800bd0c                FSMC_NORSRAMCmd
+                0x0800bda8                FSMC_NANDCmd
+                0x0800be7c                FSMC_PCCARDCmd
+                0x0800bee8                FSMC_NANDECCCmd
+                0x0800bfbc                FSMC_GetECC
+                0x0800bff8                FSMC_ITConfig
+                0x0800c138                FSMC_GetFlagStatus
+                0x0800c1f8                FSMC_ClearFlag
+                0x0800c2b8                FSMC_GetITStatus
+                0x0800c394                FSMC_ClearITPendingBit
+ .text          0x0800c460     0x1220 src/stm32f10x_gpio.o
+                0x0800c460                GPIO_DeInit
+                0x0800c5f8                GPIO_AFIODeInit
+                0x0800c618                GPIO_Init
+                0x0800c8c4                GPIO_StructInit
+                0x0800c8f0                GPIO_ReadInputDataBit
+                0x0800ca1c                GPIO_ReadInputData
+                0x0800caa8                GPIO_ReadOutputDataBit
+                0x0800cbd4                GPIO_ReadOutputData
+                0x0800cc60                GPIO_SetBits
+                0x0800ccfc                GPIO_ResetBits
+                0x0800cd98                GPIO_WriteBit
+                0x0800ced4                GPIO_Write
+                0x0800cf60                GPIO_PinLockConfig
+                0x0800d024                GPIO_EventOutputConfig
+                0x0800d114                GPIO_EventOutputCmd
+                0x0800d150                GPIO_PinRemapConfig
+                0x0800d4f0                GPIO_EXTILineConfig
+                0x0800d648                GPIO_ETH_MediaInterfaceConfig
+ .text          0x0800d680       0x94 /usr/arm-none-eabi/lib/thumb2/libc.a(lib_a-sprintf.o)
+                0x0800d680                _sprintf_r
+                0x0800d6c4                sprintf
+ .text          0x0800d714     0x14e0 /usr/arm-none-eabi/lib/thumb2/libc.a(lib_a-svfprintf.o)
+                0x0800d714                _svfprintf_r
+ *fill*         0x0800ebf4        0x4 00
+ .text          0x0800ebf8     0x1030 /usr/arm-none-eabi/lib/thumb2/libc.a(lib_a-dtoa.o)
+                0x0800ed40                _dtoa_r
+ .text          0x0800fc28        0x0 /usr/arm-none-eabi/lib/thumb2/libc.a(lib_a-impure.o)
+ .text          0x0800fc28       0xa4 /usr/arm-none-eabi/lib/thumb2/libc.a(lib_a-locale.o)
+                0x0800fc28                _setlocale_r
+                0x0800fc84                __locale_charset
+                0x0800fc90                __locale_mb_cur_max
+                0x0800fc9c                __locale_msgcharset
+                0x0800fca4                __locale_cjk_lang
+                0x0800fca8                _localeconv_r
+                0x0800fcb0                setlocale
+                0x0800fcc4                localeconv
+ .text          0x0800fccc       0x20 /usr/arm-none-eabi/lib/thumb2/libc.a(lib_a-malloc.o)
+                0x0800fccc                malloc
+                0x0800fcdc                free
+ .text          0x0800fcec      0x580 /usr/arm-none-eabi/lib/thumb2/libc.a(lib_a-mallocr.o)
+                0x0800fcec                _malloc_r
+ .text          0x0801026c       0x88 /usr/arm-none-eabi/lib/thumb2/libc.a(lib_a-memchr.o)
+                0x0801026c                memchr
+ .text          0x080102f4       0xf0 /usr/arm-none-eabi/lib/thumb2/libc.a(lib_a-memcpy.o)
+                0x080102f4                memcpy
+ .text          0x080103e4        0x8 /usr/arm-none-eabi/lib/thumb2/libc.a(lib_a-mlock.o)
+                0x080103e4                __malloc_lock
+                0x080103e8                __malloc_unlock
+ .text          0x080103ec      0x910 /usr/arm-none-eabi/lib/thumb2/libc.a(lib_a-mprec.o)
+                0x080103ec                _Balloc
+                0x08010458                _Bfree
+                0x08010490                __multadd
+                0x08010514                __s2b
+                0x080105a8                __hi0bits
+                0x080105e4                __lo0bits
+                0x08010640                __i2b
+                0x08010654                __multiply
+                0x08010790                __pow5mult
+                0x08010830                __lshift
+                0x080108ec                __mcmp
+                0x0801092c                __mdiff
+                0x08010a0c                __ulp
+                0x08010a50                __b2d
+                0x08010b00                __d2b
+                0x08010bcc                __ratio
+                0x08010c20                _mprec_log10
+                0x08010c54                __copybits
+                0x08010c9c                __any_on
+ .text          0x08010cfc       0x94 /usr/arm-none-eabi/lib/thumb2/libc.a(lib_a-s_fpclassify.o)
+                0x08010cfc                __fpclassifyd
+ .text          0x08010d90       0x28 /usr/arm-none-eabi/lib/thumb2/libc.a(lib_a-sbrkr.o)
+                0x08010d90                _sbrk_r
+ .text          0x08010db8      0x1dc /usr/arm-none-eabi/lib/thumb2/libc.a(lib_a-strcmp.o)
+                0x08010db8                strcmp
+ .text          0x08010f94       0x60 /usr/arm-none-eabi/lib/thumb2/libc.a(lib_a-strlen.o)
+                0x08010f94                strlen
+ .text          0x08010ff4      0xb60 /usr/arm-none-eabi/lib/thumb2/libc.a(lib_a-svfiprintf.o)
+                0x08010ff4                __ssprint_r
+                0x0801110c                _svfiprintf_r
+ .text          0x08011b54       0x60 /usr/arm-none-eabi/lib/thumb2/libc.a(lib_a-callocr.o)
+                0x08011b54                _calloc_r
+ .text          0x08011bb4      0x234 /usr/arm-none-eabi/lib/thumb2/libc.a(lib_a-freer.o)
+                0x08011bb4                _malloc_trim_r
+                0x08011c58                _free_r
+ .text          0x08011de8       0xbc /usr/arm-none-eabi/lib/thumb2/libc.a(lib_a-memmove.o)
+                0x08011de8                memmove
+ .text          0x08011ea4       0x8c /usr/arm-none-eabi/lib/thumb2/libc.a(lib_a-memset.o)
+                0x08011ea4                memset
+ .text          0x08011f30      0x3d8 /usr/arm-none-eabi/lib/thumb2/libc.a(lib_a-reallocr.o)
+                0x08011f30                _realloc_r
+ .text          0x08012308      0x114 /usr/arm-none-eabi/lib/thumb2/libc.a(lib_a-reent.o)
+                0x08012308                cleanup_glue
+                0x08012324                _reclaim_reent
+                0x080123e4                _wrapup_reent
+ *fill*         0x0801241c        0x4 00
+ .text          0x08012420      0x278 /usr/lib/gcc/arm-none-eabi/4.6.3/thumb2/libgcc.a(_udivsi3.o)
+                0x08012420                __udivsi3
+                0x08012420                __aeabi_uidiv
+                0x0801267c                __aeabi_uidivmod
+ .text          0x08012698        0x4 /usr/lib/gcc/arm-none-eabi/4.6.3/thumb2/libgcc.a(_dvmd_tls.o)
+                0x08012698                __aeabi_ldiv0
+                0x08012698                __aeabi_idiv0
+ .text          0x0801269c      0x370 /usr/lib/gcc/arm-none-eabi/4.6.3/thumb2/libgcc.a(_arm_addsubdf3.o)
+                0x0801269c                __aeabi_drsub
+                0x080126a4                __aeabi_dsub
+                0x080126a4                __subdf3
+                0x080126a8                __adddf3
+                0x080126a8                __aeabi_dadd
+                0x08012920                __aeabi_ui2d
+                0x08012920                __floatunsidf
+                0x08012940                __floatsidf
+                0x08012940                __aeabi_i2d
+                0x08012964                __extendsfdf2
+                0x08012964                __aeabi_f2d
+                0x080129a0                __aeabi_ul2d
+                0x080129a0                __floatundidf
+                0x080129b0                __floatdidf
+                0x080129b0                __aeabi_l2d
+ .text          0x08012a0c      0x424 /usr/lib/gcc/arm-none-eabi/4.6.3/thumb2/libgcc.a(_arm_muldivdf3.o)
+                0x08012a0c                __aeabi_dmul
+                0x08012a0c                __muldf3
+                0x08012c60                __aeabi_ddiv
+                0x08012c60                __divdf3
+ .text          0x08012e30      0x110 /usr/lib/gcc/arm-none-eabi/4.6.3/thumb2/libgcc.a(_arm_cmpdf2.o)
+                0x08012e30                __gtdf2
+                0x08012e30                __gedf2
+                0x08012e38                __ltdf2
+                0x08012e38                __ledf2
+                0x08012e40                __cmpdf2
+                0x08012e40                __eqdf2
+                0x08012e40                __nedf2
+                0x08012ebc                __aeabi_cdrcmple
+                0x08012ecc                __aeabi_cdcmple
+                0x08012ecc                __aeabi_cdcmpeq
+                0x08012edc                __aeabi_dcmpeq
+                0x08012ef0                __aeabi_dcmplt
+                0x08012f04                __aeabi_dcmple
+                0x08012f18                __aeabi_dcmpge
+                0x08012f2c                __aeabi_dcmpgt
+ .text          0x08012f40       0x50 /usr/lib/gcc/arm-none-eabi/4.6.3/thumb2/libgcc.a(_arm_fixdfsi.o)
+                0x08012f40                __fixdfsi
+                0x08012f40                __aeabi_d2iz
+ .text          0x08012f90       0x2c /usr/lib/gcc/arm-none-eabi/4.6.3/thumb2/libgcc.a(_aeabi_uldivmod.o)
+                0x08012f90                __aeabi_uldivmod
+ .text          0x08012fbc       0x5c /usr/lib/gcc/arm-none-eabi/4.6.3/thumb2/libgcc.a(bpabi.o)
+                0x08012fbc                __gnu_ldivmod_helper
+                0x08012fec                __gnu_uldivmod_helper
+ .text          0x08013018      0x364 /usr/lib/gcc/arm-none-eabi/4.6.3/thumb2/libgcc.a(_divdi3.o)
+                0x08013018                __divdi3
+ .text          0x0801337c      0x33c /usr/lib/gcc/arm-none-eabi/4.6.3/thumb2/libgcc.a(_udivdi3.o)
+                0x0801337c                __udivdi3
+ *(.text.*)
+ .text.Reset_Handler
+                0x080136b8       0x58 build/crt0.o
+                0x080136b8                Reset_Handler
+ .text.Default_Handler
+                0x08013710        0x4 build/crt0.o
+                0x08013710                EXTI2_IRQHandler
+                0x08013710                TIM8_TRG_COM_IRQHandler
+                0x08013710                TIM8_CC_IRQHandler
+                0x08013710                TIM1_CC_IRQHandler
+                0x08013710                TIM6_IRQHandler
+                0x08013710                PVD_IRQHandler
+                0x08013710                EXTI0_IRQHandler
+                0x08013710                I2C2_EV_IRQHandler
+                0x08013710                ADC1_2_IRQHandler
+                0x08013710                SPI1_IRQHandler
+                0x08013710                TAMPER_IRQHandler
+                0x08013710                TIM8_UP_IRQHandler
+                0x08013710                DMA2_Channel2_IRQHandler
+                0x08013710                DMA1_Channel4_IRQHandler
+                0x08013710                USART3_IRQHandler
+                0x08013710                RTC_IRQHandler
+                0x08013710                DMA1_Channel7_IRQHandler
+                0x08013710                CAN1_RX1_IRQHandler
+                0x08013710                UART5_IRQHandler
+                0x08013710                ADC3_IRQHandler
+                0x08013710                TIM4_IRQHandler
+                0x08013710                DMA2_Channel1_IRQHandler
+                0x08013710                I2C1_EV_IRQHandler
+                0x08013710                DMA1_Channel6_IRQHandler
+                0x08013710                UART4_IRQHandler
+                0x08013710                TIM3_IRQHandler
+                0x08013710                RCC_IRQHandler
+                0x08013710                TIM1_TRG_COM_IRQHandler
+                0x08013710                DMA1_Channel1_IRQHandler
+                0x08013710                Default_Handler
+                0x08013710                TIM7_IRQHandler
+                0x08013710                TIM5_IRQHandler
+                0x08013710                SPI2_IRQHandler
+                0x08013710                DMA1_Channel5_IRQHandler
+                0x08013710                EXTI4_IRQHandler
+                0x08013710                USB_LP_CAN1_RX0_IRQHandler
+                0x08013710                USB_HP_CAN1_TX_IRQHandler
+                0x08013710                FSMC_IRQHandler
+                0x08013710                TIM1_UP_IRQHandler
+                0x08013710                WWDG_IRQHandler
+                0x08013710                TIM2_IRQHandler
+                0x08013710                TIM1_BRK_IRQHandler
+                0x08013710                EXTI1_IRQHandler
+                0x08013710                RTCAlarm_IRQHandler
+                0x08013710                DMA2_Channel4_5_IRQHandler
+                0x08013710                USART2_IRQHandler
+                0x08013710                I2C2_ER_IRQHandler
+                0x08013710                DMA1_Channel2_IRQHandler
+                0x08013710                TIM8_BRK_IRQHandler
+                0x08013710                CAN1_SCE_IRQHandler
+                0x08013710                FLASH_IRQHandler
+                0x08013710                USART1_IRQHandler
+                0x08013710                SPI3_IRQHandler
+                0x08013710                I2C1_ER_IRQHandler
+                0x08013710                USBWakeUp_IRQHandler
+                0x08013710                DMA2_Channel3_IRQHandler
+ *(.rodata)
+ .rodata        0x08013714     0x11e8 src/stm3210e_lcd.o
+                0x08013714                ASCII_Table
+ .rodata        0x080148fc      0x5c0 src/menu.o
+                0x080148fc                IconsAddr
+ .rodata        0x08014ebc       0xf0 src/main.o
+ .rodata        0x08014fac       0x20 /usr/arm-none-eabi/lib/thumb2/libc.a(lib_a-svfprintf.o)
+ .rodata        0x08014fcc        0x4 /usr/arm-none-eabi/lib/thumb2/libc.a(lib_a-impure.o)
+                0x08014fcc                _global_impure_ptr
+ .rodata        0x08014fd0      0x128 /usr/arm-none-eabi/lib/thumb2/libc.a(lib_a-mprec.o)
+                0x08014fe0                __mprec_tens
+                0x080150a8                __mprec_tinytens
+                0x080150d0                __mprec_bigtens
+ .rodata        0x080150f8       0x20 /usr/arm-none-eabi/lib/thumb2/libc.a(lib_a-svfiprintf.o)
+ *(.rodata*)
+ .rodata.str1.4
+                0x08015118       0x42 /usr/arm-none-eabi/lib/thumb2/libc.a(lib_a-svfprintf.o)
+                                 0x44 (size before relaxing)
+ *fill*         0x0801515a        0x2 00
+ .rodata.str1.4
+                0x0801515c       0x10 /usr/arm-none-eabi/lib/thumb2/libc.a(lib_a-dtoa.o)
+                                 0x14 (size before relaxing)
+ .rodata.str1.4
+                0x0801516c        0x2 /usr/arm-none-eabi/lib/thumb2/libc.a(lib_a-impure.o)
+                                  0x4 (size before relaxing)
+ *fill*         0x0801516e        0x2 00
+ .rodata.str1.4
+                0x08015170        0xc /usr/arm-none-eabi/lib/thumb2/libc.a(lib_a-locale.o)
+                                 0x14 (size before relaxing)
+ .rodata.str1.4
+                0x00000000       0x30 /usr/arm-none-eabi/lib/thumb2/libc.a(lib_a-svfiprintf.o)
+ *(.glue_7)
+ .glue_7        0x00000000        0x0 linker stubs
+ *(.glue_7t)
+ .glue_7t       0x00000000        0x0 linker stubs
+                0x0801517c                . = ALIGN (0x4)
+                0x0801517c                _etext = .
+                0x0801517c                _sidata = _etext
+
+.vfp11_veneer   0x0801517c        0x0
+ .vfp11_veneer  0x00000000        0x0 linker stubs
+
+.v4_bx          0x0801517c        0x0
+ .v4_bx         0x00000000        0x0 linker stubs
+
+.iplt           0x0801517c        0x0
+ .iplt          0x00000000        0x0 build/crt0.o
+
+.rel.dyn        0x0801517c        0x0
+ .rel.iplt      0x00000000        0x0 build/crt0.o
+
+.data           0x20000000      0x7b0 load address 0x0801517c
+                0x20000000                . = ALIGN (0x4)
+                0x20000000                _sdata = .
+ *(.data)
+ .data          0x20000000        0x0 build/crt0.o
+ .data          0x20000000        0x0 src/fsmc_nor.o
+ .data          0x20000000        0x2 src/stm3210e_lcd.o
+ *fill*         0x20000002        0x2 00
+ .data          0x20000004        0x4 src/stm32f10x_it.o
+                0x20000004                FirstEntry
+ .data          0x20000008      0x21c src/menu.o
+                0x20000008                Status
+                0x2000000c                SlidesCheck
+                0x20000014                Icons64Check
+                0x2000001c                SDCardMenuItems
+                0x2000005c                SDCardMenu
+                0x20000068                NANDFlashMenuItems
+                0x200000b8                NANDFlashMenu
+                0x200000c4                ExternalSRAMMenuItems
+                0x20000114                ExternalSRAMMenu
+                0x20000120                NORFlashMenuItems
+                0x20000160                NORFlashMenu
+                0x2000016c                InternalFlashMenuItems
+                0x200001bc                InternalFlashMenu
+                0x200001c8                MainMenuItems
+                0x20000218                MainMenu
+ .data          0x20000224        0x1 src/main.o
+ .data          0x20000225        0x0 src/fsmc_nand.o
+ .data          0x20000225        0x0 src/fsmc_sram.o
+ *fill*         0x20000225        0x3 00
+ .data          0x20000228        0x8 src/sdcard.o
+                0x2000022c                TransferError
+ .data          0x20000230        0x0 src/stm32f10x_fsmc.o
+ .data          0x20000230        0x0 src/stm32f10x_gpio.o
+ .data          0x20000230        0x0 /usr/arm-none-eabi/lib/thumb2/libc.a(lib_a-sprintf.o)
+ .data          0x20000230        0x0 /usr/arm-none-eabi/lib/thumb2/libc.a(lib_a-svfprintf.o)
+ .data          0x20000230        0x0 /usr/arm-none-eabi/lib/thumb2/libc.a(lib_a-dtoa.o)
+ .data          0x20000230       0xf4 /usr/arm-none-eabi/lib/thumb2/libc.a(lib_a-impure.o)
+                0x20000230                _impure_ptr
+ .data          0x20000324       0x7c /usr/arm-none-eabi/lib/thumb2/libc.a(lib_a-locale.o)
+                0x20000344                __mb_cur_max
+ .data          0x200003a0        0x0 /usr/arm-none-eabi/lib/thumb2/libc.a(lib_a-malloc.o)
+ .data          0x200003a0      0x410 /usr/arm-none-eabi/lib/thumb2/libc.a(lib_a-mallocr.o)
+                0x200003a0                __malloc_av_
+                0x200007a8                __malloc_sbrk_base
+                0x200007ac                __malloc_trim_threshold
+ .data          0x200007b0        0x0 /usr/arm-none-eabi/lib/thumb2/libc.a(lib_a-memchr.o)
+ .data          0x200007b0        0x0 /usr/arm-none-eabi/lib/thumb2/libc.a(lib_a-memcpy.o)
+ .data          0x200007b0        0x0 /usr/arm-none-eabi/lib/thumb2/libc.a(lib_a-mlock.o)
+ .data          0x200007b0        0x0 /usr/arm-none-eabi/lib/thumb2/libc.a(lib_a-mprec.o)
+ .data          0x200007b0        0x0 /usr/arm-none-eabi/lib/thumb2/libc.a(lib_a-s_fpclassify.o)
+ .data          0x200007b0        0x0 /usr/arm-none-eabi/lib/thumb2/libc.a(lib_a-sbrkr.o)
+ .data          0x200007b0        0x0 /usr/arm-none-eabi/lib/thumb2/libc.a(lib_a-strcmp.o)
+ .data          0x200007b0        0x0 /usr/arm-none-eabi/lib/thumb2/libc.a(lib_a-strlen.o)
+ .data          0x200007b0        0x0 /usr/arm-none-eabi/lib/thumb2/libc.a(lib_a-svfiprintf.o)
+ .data          0x200007b0        0x0 /usr/arm-none-eabi/lib/thumb2/libc.a(lib_a-callocr.o)
+ .data          0x200007b0        0x0 /usr/arm-none-eabi/lib/thumb2/libc.a(lib_a-freer.o)
+ .data          0x200007b0        0x0 /usr/arm-none-eabi/lib/thumb2/libc.a(lib_a-memmove.o)
+ .data          0x200007b0        0x0 /usr/arm-none-eabi/lib/thumb2/libc.a(lib_a-memset.o)
+ .data          0x200007b0        0x0 /usr/arm-none-eabi/lib/thumb2/libc.a(lib_a-reallocr.o)
+ .data          0x200007b0        0x0 /usr/arm-none-eabi/lib/thumb2/libc.a(lib_a-reent.o)
+ .data          0x200007b0        0x0 /usr/lib/gcc/arm-none-eabi/4.6.3/thumb2/libgcc.a(_udivsi3.o)
+ .data          0x200007b0        0x0 /usr/lib/gcc/arm-none-eabi/4.6.3/thumb2/libgcc.a(_dvmd_tls.o)
+ .data          0x200007b0        0x0 /usr/lib/gcc/arm-none-eabi/4.6.3/thumb2/libgcc.a(_arm_addsubdf3.o)
+ .data          0x200007b0        0x0 /usr/lib/gcc/arm-none-eabi/4.6.3/thumb2/libgcc.a(_arm_muldivdf3.o)
+ .data          0x200007b0        0x0 /usr/lib/gcc/arm-none-eabi/4.6.3/thumb2/libgcc.a(_arm_cmpdf2.o)
+ .data          0x200007b0        0x0 /usr/lib/gcc/arm-none-eabi/4.6.3/thumb2/libgcc.a(_arm_fixdfsi.o)
+ .data          0x200007b0        0x0 /usr/lib/gcc/arm-none-eabi/4.6.3/thumb2/libgcc.a(_aeabi_uldivmod.o)
+ .data          0x200007b0        0x0 /usr/lib/gcc/arm-none-eabi/4.6.3/thumb2/libgcc.a(bpabi.o)
+ .data          0x200007b0        0x0 /usr/lib/gcc/arm-none-eabi/4.6.3/thumb2/libgcc.a(_divdi3.o)
+ .data          0x200007b0        0x0 /usr/lib/gcc/arm-none-eabi/4.6.3/thumb2/libgcc.a(_udivdi3.o)
+ *(.data.*)
+                0x200007b0                . = ALIGN (0x4)
+                0x200007b0                _edata = .
+
+.igot.plt       0x200007b0        0x0 load address 0x0801592c
+ .igot.plt      0x00000000        0x0 build/crt0.o
+
+.bss            0x200007b0     0x6a64 load address 0x0801592c
+                0x200007b0                . = ALIGN (0x4)
+                0x200007b0                _sbss = .
+ *(.bss)
+ .bss           0x200007b0        0x0 build/crt0.o
+ .bss           0x200007b0        0x0 src/fsmc_nor.o
+ .bss           0x200007b0        0x2 src/stm3210e_lcd.o
+ *fill*         0x200007b2        0x2 00
+ .bss           0x200007b4        0x4 src/stm32f10x_it.o
+                0x200007b4                DMAComplete
+ .bss           0x200007b8        0xc src/menu.o
+                0x200007b8                MenuItemIndex
+                0x200007b9                nMenuLevel
+                0x200007bc                DMASourceAddress
+                0x200007c0                fractionaltimeunits
+ .bss           0x200007c4        0x8 src/main.o
+ .bss           0x200007cc        0x0 src/fsmc_nand.o
+ .bss           0x200007cc        0x0 src/fsmc_sram.o
+ .bss           0x200007cc       0x38 src/sdcard.o
+                0x200007fc                TransferEnd
+                0x20000800                NumberOfBytes
+ .bss           0x20000804        0x0 src/stm32f10x_fsmc.o
+ .bss           0x20000804        0x0 src/stm32f10x_gpio.o
+ .bss           0x20000804        0x0 /usr/arm-none-eabi/lib/thumb2/libc.a(lib_a-sprintf.o)
+ .bss           0x20000804        0x0 /usr/arm-none-eabi/lib/thumb2/libc.a(lib_a-svfprintf.o)
+ .bss           0x20000804        0x0 /usr/arm-none-eabi/lib/thumb2/libc.a(lib_a-dtoa.o)
+ .bss           0x20000804        0x0 /usr/arm-none-eabi/lib/thumb2/libc.a(lib_a-impure.o)
+ .bss           0x20000804        0xc /usr/arm-none-eabi/lib/thumb2/libc.a(lib_a-locale.o)
+                0x20000804                _PathLocale
+                0x20000808                __mlocale_changed
+                0x2000080c                __nlocale_changed
+ .bss           0x20000810        0x0 /usr/arm-none-eabi/lib/thumb2/libc.a(lib_a-malloc.o)
+ .bss           0x20000810       0x34 /usr/arm-none-eabi/lib/thumb2/libc.a(lib_a-mallocr.o)
+                0x20000810                __malloc_top_pad
+                0x20000814                __malloc_current_mallinfo
+                0x2000083c                __malloc_max_sbrked_mem
+                0x20000840                __malloc_max_total_mem
+ .bss           0x20000844        0x0 /usr/arm-none-eabi/lib/thumb2/libc.a(lib_a-memchr.o)
+ .bss           0x20000844        0x0 /usr/arm-none-eabi/lib/thumb2/libc.a(lib_a-memcpy.o)
+ .bss           0x20000844        0x0 /usr/arm-none-eabi/lib/thumb2/libc.a(lib_a-mlock.o)
+ .bss           0x20000844        0x0 /usr/arm-none-eabi/lib/thumb2/libc.a(lib_a-mprec.o)
+ .bss           0x20000844        0x0 /usr/arm-none-eabi/lib/thumb2/libc.a(lib_a-s_fpclassify.o)
+ .bss           0x20000844        0x0 /usr/arm-none-eabi/lib/thumb2/libc.a(lib_a-sbrkr.o)
+ .bss           0x20000844        0x0 /usr/arm-none-eabi/lib/thumb2/libc.a(lib_a-strcmp.o)
+ .bss           0x20000844        0x0 /usr/arm-none-eabi/lib/thumb2/libc.a(lib_a-strlen.o)
+ .bss           0x20000844        0x0 /usr/arm-none-eabi/lib/thumb2/libc.a(lib_a-svfiprintf.o)
+ .bss           0x20000844        0x0 /usr/arm-none-eabi/lib/thumb2/libc.a(lib_a-callocr.o)
+ .bss           0x20000844        0x0 /usr/arm-none-eabi/lib/thumb2/libc.a(lib_a-freer.o)
+ .bss           0x20000844        0x0 /usr/arm-none-eabi/lib/thumb2/libc.a(lib_a-memmove.o)
+ .bss           0x20000844        0x0 /usr/arm-none-eabi/lib/thumb2/libc.a(lib_a-memset.o)
+ .bss           0x20000844        0x0 /usr/arm-none-eabi/lib/thumb2/libc.a(lib_a-reallocr.o)
+ .bss           0x20000844        0x0 /usr/arm-none-eabi/lib/thumb2/libc.a(lib_a-reent.o)
+ .bss           0x20000844        0x0 /usr/lib/gcc/arm-none-eabi/4.6.3/thumb2/libgcc.a(_udivsi3.o)
+ .bss           0x20000844        0x0 /usr/lib/gcc/arm-none-eabi/4.6.3/thumb2/libgcc.a(_dvmd_tls.o)
+ .bss           0x20000844        0x0 /usr/lib/gcc/arm-none-eabi/4.6.3/thumb2/libgcc.a(_arm_addsubdf3.o)
+ .bss           0x20000844        0x0 /usr/lib/gcc/arm-none-eabi/4.6.3/thumb2/libgcc.a(_arm_muldivdf3.o)
+ .bss           0x20000844        0x0 /usr/lib/gcc/arm-none-eabi/4.6.3/thumb2/libgcc.a(_arm_cmpdf2.o)
+ .bss           0x20000844        0x0 /usr/lib/gcc/arm-none-eabi/4.6.3/thumb2/libgcc.a(_arm_fixdfsi.o)
+ .bss           0x20000844        0x0 /usr/lib/gcc/arm-none-eabi/4.6.3/thumb2/libgcc.a(_aeabi_uldivmod.o)
+ .bss           0x20000844        0x0 /usr/lib/gcc/arm-none-eabi/4.6.3/thumb2/libgcc.a(bpabi.o)
+ .bss           0x20000844        0x0 /usr/lib/gcc/arm-none-eabi/4.6.3/thumb2/libgcc.a(_divdi3.o)
+ .bss           0x20000844        0x0 /usr/lib/gcc/arm-none-eabi/4.6.3/thumb2/libgcc.a(_udivdi3.o)
+ *(COMMON)
+ COMMON         0x20000844     0x6980 src/menu.o
+                0x20000844                psCurrentMenu
+                0x20000848                psPrevMenu
+                0x20000858                SDCardInfo
+                0x200008a8                ItemNumb
+                0x200008ac                Buffer_Block_Rx
+                0x200030ac                psMenuItem
+                0x200030b0                NOR_ID
+                0x200030b8                psCurrentMenuItem
+                0x200030bc                TxBuffer
+                0x200031bc                wAddress
+                0x200031c4                pBuffer
+ COMMON         0x200071c4       0x4c src/sdcard.o
+                0x200071c4                SDIO_CmdInitStructure
+                0x200071d8                DestBuffer
+                0x200071dc                SDIO_InitStructure
+                0x200071f4                SDIO_DataInitStructure
+                0x2000720c                SrcBuffer
+ COMMON         0x20007210        0x4 /usr/arm-none-eabi/lib/thumb2/libc.a(lib_a-reent.o)
+                0x20007210                errno
+                0x20007214                . = ALIGN (0x4)
+                0x20007214                _ebss = .
+LOAD build/crt0.o
+LOAD src/fsmc_nor.o
+LOAD src/stm3210e_lcd.o
+LOAD src/stm32f10x_it.o
+LOAD src/menu.o
+LOAD src/main.o
+LOAD src/fsmc_nand.o
+LOAD src/fsmc_sram.o
+LOAD src/sdcard.o
+LOAD src/stm32f10x_fsmc.o
+LOAD src/stm32f10x_gpio.o
+LOAD /usr/arm-none-eabi/lib/thumb2/libm.a
+LOAD /usr/arm-none-eabi/lib/thumb2/libc.a
+LOAD /usr/lib/gcc/arm-none-eabi/4.6.3/thumb2/libgcc.a
+OUTPUT(build/stm.o elf32-littlearm)
+
+.ARM.attributes
+                0x00000000       0x2f
+ .ARM.attributes
+                0x00000000       0x21 build/crt0.o
+ .ARM.attributes
+                0x00000021       0x33 src/fsmc_nor.o
+ .ARM.attributes
+                0x00000054       0x33 src/stm3210e_lcd.o
+ .ARM.attributes
+                0x00000087       0x33 src/stm32f10x_it.o
+ .ARM.attributes
+                0x000000ba       0x33 src/menu.o
+ .ARM.attributes
+                0x000000ed       0x33 src/main.o
+ .ARM.attributes
+                0x00000120       0x33 src/fsmc_nand.o
+ .ARM.attributes
+                0x00000153       0x33 src/fsmc_sram.o
+ .ARM.attributes
+                0x00000186       0x33 src/sdcard.o
+ .ARM.attributes
+                0x000001b9       0x33 src/stm32f10x_fsmc.o
+ .ARM.attributes
+                0x000001ec       0x33 src/stm32f10x_gpio.o
+ .ARM.attributes
+                0x0000021f       0x2b /usr/arm-none-eabi/lib/thumb2/libc.a(lib_a-sprintf.o)
+ .ARM.attributes
+                0x0000024a       0x2b /usr/arm-none-eabi/lib/thumb2/libc.a(lib_a-svfprintf.o)
+ .ARM.attributes
+                0x00000275       0x2b /usr/arm-none-eabi/lib/thumb2/libc.a(lib_a-dtoa.o)
+ .ARM.attributes
+                0x000002a0       0x2b /usr/arm-none-eabi/lib/thumb2/libc.a(lib_a-impure.o)
+ .ARM.attributes
+                0x000002cb       0x2b /usr/arm-none-eabi/lib/thumb2/libc.a(lib_a-locale.o)
+ .ARM.attributes
+                0x000002f6       0x2b /usr/arm-none-eabi/lib/thumb2/libc.a(lib_a-malloc.o)
+ .ARM.attributes
+                0x00000321       0x2b /usr/arm-none-eabi/lib/thumb2/libc.a(lib_a-mallocr.o)
+ .ARM.attributes
+                0x0000034c       0x2b /usr/arm-none-eabi/lib/thumb2/libc.a(lib_a-memchr.o)
+ .ARM.attributes
+                0x00000377       0x2b /usr/arm-none-eabi/lib/thumb2/libc.a(lib_a-memcpy.o)
+ .ARM.attributes
+                0x000003a2       0x2b /usr/arm-none-eabi/lib/thumb2/libc.a(lib_a-mlock.o)
+ .ARM.attributes
+                0x000003cd       0x2b /usr/arm-none-eabi/lib/thumb2/libc.a(lib_a-mprec.o)
+ .ARM.attributes
+                0x000003f8       0x2b /usr/arm-none-eabi/lib/thumb2/libc.a(lib_a-s_fpclassify.o)
+ .ARM.attributes
+                0x00000423       0x2b /usr/arm-none-eabi/lib/thumb2/libc.a(lib_a-sbrkr.o)
+ .ARM.attributes
+                0x0000044e       0x2b /usr/arm-none-eabi/lib/thumb2/libc.a(lib_a-strcmp.o)
+ .ARM.attributes
+                0x00000479       0x2b /usr/arm-none-eabi/lib/thumb2/libc.a(lib_a-strlen.o)
+ .ARM.attributes
+                0x000004a4       0x2b /usr/arm-none-eabi/lib/thumb2/libc.a(lib_a-svfiprintf.o)
+ .ARM.attributes
+                0x000004cf       0x2b /usr/arm-none-eabi/lib/thumb2/libc.a(lib_a-callocr.o)
+ .ARM.attributes
+                0x000004fa       0x2b /usr/arm-none-eabi/lib/thumb2/libc.a(lib_a-freer.o)
+ .ARM.attributes
+                0x00000525       0x2b /usr/arm-none-eabi/lib/thumb2/libc.a(lib_a-memmove.o)
+ .ARM.attributes
+                0x00000550       0x2b /usr/arm-none-eabi/lib/thumb2/libc.a(lib_a-memset.o)
+ .ARM.attributes
+                0x0000057b       0x2b /usr/arm-none-eabi/lib/thumb2/libc.a(lib_a-reallocr.o)
+ .ARM.attributes
+                0x000005a6       0x2b /usr/arm-none-eabi/lib/thumb2/libc.a(lib_a-reent.o)
+ .ARM.attributes
+                0x000005d1       0x1b /usr/lib/gcc/arm-none-eabi/4.6.3/thumb2/libgcc.a(_udivsi3.o)
+ .ARM.attributes
+                0x000005ec       0x1b /usr/lib/gcc/arm-none-eabi/4.6.3/thumb2/libgcc.a(_dvmd_tls.o)
+ .ARM.attributes
+                0x00000607       0x1b /usr/lib/gcc/arm-none-eabi/4.6.3/thumb2/libgcc.a(_arm_addsubdf3.o)
+ .ARM.attributes
+                0x00000622       0x1b /usr/lib/gcc/arm-none-eabi/4.6.3/thumb2/libgcc.a(_arm_muldivdf3.o)
+ .ARM.attributes
+                0x0000063d       0x1b /usr/lib/gcc/arm-none-eabi/4.6.3/thumb2/libgcc.a(_arm_cmpdf2.o)
+ .ARM.attributes
+                0x00000658       0x1b /usr/lib/gcc/arm-none-eabi/4.6.3/thumb2/libgcc.a(_arm_fixdfsi.o)
+ .ARM.attributes
+                0x00000673       0x1b /usr/lib/gcc/arm-none-eabi/4.6.3/thumb2/libgcc.a(_aeabi_uldivmod.o)
+ .ARM.attributes
+                0x0000068e       0x2b /usr/lib/gcc/arm-none-eabi/4.6.3/thumb2/libgcc.a(bpabi.o)
+ .ARM.attributes
+                0x000006b9       0x2b /usr/lib/gcc/arm-none-eabi/4.6.3/thumb2/libgcc.a(_divdi3.o)
+ .ARM.attributes
+                0x000006e4       0x2b /usr/lib/gcc/arm-none-eabi/4.6.3/thumb2/libgcc.a(_udivdi3.o)
+
+.comment        0x00000000       0x30
+ .comment       0x00000000       0x30 src/fsmc_nor.o
+                                 0x31 (size before relaxing)
+ .comment       0x00000000       0x31 src/stm3210e_lcd.o
+ .comment       0x00000000       0x31 src/stm32f10x_it.o
+ .comment       0x00000000       0x31 src/menu.o
+ .comment       0x00000000       0x31 src/main.o
+ .comment       0x00000000       0x31 src/fsmc_nand.o
+ .comment       0x00000000       0x31 src/fsmc_sram.o
+ .comment       0x00000000       0x31 src/sdcard.o
+ .comment       0x00000000       0x31 src/stm32f10x_fsmc.o
+ .comment       0x00000000       0x31 src/stm32f10x_gpio.o
+
+.debug_info     0x00000000     0x6992
+ .debug_info    0x00000000      0x69c src/fsmc_nor.o
+ .debug_info    0x0000069c      0x990 src/stm3210e_lcd.o
+ .debug_info    0x0000102c      0x32c src/stm32f10x_it.o
+ .debug_info    0x00001358     0x17c5 src/menu.o
+ .debug_info    0x00002b1d      0xbb1 src/main.o
+ .debug_info    0x000036ce      0x724 src/fsmc_nand.o
+ .debug_info    0x00003df2      0x40d src/fsmc_sram.o
+ .debug_info    0x000041ff     0x1525 src/sdcard.o
+ .debug_info    0x00005724      0xa5d src/stm32f10x_fsmc.o
+ .debug_info    0x00006181      0x811 src/stm32f10x_gpio.o
+
+.debug_abbrev   0x00000000     0x10b0
+ .debug_abbrev  0x00000000      0x1b1 src/fsmc_nor.o
+ .debug_abbrev  0x000001b1      0x1db src/stm3210e_lcd.o
+ .debug_abbrev  0x0000038c      0x11f src/stm32f10x_it.o
+ .debug_abbrev  0x000004ab      0x24e src/menu.o
+ .debug_abbrev  0x000006f9      0x214 src/main.o
+ .debug_abbrev  0x0000090d      0x17a src/fsmc_nand.o
+ .debug_abbrev  0x00000a87      0x113 src/fsmc_sram.o
+ .debug_abbrev  0x00000b9a      0x1e0 src/sdcard.o
+ .debug_abbrev  0x00000d7a      0x17c src/stm32f10x_fsmc.o
+ .debug_abbrev  0x00000ef6      0x1ba src/stm32f10x_gpio.o
+
+.debug_loc      0x00000000     0x281e
+ .debug_loc     0x00000000      0x27e src/fsmc_nor.o
+ .debug_loc     0x0000027e      0x55e src/stm3210e_lcd.o
+ .debug_loc     0x000007dc      0x274 src/stm32f10x_it.o
+ .debug_loc     0x00000a50      0x93c src/menu.o
+ .debug_loc     0x0000138c      0x2c8 src/main.o
+ .debug_loc     0x00001654      0x25e src/fsmc_nand.o
+ .debug_loc     0x000018b2       0xaa src/fsmc_sram.o
+ .debug_loc     0x0000195c      0x6c2 src/sdcard.o
+ .debug_loc     0x0000201e      0x41c src/stm32f10x_fsmc.o
+ .debug_loc     0x0000243a      0x3e4 src/stm32f10x_gpio.o
+
+.debug_aranges  0x00000000      0x140
+ .debug_aranges
+                0x00000000       0x20 src/fsmc_nor.o
+ .debug_aranges
+                0x00000020       0x20 src/stm3210e_lcd.o
+ .debug_aranges
+                0x00000040       0x20 src/stm32f10x_it.o
+ .debug_aranges
+                0x00000060       0x20 src/menu.o
+ .debug_aranges
+                0x00000080       0x20 src/main.o
+ .debug_aranges
+                0x000000a0       0x20 src/fsmc_nand.o
+ .debug_aranges
+                0x000000c0       0x20 src/fsmc_sram.o
+ .debug_aranges
+                0x000000e0       0x20 src/sdcard.o
+ .debug_aranges
+                0x00000100       0x20 src/stm32f10x_fsmc.o
+ .debug_aranges
+                0x00000120       0x20 src/stm32f10x_gpio.o
+
+.debug_line     0x00000000     0x3a07
+ .debug_line    0x00000000      0x2c3 src/fsmc_nor.o
+ .debug_line    0x000002c3      0x3cc src/stm3210e_lcd.o
+ .debug_line    0x0000068f      0x1f4 src/stm32f10x_it.o
+ .debug_line    0x00000883      0xc53 src/menu.o
+ .debug_line    0x000014d6      0x2b3 src/main.o
+ .debug_line    0x00001789      0x31e src/fsmc_nand.o
+ .debug_line    0x00001aa7      0x214 src/fsmc_sram.o
+ .debug_line    0x00001cbb      0xa4f src/sdcard.o
+ .debug_line    0x0000270a      0x9f2 src/stm32f10x_fsmc.o
+ .debug_line    0x000030fc      0x90b src/stm32f10x_gpio.o
+
+.debug_str      0x00000000     0x2c81
+ .debug_str     0x00000000      0x5eb src/fsmc_nor.o
+                                0x631 (size before relaxing)
+ .debug_str     0x000005eb      0x255 src/stm3210e_lcd.o
+                                0x69e (size before relaxing)
+ .debug_str     0x00000840      0x21c src/stm32f10x_it.o
+                                0x2fc (size before relaxing)
+ .debug_str     0x00000a5c      0xd5e src/menu.o
+                               0x1063 (size before relaxing)
+ .debug_str     0x000017ba      0x77e src/main.o
+                                0xa50 (size before relaxing)
+ .debug_str     0x00001f38      0x2f1 src/fsmc_nand.o
+                                0x56d (size before relaxing)
+ .debug_str     0x00002229       0x4a src/fsmc_sram.o
+                                0x495 (size before relaxing)
+ .debug_str     0x00002273      0x518 src/sdcard.o
+                                0xead (size before relaxing)
+ .debug_str     0x0000278b      0x2cf src/stm32f10x_fsmc.o
+                                0x6e1 (size before relaxing)
+ .debug_str     0x00002a5a      0x227 src/stm32f10x_gpio.o
+                                0x476 (size before relaxing)
+
+.debug_frame    0x00000000     0x1f7c
+ .debug_frame   0x00000000      0x170 src/fsmc_nor.o
+ .debug_frame   0x00000170      0x318 src/stm3210e_lcd.o
+ .debug_frame   0x00000488      0x17c src/stm32f10x_it.o
+ .debug_frame   0x00000604      0x570 src/menu.o
+ .debug_frame   0x00000b74      0x1a8 src/main.o
+ .debug_frame   0x00000d1c      0x15c src/fsmc_nand.o
+ .debug_frame   0x00000e78       0x68 src/fsmc_sram.o
+ .debug_frame   0x00000ee0      0x3dc src/sdcard.o
+ .debug_frame   0x000012bc      0x258 src/stm32f10x_fsmc.o
+ .debug_frame   0x00001514      0x248 src/stm32f10x_gpio.o
+ .debug_frame   0x0000175c       0x64 /usr/arm-none-eabi/lib/thumb2/libc.a(lib_a-sprintf.o)
+ .debug_frame   0x000017c0       0x3c /usr/arm-none-eabi/lib/thumb2/libc.a(lib_a-svfprintf.o)
+ .debug_frame   0x000017fc       0x64 /usr/arm-none-eabi/lib/thumb2/libc.a(lib_a-dtoa.o)
+ .debug_frame   0x00001860       0x98 /usr/arm-none-eabi/lib/thumb2/libc.a(lib_a-locale.o)
+ .debug_frame   0x000018f8       0x30 /usr/arm-none-eabi/lib/thumb2/libc.a(lib_a-malloc.o)
+ .debug_frame   0x00001928       0x38 /usr/arm-none-eabi/lib/thumb2/libc.a(lib_a-mallocr.o)
+ .debug_frame   0x00001960       0x2c /usr/arm-none-eabi/lib/thumb2/libc.a(lib_a-memchr.o)
+ .debug_frame   0x0000198c       0x30 /usr/arm-none-eabi/lib/thumb2/libc.a(lib_a-memcpy.o)
+ .debug_frame   0x000019bc       0x30 /usr/arm-none-eabi/lib/thumb2/libc.a(lib_a-mlock.o)
+ .debug_frame   0x000019ec      0x23c /usr/arm-none-eabi/lib/thumb2/libc.a(lib_a-mprec.o)
+ .debug_frame   0x00001c28       0x28 /usr/arm-none-eabi/lib/thumb2/libc.a(lib_a-s_fpclassify.o)
+ .debug_frame   0x00001c50       0x2c /usr/arm-none-eabi/lib/thumb2/libc.a(lib_a-sbrkr.o)
+ .debug_frame   0x00001c7c       0x30 /usr/arm-none-eabi/lib/thumb2/libc.a(lib_a-strcmp.o)
+ .debug_frame   0x00001cac       0x20 /usr/arm-none-eabi/lib/thumb2/libc.a(lib_a-strlen.o)
+ .debug_frame   0x00001ccc       0x64 /usr/arm-none-eabi/lib/thumb2/libc.a(lib_a-svfiprintf.o)
+ .debug_frame   0x00001d30       0x28 /usr/arm-none-eabi/lib/thumb2/libc.a(lib_a-callocr.o)
+ .debug_frame   0x00001d58       0x50 /usr/arm-none-eabi/lib/thumb2/libc.a(lib_a-freer.o)
+ .debug_frame   0x00001da8       0x2c /usr/arm-none-eabi/lib/thumb2/libc.a(lib_a-memmove.o)
+ .debug_frame   0x00001dd4       0x2c /usr/arm-none-eabi/lib/thumb2/libc.a(lib_a-memset.o)
+ .debug_frame   0x00001e00       0x38 /usr/arm-none-eabi/lib/thumb2/libc.a(lib_a-reallocr.o)
+ .debug_frame   0x00001e38       0x64 /usr/arm-none-eabi/lib/thumb2/libc.a(lib_a-reent.o)
+ .debug_frame   0x00001e9c       0x20 /usr/lib/gcc/arm-none-eabi/4.6.3/thumb2/libgcc.a(_udivsi3.o)
+ .debug_frame   0x00001ebc       0x50 /usr/lib/gcc/arm-none-eabi/4.6.3/thumb2/libgcc.a(bpabi.o)
+ .debug_frame   0x00001f0c       0x38 /usr/lib/gcc/arm-none-eabi/4.6.3/thumb2/libgcc.a(_divdi3.o)
+ .debug_frame   0x00001f44       0x38 /usr/lib/gcc/arm-none-eabi/4.6.3/thumb2/libgcc.a(_udivdi3.o)
+
+.debug_ranges   0x00000000       0x78
+ .debug_ranges  0x00000000       0x78 src/menu.o

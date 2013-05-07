@@ -1,0 +1,14 @@
+<html>
+<body>
+<pre>
+<h1>礦ision Build Log</h1>
+<h2>Project:</h2>
+F:\路虎开发板光盘\实验例程\SD_File\SD_File.uvproj
+Project File Date:  <unknown>
+
+<h2>Output:</h2>
+Build target 'MCB1700'
+linking...
+Program Size: Code=28386 RO-data=7542 RW-data=52 ZI-data=9860  
+FromELF: creating hex file...
+".\Obj\SD_File.axf" - 0 Error(s), 0 Warning(s).

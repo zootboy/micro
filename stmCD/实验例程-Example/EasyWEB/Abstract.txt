@@ -1,0 +1,35 @@
+This tiny web server was taken from the 'Design & Elektronik'
+extra issue 'Embedded Internet'. It can be downloaded from the 
+following web site: www.elektroniknet.de/extraheft. 
+
+This software was adapted to work with a Keil MCB1700 board and 
+the Keil RV ARM C-Compiler with as few modifications as possible. 
+
+Note that modifications are not optimal, because ARM is a 32-bit 
+machine while the original software was written for 16-bit cpu.
+
+The web page shows the values of two analog inputs (AN0 and AN1).
+This tiny webserver needs very little resources and therefore has
+some restrictions:
+- only one active TCP session at any one time
+- no support for fragmented IP datagrams
+- no buffer for TCP datagrams received in wrong order
+- only one web page. No GIF/JPG graphics possible.
+
+The IP address can be modified in the module tcpip.h to
+fit into your existing LAN (see MYIP_x). 
+Please order the extra issue 'Embedded Internet' of the 
+'Design & Elektronik' magazine for a technical description.
+It is only available in German language. 
+
+The easyWEB project is set up for one target:
+  MCB1700:  Settings for Keil MCB1700 Board. 
+            Program code is loaded into on-chip flash
+
+Note: check correct settings for jumper E/C and jumper E/U
+
+
+以太网测试程序。
+使用方法： 插上JP6 跳线 和JP12跳线
+在IE上输入192.168.0.100 显示一些板子信息和AD采样电压
+调节VR1 可以看到电压值变化

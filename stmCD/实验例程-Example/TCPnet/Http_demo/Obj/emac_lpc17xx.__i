@@ -1,0 +1,1 @@
+-c --cpu Cortex-M3 -D__MICROLIB -g -O3 --apcs=interwork --bss-threshold=0 -I..\Library -I "d:\Keil\\ARM\INC" -I "d:\Keil\\ARM\INC\NXP\LPC17xx" -o ".\Obj\emac_lpc17xx.o" --omf_browse ".\Obj\emac_lpc17xx.crf" --depend ".\Obj\emac_lpc17xx.d" "..\Library\EMAC_LPC17xx.c"

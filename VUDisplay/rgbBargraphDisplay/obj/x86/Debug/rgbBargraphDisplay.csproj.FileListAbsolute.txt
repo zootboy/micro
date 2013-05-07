@@ -1,0 +1,24 @@
+C:\Users\sdi\Documents\Visual Studio 2010\Projects\Development\rgbBargraphDisplay\rgbBargraphDisplay\bin\Debug\rgbBargraphDisplay.exe
+C:\Users\sdi\Documents\Visual Studio 2010\Projects\Development\rgbBargraphDisplay\rgbBargraphDisplay\bin\Debug\rgbBargraphDisplay.pdb
+C:\Users\sdi\Documents\Visual Studio 2010\Projects\Development\rgbBargraphDisplay\rgbBargraphDisplay\bin\Debug\usbGenericHidCommunications.dll
+C:\Users\sdi\Documents\Visual Studio 2010\Projects\Development\rgbBargraphDisplay\rgbBargraphDisplay\bin\Debug\usbGenericHidCommunications.pdb
+C:\Users\sdi\Documents\Visual Studio 2010\Projects\Development\rgbBargraphDisplay\rgbBargraphDisplay\obj\x86\Debug\ResolveAssemblyReference.cache
+C:\Users\sdi\Documents\Visual Studio 2010\Projects\Development\rgbBargraphDisplay\rgbBargraphDisplay\obj\x86\Debug\rgbBargraphDisplay.Properties.Resources.resources
+C:\Users\sdi\Documents\Visual Studio 2010\Projects\Development\rgbBargraphDisplay\rgbBargraphDisplay\obj\x86\Debug\GenerateResource.read.1.tlog
+C:\Users\sdi\Documents\Visual Studio 2010\Projects\Development\rgbBargraphDisplay\rgbBargraphDisplay\obj\x86\Debug\GenerateResource.write.1.tlog
+C:\Users\sdi\Documents\Visual Studio 2010\Projects\Development\rgbBargraphDisplay\rgbBargraphDisplay\obj\x86\Debug\rgbBargraphDisplay.exe
+C:\Users\sdi\Documents\Visual Studio 2010\Projects\Development\rgbBargraphDisplay\rgbBargraphDisplay\obj\x86\Debug\rgbBargraphDisplay.pdb
+C:\Users\sdi\Documents\Visual Studio 2010\Projects\Development\rgbBargraphDisplay\rgbBargraphDisplay\obj\x86\Debug\rgbBargraphDisplay.Form1.resources
+C:\Users\Sean\AppData\Local\Temp\rgbBargraphDisplay\rgbBargraphDisplay\bin\Debug\rgbBargraphDisplay.exe
+C:\Users\Sean\AppData\Local\Temp\rgbBargraphDisplay\rgbBargraphDisplay\bin\Debug\rgbBargraphDisplay.pdb
+C:\Users\Sean\AppData\Local\Temp\rgbBargraphDisplay\rgbBargraphDisplay\bin\Debug\CoreAudioApi.dll
+C:\Users\Sean\AppData\Local\Temp\rgbBargraphDisplay\rgbBargraphDisplay\bin\Debug\usbGenericHidCommunications.dll
+C:\Users\Sean\AppData\Local\Temp\rgbBargraphDisplay\rgbBargraphDisplay\bin\Debug\CoreAudioApi.pdb
+C:\Users\Sean\AppData\Local\Temp\rgbBargraphDisplay\rgbBargraphDisplay\bin\Debug\usbGenericHidCommunications.pdb
+C:\Users\Sean\AppData\Local\Temp\rgbBargraphDisplay\rgbBargraphDisplay\obj\x86\Debug\ResolveAssemblyReference.cache
+C:\Users\Sean\AppData\Local\Temp\rgbBargraphDisplay\rgbBargraphDisplay\obj\x86\Debug\rgbBargraphDisplay.Form1.resources
+C:\Users\Sean\AppData\Local\Temp\rgbBargraphDisplay\rgbBargraphDisplay\obj\x86\Debug\rgbBargraphDisplay.Properties.Resources.resources
+C:\Users\Sean\AppData\Local\Temp\rgbBargraphDisplay\rgbBargraphDisplay\obj\x86\Debug\GenerateResource.read.1.tlog
+C:\Users\Sean\AppData\Local\Temp\rgbBargraphDisplay\rgbBargraphDisplay\obj\x86\Debug\GenerateResource.write.1.tlog
+C:\Users\Sean\AppData\Local\Temp\rgbBargraphDisplay\rgbBargraphDisplay\obj\x86\Debug\rgbBargraphDisplay.exe
+C:\Users\Sean\AppData\Local\Temp\rgbBargraphDisplay\rgbBargraphDisplay\obj\x86\Debug\rgbBargraphDisplay.pdb

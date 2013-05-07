@@ -1,0 +1,288 @@
+Archive member included because of file (symbol)
+
+/usr/arm-none-eabi/lib/thumb2/libc.a(lib_a-strlen.o)
+                              lcd.o (strlen)
+
+Allocating common symbols
+Common symbol       size              file
+
+valTest             0x4               main.o
+uartBuf             0x14              uart.o
+uartTX              0x50              uart.o
+
+Memory Configuration
+
+Name             Origin             Length             Attributes
+RAM              0x20000000         0x0000c000         xrw
+FLASH            0x08000000         0x00040000         xr
+*default*        0x00000000         0xffffffff
+
+Linker script and memory map
+
+                0x2000c000                _estack = 0x2000c000
+
+.isr_vector     0x08000000      0x1e4
+                0x08000000                . = ALIGN (0x4)
+ *(.isr_vector)
+ .isr_vector    0x08000000      0x1e4 crt0.o
+                0x08000000                g_pfnVectors
+                0x080001e4                . = ALIGN (0x4)
+
+.text           0x080001e4      0xb80
+                0x080001e4                . = ALIGN (0x4)
+ *(.text)
+ .text          0x080001e4       0x14 crt0.o
+ .text          0x080001f8       0x98 sysinit.o
+                0x080001f8                SystemInit
+ .text          0x08000290      0x1c4 main.o
+                0x080002d4                EXTI15_10_IRQHandler
+                0x0800034c                main
+ .text          0x08000454      0x570 lcd.o
+                0x08000454                reverse
+                0x080004b8                itoa
+                0x0800056c                FSMC_NORSRAMInit
+                0x080006c4                write_cmd
+                0x080006e0                read_data
+                0x080006f8                read_reg
+                0x08000728                FSMC_NORSRAMCmd
+                0x08000780                lcdInit
+                0x0800091c                lcdSetPixel
+ .text          0x080009c4      0x1b8 uart.o
+                0x08000a44                uart_init
+                0x08000ad0                txStr
+                0x08000b2c                USART1_IRQHandler
+ .text          0x08000b7c      0x110 circular_buf.o
+                0x08000b7c                c_buffer_init
+                0x08000bc0                c_buffer_write
+                0x08000c28                c_buffer_read
+ .text          0x08000c8c       0x60 /usr/arm-none-eabi/lib/thumb2/libc.a(lib_a-strlen.o)
+                0x08000c8c                strlen
+ *(.text.*)
+ .text.Reset_Handler
+                0x08000cec       0x58 crt0.o
+                0x08000cec                Reset_Handler
+ .text.Default_Handler
+                0x08000d44        0x4 crt0.o
+                0x08000d44                EXTI2_IRQHandler
+                0x08000d44                TIM8_TRG_COM_IRQHandler
+                0x08000d44                TIM8_CC_IRQHandler
+                0x08000d44                DebugMon_Handler
+                0x08000d44                TIM1_CC_IRQHandler
+                0x08000d44                HardFault_Handler
+                0x08000d44                TIM6_IRQHandler
+                0x08000d44                SysTick_Handler
+                0x08000d44                PVD_IRQHandler
+                0x08000d44                SDIO_IRQHandler
+                0x08000d44                PendSV_Handler
+                0x08000d44                NMI_Handler
+                0x08000d44                EXTI3_IRQHandler
+                0x08000d44                EXTI0_IRQHandler
+                0x08000d44                I2C2_EV_IRQHandler
+                0x08000d44                UsageFault_Handler
+                0x08000d44                ADC1_2_IRQHandler
+                0x08000d44                SPI1_IRQHandler
+                0x08000d44                TAMPER_IRQHandler
+                0x08000d44                TIM8_UP_IRQHandler
+                0x08000d44                DMA2_Channel2_IRQHandler
+                0x08000d44                DMA1_Channel4_IRQHandler
+                0x08000d44                USART3_IRQHandler
+                0x08000d44                RTC_IRQHandler
+                0x08000d44                DMA1_Channel7_IRQHandler
+                0x08000d44                CAN1_RX1_IRQHandler
+                0x08000d44                UART5_IRQHandler
+                0x08000d44                ADC3_IRQHandler
+                0x08000d44                TIM4_IRQHandler
+                0x08000d44                DMA2_Channel1_IRQHandler
+                0x08000d44                I2C1_EV_IRQHandler
+                0x08000d44                DMA1_Channel6_IRQHandler
+                0x08000d44                UART4_IRQHandler
+                0x08000d44                TIM3_IRQHandler
+                0x08000d44                RCC_IRQHandler
+                0x08000d44                TIM1_TRG_COM_IRQHandler
+                0x08000d44                DMA1_Channel1_IRQHandler
+                0x08000d44                Default_Handler
+                0x08000d44                TIM7_IRQHandler
+                0x08000d44                TIM5_IRQHandler
+                0x08000d44                EXTI9_5_IRQHandler
+                0x08000d44                SPI2_IRQHandler
+                0x08000d44                MemManage_Handler
+                0x08000d44                SVC_Handler
+                0x08000d44                DMA1_Channel5_IRQHandler
+                0x08000d44                EXTI4_IRQHandler
+                0x08000d44                USB_LP_CAN1_RX0_IRQHandler
+                0x08000d44                USB_HP_CAN1_TX_IRQHandler
+                0x08000d44                DMA1_Channel3_IRQHandler
+                0x08000d44                FSMC_IRQHandler
+                0x08000d44                TIM1_UP_IRQHandler
+                0x08000d44                WWDG_IRQHandler
+                0x08000d44                TIM2_IRQHandler
+                0x08000d44                TIM1_BRK_IRQHandler
+                0x08000d44                EXTI1_IRQHandler
+                0x08000d44                RTCAlarm_IRQHandler
+                0x08000d44                DMA2_Channel4_5_IRQHandler
+                0x08000d44                USART2_IRQHandler
+                0x08000d44                I2C2_ER_IRQHandler
+                0x08000d44                DMA1_Channel2_IRQHandler
+                0x08000d44                TIM8_BRK_IRQHandler
+                0x08000d44                CAN1_SCE_IRQHandler
+                0x08000d44                FLASH_IRQHandler
+                0x08000d44                BusFault_Handler
+                0x08000d44                SPI3_IRQHandler
+                0x08000d44                I2C1_ER_IRQHandler
+                0x08000d44                USBWakeUp_IRQHandler
+                0x08000d44                DMA2_Channel3_IRQHandler
+ *(.rodata)
+ .rodata        0x08000d48       0x1c main.o
+ *(.rodata*)
+ *(.glue_7)
+ .glue_7        0x00000000        0x0 linker stubs
+ *(.glue_7t)
+ .glue_7t       0x00000000        0x0 linker stubs
+                0x08000d64                . = ALIGN (0x4)
+                0x08000d64                _etext = .
+                0x08000d64                _sidata = _etext
+
+.vfp11_veneer   0x08000d64        0x0
+ .vfp11_veneer  0x00000000        0x0 linker stubs
+
+.v4_bx          0x08000d64        0x0
+ .v4_bx         0x00000000        0x0 linker stubs
+
+.iplt           0x08000d64        0x0
+ .iplt          0x00000000        0x0 crt0.o
+
+.rel.dyn        0x08000d64        0x0
+ .rel.iplt      0x00000000        0x0 crt0.o
+
+.data           0x20000000        0x0 load address 0x08000d64
+                0x20000000                . = ALIGN (0x4)
+                0x20000000                _sdata = .
+ *(.data)
+ .data          0x20000000        0x0 crt0.o
+ .data          0x20000000        0x0 sysinit.o
+ .data          0x20000000        0x0 main.o
+ .data          0x20000000        0x0 lcd.o
+ .data          0x20000000        0x0 uart.o
+ .data          0x20000000        0x0 circular_buf.o
+ .data          0x20000000        0x0 /usr/arm-none-eabi/lib/thumb2/libc.a(lib_a-strlen.o)
+ *(.data.*)
+                0x20000000                . = ALIGN (0x4)
+                0x20000000                _edata = .
+
+.igot.plt       0x20000000        0x0 load address 0x08000d64
+ .igot.plt      0x00000000        0x0 crt0.o
+
+.bss            0x20000000       0x68 load address 0x08000d64
+                0x20000000                . = ALIGN (0x4)
+                0x20000000                _sbss = .
+ *(.bss)
+ .bss           0x20000000        0x0 crt0.o
+ .bss           0x20000000        0x0 sysinit.o
+ .bss           0x20000000        0x0 main.o
+ .bss           0x20000000        0x0 lcd.o
+ .bss           0x20000000        0x0 uart.o
+ .bss           0x20000000        0x0 circular_buf.o
+ .bss           0x20000000        0x0 /usr/arm-none-eabi/lib/thumb2/libc.a(lib_a-strlen.o)
+ *(COMMON)
+ COMMON         0x20000000        0x4 main.o
+                0x20000000                valTest
+ COMMON         0x20000004       0x64 uart.o
+                0x20000004                uartBuf
+                0x20000018                uartTX
+                0x20000068                . = ALIGN (0x4)
+                0x20000068                _ebss = .
+LOAD crt0.o
+LOAD sysinit.o
+LOAD main.o
+LOAD lcd.o
+LOAD uart.o
+LOAD circular_buf.o
+LOAD /usr/arm-none-eabi/lib/thumb2/libm.a
+LOAD /usr/arm-none-eabi/lib/thumb2/libc.a
+LOAD /usr/lib/gcc/arm-none-eabi/4.6.3/thumb2/libgcc.a
+OUTPUT(stm.o elf32-littlearm)
+
+.ARM.attributes
+                0x00000000       0x2f
+ .ARM.attributes
+                0x00000000       0x21 crt0.o
+ .ARM.attributes
+                0x00000021       0x33 sysinit.o
+ .ARM.attributes
+                0x00000054       0x33 main.o
+ .ARM.attributes
+                0x00000087       0x33 lcd.o
+ .ARM.attributes
+                0x000000ba       0x33 uart.o
+ .ARM.attributes
+                0x000000ed       0x33 circular_buf.o
+ .ARM.attributes
+                0x00000120       0x2b /usr/arm-none-eabi/lib/thumb2/libc.a(lib_a-strlen.o)
+
+.comment        0x00000000       0x30
+ .comment       0x00000000       0x30 sysinit.o
+                                 0x31 (size before relaxing)
+ .comment       0x00000000       0x31 main.o
+ .comment       0x00000000       0x31 lcd.o
+ .comment       0x00000000       0x31 uart.o
+ .comment       0x00000000       0x31 circular_buf.o
+
+.debug_info     0x00000000     0x169b
+ .debug_info    0x00000000      0x1f4 sysinit.o
+ .debug_info    0x000001f4      0x653 main.o
+ .debug_info    0x00000847      0x605 lcd.o
+ .debug_info    0x00000e4c      0x6b7 uart.o
+ .debug_info    0x00001503      0x198 circular_buf.o
+
+.debug_abbrev   0x00000000      0x601
+ .debug_abbrev  0x00000000       0x9c sysinit.o
+ .debug_abbrev  0x0000009c      0x168 main.o
+ .debug_abbrev  0x00000204      0x1b0 lcd.o
+ .debug_abbrev  0x000003b4      0x194 uart.o
+ .debug_abbrev  0x00000548       0xb9 circular_buf.o
+
+.debug_loc      0x00000000      0x506
+ .debug_loc     0x00000000       0x2c sysinit.o
+ .debug_loc     0x0000002c       0xc8 main.o
+ .debug_loc     0x000000f4      0x226 lcd.o
+ .debug_loc     0x0000031a      0x144 uart.o
+ .debug_loc     0x0000045e       0xa8 circular_buf.o
+
+.debug_aranges  0x00000000       0xa0
+ .debug_aranges
+                0x00000000       0x20 sysinit.o
+ .debug_aranges
+                0x00000020       0x20 main.o
+ .debug_aranges
+                0x00000040       0x20 lcd.o
+ .debug_aranges
+                0x00000060       0x20 uart.o
+ .debug_aranges
+                0x00000080       0x20 circular_buf.o
+
+.debug_line     0x00000000      0x784
+ .debug_line    0x00000000      0x14d sysinit.o
+ .debug_line    0x0000014d      0x178 main.o
+ .debug_line    0x000002c5      0x25e lcd.o
+ .debug_line    0x00000523      0x1ba uart.o
+ .debug_line    0x000006dd       0xa7 circular_buf.o
+
+.debug_str      0x00000000      0x9d1
+ .debug_str     0x00000000      0x112 sysinit.o
+                                0x14b (size before relaxing)
+ .debug_str     0x00000112      0x4ce main.o
+                                0x5ec (size before relaxing)
+ .debug_str     0x000005e0      0x305 lcd.o
+                                0x42f (size before relaxing)
+ .debug_str     0x000008e5       0x9b uart.o
+                                0x5f2 (size before relaxing)
+ .debug_str     0x00000980       0x51 circular_buf.o
+                                0x137 (size before relaxing)
+
+.debug_frame    0x00000000      0x328
+ .debug_frame   0x00000000       0x28 sysinit.o
+ .debug_frame   0x00000028       0x7c main.o
+ .debug_frame   0x000000a4      0x138 lcd.o
+ .debug_frame   0x000001dc       0xc4 uart.o
+ .debug_frame   0x000002a0       0x68 circular_buf.o
+ .debug_frame   0x00000308       0x20 /usr/arm-none-eabi/lib/thumb2/libc.a(lib_a-strlen.o)

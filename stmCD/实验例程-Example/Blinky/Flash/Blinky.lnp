@@ -1,0 +1,4 @@
+--cpu Cortex-M3 ".\flash\startup_lpc17xx.o" ".\flash\system_lpc17xx.o" ".\flash\core_cm3.o" ".\flash\blinky.o" ".\flash\irq.o" ".\flash\serial.o" ".\flash\retarget.o" --library_type=microlib --strict --scatter ".\Flash\Blinky.sct" 
+--autoat --summary_stderr --info summarysizes --map --xref --callgraph --symbols 
+--info sizes --info totals --info unused --info veneers 
+ --list ".\Flash\Blinky.map" -o ".\Flash\Blinky.axf"

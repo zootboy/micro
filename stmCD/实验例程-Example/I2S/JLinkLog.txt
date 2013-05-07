@@ -1,0 +1,26 @@
+
+T1560 000:589 SEGGER J-Link V4.14a Log File (0002ms, 0585ms total)
+T1560 000:589 DLL Compiled: Apr 21 2010 20:54:28 (0004ms, 0585ms total)
+T1560 000:589 Logging started @ 2010-05-13 11:20 (0005ms, 0585ms total)
+T1560 000:595 JLINK_SetWarnOutHandler(...) (0001ms, 0591ms total)
+T1560 000:596 JLINK_OpenEx(...)
+Firmware: J-Link ARM-OB STM32 compiled Mar 01 2010 17:00:09
+Hardware: V7.00
+S/N: 20090928
+Feature(s): RDI,FlashDL,FlashBP,JFlash,GDBFull  returns O.K. (0309ms, 0592ms total)
+T1560 000:907 JLINK_SetErrorOutHandler(...) (0001ms, 0901ms total)
+T1560 000:909 JLINK_TIF_Select(JLINKARM_TIF_SWD)  returns 0x00 (0003ms, 0902ms total)
+T1560 000:916 JLINK_SetSpeed(2000) (0002ms, 0906ms total)
+T1560 000:918 JLINK_GetHardwareVersion()  returns 0x11170 (0000ms, 0908ms total)
+T1560 000:920 JLINK_GetDLLVersion()  returns 41401 (0000ms, 0910ms total)
+T1560 000:920 JLINK_GetFirmwareString(...) (0001ms, 0910ms total)
+T1560 000:921 JLINK_GetDLLVersion()  returns 41401 (0011ms, 0911ms total)
+T1560 000:932 JLINK_GetCompileDateTime() (0000ms, 0922ms total)
+T1560 000:932 JLINK_GetFirmwareString(...) (0001ms, 0922ms total)
+T1560 000:933 JLINK_GetHardwareVersion()  returns 0x11170 (0001ms, 0923ms total)
+T1560 000:935 JLINK_SetResetType(JLINKARM_RESET_TYPE_ADI)  returns JLINKARM_RESET_TYPE_NORMAL (0000ms, 0924ms total)
+T1560 000:936 JLINK_Reset() >0x108 TIF>Found SWD-DP with ID 0x2BA01477 >0x33 TIF> >0x33 TIF> >0x35 TIF> >0x33 TIF> >0x35 TIF> >0x33 TIF> >0x33 TIF> >0x35 TIF> >0x66 TIF> >0x66 TIF> >0x35 TIF> >0x16D TIF> >0xD0 TIF> >0xD0 TIF>TPIU fitted. >0xD0 TIF>ETM fitted. >0xD0 TIF>  FPUnit: 6 code (BP) slots and 2 literal slots >0xD0 TIF> (0238ms, 0925ms total)
+T1560 001:175 JLINK_JTAG_StoreRaw(..., 0x108 Bits)  returns 0x00 (0001ms, 1163ms total)
+T1560 001:176 JLINK_JTAG_GetU32(BitPos = 227) >0x108 TIF>  returns 0x2BA01477 (0002ms, 1164ms total)
+T1560 001:181 JLINK_GetCompileDateTime() (0000ms, 1167ms total)
+T1560 002:527 JLINK_Close() (0142ms, 1167ms total)

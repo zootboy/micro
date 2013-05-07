@@ -1,0 +1,27 @@
+*** Creating Trace Output File '.\Obj\Memory.tra' Ok.
+### Preparing for ADS-LD.
+### Creating ADS-LD Command Line
+### List of Objects: adding '".\obj\startup_lpc17xx.o"'
+### List of Objects: adding '".\obj\system_lpc17xx.o"'
+### List of Objects: adding '".\obj\usbcore.o"'
+### List of Objects: adding '".\obj\usbdesc.o"'
+### List of Objects: adding '".\obj\usbhw.o"'
+### List of Objects: adding '".\obj\usbuser.o"'
+### List of Objects: adding '".\obj\mscuser.o"'
+### List of Objects: adding '".\obj\memory.o"'
+### List of Objects: adding '".\obj\diskimg.o"'
+### ADS-LD Command completed:
+--cpu Cortex-M3 ".\obj\startup_lpc17xx.o" ".\obj\system_lpc17xx.o" ".\obj\usbcore.o" ".\obj\usbdesc.o" ".\obj\usbhw.o" ".\obj\usbuser.o" ".\obj\mscuser.o" ".\obj\memory.o" ".\obj\diskimg.o" --library_type=microlib --strict --scatter ".\Obj\Memory.sct" 
+--autoat --summary_stderr --info summarysizes --map --xref --callgraph --symbols 
+--info sizes --info totals --info unused --info veneers 
+ --list ".\Lst\Memory.map" -o ".\Obj\Memory.axf"### Preparing Environment (PrepEnvAds)
+### ADS-LD Output File: '.\Obj\Memory.axf'
+### ADS-LD Command File: '.\Obj\Memory.lnp'
+### Checking for dirty Components...
+### Creating CmdFile '.\Obj\Memory.lnp', Handle=0x000001D0
+### Writing '.lnp' file
+### ADS-LD Command file '.\Obj\Memory.lnp' is ready.
+### ADS-LD: About to start ADS-LD Thread.
+### ADS-LD: executed with 0 errors
+### Updating obj list
+### LDADS_file() completed.

@@ -1,0 +1,88 @@
+   1               		.file	"interrupt.c"
+   2               	__SREG__ = 0x3f
+   3               	__SP_H__ = 0x3e
+   4               	__SP_L__ = 0x3d
+   5               	__tmp_reg__ = 0
+   6               	__zero_reg__ = 1
+   7               		.global __do_copy_data
+   8               		.global __do_clear_bss
+  16               	.Ltext0:
+  17               	.global	INTERRUPT
+  19               	INTERRUPT:
+  20               	.LFB6:
+  21               	.LM1:
+  22               	/* prologue: frame size=0 */
+  23               	/* prologue end (size=0) */
+  24               	.LVL0:
+  25               	.LM2:
+  26 0000 8091 0000 		lds r24,ledon.1533
+  27               	.LVL1:
+  28 0004 8823      		tst r24
+  29 0006 01F0      		breq .L2
+  30               	.LM3:
+  31 0008 1092 0000 		sts ledon.1533,__zero_reg__
+  32               	.LM4:
+  33 000c 18BA      		out 56-0x20,__zero_reg__
+  34 000e 00C0      		rjmp .L4
+  35               	.L2:
+  36               	.LM5:
+  37 0010 81E0      		ldi r24,lo8(1)
+  38 0012 8093 0000 		sts ledon.1533,r24
+  39               	.LM6:
+  40 0016 88BB      		out 56-0x20,r24
+  41               	.L4:
+  42               	.LM7:
+  43 0018 80E0      		ldi r24,lo8(0)
+  44 001a 90E0      		ldi r25,hi8(0)
+  45               	/* epilogue: frame size=0 */
+  46 001c 0895      		ret
+  47               	/* epilogue end (size=1) */
+  48               	/* function INTERRUPT size 15 (14) */
+  49               	.LFE6:
+  51               	.global	main
+  53               	main:
+  54               	.LFB7:
+  55               	.LM8:
+  56               	/* prologue: frame size=0 */
+  57               	/* prologue end (size=0) */
+  58               	.LM9:
+  59 001e 81E0      		ldi r24,lo8(1)
+  60 0020 87BB      		out 55-0x20,r24
+  61               	.LM10:
+  62 0022 80E4      		ldi r24,lo8(64)
+  63 0024 89BF      		out 89-0x20,r24
+  64               	.LM11:
+  65 0026 8CE0      		ldi r24,lo8(12)
+  66 0028 8EBD      		out 78-0x20,r24
+  67               	.LM12:
+  68 002a 89E0      		ldi r24,lo8(15625)
+  69 002c 9DE3      		ldi r25,hi8(15625)
+  70 002e 9BBD      		out (74)+1-0x20,r25
+  71 0030 8ABD      		out 74-0x20,r24
+  72               	.L7:
+  73               	.LM13:
+  74               	/* #APP */
+  75 0032 0000      		nop
+  76               	/* #NOAPP */
+  77 0034 00C0      		rjmp .L7
+  78               	/* epilogue: frame size=0 */
+  79               	/* epilogue: noreturn */
+  80               	/* epilogue end (size=0) */
+  81               	/* function main size 13 (13) */
+  82               	.LFE7:
+  84               		.lcomm ledon.1533,1
+ 117               	.Letext0:
+DEFINED SYMBOLS
+                            *ABS*:00000000 interrupt.c
+C:\DOCUME~1\SEAN~1.GRE\LOCALS~1\Temp/ccYwUCzd.s:2      *ABS*:0000003f __SREG__
+C:\DOCUME~1\SEAN~1.GRE\LOCALS~1\Temp/ccYwUCzd.s:3      *ABS*:0000003e __SP_H__
+C:\DOCUME~1\SEAN~1.GRE\LOCALS~1\Temp/ccYwUCzd.s:4      *ABS*:0000003d __SP_L__
+C:\DOCUME~1\SEAN~1.GRE\LOCALS~1\Temp/ccYwUCzd.s:5      *ABS*:00000000 __tmp_reg__
+C:\DOCUME~1\SEAN~1.GRE\LOCALS~1\Temp/ccYwUCzd.s:6      *ABS*:00000001 __zero_reg__
+C:\DOCUME~1\SEAN~1.GRE\LOCALS~1\Temp/ccYwUCzd.s:19     .text:00000000 INTERRUPT
+                             .bss:00000000 ledon.1533
+C:\DOCUME~1\SEAN~1.GRE\LOCALS~1\Temp/ccYwUCzd.s:53     .text:0000001e main
+
+UNDEFINED SYMBOLS
+__do_copy_data
+__do_clear_bss

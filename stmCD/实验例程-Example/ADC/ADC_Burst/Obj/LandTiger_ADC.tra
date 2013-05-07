@@ -1,0 +1,24 @@
+*** Creating Trace Output File '.\Obj\LandTiger_ADC.tra' Ok.
+### Preparing for ADS-LD.
+### Creating ADS-LD Command Line
+### List of Objects: adding '".\obj\core_cm3.o"'
+### List of Objects: adding '".\obj\system_lpc17xx.o"'
+### List of Objects: adding '".\obj\startup_lpc17xx.o"'
+### List of Objects: adding '".\obj\main.o"'
+### List of Objects: adding '".\obj\uart.o"'
+### List of Objects: adding '".\obj\adc.o"'
+### ADS-LD Command completed:
+--cpu Cortex-M3 ".\obj\core_cm3.o" ".\obj\system_lpc17xx.o" ".\obj\startup_lpc17xx.o" ".\obj\main.o" ".\obj\uart.o" ".\obj\adc.o" --strict --scatter ".\Obj\LandTiger_ADC.sct" 
+--autoat --summary_stderr --info summarysizes --map --xref --callgraph --symbols 
+--info sizes --info totals --info unused --info veneers 
+ --list ".\List\LandTiger_ADC.map" -o ".\Obj\LandTiger_ADC.axf"### Preparing Environment (PrepEnvAds)
+### ADS-LD Output File: '.\Obj\LandTiger_ADC.axf'
+### ADS-LD Command File: '.\Obj\LandTiger_ADC.lnp'
+### Checking for dirty Components...
+### Creating CmdFile '.\Obj\LandTiger_ADC.lnp', Handle=0x000002A8
+### Writing '.lnp' file
+### ADS-LD Command file '.\Obj\LandTiger_ADC.lnp' is ready.
+### ADS-LD: About to start ADS-LD Thread.
+### ADS-LD: executed with 0 errors
+### Updating obj list
+### LDADS_file() completed.

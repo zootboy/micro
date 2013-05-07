@@ -1,0 +1,4 @@
+--cpu Cortex-M3 ".\obj\startup_lpc17xx.o" ".\obj\system_lpc17xx.o" ".\obj\file_config.o" ".\obj\retarget.o" ".\obj\getline.o" ".\obj\serial.o" ".\obj\sd_file.o" ".\obj\spi_lpc17xx.o" ".\obj\glcd_lpc1700.o" ".\obj\_fs_fclose.o" ".\obj\_fs_fcreate.o" ".\obj\_fs_fdelete.o" ".\obj\_fs_ffind.o" ".\obj\_fs_flashio.o" ".\obj\_fs_flushbuf.o" ".\obj\_fs_fopen.o" ".\obj\_fs_frename.o" ".\obj\_fs_getfsize.o" ".\obj\_fs_read.o" ".\obj\_fs_setfpos.o" ".\obj\_fs_write.o" ".\obj\fs_fanalyse.o" ".\obj\fs_fat.o" ".\obj\fs_fcheck.o" ".\obj\fs_fdefrag.o" ".\obj\fs_fdelete.o" ".\obj\fs_ffind.o" ".\obj\fs_fformat.o" ".\obj\fs_ffree.o" ".\obj\fs_finit.o" ".\obj\fs_flashprg.o" ".\obj\fs_frename.o" ".\obj\fs_lib.o" ".\obj\fs_mmc.o" ".\obj\fs_time.o" --strict --scatter ".\Obj\SD_File.sct" 
+--autoat --summary_stderr --info summarysizes --map --xref --callgraph --symbols 
+--info sizes --info totals --info unused --info veneers 
+ --list ".\Lst\SD_File.map" -o ".\Obj\SD_File.axf"

@@ -1,0 +1,98 @@
+### uVision2 Project, (C) Keil Software
+### Do not modify !
+
+ cExt (*.c)
+ aExt (*.s*; *.src; *.a*)
+ oExt (*.obj)
+ lExt (*.lib)
+ tExt (*.txt; *.h; *.inc)
+ pExt (*.plm)
+ CppX (*.cpp)
+ DaveTm { 0,0,0,0,0,0,0,0 }
+
+Target (LPC17xx_IRAM), 0x0004 // Tools: 'ARM-ADS'
+Target (LPC17xx_IFLASH), 0x0004 // Tools: 'ARM-ADS'
+GRPOPT 1,(Source),0,0,0
+GRPOPT 2,(Uart),0,0,0
+GRPOPT 3,(Fat),0,0,0
+GRPOPT 4,(MassStorage),0,0,0
+GRPOPT 5,(Include),0,0,0
+GRPOPT 6,(Host),0,0,0
+GRPOPT 7,(Main),1,0,0
+GRPOPT 8,(Startup),1,0,0
+
+OPTFFF 1,1,1,0,0,0,0,0,<..\common\src\core_cm3.c><core_cm3.c> 
+OPTFFF 1,2,1,0,0,29,33,0,<..\common\src\system_LPC17xx.c><system_LPC17xx.c> { 44,0,0,0,0,0,0,0,1,0,0,0,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,11,1,0,0,9,0,0,0,201,3,0,0,21,1,0,0 }
+OPTFFF 2,3,1,0,0,0,0,0,<.\UsbHost\Uart\usbhost_uart.c><usbhost_uart.c> 
+OPTFFF 2,4,5,520093696,0,0,0,0,<.\UsbHost\Uart\usbhost_uart.h><usbhost_uart.h> 
+OPTFFF 3,5,1,704643072,0,0,0,0,<.\UsbHost\Fat\usbhost_fat.c><usbhost_fat.c> 
+OPTFFF 3,6,5,754974720,0,0,0,0,<.\UsbHost\Fat\usbhost_fat.h><usbhost_fat.h> 
+OPTFFF 4,7,1,0,0,0,0,0,<.\UsbHost\MassStorage\usbhost_ms.c><usbhost_ms.c> 
+OPTFFF 4,8,5,956301312,0,0,0,0,<.\UsbHost\MassStorage\usbhost_ms.h><usbhost_ms.h> 
+OPTFFF 5,9,5,0,0,0,0,0,<.\UsbHost\Include\usbhost_err.h><usbhost_err.h> 
+OPTFFF 5,10,5,184549376,0,0,0,0,<.\UsbHost\Include\usbhost_inc.h><usbhost_inc.h> 
+OPTFFF 5,11,5,0,0,0,0,0,<..\common\inc\core_cm3.h><core_cm3.h> 
+OPTFFF 5,12,5,0,0,0,0,0,<..\common\inc\LPC17xx.h><LPC17xx.h> 
+OPTFFF 5,13,5,385875968,0,35,47,0,<..\common\inc\system_LPC17xx.h><system_LPC17xx.h> { 44,0,0,0,0,0,0,0,1,0,0,0,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,236,0,0,0,51,0,0,0,238,3,0,0,65,1,0,0 }
+OPTFFF 6,14,1,0,0,343,346,0,<.\UsbHost\Host\usbhost_lpc17xx.c><usbhost_lpc17xx.c> { 44,0,0,0,0,0,0,0,1,0,0,0,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,31,0,0,0,59,0,0,0,218,2,0,0,41,1,0,0 }
+OPTFFF 6,15,5,0,0,0,0,0,<.\UsbHost\Host\usbhost_lpc17xx.h><usbhost_lpc17xx.h> 
+OPTFFF 7,16,1,0,0,63,67,0,<.\UsbHost\Main\usbhost_main.c><usbhost_main.c> { 44,0,0,0,0,0,0,0,1,0,0,0,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,46,0,0,0,12,0,0,0,219,2,0,0,34,1,0,0 }
+OPTFFF 8,17,2,0,0,18,23,0,<..\common\src\startup_LPC17xx.s><startup_LPC17xx.s> { 44,0,0,0,0,0,0,0,1,0,0,0,255,255,255,255,255,255,255,255,252,255,255,255,226,255,255,255,75,0,0,0,0,0,0,0,245,2,0,0,103,1,0,0 }
+
+ExtF <C:\Philips\LPC17xx\USBHostLite\target.h> 152,152,0,{ 44,0,0,0,0,0,0,0,1,0,0,0,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,13,1,0,0,59,0,0,0,196,3,0,0,61,1,0,0 }
+
+TARGOPT 1, (LPC17xx_IRAM)
+ ADSCLK=12000000
+  OPTTT 1,1,1,0
+  OPTHX 1,65535,0,0,0
+  OPTLX 79,66,8,<.\Lst\>
+  OPTOX 16
+  OPTLT 1,1,1,0,1,1,0,1,0,0,0,0
+  OPTXL 1,1,1,1,1,1,1,0,0
+  OPTFL 1,0,0
+  OPTAX 255
+  OPTBL 0,(Data Sheet)<DATASHTS\NXP\LPC1766_DS.PDF>
+  OPTBL 1,(User Manual)<DATASHTS\NXP\LPC17xx_UM.pdf>
+  OPTDL (SARMCM3.DLL)(-MPU)(DARMSTM.DLL)(-pCortexM3)(SARMCM3.DLL)(-MPU)(TARMSTM.DLL)(-pCortexM3)
+  OPTDBG 49150,1,()()()()()()()()()(.\RAM.ini) (BIN\UL2CM3.DLL)()()()
+  OPTKEY 0,(DLGUARM)((105=-1,-1,-1,-1,0)(106=-1,-1,-1,-1,0)(107=-1,-1,-1,-1,0))
+  OPTKEY 0,(DLGARARM)((6000=505,385,1095,785,0))
+  OPTKEY 0,(DLGTARM)((1010=-1,-1,-1,-1,0)(1007=-1,-1,-1,-1,0)(1008=626,394,992,623,0)(1009=-1,-1,-1,-1,0)(1012=-1,-1,-1,-1,0))
+  OPTKEY 0,(ARMDBGFLAGS)()
+  OPTKEY 0,(UL2CM3)(-UV0887A9E -O391 -S0 -C0 -N00("ARM CoreSight JTAG-DP") -D00(4BA00477) -L00(4) -TO18 -TC10000000 -TP21 -TDS8007 -TDT0 -TDC1F -TIEFFFFFFFF -TIP8 -FO7 -FD10000000 -FC800 -FN1 -FF0LPC_V1_IAP_256 -FS00 -FL040000)
+  OPTBB 0,0,62,1,268443208,0,0,0,0,1,<usbhost_main.c>()()
+  OPTBB 1,0,236,1,268441544,0,0,0,0,1,<usbhost_lpc17xx.c>()()
+  OPTBB 2,0,239,1,268441550,0,0,0,0,1,<usbhost_lpc17xx.c>()()
+  OPTMM 1,2,(0x20080100)
+  OPTDF 0x80
+  OPTLE <>
+  OPTLC <>
+EndOpt
+
+TARGOPT 2, (LPC17xx_IFLASH)
+ ADSCLK=12000000
+  OPTTT 1,1,1,0
+  OPTHX 1,65535,0,0,0
+  OPTLX 79,66,8,<.\Lst\>
+  OPTOX 16
+  OPTLT 1,1,1,0,1,1,0,1,0,0,0,0
+  OPTXL 1,1,1,1,1,1,1,0,0
+  OPTFL 1,0,1
+  OPTAX 255
+  OPTBL 0,(Data Sheet)<DATASHTS\NXP\LPC1766_DS.PDF>
+  OPTBL 1,(User Manual)<DATASHTS\NXP\LPC17xx_UM.pdf>
+  OPTDL (SARMCM3.DLL)(-MPU)(DARMSTM.DLL)(-pCortexM3)(SARMCM3.DLL)(-MPU)(TARMSTM.DLL)(-pCortexM3)
+  OPTDBG 49150,1,()()()()()()()()()() (BIN\UL2CM3.DLL)()()()
+  OPTKEY 0,(DLGUARM)((105=-1,-1,-1,-1,0)(106=-1,-1,-1,-1,0)(107=-1,-1,-1,-1,0))
+  OPTKEY 0,(DLGARARM)((6000=505,385,1095,785,0))
+  OPTKEY 0,(DLGTARM)((1010=-1,-1,-1,-1,0)(1007=-1,-1,-1,-1,0)(1008=626,394,992,623,0)(1009=-1,-1,-1,-1,0)(1012=-1,-1,-1,-1,0))
+  OPTKEY 0,(ARMDBGFLAGS)()
+  OPTKEY 0,(UL2CM3)(-UV0887A9E -O398 -S2 -C0 -N00("ARM CoreSight JTAG-DP") -D00(4BA00477) -L00(4) -TO18 -TC10000000 -TP21 -TDS8007 -TDT0 -TDC1F -TIEFFFFFFFF -TIP8 -FO7 -FD10000000 -FC800 -FN1 -FF0LPC_IAP_512 -FS00 -FL080000)
+  OPTMM 1,1,(0x40024044)
+  OPTMM 2,2,(0xe000c000)
+  OPTMM 3,1,(0x7fe0170)
+  OPTDF 0x80
+  OPTLE <>
+  OPTLC <>
+EndOpt
+

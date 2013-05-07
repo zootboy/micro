@@ -1,0 +1,124 @@
+<html>
+<body>
+<pre>
+<h1>µVision Build Log</h1>
+<h2>Project:</h2>
+C:\Documents and Settings\PowerARM\◊¿√Ê\LPC1768≤‚ ‘≥Ã–Ú\RS485\LandTiger_RS485.uvproj
+Project File Date:  05/12/2010
+
+<h2>Output:</h2>
+Build target 'LandTiger_RS485'
+compiling core_cm3.c...
+compiling system_LPC17xx.c...
+assembling startup_LPC17xx.s...
+compiling rs485.c...
+compiling rs485test.c...
+linking...
+.\Obj\LandTiger_RS485.axf: Error: L6218E: Undefined symbol SystemFrequency (referred from rs485.o).
+.\Obj\LandTiger_RS485.axf: Not enough information to list image symbols.
+.\Obj\LandTiger_RS485.axf: Not enough information to list the image map.
+.\Obj\LandTiger_RS485.axf: Finished: 2 information, 0 warning and 1 error messages.
+Target not created
+Build target 'LandTiger_RS485'
+linking...
+.\Obj\LandTiger_RS485.axf: Error: L6218E: Undefined symbol SystemFrequency (referred from rs485.o).
+.\Obj\LandTiger_RS485.axf: Not enough information to list image symbols.
+.\Obj\LandTiger_RS485.axf: Not enough information to list the image map.
+.\Obj\LandTiger_RS485.axf: Finished: 2 information, 0 warning and 1 error messages.
+Target not created
+Build target 'LandTiger_RS485'
+compiling rs485.c...
+linking...
+Program Size: Code=1708 RO-data=356 RW-data=20 ZI-data=676  
+".\Obj\LandTiger_RS485.axf" - 0 Error(s), 0 Warning(s).
+Build target 'LandTiger_RS485'
+linking...
+Program Size: Code=1708 RO-data=356 RW-data=20 ZI-data=676  
+".\Obj\LandTiger_RS485.axf" - 0 Error(s), 0 Warning(s).
+Build target 'LandTiger_RS485'
+linking...
+Program Size: Code=1708 RO-data=356 RW-data=20 ZI-data=676  
+".\Obj\LandTiger_RS485.axf" - 0 Error(s), 0 Warning(s).
+Build target 'LandTiger_RS485'
+compiling rs485.c...
+Source\App\rs485.c(137): warning:  #61-D: integer operation result is out of range
+Source\App\rs485.c:     LPC_PINCON->PINSEL9 &= ~(0xff<<24);
+Source\App\rs485.c:                                    ^
+Source\App\rs485.c(138): warning:  #61-D: integer operation result is out of range
+Source\App\rs485.c:     LPC_PINCON->PINSEL9 |=  (0xff<<24);     /* Enable RxD3 P4.29, TxD3 P4.28 */
+Source\App\rs485.c:                                    ^
+Source\App\rs485.c(138): warning:  #68-D: integer conversion resulted in a change of sign
+Source\App\rs485.c:     LPC_PINCON->PINSEL9 |=  (0xff<<24);     /* Enable RxD3 P4.29, TxD3 P4.28 */
+Source\App\rs485.c:                             ^
+Source\App\rs485.c: Source\App\rs485.c: 3 warnings, 0 errors
+linking...
+Program Size: Code=1708 RO-data=356 RW-data=20 ZI-data=676  
+".\Obj\LandTiger_RS485.axf" - 0 Error(s), 3 Warning(s).
+Build target 'LandTiger_RS485'
+compiling rs485.c...
+Source\App\rs485.c(138): warning:  #61-D: integer operation result is out of range
+Source\App\rs485.c:     LPC_PINCON->PINSEL9 |=  (0xff<<24);     /* Enable RxD3 P4.29, TxD3 P4.28 */
+Source\App\rs485.c:                                    ^
+Source\App\rs485.c(138): warning:  #68-D: integer conversion resulted in a change of sign
+Source\App\rs485.c:     LPC_PINCON->PINSEL9 |=  (0xff<<24);     /* Enable RxD3 P4.29, TxD3 P4.28 */
+Source\App\rs485.c:                             ^
+Source\App\rs485.c: Source\App\rs485.c: 2 warnings, 0 errors
+linking...
+Program Size: Code=1708 RO-data=356 RW-data=20 ZI-data=676  
+".\Obj\LandTiger_RS485.axf" - 0 Error(s), 2 Warning(s).
+Build target 'LandTiger_RS485'
+compiling rs485.c...
+Source\App\rs485.c(137): warning:  #61-D: integer operation result is out of range
+Source\App\rs485.c:     LPC_PINCON->PINSEL9 &= ~(0xff<<24);
+Source\App\rs485.c:                                    ^
+Source\App\rs485.c(138): warning:  #61-D: integer operation result is out of range
+Source\App\rs485.c:     LPC_PINCON->PINSEL9 |=  (0xff<<24);     /* Enable RxD3 P4.29, TxD3 P4.28 */
+Source\App\rs485.c:                                    ^
+Source\App\rs485.c(138): warning:  #68-D: integer conversion resulted in a change of sign
+Source\App\rs485.c:     LPC_PINCON->PINSEL9 |=  (0xff<<24);     /* Enable RxD3 P4.29, TxD3 P4.28 */
+Source\App\rs485.c:                             ^
+Source\App\rs485.c: Source\App\rs485.c: 3 warnings, 0 errors
+linking...
+Program Size: Code=1708 RO-data=356 RW-data=20 ZI-data=676  
+".\Obj\LandTiger_RS485.axf" - 0 Error(s), 3 Warning(s).
+Build target 'LandTiger_RS485'
+compiling rs485.c...
+linking...
+Program Size: Code=1708 RO-data=356 RW-data=20 ZI-data=676  
+".\Obj\LandTiger_RS485.axf" - 0 Error(s), 0 Warning(s).
+Build target 'LandTiger_RS485'
+compiling rs485.c...
+linking...
+Program Size: Code=1724 RO-data=356 RW-data=20 ZI-data=676  
+".\Obj\LandTiger_RS485.axf" - 0 Error(s), 0 Warning(s).
+Build target 'LandTiger_RS485'
+compiling core_cm3.c...
+compiling system_LPC17xx.c...
+assembling startup_LPC17xx.s...
+compiling rs485.c...
+compiling rs485test.c...
+linking...
+Program Size: Code=1724 RO-data=356 RW-data=20 ZI-data=676  
+".\Obj\LandTiger_RS485.axf" - 0 Error(s), 0 Warning(s).
+Build target 'LandTiger_RS485'
+compiling rs485.c...
+Source\App\rs485.c(44): error:  #136: struct "<unnamed>" has no field "RS485CTRL"
+Source\App\rs485.c:                                             && (LPC_UART3->RS485CTRL & RS485_NMMEN) )
+Source\App\rs485.c:                                                            ^
+Source\App\rs485.c(48): error:  #136: struct "<unnamed>" has no field "ADRMATCH"
+Source\App\rs485.c:       if ( Dummy == LPC_UART3->ADRMATCH )
+Source\App\rs485.c:                                ^
+Source\App\rs485.c(50): error:  #136: struct "<unnamed>" has no field "RS485CTRL"
+Source\App\rs485.c:             LPC_UART3->RS485CTRL &= ~RS485_RXDIS;   /* Enable RX */
+Source\App\rs485.c:                        ^
+Source\App\rs485.c(54): error:  #136: struct "<unnamed>" has no field "RS485CTRL"
+Source\App\rs485.c:             LPC_UART3->RS485CTRL |= RS485_RXDIS;            /* Disable RX */
+Source\App\rs485.c:                        ^
+Source\App\rs485.c(181): error:  #136: struct "<unnamed>" has no field "ADRMATCH"
+Source\App\rs485.c:     LPC_UART3->ADRMATCH = RS485_SLAVE_ADR;  /* UARTA 485 address, 0xC0 */
+Source\App\rs485.c:                ^
+Source\App\rs485.c(183): error:  #136: struct "<unnamed>" has no field "RS485CTRL"
+Source\App\rs485.c:     LPC_UART3->RS485CTRL = RS485_NMMEN;             /* NMM mode */
+Source\App\rs485.c:                ^
+Source\App\rs485.c: Source\App\rs485.c: 0 warnings, 6 errors
+Target not created

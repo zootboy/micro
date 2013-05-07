@@ -1,0 +1,4 @@
+--cpu Cortex-M3 ".\obj\startup_lpc17xx.o" ".\obj\system_lpc17xx.o" ".\obj\tcpip.o" ".\obj\emac.o" ".\obj\easyweb.o" ".\obj\retarget.o" --library_type=microlib --strict --scatter ".\Obj\EasyWeb.sct" 
+--autoat --summary_stderr --info summarysizes --map --xref --callgraph --symbols 
+--info sizes --info totals --info unused --info veneers 
+ --list ".\Lst\EasyWeb.map" -o ".\Obj\EasyWeb.axf"

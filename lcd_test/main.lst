@@ -1,0 +1,415 @@
+   1               		.file	"main.c"
+   2               	__SP_H__ = 0x3e
+   3               	__SP_L__ = 0x3d
+   4               	__SREG__ = 0x3f
+   5               	__tmp_reg__ = 0
+   6               	__zero_reg__ = 1
+   9               		.text
+  10               	.Ltext0:
+  83               	.global	pushUART
+  85               	pushUART:
+  86               		.stabd	46,0,0
+   1:main.c        **** /* Blinker Demo */
+   2:main.c        **** 
+   3:main.c        **** /* Include useful pre-defined functions */
+   4:main.c        **** //#include <avr/interrupt.h>    // Defines pins, ports, etc to make programs easier to read
+   5:main.c        **** #define F_CPU 8000000	      // Sets up the default speed for delay.h
+   6:main.c        **** #include <avr/io.h>
+   7:main.c        **** #include <avr/interrupt.h>
+   8:main.c        **** #include <util/delay.h>
+   9:main.c        **** #include "cbuff.h" // UART buffer.
+  10:main.c        **** #include "util.h"
+  11:main.c        **** #include "lcd.h"
+  12:main.c        **** 
+  13:main.c        **** // UART buffer stuff;
+  14:main.c        **** #define BUFFLEN 60
+  15:main.c        **** char uba[BUFFLEN];
+  16:main.c        **** c_buffer_t ub;
+  17:main.c        **** #define CPUT(x) c_buffer_write(&ub, (x)); pushUART()
+  18:main.c        **** 
+  19:main.c        **** void pushUART(void)
+  20:main.c        **** {
+  88               	.LM0:
+  89               	.LFBB1:
+  90 0000 CF93      		push r28
+  91 0002 DF93      		push r29
+  92 0004 1F92      		push __zero_reg__
+  93 0006 CDB7      		in r28,__SP_L__
+  94 0008 DEB7      		in r29,__SP_H__
+  95               	/* prologue: function */
+  96               	/* frame size = 1 */
+  97               	/* stack size = 3 */
+  98               	.L__stack_usage = 3
+  21:main.c        **** 	char cnext;
+  22:main.c        **** 	if( (UCSR0A & (1<<UDRE0)) && (c_buffer_read(&ub, &cnext ) == 0) )
+ 100               	.LM1:
+ 101 000a 8091 C000 		lds r24,192
+ 102 000e 85FF      		sbrs r24,5
+ 103 0010 00C0      		rjmp .L1
+ 104               	.LBB4:
+ 105               	.LBB5:
+ 106 0012 BE01      		movw r22,r28
+ 107 0014 6F5F      		subi r22,-1
+ 108 0016 7F4F      		sbci r23,-1
+ 109 0018 80E0      		ldi r24,lo8(ub)
+ 110 001a 90E0      		ldi r25,hi8(ub)
+ 111 001c 0E94 0000 		call c_buffer_read
+ 112 0020 892B      		or r24,r25
+ 113 0022 01F4      		brne .L1
+  23:main.c        **** 	{// USART TX buffer empty && content in circ. buffer...
+  24:main.c        **** 		UDR0 = cnext; // Transmission begins as soon as write completes.
+ 115               	.LM2:
+ 116 0024 8981      		ldd r24,Y+1
+ 117 0026 8093 C600 		sts 198,r24
+ 118               	.L1:
+ 119               	/* epilogue start */
+ 120               	.LBE5:
+ 121               	.LBE4:
+  25:main.c        **** 	}
+  26:main.c        **** }
+ 123               	.LM3:
+ 124 002a 0F90      		pop __tmp_reg__
+ 125 002c DF91      		pop r29
+ 126 002e CF91      		pop r28
+ 127 0030 0895      		ret
+ 132               	.Lscope1:
+ 134               		.stabd	78,0,0
+ 137               	.global	str2lcd
+ 139               	str2lcd:
+ 140               		.stabd	46,0,0
+  27:main.c        **** 
+  28:main.c        **** void str2lcd(char *s)
+  29:main.c        **** {
+ 142               	.LM4:
+ 143               	.LFBB2:
+ 144 0032 1F93      		push r17
+ 145 0034 CF93      		push r28
+ 146 0036 DF93      		push r29
+ 147               	/* prologue: function */
+ 148               	/* frame size = 0 */
+ 149               	/* stack size = 3 */
+ 150               	.L__stack_usage = 3
+ 151 0038 EC01      		movw r28,r24
+  30:main.c        **** 	uint8_t i = 0;
+ 153               	.LM5:
+ 154 003a 10E0      		ldi r17,0
+  31:main.c        **** 	while(s[i] != '\0') 
+ 156               	.LM6:
+ 157 003c 00C0      		rjmp .L8
+ 158               	.L9:
+  32:main.c        **** 	{
+  33:main.c        **** 		CPUT(s[i]);
+ 160               	.LM7:
+ 161 003e 80E0      		ldi r24,lo8(ub)
+ 162 0040 90E0      		ldi r25,hi8(ub)
+ 163 0042 0E94 0000 		call c_buffer_write
+ 164 0046 0E94 0000 		call pushUART
+  34:main.c        **** 		i++;
+ 166               	.LM8:
+ 167 004a 1F5F      		subi r17,lo8(-(1))
+ 168               	.L8:
+  31:main.c        **** 	while(s[i] != '\0') 
+ 170               	.LM9:
+ 171 004c FE01      		movw r30,r28
+ 172 004e E10F      		add r30,r17
+ 173 0050 F11D      		adc r31,__zero_reg__
+ 174 0052 6081      		ld r22,Z
+ 175 0054 6111      		cpse r22,__zero_reg__
+ 176 0056 00C0      		rjmp .L9
+ 177               	/* epilogue start */
+  35:main.c        **** 	}
+  36:main.c        **** }
+ 179               	.LM10:
+ 180 0058 DF91      		pop r29
+ 181 005a CF91      		pop r28
+ 182 005c 1F91      		pop r17
+ 183 005e 0895      		ret
+ 188               	.Lscope2:
+ 190               		.stabd	78,0,0
+ 192               	.global	__vector_20
+ 194               	__vector_20:
+ 195               		.stabd	46,0,0
+  37:main.c        **** 
+  38:main.c        **** ISR(USART_TX_vect)
+  39:main.c        **** {
+ 197               	.LM11:
+ 198               	.LFBB3:
+ 199 0060 1F92      		push r1
+ 200 0062 0F92      		push r0
+ 201 0064 0FB6      		in r0,__SREG__
+ 202 0066 0F92      		push r0
+ 203 0068 1124      		clr __zero_reg__
+ 204 006a 2F93      		push r18
+ 205 006c 3F93      		push r19
+ 206 006e 4F93      		push r20
+ 207 0070 5F93      		push r21
+ 208 0072 6F93      		push r22
+ 209 0074 7F93      		push r23
+ 210 0076 8F93      		push r24
+ 211 0078 9F93      		push r25
+ 212 007a AF93      		push r26
+ 213 007c BF93      		push r27
+ 214 007e EF93      		push r30
+ 215 0080 FF93      		push r31
+ 216               	/* prologue: Signal */
+ 217               	/* frame size = 0 */
+ 218               	/* stack size = 15 */
+ 219               	.L__stack_usage = 15
+  40:main.c        **** 	pushUART();
+ 221               	.LM12:
+ 222 0082 0E94 0000 		call pushUART
+ 223               	/* epilogue start */
+  41:main.c        **** }
+ 225               	.LM13:
+ 226 0086 FF91      		pop r31
+ 227 0088 EF91      		pop r30
+ 228 008a BF91      		pop r27
+ 229 008c AF91      		pop r26
+ 230 008e 9F91      		pop r25
+ 231 0090 8F91      		pop r24
+ 232 0092 7F91      		pop r23
+ 233 0094 6F91      		pop r22
+ 234 0096 5F91      		pop r21
+ 235 0098 4F91      		pop r20
+ 236 009a 3F91      		pop r19
+ 237 009c 2F91      		pop r18
+ 238 009e 0F90      		pop r0
+ 239 00a0 0FBE      		out __SREG__,r0
+ 240 00a2 0F90      		pop r0
+ 241 00a4 1F90      		pop r1
+ 242 00a6 1895      		reti
+ 244               	.Lscope3:
+ 246               		.stabd	78,0,0
+ 247               		.section	.rodata.str1.1,"aMS",@progbits,1
+ 248               	.LC0:
+ 249 0000 7465 7374 		.string	"test1"
+ 249      3100 
+ 250               	.LC1:
+ 251 0006 7465 7374 		.string	"test2"
+ 251      3200 
+ 252               		.section	.text.startup,"ax",@progbits
+ 254               	.global	main
+ 256               	main:
+ 257               		.stabd	46,0,0
+  42:main.c        **** 
+  43:main.c        **** int main(void)
+  44:main.c        **** {
+ 259               	.LM14:
+ 260               	.LFBB4:
+ 261 0000 CF93      		push r28
+ 262 0002 DF93      		push r29
+ 263 0004 CDB7      		in r28,__SP_L__
+ 264 0006 DEB7      		in r29,__SP_H__
+ 265 0008 2A97      		sbiw r28,10
+ 266 000a 0FB6      		in __tmp_reg__,__SREG__
+ 267 000c F894      		cli
+ 268 000e DEBF      		out __SP_H__,r29
+ 269 0010 0FBE      		out __SREG__,__tmp_reg__
+ 270 0012 CDBF      		out __SP_L__,r28
+ 271               	/* prologue: function */
+ 272               	/* frame size = 10 */
+ 273               	/* stack size = 12 */
+ 274               	.L__stack_usage = 12
+  45:main.c        **** 	// Set up USART stuff.
+  46:main.c        **** 	ub = c_buffer_init(uba, BUFFLEN); // Create buffer struct.
+ 276               	.LM15:
+ 277 0014 4CE3      		ldi r20,lo8(60)
+ 278 0016 50E0      		ldi r21,0
+ 279 0018 60E0      		ldi r22,lo8(uba)
+ 280 001a 70E0      		ldi r23,hi8(uba)
+ 281 001c CE01      		movw r24,r28
+ 282 001e 0196      		adiw r24,1
+ 283 0020 0E94 0000 		call c_buffer_init
+ 284 0024 8AE0      		ldi r24,lo8(10)
+ 285 0026 FE01      		movw r30,r28
+ 286 0028 3196      		adiw r30,1
+ 287 002a A0E0      		ldi r26,lo8(ub)
+ 288 002c B0E0      		ldi r27,hi8(ub)
+ 289               		0:
+ 290 002e 0190      		ld r0,Z+
+ 291 0030 0D92      		st X+,r0
+ 292 0032 8A95      		dec r24
+ 293 0034 01F4      		brne 0b
+  47:main.c        **** 	UCSR0B = (1<<TXCIE0)|(1<<TXEN0); // TX complete interrupt enable, TX enable.
+ 295               	.LM16:
+ 296 0036 88E4      		ldi r24,lo8(72)
+ 297 0038 8093 C100 		sts 193,r24
+  48:main.c        **** 	UCSR0C = (1<<UCSZ01)|(1<<UCSZ00); // 8-bit, 1 stop, no parity.
+ 299               	.LM17:
+ 300 003c 86E0      		ldi r24,lo8(6)
+ 301 003e 8093 C200 		sts 194,r24
+  49:main.c        **** 	UBRR0 = 51; // 9600 baud @ 8MHz clock.
+ 303               	.LM18:
+ 304 0042 83E3      		ldi r24,lo8(51)
+ 305 0044 90E0      		ldi r25,0
+ 306 0046 9093 C500 		sts 196+1,r25
+ 307 004a 8093 C400 		sts 196,r24
+  50:main.c        **** 
+  51:main.c        **** 	// IO
+  52:main.c        **** 	DDRB = 0xFF;
+ 309               	.LM19:
+ 310 004e 8FEF      		ldi r24,lo8(-1)
+ 311 0050 84B9      		out 0x4,r24
+  53:main.c        **** 	DDRD = 0xFF;
+ 313               	.LM20:
+ 314 0052 8AB9      		out 0xa,r24
+  54:main.c        **** 
+  55:main.c        **** 	delay_ms(50); // Let things settle.
+ 316               	.LM21:
+ 317 0054 82E3      		ldi r24,lo8(50)
+ 318 0056 90E0      		ldi r25,0
+ 319 0058 0E94 0000 		call delay_ms
+  56:main.c        ****   	sei(); // Enable interrupts.
+ 321               	.LM22:
+ 322               	/* #APP */
+ 323               	 ;  56 "main.c" 1
+ 324 005c 7894      		sei
+ 325               	 ;  0 "" 2
+  57:main.c        **** 
+  58:main.c        **** 	CPUT(0xFE); CPUT(0x41); // Display on.
+ 327               	.LM23:
+ 328               	/* #NOAPP */
+ 329 005e 6EEF      		ldi r22,lo8(-2)
+ 330 0060 80E0      		ldi r24,lo8(ub)
+ 331 0062 90E0      		ldi r25,hi8(ub)
+ 332 0064 0E94 0000 		call c_buffer_write
+ 333 0068 0E94 0000 		call pushUART
+ 334 006c 61E4      		ldi r22,lo8(65)
+ 335 006e 80E0      		ldi r24,lo8(ub)
+ 336 0070 90E0      		ldi r25,hi8(ub)
+ 337 0072 0E94 0000 		call c_buffer_write
+ 338 0076 0E94 0000 		call pushUART
+  59:main.c        **** 	CPUT(0xFE); CPUT(0x46); // Cursor home.
+ 340               	.LM24:
+ 341 007a 6EEF      		ldi r22,lo8(-2)
+ 342 007c 80E0      		ldi r24,lo8(ub)
+ 343 007e 90E0      		ldi r25,hi8(ub)
+ 344 0080 0E94 0000 		call c_buffer_write
+ 345 0084 0E94 0000 		call pushUART
+ 346 0088 66E4      		ldi r22,lo8(70)
+ 347 008a 80E0      		ldi r24,lo8(ub)
+ 348 008c 90E0      		ldi r25,hi8(ub)
+ 349 008e 0E94 0000 		call c_buffer_write
+ 350 0092 0E94 0000 		call pushUART
+  60:main.c        **** 	CPUT(0xFE); CPUT(0x53); CPUT(0x04); // Backlight brightness 4.
+ 352               	.LM25:
+ 353 0096 6EEF      		ldi r22,lo8(-2)
+ 354 0098 80E0      		ldi r24,lo8(ub)
+ 355 009a 90E0      		ldi r25,hi8(ub)
+ 356 009c 0E94 0000 		call c_buffer_write
+ 357 00a0 0E94 0000 		call pushUART
+ 358 00a4 63E5      		ldi r22,lo8(83)
+ 359 00a6 80E0      		ldi r24,lo8(ub)
+ 360 00a8 90E0      		ldi r25,hi8(ub)
+ 361 00aa 0E94 0000 		call c_buffer_write
+ 362 00ae 0E94 0000 		call pushUART
+ 363 00b2 64E0      		ldi r22,lo8(4)
+ 364 00b4 80E0      		ldi r24,lo8(ub)
+ 365 00b6 90E0      		ldi r25,hi8(ub)
+ 366 00b8 0E94 0000 		call c_buffer_write
+ 367 00bc 0E94 0000 		call pushUART
+  61:main.c        **** 
+  62:main.c        **** 	//CPUT('t'); //
+  63:main.c        **** 	//CPUT('e'); //
+  64:main.c        **** 	//CPUT('s'); //
+  65:main.c        **** 	//CPUT('t'); //
+  66:main.c        **** 	str2lcd("test1");
+ 369               	.LM26:
+ 370 00c0 80E0      		ldi r24,lo8(.LC0)
+ 371 00c2 90E0      		ldi r25,hi8(.LC0)
+ 372 00c4 0E94 0000 		call str2lcd
+  67:main.c        **** 
+  68:main.c        **** 	lcd_init(LCD_DISP_ON);
+ 374               	.LM27:
+ 375 00c8 8CE0      		ldi r24,lo8(12)
+ 376 00ca 0E94 0000 		call lcd_init
+  69:main.c        **** 	lcd_clrscr();
+ 378               	.LM28:
+ 379 00ce 0E94 0000 		call lcd_clrscr
+  70:main.c        **** 	lcd_puts("test2");
+ 381               	.LM29:
+ 382 00d2 80E0      		ldi r24,lo8(.LC1)
+ 383 00d4 90E0      		ldi r25,hi8(.LC1)
+ 384 00d6 0E94 0000 		call lcd_puts
+ 385               	.L12:
+  71:main.c        **** 
+  72:main.c        **** 	while(1)
+  73:main.c        ****   	{
+  74:main.c        **** 		delay_ms(5000);
+ 387               	.LM30:
+ 388 00da 88E8      		ldi r24,lo8(-120)
+ 389 00dc 93E1      		ldi r25,lo8(19)
+ 390 00de 0E94 0000 		call delay_ms
+  75:main.c        **** 		CPUT(0xFE); CPUT(0x53); CPUT(0x01); // Backlight brightness 4.
+ 392               	.LM31:
+ 393 00e2 6EEF      		ldi r22,lo8(-2)
+ 394 00e4 80E0      		ldi r24,lo8(ub)
+ 395 00e6 90E0      		ldi r25,hi8(ub)
+ 396 00e8 0E94 0000 		call c_buffer_write
+ 397 00ec 0E94 0000 		call pushUART
+ 398 00f0 63E5      		ldi r22,lo8(83)
+ 399 00f2 80E0      		ldi r24,lo8(ub)
+ 400 00f4 90E0      		ldi r25,hi8(ub)
+ 401 00f6 0E94 0000 		call c_buffer_write
+ 402 00fa 0E94 0000 		call pushUART
+ 403 00fe 61E0      		ldi r22,lo8(1)
+ 404 0100 80E0      		ldi r24,lo8(ub)
+ 405 0102 90E0      		ldi r25,hi8(ub)
+ 406 0104 0E94 0000 		call c_buffer_write
+ 407 0108 0E94 0000 		call pushUART
+  76:main.c        **** 		delay_ms(5000);
+ 409               	.LM32:
+ 410 010c 88E8      		ldi r24,lo8(-120)
+ 411 010e 93E1      		ldi r25,lo8(19)
+ 412 0110 0E94 0000 		call delay_ms
+  77:main.c        **** 		CPUT(0xFE); CPUT(0x53); CPUT(0x08); // Backlight brightness 4.
+ 414               	.LM33:
+ 415 0114 6EEF      		ldi r22,lo8(-2)
+ 416 0116 80E0      		ldi r24,lo8(ub)
+ 417 0118 90E0      		ldi r25,hi8(ub)
+ 418 011a 0E94 0000 		call c_buffer_write
+ 419 011e 0E94 0000 		call pushUART
+ 420 0122 63E5      		ldi r22,lo8(83)
+ 421 0124 80E0      		ldi r24,lo8(ub)
+ 422 0126 90E0      		ldi r25,hi8(ub)
+ 423 0128 0E94 0000 		call c_buffer_write
+ 424 012c 0E94 0000 		call pushUART
+ 425 0130 68E0      		ldi r22,lo8(8)
+ 426 0132 80E0      		ldi r24,lo8(ub)
+ 427 0134 90E0      		ldi r25,hi8(ub)
+ 428 0136 0E94 0000 		call c_buffer_write
+ 429 013a 0E94 0000 		call pushUART
+ 430 013e 00C0      		rjmp .L12
+ 432               	.Lscope4:
+ 434               		.stabd	78,0,0
+ 435               		.comm	ub,10,1
+ 436               		.comm	uba,60,1
+ 439               		.text
+ 441               	.Letext0:
+ 442               		.ident	"GCC: (GNU) 4.7.2"
+ 443               	.global __do_copy_data
+ 444               	.global __do_clear_bss
+DEFINED SYMBOLS
+                            *ABS*:0000000000000000 main.c
+     /tmp/ccYeosm8.s:2      *ABS*:000000000000003e __SP_H__
+     /tmp/ccYeosm8.s:3      *ABS*:000000000000003d __SP_L__
+     /tmp/ccYeosm8.s:4      *ABS*:000000000000003f __SREG__
+     /tmp/ccYeosm8.s:5      *ABS*:0000000000000000 __tmp_reg__
+     /tmp/ccYeosm8.s:6      *ABS*:0000000000000001 __zero_reg__
+     /tmp/ccYeosm8.s:85     .text:0000000000000000 pushUART
+                            *COM*:000000000000000a ub
+     /tmp/ccYeosm8.s:139    .text:0000000000000032 str2lcd
+     /tmp/ccYeosm8.s:194    .text:0000000000000060 __vector_20
+     /tmp/ccYeosm8.s:256    .text.startup:0000000000000000 main
+                            *COM*:000000000000003c uba
+
+UNDEFINED SYMBOLS
+c_buffer_read
+c_buffer_write
+c_buffer_init
+delay_ms
+lcd_init
+lcd_clrscr
+lcd_puts
+__do_copy_data
+__do_clear_bss

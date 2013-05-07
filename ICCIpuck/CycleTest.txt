@@ -1,0 +1,7 @@
+1/11
+4:32 PM  - 5 lights - 4.1v - Full charge
+5:55 PM  - 4 lights - 3.9v
+9:47 PM  - Test paused - 3.7v
+1/12
+9:16 AM  - Test resumed - 3.7v
+11:05 AM - 3 lights - 3.6v

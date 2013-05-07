@@ -1,0 +1,1117 @@
+   1               		.file	"main.c"
+   2               	__SREG__ = 0x3f
+   3               	__SP_H__ = 0x3e
+   4               	__SP_L__ = 0x3d
+   5               	__tmp_reg__ = 0
+   6               	__zero_reg__ = 1
+   7               		.global __do_copy_data
+   8               		.global __do_clear_bss
+  11               		.text
+  12               	.Ltext0:
+  96               		.data
+  97               	.LC0:
+  98 0000 5359 5354 		.string	"SYSTEM BOOTING\nSEGUE"
+  98      454D 2042 
+  98      4F4F 5449 
+  98      4E47 0A53 
+  98      4547 5545 
+  99               	.LC1:
+ 100 0015 5469 6C74 		.string	"Tilt: "
+ 100      3A20 00
+ 101               	.LC2:
+ 102 001c 0A47 7972 		.string	"\nGyro: "
+ 102      6F3A 2000 
+ 103               	.LC3:
+ 104 0024 4341 4C00 		.string	"CAL"
+ 105               		.section	.text.startup,"ax",@progbits
+ 107               	.global	main
+ 109               	main:
+ 110               		.stabd	46,0,0
+   0:main.c        **** /* Wireless tester*/
+   1:main.c        **** 
+   2:main.c        **** #include <avr/io.h>
+   3:main.c        **** #include <avr/interrupt.h>    
+   4:main.c        **** #include <stdlib.h>
+   5:main.c        **** #include <math.h>
+   6:main.c        **** #include "lcd.h"
+   7:main.c        **** #include "util.h"
+   8:main.c        **** #include "nrf.h"
+   9:main.c        **** 
+  10:main.c        **** /* --- Pins ---
+  11:main.c        ****  * PORT B:        | PORT C:       | PORT D: 
+  12:main.c        ****  * PBO - radio_ce | PC0 -         | PD0 - LCD D4
+  13:main.c        ****  * PB1 -          | PC1 -         | PD1 - LCD D5 
+  14:main.c        ****  * PB2 - radio_csn| PC2 -         | PD2 - LCD D6  
+  15:main.c        ****  * PB3 - MOSI     | PC3 -         | PD3 - LCD D7
+  16:main.c        ****  * PB4 - MISO     | PC4 - i2c     | PD4 - LCD RS
+  17:main.c        ****  * PB5 - SCK      | PC5 - i2c     | PD5 - LCD RW
+  18:main.c        ****  * PB6 -          |               | PD6 - LCD EN
+  19:main.c        ****  * PB7 -          |               | PD7 - 
+  20:main.c        ****  * 
+  21:main.c        ****  */
+  22:main.c        **** 
+  23:main.c        **** /// Globals ///
+  24:main.c        **** char buffer[9]; // Buffer for string conversion.
+  25:main.c        **** 
+  26:main.c        **** #define TILTRBSIZE 80
+  27:main.c        **** #define GYRORBSIZE 10	
+  28:main.c        **** 
+  29:main.c        **** double tilt = 0.0;
+  30:main.c        **** double gyro = 0.0;
+  31:main.c        **** uint16_t tilt_rb[TILTRBSIZE];
+  32:main.c        **** uint16_t gyro_rb[GYRORBSIZE];
+  33:main.c        **** uint8_t tilt_index = 0;
+  34:main.c        **** uint8_t gyro_index = 0;
+  35:main.c        **** double gyro_steadystate = -0.24;
+  36:main.c        **** double tilt_zero = -1.9;
+  37:main.c        **** uint8_t calibrate_count = 0;
+  38:main.c        **** uint8_t tilt_count = 0;
+  39:main.c        **** double tilt_min = 0;
+  40:main.c        **** double tilt_max = 0;
+  41:main.c        **** 
+  42:main.c        **** #define INTEGRATE_TIME 0.03264 // 8000000/1024/256 = ~30; 1/30 = ~0.03
+  43:main.c        **** #define TILT_THRESHOLD 0.5 // Delta degrees allowed for tilt gyro calibration.
+  44:main.c        **** #define TILT_CALFREQ 5 // Frequency of tilt calibrate. Lower = more often. Shouldn't be too often..
+  45:main.c        **** #define OFFSET_STRENGTH 0.25 // Percentage strength of tilt offset tweak. Should never be over 1.0
+  46:main.c        **** 
+  47:main.c        **** 
+  48:main.c        **** int main(void)
+  49:main.c        **** {
+ 112               	.LM0:
+ 113               	.LFBB1:
+ 114               	/* prologue: function */
+ 115               	/* frame size = 0 */
+ 116               	/* stack size = 0 */
+ 117               	.L__stack_usage = 0
+  50:main.c        **** 	DDRD = 0b01111111; // LCD lines.
+ 119               	.LM1:
+ 120 0000 8FE7      		ldi r24,lo8(127)
+ 121 0002 8AB9      		out 42-0x20,r24
+  51:main.c        **** 	//DDRC = 0b00001111; // LCD lines.
+  52:main.c        **** 	PORTB |= (1<<PB1); // Enable pull-up on button.
+ 123               	.LM2:
+ 124 0004 299A      		sbi 37-0x20,1
+  53:main.c        **** 	
+  54:main.c        **** 	//PORTC = (1<<PC4)|(1<<PC5); // Enable pull-ups on i2c pins.
+  55:main.c        **** 
+  56:main.c        **** 	lcd_init(LCD_DISP_ON); // LCD on, cursor off.
+ 126               	.LM3:
+ 127 0006 8CE0      		ldi r24,lo8(12)
+ 128 0008 0E94 0000 		call lcd_init
+  57:main.c        **** 	lcd_clrscr();
+ 130               	.LM4:
+ 131 000c 0E94 0000 		call lcd_clrscr
+  58:main.c        **** 	lcd_puts("SYSTEM BOOTING\nSEGUE"); // Some debug data for the LCD.
+ 133               	.LM5:
+ 134 0010 80E0      		ldi r24,lo8(.LC0)
+ 135 0012 90E0      		ldi r25,hi8(.LC0)
+ 136 0014 0E94 0000 		call lcd_puts
+  59:main.c        **** 	
+  60:main.c        **** 	ADMUX = (1<<REFS0)|(0<<MUX0); // AVCC reference, pin select.
+ 138               	.LM6:
+ 139 0018 80E4      		ldi r24,lo8(64)
+ 140 001a 8093 7C00 		sts 124,r24
+  61:main.c        **** 	ADCSRA = (1<<ADEN)|(1<<ADPS2)|(1<<ADPS0)|(1<<ADIE); // Enable ADC, precsaler x64, enable interrupt
+ 142               	.LM7:
+ 143 001e 8DE8      		ldi r24,lo8(-115)
+ 144 0020 8093 7A00 		sts 122,r24
+  62:main.c        **** 	DIDR0 = (1<<ADC0D)|(1<<ADC1D); // Disable digital input buffer on ADC0 & 1.
+ 146               	.LM8:
+ 147 0024 83E0      		ldi r24,lo8(3)
+ 148 0026 8093 7E00 		sts 126,r24
+  63:main.c        **** 	
+  64:main.c        **** 	TCCR0A = 0;
+ 150               	.LM9:
+ 151 002a 14BC      		out 68-0x20,__zero_reg__
+  65:main.c        **** 	TCCR0B = (1<<CS02)|(1<<CS00); // Prescale by 1024
+ 153               	.LM10:
+ 154 002c 85E0      		ldi r24,lo8(5)
+ 155 002e 85BD      		out 69-0x20,r24
+  66:main.c        **** 	TIMSK0 = (1<<TOIE0);
+ 157               	.LM11:
+ 158 0030 81E0      		ldi r24,lo8(1)
+ 159 0032 8093 6E00 		sts 110,r24
+  67:main.c        **** 	
+  68:main.c        **** 	delay_ms(100);
+ 161               	.LM12:
+ 162 0036 84E6      		ldi r24,lo8(100)
+ 163 0038 90E0      		ldi r25,hi8(100)
+ 164 003a 0E94 0000 		call delay_ms
+  69:main.c        **** 	
+  70:main.c        **** 	sei();
+ 166               	.LM13:
+ 167               	/* #APP */
+ 168               	 ;  71 "main.c" 1
+ 169 003e 7894      		sei
+ 170               	 ;  0 "" 2
+  71:main.c        **** 	
+  72:main.c        **** 	ADCSRA |= (1<<ADSC);
+ 172               	.LM14:
+ 173               	/* #NOAPP */
+ 174 0040 8091 7A00 		lds r24,122
+ 175 0044 8064      		ori r24,lo8(64)
+ 176 0046 8093 7A00 		sts 122,r24
+ 177               	.LBB2:
+  73:main.c        **** 	
+  74:main.c        **** 	//nrf_init();
+  75:main.c        **** 	//CE_UP; // Enable radio.
+  76:main.c        **** 	
+  77:main.c        **** 	//delay_ms(1000);
+  78:main.c        **** 	
+  79:main.c        **** 	//lcd_clrscr();
+  80:main.c        **** 	//lcd_puts("Press start..."); // Some debug data for the LCD.
+  81:main.c        **** 
+  82:main.c        **** 	
+  83:main.c        **** 	while(1)
+  84:main.c        **** 	{	
+  85:main.c        **** 		uint32_t value = 0;
+  86:main.c        **** 		for(uint8_t i = 0;i<TILTRBSIZE;i++) value += tilt_rb[i];
+  87:main.c        **** 		value /= TILTRBSIZE;
+ 179               	.LM15:
+ 180 004a 80E5      		ldi r24,lo8(80)
+ 181 004c 882E      		mov r8,r24
+ 182 004e 912C      		mov r9,__zero_reg__
+ 183 0050 A12C      		mov r10,__zero_reg__
+ 184 0052 B12C      		mov r11,__zero_reg__
+  88:main.c        **** 		
+  89:main.c        **** 		tilt = asin(((double)value / 512.0) - 1.0) * 180.0 * M_1_PI * 0.45;
+  90:main.c        **** 		if(bit_is_clear(PINB,PB1) && !calibrate_count) 
+  91:main.c        **** 		{
+  92:main.c        **** 			cli();
+  93:main.c        **** 			tilt_zero = tilt;
+  94:main.c        **** 			calibrate_count = 1;
+ 186               	.LM16:
+ 187 0054 7724      		clr r7
+ 188 0056 7394      		inc r7
+  95:main.c        **** 			gyro_steadystate = 0.0;
+ 190               	.LM17:
+ 191 0058 0F2E      		mov __tmp_reg__,r31
+ 192 005a F0E0      		ldi r31,lo8(0x0)
+ 193 005c CF2E      		mov r12,r31
+ 194 005e F0E0      		ldi r31,hi8(0x0)
+ 195 0060 DF2E      		mov r13,r31
+ 196 0062 F0E0      		ldi r31,hlo8(0x0)
+ 197 0064 EF2E      		mov r14,r31
+ 198 0066 F0E0      		ldi r31,hhi8(0x0)
+ 199 0068 FF2E      		mov r15,r31
+ 200 006a F02D      		mov r31,__tmp_reg__
+ 201               	.L6:
+ 202               	.LBE2:
+  73:main.c        **** 	
+ 204               	.LM18:
+ 205 006c E0E0      		ldi r30,lo8(tilt_rb)
+ 206 006e F0E0      		ldi r31,hi8(tilt_rb)
+  50:main.c        **** {
+ 208               	.LM19:
+ 209 0070 20E5      		ldi r18,lo8(80)
+  86:main.c        **** 		uint32_t value = 0;
+ 211               	.LM20:
+ 212 0072 40E0      		ldi r20,lo8(0)
+ 213 0074 50E0      		ldi r21,hi8(0)
+ 214 0076 60E0      		ldi r22,hlo8(0)
+ 215 0078 70E0      		ldi r23,hhi8(0)
+ 216               	.L2:
+ 217               	.LBB4:
+ 218               	.LBB3:
+  87:main.c        **** 		for(uint8_t i = 0;i<TILTRBSIZE;i++) value += tilt_rb[i];
+ 220               	.LM21:
+ 221 007a 8191      		ld r24,Z+
+ 222 007c 9191      		ld r25,Z+
+ 223 007e A0E0      		ldi r26,lo8(0)
+ 224 0080 B0E0      		ldi r27,hi8(0)
+ 225 0082 480F      		add r20,r24
+ 226 0084 591F      		adc r21,r25
+ 227 0086 6A1F      		adc r22,r26
+ 228 0088 7B1F      		adc r23,r27
+ 229 008a 2150      		subi r18,lo8(-(-1))
+ 230 008c 01F4      		brne .L2
+ 231               	.LBE3:
+  88:main.c        **** 		value /= TILTRBSIZE;
+ 233               	.LM22:
+ 234 008e CB01      		movw r24,r22
+ 235 0090 BA01      		movw r22,r20
+ 236 0092 A501      		movw r20,r10
+ 237 0094 9401      		movw r18,r8
+ 238 0096 0E94 0000 		call __udivmodsi4
+  90:main.c        **** 		tilt = asin(((double)value / 512.0) - 1.0) * 180.0 * M_1_PI * 0.45;
+ 240               	.LM23:
+ 241 009a CA01      		movw r24,r20
+ 242 009c B901      		movw r22,r18
+ 243 009e 0E94 0000 		call __floatunsisf
+ 244 00a2 20E0      		ldi r18,lo8(0x3b000000)
+ 245 00a4 30E0      		ldi r19,hi8(0x3b000000)
+ 246 00a6 40E0      		ldi r20,hlo8(0x3b000000)
+ 247 00a8 5BE3      		ldi r21,hhi8(0x3b000000)
+ 248 00aa 0E94 0000 		call __mulsf3
+ 249 00ae 20E0      		ldi r18,lo8(0x3f800000)
+ 250 00b0 30E0      		ldi r19,hi8(0x3f800000)
+ 251 00b2 40E8      		ldi r20,hlo8(0x3f800000)
+ 252 00b4 5FE3      		ldi r21,hhi8(0x3f800000)
+ 253 00b6 0E94 0000 		call __subsf3
+ 254 00ba 0E94 0000 		call asin
+ 255 00be 20E0      		ldi r18,lo8(0x43340000)
+ 256 00c0 30E0      		ldi r19,hi8(0x43340000)
+ 257 00c2 44E3      		ldi r20,hlo8(0x43340000)
+ 258 00c4 53E4      		ldi r21,hhi8(0x43340000)
+ 259 00c6 0E94 0000 		call __mulsf3
+ 260 00ca 23E8      		ldi r18,lo8(0x3ea2f983)
+ 261 00cc 39EF      		ldi r19,hi8(0x3ea2f983)
+ 262 00ce 42EA      		ldi r20,hlo8(0x3ea2f983)
+ 263 00d0 5EE3      		ldi r21,hhi8(0x3ea2f983)
+ 264 00d2 0E94 0000 		call __mulsf3
+ 265 00d6 26E6      		ldi r18,lo8(0x3ee66666)
+ 266 00d8 36E6      		ldi r19,hi8(0x3ee66666)
+ 267 00da 46EE      		ldi r20,hlo8(0x3ee66666)
+ 268 00dc 5EE3      		ldi r21,hhi8(0x3ee66666)
+ 269 00de 0E94 0000 		call __mulsf3
+ 270 00e2 DC01      		movw r26,r24
+ 271 00e4 CB01      		movw r24,r22
+ 272 00e6 8093 0000 		sts tilt,r24
+ 273 00ea 9093 0000 		sts tilt+1,r25
+ 274 00ee A093 0000 		sts tilt+2,r26
+ 275 00f2 B093 0000 		sts tilt+3,r27
+  91:main.c        **** 		if(bit_is_clear(PINB,PB1) && !calibrate_count) 
+ 277               	.LM24:
+ 278 00f6 1999      		sbic 35-0x20,1
+ 279 00f8 00C0      		rjmp .L3
+  91:main.c        **** 		if(bit_is_clear(PINB,PB1) && !calibrate_count) 
+ 281               	.LM25:
+ 282 00fa 8091 0000 		lds r24,calibrate_count
+ 283 00fe 8823      		tst r24
+ 284 0100 01F4      		brne .L3
+  93:main.c        **** 			cli();
+ 286               	.LM26:
+ 287               	/* #APP */
+ 288               	 ;  93 "main.c" 1
+ 289 0102 F894      		cli
+ 290               	 ;  0 "" 2
+  94:main.c        **** 			tilt_zero = tilt;
+ 292               	.LM27:
+ 293               	/* #NOAPP */
+ 294 0104 8091 0000 		lds r24,tilt
+ 295 0108 9091 0000 		lds r25,tilt+1
+ 296 010c A091 0000 		lds r26,tilt+2
+ 297 0110 B091 0000 		lds r27,tilt+3
+ 298 0114 8093 0000 		sts tilt_zero,r24
+ 299 0118 9093 0000 		sts tilt_zero+1,r25
+ 300 011c A093 0000 		sts tilt_zero+2,r26
+ 301 0120 B093 0000 		sts tilt_zero+3,r27
+  95:main.c        **** 			calibrate_count = 1;
+ 303               	.LM28:
+ 304 0124 7092 0000 		sts calibrate_count,r7
+ 306               	.LM29:
+ 307 0128 C092 0000 		sts gyro_steadystate,r12
+ 308 012c D092 0000 		sts gyro_steadystate+1,r13
+ 309 0130 E092 0000 		sts gyro_steadystate+2,r14
+ 310 0134 F092 0000 		sts gyro_steadystate+3,r15
+  96:main.c        **** 			gyro = 0;
+ 312               	.LM30:
+ 313 0138 C092 0000 		sts gyro,r12
+ 314 013c D092 0000 		sts gyro+1,r13
+ 315 0140 E092 0000 		sts gyro+2,r14
+ 316 0144 F092 0000 		sts gyro+3,r15
+  97:main.c        **** 			sei();
+ 318               	.LM31:
+ 319               	/* #APP */
+ 320               	 ;  98 "main.c" 1
+ 321 0148 7894      		sei
+ 322               	 ;  0 "" 2
+ 323               	/* #NOAPP */
+ 324               	.L3:
+  98:main.c        **** 		}
+  99:main.c        **** 		tilt -= tilt_zero;
+ 326               	.LM32:
+ 327 014a 6091 0000 		lds r22,tilt
+ 328 014e 7091 0000 		lds r23,tilt+1
+ 329 0152 8091 0000 		lds r24,tilt+2
+ 330 0156 9091 0000 		lds r25,tilt+3
+ 331 015a 2091 0000 		lds r18,tilt_zero
+ 332 015e 3091 0000 		lds r19,tilt_zero+1
+ 333 0162 4091 0000 		lds r20,tilt_zero+2
+ 334 0166 5091 0000 		lds r21,tilt_zero+3
+ 335 016a 0E94 0000 		call __subsf3
+ 336 016e DC01      		movw r26,r24
+ 337 0170 CB01      		movw r24,r22
+ 338 0172 8093 0000 		sts tilt,r24
+ 339 0176 9093 0000 		sts tilt+1,r25
+ 340 017a A093 0000 		sts tilt+2,r26
+ 341 017e B093 0000 		sts tilt+3,r27
+ 100:main.c        **** 		
+ 101:main.c        **** 		lcd_clrscr();
+ 343               	.LM33:
+ 344 0182 0E94 0000 		call lcd_clrscr
+ 102:main.c        **** 		lcd_puts("Tilt: ");
+ 346               	.LM34:
+ 347 0186 80E0      		ldi r24,lo8(.LC1)
+ 348 0188 90E0      		ldi r25,hi8(.LC1)
+ 349 018a 0E94 0000 		call lcd_puts
+ 103:main.c        **** 		dtostrf(tilt, 3, 1, buffer);
+ 351               	.LM35:
+ 352 018e 6091 0000 		lds r22,tilt
+ 353 0192 7091 0000 		lds r23,tilt+1
+ 354 0196 8091 0000 		lds r24,tilt+2
+ 355 019a 9091 0000 		lds r25,tilt+3
+ 356 019e 43E0      		ldi r20,lo8(3)
+ 357 01a0 21E0      		ldi r18,lo8(1)
+ 358 01a2 00E0      		ldi r16,lo8(buffer)
+ 359 01a4 10E0      		ldi r17,hi8(buffer)
+ 360 01a6 0E94 0000 		call dtostrf
+ 104:main.c        **** 		lcd_puts(buffer);
+ 362               	.LM36:
+ 363 01aa C801      		movw r24,r16
+ 364 01ac 0E94 0000 		call lcd_puts
+ 105:main.c        **** 		lcd_puts("\nGyro: ");
+ 366               	.LM37:
+ 367 01b0 80E0      		ldi r24,lo8(.LC2)
+ 368 01b2 90E0      		ldi r25,hi8(.LC2)
+ 369 01b4 0E94 0000 		call lcd_puts
+ 106:main.c        **** 		if(calibrate_count) lcd_puts("CAL");
+ 371               	.LM38:
+ 372 01b8 8091 0000 		lds r24,calibrate_count
+ 373 01bc 8823      		tst r24
+ 374 01be 01F0      		breq .L4
+ 376               	.LM39:
+ 377 01c0 80E0      		ldi r24,lo8(.LC3)
+ 378 01c2 90E0      		ldi r25,hi8(.LC3)
+ 379 01c4 00C0      		rjmp .L8
+ 380               	.L4:
+ 107:main.c        **** 		else
+ 108:main.c        **** 		{
+ 109:main.c        **** 			dtostrf(gyro, 3, 1, buffer);
+ 382               	.LM40:
+ 383 01c6 6091 0000 		lds r22,gyro
+ 384 01ca 7091 0000 		lds r23,gyro+1
+ 385 01ce 8091 0000 		lds r24,gyro+2
+ 386 01d2 9091 0000 		lds r25,gyro+3
+ 387 01d6 43E0      		ldi r20,lo8(3)
+ 388 01d8 21E0      		ldi r18,lo8(1)
+ 389 01da 00E0      		ldi r16,lo8(buffer)
+ 390 01dc 10E0      		ldi r17,hi8(buffer)
+ 391 01de 0E94 0000 		call dtostrf
+ 110:main.c        **** 			lcd_puts(buffer);
+ 393               	.LM41:
+ 394 01e2 C801      		movw r24,r16
+ 395               	.L8:
+ 396 01e4 0E94 0000 		call lcd_puts
+ 111:main.c        **** 		}
+ 112:main.c        **** 		
+ 113:main.c        **** 		/*if(nrf_last_status & (1<<MAX_RT))
+ 114:main.c        **** 		{
+ 115:main.c        **** 			lcd_puts("\nRe-tx max hit.");
+ 116:main.c        **** 			SS_DOWN;
+ 117:main.c        **** 			SPI_WRITE(W_REGISTER | NRG_STATUS);
+ 118:main.c        **** 			SPI_WRITE(0x7F & (1<<MAX_RT));
+ 119:main.c        **** 			SS_UP;
+ 120:main.c        **** 			delay_us(1);
+ 121:main.c        **** 			SS_DOWN;
+ 122:main.c        **** 			SPI_WRITE(NOP);
+ 123:main.c        **** 			SS_UP;
+ 124:main.c        **** 			nrf_last_status = SPDR;
+ 125:main.c        **** 			delay_us(1);
+ 126:main.c        **** 		}*/
+ 127:main.c        **** 	
+ 128:main.c        **** 		
+ 129:main.c        **** 		delay_ms(100);
+ 398               	.LM42:
+ 399 01e8 84E6      		ldi r24,lo8(100)
+ 400 01ea 90E0      		ldi r25,hi8(100)
+ 401 01ec 0E94 0000 		call delay_ms
+ 402               	.LBE4:
+ 130:main.c        **** 
+ 131:main.c        **** 	}
+ 404               	.LM43:
+ 405 01f0 00C0      		rjmp .L6
+ 407               	.Lscope1:
+ 409               		.stabd	78,0,0
+ 410               		.text
+ 412               	.global	__vector_16
+ 414               	__vector_16:
+ 415               		.stabd	46,0,0
+ 132:main.c        **** 	
+ 133:main.c        **** 	return 0; // This shouldn't run, but it makes gcc happy.
+ 134:main.c        **** }
+ 135:main.c        **** 
+ 136:main.c        **** 
+ 137:main.c        **** ISR(TIMER0_OVF_vect) // Integrator timer.
+ 138:main.c        **** {
+ 417               	.LM44:
+ 418               	.LFBB2:
+ 419 0000 1F92      		push r1
+ 420 0002 0F92      		push r0
+ 421 0004 0FB6      		in r0,__SREG__
+ 422 0006 0F92      		push r0
+ 423 0008 1124      		clr __zero_reg__
+ 424 000a 4F92      		push r4
+ 425 000c 5F92      		push r5
+ 426 000e 6F92      		push r6
+ 427 0010 7F92      		push r7
+ 428 0012 AF92      		push r10
+ 429 0014 BF92      		push r11
+ 430 0016 CF92      		push r12
+ 431 0018 DF92      		push r13
+ 432 001a EF92      		push r14
+ 433 001c FF92      		push r15
+ 434 001e 0F93      		push r16
+ 435 0020 1F93      		push r17
+ 436 0022 2F93      		push r18
+ 437 0024 3F93      		push r19
+ 438 0026 4F93      		push r20
+ 439 0028 5F93      		push r21
+ 440 002a 6F93      		push r22
+ 441 002c 7F93      		push r23
+ 442 002e 8F93      		push r24
+ 443 0030 9F93      		push r25
+ 444 0032 AF93      		push r26
+ 445 0034 BF93      		push r27
+ 446 0036 EF93      		push r30
+ 447 0038 FF93      		push r31
+ 448 003a CF93      		push r28
+ 449 003c DF93      		push r29
+ 450 003e 00D0      		rcall .
+ 451 0040 00D0      		rcall .
+ 452 0042 CDB7      		in r28,__SP_L__
+ 453 0044 DEB7      		in r29,__SP_H__
+ 454               	/* prologue: Signal */
+ 455               	/* frame size = 4 */
+ 456               	/* stack size = 33 */
+ 457               	.L__stack_usage = 33
+ 139:main.c        **** 	uint32_t value = 0;
+ 140:main.c        **** 	double hold = 0.0;
+ 459               	.LM45:
+ 460 0046 E0E0      		ldi r30,lo8(gyro_rb)
+ 461 0048 F0E0      		ldi r31,hi8(gyro_rb)
+ 141:main.c        **** 	for(uint8_t i = 0;i<GYRORBSIZE;i++) value += gyro_rb[i];
+ 463               	.LM46:
+ 464 004a 20E0      		ldi r18,lo8(0)
+ 140:main.c        **** 	uint32_t value = 0;
+ 466               	.LM47:
+ 467 004c 40E0      		ldi r20,lo8(0)
+ 468 004e 50E0      		ldi r21,hi8(0)
+ 469 0050 60E0      		ldi r22,hlo8(0)
+ 470 0052 70E0      		ldi r23,hhi8(0)
+ 471               	.L10:
+ 472               	.LBB5:
+ 474               	.LM48:
+ 475 0054 8191      		ld r24,Z+
+ 476 0056 9191      		ld r25,Z+
+ 477 0058 A0E0      		ldi r26,lo8(0)
+ 478 005a B0E0      		ldi r27,hi8(0)
+ 479 005c 480F      		add r20,r24
+ 480 005e 591F      		adc r21,r25
+ 481 0060 6A1F      		adc r22,r26
+ 482 0062 7B1F      		adc r23,r27
+ 483 0064 2F5F      		subi r18,lo8(-(1))
+ 484 0066 2A30      		cpi r18,lo8(10)
+ 485 0068 01F4      		brne .L10
+ 486               	.LBE5:
+ 142:main.c        **** 	value /= GYRORBSIZE;
+ 488               	.LM49:
+ 489 006a CB01      		movw r24,r22
+ 490 006c BA01      		movw r22,r20
+ 491 006e 2AE0      		ldi r18,lo8(10)
+ 492 0070 30E0      		ldi r19,hi8(10)
+ 493 0072 40E0      		ldi r20,hlo8(10)
+ 494 0074 50E0      		ldi r21,hhi8(10)
+ 495 0076 0E94 0000 		call __udivmodsi4
+ 143:main.c        **** 	
+ 144:main.c        **** 	if(calibrate_count == 0) 
+ 497               	.LM50:
+ 498 007a 8091 0000 		lds r24,calibrate_count
+ 499 007e 8823      		tst r24
+ 500 0080 01F0      		breq .+2
+ 501 0082 00C0      		rjmp .L11
+ 145:main.c        **** 	{
+ 146:main.c        **** 		hold = ((double)value / 512.0) - 1.0 - gyro_steadystate; // Scale to -1 thru +1.
+ 503               	.LM51:
+ 504 0084 8091 0000 		lds r24,gyro_steadystate
+ 505 0088 9091 0000 		lds r25,gyro_steadystate+1
+ 506 008c A091 0000 		lds r26,gyro_steadystate+2
+ 507 0090 B091 0000 		lds r27,gyro_steadystate+3
+ 508 0094 8983      		std Y+1,r24
+ 509 0096 9A83      		std Y+2,r25
+ 510 0098 AB83      		std Y+3,r26
+ 511 009a BC83      		std Y+4,r27
+ 512 009c 622F      		mov r22,r18
+ 513 009e 732F      		mov r23,r19
+ 514 00a0 CA01      		movw r24,r20
+ 515 00a2 0E94 0000 		call __floatunsisf
+ 516 00a6 20E0      		ldi r18,lo8(0x3b000000)
+ 517 00a8 30E0      		ldi r19,hi8(0x3b000000)
+ 518 00aa 40E0      		ldi r20,hlo8(0x3b000000)
+ 519 00ac 5BE3      		ldi r21,hhi8(0x3b000000)
+ 520 00ae 0E94 0000 		call __mulsf3
+ 521 00b2 20E0      		ldi r18,lo8(0x3f800000)
+ 522 00b4 30E0      		ldi r19,hi8(0x3f800000)
+ 523 00b6 40E8      		ldi r20,hlo8(0x3f800000)
+ 524 00b8 5FE3      		ldi r21,hhi8(0x3f800000)
+ 525 00ba 0E94 0000 		call __subsf3
+ 526 00be 2981      		ldd r18,Y+1
+ 527 00c0 3A81      		ldd r19,Y+2
+ 528 00c2 4B81      		ldd r20,Y+3
+ 529 00c4 5C81      		ldd r21,Y+4
+ 530 00c6 0E94 0000 		call __subsf3
+ 531 00ca 162F      		mov r17,r22
+ 532 00cc 072F      		mov r16,r23
+ 533 00ce B82E      		mov r11,r24
+ 534 00d0 A92E      		mov r10,r25
+ 147:main.c        **** 		
+ 148:main.c        **** 		// Tilt calibration routines.
+ 149:main.c        **** 		tilt_count++;
+ 536               	.LM52:
+ 537 00d2 8091 0000 		lds r24,tilt_count
+ 538 00d6 8F5F      		subi r24,lo8(-(1))
+ 539 00d8 8093 0000 		sts tilt_count,r24
+ 150:main.c        **** 		if(tilt_count >= TILT_CALFREQ) tilt_count = 0;
+ 541               	.LM53:
+ 542 00dc 8530      		cpi r24,lo8(5)
+ 543 00de 00F0      		brlo .L12
+ 545               	.LM54:
+ 546 00e0 1092 0000 		sts tilt_count,__zero_reg__
+ 547               	.L12:
+ 151:main.c        **** 		if(!tilt_count)
+ 549               	.LM55:
+ 550 00e4 8091 0000 		lds r24,tilt_count
+ 551 00e8 C090 0000 		lds r12,tilt
+ 552 00ec D090 0000 		lds r13,tilt+1
+ 553 00f0 E090 0000 		lds r14,tilt+2
+ 554 00f4 F090 0000 		lds r15,tilt+3
+ 555 00f8 8823      		tst r24
+ 556 00fa 01F0      		breq .+2
+ 557 00fc 00C0      		rjmp .L13
+ 152:main.c        **** 		{
+ 153:main.c        **** 			if((tilt - tilt_min) < TILT_THRESHOLD && (tilt_max - tilt) < TILT_THRESHOLD)
+ 559               	.LM56:
+ 560 00fe C701      		movw r24,r14
+ 561 0100 B601      		movw r22,r12
+ 562 0102 2091 0000 		lds r18,tilt_min
+ 563 0106 3091 0000 		lds r19,tilt_min+1
+ 564 010a 4091 0000 		lds r20,tilt_min+2
+ 565 010e 5091 0000 		lds r21,tilt_min+3
+ 566 0112 0E94 0000 		call __subsf3
+ 567 0116 20E0      		ldi r18,lo8(0x3f000000)
+ 568 0118 30E0      		ldi r19,hi8(0x3f000000)
+ 569 011a 40E0      		ldi r20,hlo8(0x3f000000)
+ 570 011c 5FE3      		ldi r21,hhi8(0x3f000000)
+ 571 011e 0E94 0000 		call __ltsf2
+ 572 0122 87FF      		sbrs r24,7
+ 573 0124 00C0      		rjmp .L14
+ 575               	.LM57:
+ 576 0126 6091 0000 		lds r22,tilt_max
+ 577 012a 7091 0000 		lds r23,tilt_max+1
+ 578 012e 8091 0000 		lds r24,tilt_max+2
+ 579 0132 9091 0000 		lds r25,tilt_max+3
+ 580 0136 A701      		movw r20,r14
+ 581 0138 9601      		movw r18,r12
+ 582 013a 0E94 0000 		call __subsf3
+ 583 013e 20E0      		ldi r18,lo8(0x3f000000)
+ 584 0140 30E0      		ldi r19,hi8(0x3f000000)
+ 585 0142 40E0      		ldi r20,hlo8(0x3f000000)
+ 586 0144 5FE3      		ldi r21,hhi8(0x3f000000)
+ 587 0146 0E94 0000 		call __ltsf2
+ 588 014a 87FF      		sbrs r24,7
+ 589 014c 00C0      		rjmp .L14
+ 590               	.LBB6:
+ 154:main.c        **** 			{ // Tilt is steady. Calibrate gyro.
+ 155:main.c        **** 				double offset = gyro - tilt;
+ 592               	.LM58:
+ 593 014e 4090 0000 		lds r4,gyro
+ 594 0152 5090 0000 		lds r5,gyro+1
+ 595 0156 6090 0000 		lds r6,gyro+2
+ 596 015a 7090 0000 		lds r7,gyro+3
+ 597 015e C301      		movw r24,r6
+ 598 0160 B201      		movw r22,r4
+ 599 0162 A701      		movw r20,r14
+ 600 0164 9601      		movw r18,r12
+ 601 0166 0E94 0000 		call __subsf3
+ 156:main.c        **** 				offset /= (INTEGRATE_TIME * -80.0 * (TILT_CALFREQ-1));
+ 603               	.LM59:
+ 604 016a 462F      		mov r20,r22
+ 605 016c 572F      		mov r21,r23
+ 606 016e 682F      		mov r22,r24
+ 607 0170 792F      		mov r23,r25
+ 608 0172 CB01      		movw r24,r22
+ 609 0174 BA01      		movw r22,r20
+ 610 0176 26EE      		ldi r18,lo8(0xc1271de6)
+ 611 0178 3DE1      		ldi r19,hi8(0xc1271de6)
+ 612 017a 47E2      		ldi r20,hlo8(0xc1271de6)
+ 613 017c 51EC      		ldi r21,hhi8(0xc1271de6)
+ 614 017e 0E94 0000 		call __divsf3
+ 157:main.c        **** 				gyro_steadystate += offset * OFFSET_STRENGTH;
+ 616               	.LM60:
+ 617 0182 20E0      		ldi r18,lo8(0x3e800000)
+ 618 0184 30E0      		ldi r19,hi8(0x3e800000)
+ 619 0186 40E8      		ldi r20,hlo8(0x3e800000)
+ 620 0188 5EE3      		ldi r21,hhi8(0x3e800000)
+ 621 018a 0E94 0000 		call __mulsf3
+ 622 018e 9B01      		movw r18,r22
+ 623 0190 AC01      		movw r20,r24
+ 624 0192 6981      		ldd r22,Y+1
+ 625 0194 7A81      		ldd r23,Y+2
+ 626 0196 8B81      		ldd r24,Y+3
+ 627 0198 9C81      		ldd r25,Y+4
+ 628 019a 0E94 0000 		call __addsf3
+ 629 019e DC01      		movw r26,r24
+ 630 01a0 CB01      		movw r24,r22
+ 631 01a2 8093 0000 		sts gyro_steadystate,r24
+ 632 01a6 9093 0000 		sts gyro_steadystate+1,r25
+ 633 01aa A093 0000 		sts gyro_steadystate+2,r26
+ 634 01ae B093 0000 		sts gyro_steadystate+3,r27
+ 158:main.c        **** 				
+ 159:main.c        **** 				// Also reset the absolute angle.
+ 160:main.c        **** 				gyro = (tilt+gyro)/2.0; // Average the current angle and desired angle to make the jump less ab
+ 636               	.LM61:
+ 637 01b2 C701      		movw r24,r14
+ 638 01b4 B601      		movw r22,r12
+ 639 01b6 A301      		movw r20,r6
+ 640 01b8 9201      		movw r18,r4
+ 641 01ba 0E94 0000 		call __addsf3
+ 642 01be 20E0      		ldi r18,lo8(0x3f000000)
+ 643 01c0 30E0      		ldi r19,hi8(0x3f000000)
+ 644 01c2 40E0      		ldi r20,hlo8(0x3f000000)
+ 645 01c4 5FE3      		ldi r21,hhi8(0x3f000000)
+ 646 01c6 0E94 0000 		call __mulsf3
+ 647 01ca DC01      		movw r26,r24
+ 648 01cc CB01      		movw r24,r22
+ 649 01ce 8093 0000 		sts gyro,r24
+ 650 01d2 9093 0000 		sts gyro+1,r25
+ 651 01d6 A093 0000 		sts gyro+2,r26
+ 652 01da B093 0000 		sts gyro+3,r27
+ 653               	.L14:
+ 654               	.LBE6:
+ 161:main.c        **** 			}	
+ 162:main.c        **** 			tilt_min = tilt; tilt_max = tilt; // And reset.
+ 656               	.LM62:
+ 657 01de C092 0000 		sts tilt_min,r12
+ 658 01e2 D092 0000 		sts tilt_min+1,r13
+ 659 01e6 E092 0000 		sts tilt_min+2,r14
+ 660 01ea F092 0000 		sts tilt_min+3,r15
+ 661 01ee 00C0      		rjmp .L29
+ 662               	.L13:
+ 163:main.c        **** 		}
+ 164:main.c        **** 		else
+ 165:main.c        **** 		{
+ 166:main.c        **** 			if(tilt < tilt_min) tilt_min = tilt;
+ 664               	.LM63:
+ 665 01f0 C701      		movw r24,r14
+ 666 01f2 B601      		movw r22,r12
+ 667 01f4 2091 0000 		lds r18,tilt_min
+ 668 01f8 3091 0000 		lds r19,tilt_min+1
+ 669 01fc 4091 0000 		lds r20,tilt_min+2
+ 670 0200 5091 0000 		lds r21,tilt_min+3
+ 671 0204 0E94 0000 		call __ltsf2
+ 672 0208 87FF      		sbrs r24,7
+ 673 020a 00C0      		rjmp .L18
+ 675               	.LM64:
+ 676 020c C092 0000 		sts tilt_min,r12
+ 677 0210 D092 0000 		sts tilt_min+1,r13
+ 678 0214 E092 0000 		sts tilt_min+2,r14
+ 679 0218 F092 0000 		sts tilt_min+3,r15
+ 680               	.L18:
+ 167:main.c        **** 			if(tilt > tilt_max) tilt_max = tilt;
+ 682               	.LM65:
+ 683 021c C701      		movw r24,r14
+ 684 021e B601      		movw r22,r12
+ 685 0220 2091 0000 		lds r18,tilt_max
+ 686 0224 3091 0000 		lds r19,tilt_max+1
+ 687 0228 4091 0000 		lds r20,tilt_max+2
+ 688 022c 5091 0000 		lds r21,tilt_max+3
+ 689 0230 0E94 0000 		call __gtsf2
+ 690 0234 1816      		cp __zero_reg__,r24
+ 691 0236 04F0      		brlt .+2
+ 692 0238 00C0      		rjmp .L17
+ 693               	.L29:
+ 695               	.LM66:
+ 696 023a C092 0000 		sts tilt_max,r12
+ 697 023e D092 0000 		sts tilt_max+1,r13
+ 698 0242 E092 0000 		sts tilt_max+2,r14
+ 699 0246 F092 0000 		sts tilt_max+3,r15
+ 700 024a 00C0      		rjmp .L17
+ 701               	.L11:
+ 168:main.c        **** 		}
+ 169:main.c        **** 	}
+ 170:main.c        **** 	else
+ 171:main.c        **** 	{
+ 172:main.c        **** 		if(calibrate_count == 255)
+ 703               	.LM67:
+ 704 024c 8F3F      		cpi r24,lo8(-1)
+ 705 024e 01F4      		brne .L21
+ 173:main.c        **** 		{
+ 174:main.c        **** 			gyro_steadystate = (gyro / 254.0);
+ 707               	.LM68:
+ 708 0250 6091 0000 		lds r22,gyro
+ 709 0254 7091 0000 		lds r23,gyro+1
+ 710 0258 8091 0000 		lds r24,gyro+2
+ 711 025c 9091 0000 		lds r25,gyro+3
+ 712 0260 20E0      		ldi r18,lo8(0x437e0000)
+ 713 0262 30E0      		ldi r19,hi8(0x437e0000)
+ 714 0264 4EE7      		ldi r20,hlo8(0x437e0000)
+ 715 0266 53E4      		ldi r21,hhi8(0x437e0000)
+ 716 0268 0E94 0000 		call __divsf3
+ 717 026c DC01      		movw r26,r24
+ 718 026e CB01      		movw r24,r22
+ 719 0270 8093 0000 		sts gyro_steadystate,r24
+ 720 0274 9093 0000 		sts gyro_steadystate+1,r25
+ 721 0278 A093 0000 		sts gyro_steadystate+2,r26
+ 722 027c B093 0000 		sts gyro_steadystate+3,r27
+ 175:main.c        **** 			calibrate_count = 0;
+ 724               	.LM69:
+ 725 0280 1092 0000 		sts calibrate_count,__zero_reg__
+ 176:main.c        **** 			gyro = 0;
+ 727               	.LM70:
+ 728 0284 80E0      		ldi r24,lo8(0x0)
+ 729 0286 90E0      		ldi r25,hi8(0x0)
+ 730 0288 A0E0      		ldi r26,hlo8(0x0)
+ 731 028a B0E0      		ldi r27,hhi8(0x0)
+ 732 028c 8093 0000 		sts gyro,r24
+ 733 0290 9093 0000 		sts gyro+1,r25
+ 734 0294 A093 0000 		sts gyro+2,r26
+ 735 0298 B093 0000 		sts gyro+3,r27
+ 141:main.c        **** 	double hold = 0.0;
+ 737               	.LM71:
+ 738 029c 10E0      		ldi r17,lo8(0)
+ 739 029e 00E0      		ldi r16,lo8(0)
+ 740 02a0 BB24      		clr r11
+ 741 02a2 AA24      		clr r10
+ 742 02a4 00C0      		rjmp .L17
+ 743               	.L21:
+ 177:main.c        **** 		}
+ 178:main.c        **** 		else 
+ 179:main.c        **** 		{
+ 180:main.c        **** 			calibrate_count++;
+ 745               	.LM72:
+ 746 02a6 8F5F      		subi r24,lo8(-(1))
+ 747 02a8 8093 0000 		sts calibrate_count,r24
+ 181:main.c        **** 			hold = ((double)value / 512.0) - 1.0;
+ 749               	.LM73:
+ 750 02ac 622F      		mov r22,r18
+ 751 02ae 732F      		mov r23,r19
+ 752 02b0 CA01      		movw r24,r20
+ 753 02b2 0E94 0000 		call __floatunsisf
+ 754 02b6 20E0      		ldi r18,lo8(0x3b000000)
+ 755 02b8 30E0      		ldi r19,hi8(0x3b000000)
+ 756 02ba 40E0      		ldi r20,hlo8(0x3b000000)
+ 757 02bc 5BE3      		ldi r21,hhi8(0x3b000000)
+ 758 02be 0E94 0000 		call __mulsf3
+ 759 02c2 20E0      		ldi r18,lo8(0x3f800000)
+ 760 02c4 30E0      		ldi r19,hi8(0x3f800000)
+ 761 02c6 40E8      		ldi r20,hlo8(0x3f800000)
+ 762 02c8 5FE3      		ldi r21,hhi8(0x3f800000)
+ 763 02ca 0E94 0000 		call __subsf3
+ 764 02ce 162F      		mov r17,r22
+ 765 02d0 072F      		mov r16,r23
+ 766 02d2 B82E      		mov r11,r24
+ 767 02d4 A92E      		mov r10,r25
+ 768               	.L17:
+ 182:main.c        **** 		}
+ 183:main.c        **** 	}
+ 184:main.c        **** 	/*if(bit_is_clear(PINB,PB1))
+ 185:main.c        **** 	{
+ 186:main.c        **** 		gyro_steadystate += hold * 0.7;
+ 187:main.c        **** 		gyro = 0;
+ 188:main.c        **** 	}*/
+ 189:main.c        **** 	
+ 190:main.c        **** 	//tilt = hold; //TEMP TEST
+ 191:main.c        **** 	
+ 192:main.c        **** 	if(calibrate_count != 0) gyro += hold;
+ 770               	.LM74:
+ 771 02d6 8091 0000 		lds r24,calibrate_count
+ 772 02da 8823      		tst r24
+ 773 02dc 01F0      		breq .L22
+ 775               	.LM75:
+ 776 02de 6091 0000 		lds r22,gyro
+ 777 02e2 7091 0000 		lds r23,gyro+1
+ 778 02e6 8091 0000 		lds r24,gyro+2
+ 779 02ea 9091 0000 		lds r25,gyro+3
+ 780 02ee F801      		movw r30,r16
+ 781 02f0 A501      		movw r20,r10
+ 782 02f2 0F2F      		mov r16,r31
+ 783 02f4 1E2F      		mov r17,r30
+ 784 02f6 252F      		mov r18,r21
+ 785 02f8 3A2D      		mov r19,r10
+ 786 02fa A901      		movw r20,r18
+ 787 02fc 9801      		movw r18,r16
+ 788 02fe 00C0      		rjmp .L30
+ 789               	.L22:
+ 193:main.c        **** 	else gyro += (hold * INTEGRATE_TIME * -80.0);
+ 791               	.LM76:
+ 792 0300 A801      		movw r20,r16
+ 793 0302 9501      		movw r18,r10
+ 794 0304 852F      		mov r24,r21
+ 795 0306 902F      		mov r25,r16
+ 796 0308 A32F      		mov r26,r19
+ 797 030a BA2D      		mov r27,r10
+ 798 030c BC01      		movw r22,r24
+ 799 030e CD01      		movw r24,r26
+ 800 0310 25E8      		ldi r18,lo8(0x3d05b185)
+ 801 0312 31EB      		ldi r19,hi8(0x3d05b185)
+ 802 0314 45E0      		ldi r20,hlo8(0x3d05b185)
+ 803 0316 5DE3      		ldi r21,hhi8(0x3d05b185)
+ 804 0318 0E94 0000 		call __mulsf3
+ 805 031c 20E0      		ldi r18,lo8(0xc2a00000)
+ 806 031e 30E0      		ldi r19,hi8(0xc2a00000)
+ 807 0320 40EA      		ldi r20,hlo8(0xc2a00000)
+ 808 0322 52EC      		ldi r21,hhi8(0xc2a00000)
+ 809 0324 0E94 0000 		call __mulsf3
+ 810 0328 9B01      		movw r18,r22
+ 811 032a AC01      		movw r20,r24
+ 812 032c 6091 0000 		lds r22,gyro
+ 813 0330 7091 0000 		lds r23,gyro+1
+ 814 0334 8091 0000 		lds r24,gyro+2
+ 815 0338 9091 0000 		lds r25,gyro+3
+ 816               	.L30:
+ 817 033c 0E94 0000 		call __addsf3
+ 818 0340 DC01      		movw r26,r24
+ 819 0342 CB01      		movw r24,r22
+ 820 0344 8093 0000 		sts gyro,r24
+ 821 0348 9093 0000 		sts gyro+1,r25
+ 822 034c A093 0000 		sts gyro+2,r26
+ 823 0350 B093 0000 		sts gyro+3,r27
+ 824               	/* epilogue start */
+ 194:main.c        **** }
+ 826               	.LM77:
+ 827 0354 2496      		adiw r28,4
+ 828 0356 DEBF      		out __SP_H__, r29
+ 829 0358 CDBF      		out __SP_L__, r28
+ 830 035a DF91      		pop r29
+ 831 035c CF91      		pop r28
+ 832 035e FF91      		pop r31
+ 833 0360 EF91      		pop r30
+ 834 0362 BF91      		pop r27
+ 835 0364 AF91      		pop r26
+ 836 0366 9F91      		pop r25
+ 837 0368 8F91      		pop r24
+ 838 036a 7F91      		pop r23
+ 839 036c 6F91      		pop r22
+ 840 036e 5F91      		pop r21
+ 841 0370 4F91      		pop r20
+ 842 0372 3F91      		pop r19
+ 843 0374 2F91      		pop r18
+ 844 0376 1F91      		pop r17
+ 845 0378 0F91      		pop r16
+ 846 037a FF90      		pop r15
+ 847 037c EF90      		pop r14
+ 848 037e DF90      		pop r13
+ 849 0380 CF90      		pop r12
+ 850 0382 BF90      		pop r11
+ 851 0384 AF90      		pop r10
+ 852 0386 7F90      		pop r7
+ 853 0388 6F90      		pop r6
+ 854 038a 5F90      		pop r5
+ 855 038c 4F90      		pop r4
+ 856 038e 0F90      		pop r0
+ 857 0390 0FBE      		out __SREG__,r0
+ 858 0392 0F90      		pop r0
+ 859 0394 1F90      		pop r1
+ 860 0396 1895      		reti
+ 865               	.Lscope2:
+ 867               		.stabd	78,0,0
+ 869               	.global	__vector_21
+ 871               	__vector_21:
+ 872               		.stabd	46,0,0
+ 195:main.c        **** 
+ 196:main.c        **** ISR(ADC_vect)
+ 197:main.c        **** {
+ 874               	.LM78:
+ 875               	.LFBB3:
+ 876 0398 1F92      		push r1
+ 877 039a 0F92      		push r0
+ 878 039c 0FB6      		in r0,__SREG__
+ 879 039e 0F92      		push r0
+ 880 03a0 1124      		clr __zero_reg__
+ 881 03a2 8F93      		push r24
+ 882 03a4 9F93      		push r25
+ 883 03a6 EF93      		push r30
+ 884 03a8 FF93      		push r31
+ 885               	/* prologue: Signal */
+ 886               	/* frame size = 0 */
+ 887               	/* stack size = 7 */
+ 888               	.L__stack_usage = 7
+ 198:main.c        **** 	if(bit_is_set(ADMUX,MUX0)) // Gyro
+ 890               	.LM79:
+ 891 03aa 8091 7C00 		lds r24,124
+ 892 03ae 80FF      		sbrs r24,0
+ 893 03b0 00C0      		rjmp .L32
+ 199:main.c        **** 	{
+ 200:main.c        **** 		gyro_index++; if(gyro_index >= GYRORBSIZE) gyro_index = 0;
+ 895               	.LM80:
+ 896 03b2 8091 0000 		lds r24,gyro_index
+ 897 03b6 8F5F      		subi r24,lo8(-(1))
+ 898 03b8 8093 0000 		sts gyro_index,r24
+ 899 03bc 8A30      		cpi r24,lo8(10)
+ 900 03be 00F0      		brlo .L33
+ 902               	.LM81:
+ 903 03c0 1092 0000 		sts gyro_index,__zero_reg__
+ 904               	.L33:
+ 201:main.c        **** 		gyro_rb[gyro_index] = ADC;
+ 906               	.LM82:
+ 907 03c4 8091 7800 		lds r24,120
+ 908 03c8 9091 7900 		lds r25,120+1
+ 909 03cc E091 0000 		lds r30,gyro_index
+ 910 03d0 F0E0      		ldi r31,lo8(0)
+ 911 03d2 EE0F      		lsl r30
+ 912 03d4 FF1F      		rol r31
+ 913 03d6 E050      		subi r30,lo8(-(gyro_rb))
+ 914 03d8 F040      		sbci r31,hi8(-(gyro_rb))
+ 915 03da 9183      		std Z+1,r25
+ 916 03dc 8083      		st Z,r24
+ 202:main.c        **** 		
+ 203:main.c        **** 		ADMUX &= ~(1<<MUX0);
+ 918               	.LM83:
+ 919 03de 8091 7C00 		lds r24,124
+ 920 03e2 8E7F      		andi r24,lo8(-2)
+ 921 03e4 00C0      		rjmp .L36
+ 922               	.L32:
+ 204:main.c        **** 	}
+ 205:main.c        **** 	else // Tilt
+ 206:main.c        **** 	{
+ 207:main.c        **** 		tilt_index++; if(tilt_index >= TILTRBSIZE) tilt_index = 0;
+ 924               	.LM84:
+ 925 03e6 8091 0000 		lds r24,tilt_index
+ 926 03ea 8F5F      		subi r24,lo8(-(1))
+ 927 03ec 8093 0000 		sts tilt_index,r24
+ 928 03f0 8035      		cpi r24,lo8(80)
+ 929 03f2 00F0      		brlo .L35
+ 931               	.LM85:
+ 932 03f4 1092 0000 		sts tilt_index,__zero_reg__
+ 933               	.L35:
+ 208:main.c        **** 		tilt_rb[tilt_index] = ADC;
+ 935               	.LM86:
+ 936 03f8 8091 7800 		lds r24,120
+ 937 03fc 9091 7900 		lds r25,120+1
+ 938 0400 E091 0000 		lds r30,tilt_index
+ 939 0404 F0E0      		ldi r31,lo8(0)
+ 940 0406 EE0F      		lsl r30
+ 941 0408 FF1F      		rol r31
+ 942 040a E050      		subi r30,lo8(-(tilt_rb))
+ 943 040c F040      		sbci r31,hi8(-(tilt_rb))
+ 944 040e 9183      		std Z+1,r25
+ 945 0410 8083      		st Z,r24
+ 209:main.c        **** 		
+ 210:main.c        **** 		ADMUX |= (1<<MUX0);
+ 947               	.LM87:
+ 948 0412 8091 7C00 		lds r24,124
+ 949 0416 8160      		ori r24,lo8(1)
+ 950               	.L36:
+ 951 0418 8093 7C00 		sts 124,r24
+ 211:main.c        **** 	}
+ 212:main.c        **** 	
+ 213:main.c        **** 	ADCSRA |= (1<<ADSC); // Begin next conversion.
+ 953               	.LM88:
+ 954 041c 8091 7A00 		lds r24,122
+ 955 0420 8064      		ori r24,lo8(64)
+ 956 0422 8093 7A00 		sts 122,r24
+ 957               	/* epilogue start */
+ 214:main.c        **** }
+ 959               	.LM89:
+ 960 0426 FF91      		pop r31
+ 961 0428 EF91      		pop r30
+ 962 042a 9F91      		pop r25
+ 963 042c 8F91      		pop r24
+ 964 042e 0F90      		pop r0
+ 965 0430 0FBE      		out __SREG__,r0
+ 966 0432 0F90      		pop r0
+ 967 0434 1F90      		pop r1
+ 968 0436 1895      		reti
+ 970               	.Lscope3:
+ 972               		.stabd	78,0,0
+ 973               	.global	tilt_max
+ 974               	.global	tilt_max
+ 975               		.section .bss
+ 978               	tilt_max:
+ 979 0000 0000 0000 		.skip 4,0
+ 980               	.global	tilt_min
+ 981               	.global	tilt_min
+ 984               	tilt_min:
+ 985 0004 0000 0000 		.skip 4,0
+ 986               	.global	tilt_count
+ 987               	.global	tilt_count
+ 990               	tilt_count:
+ 991 0008 00        		.skip 1,0
+ 992               	.global	calibrate_count
+ 993               	.global	calibrate_count
+ 996               	calibrate_count:
+ 997 0009 00        		.skip 1,0
+ 998               	.global	tilt_zero
+ 999               		.data
+ 1002               	tilt_zero:
+ 1003 0028 33        		.byte	51
+ 1004 0029 33        		.byte	51
+ 1005 002a F3        		.byte	-13
+ 1006 002b BF        		.byte	-65
+ 1007               	.global	gyro_steadystate
+ 1010               	gyro_steadystate:
+ 1011 002c 8F        		.byte	-113
+ 1012 002d C2        		.byte	-62
+ 1013 002e 75        		.byte	117
+ 1014 002f BE        		.byte	-66
+ 1015               	.global	gyro_index
+ 1016               	.global	gyro_index
+ 1017               		.section .bss
+ 1020               	gyro_index:
+ 1021 000a 00        		.skip 1,0
+ 1022               	.global	tilt_index
+ 1023               	.global	tilt_index
+ 1026               	tilt_index:
+ 1027 000b 00        		.skip 1,0
+ 1028               		.comm gyro_rb,20,1
+ 1029               		.comm tilt_rb,160,1
+ 1030               	.global	gyro
+ 1031               	.global	gyro
+ 1034               	gyro:
+ 1035 000c 0000 0000 		.skip 4,0
+ 1036               	.global	tilt
+ 1037               	.global	tilt
+ 1040               	tilt:
+ 1041 0010 0000 0000 		.skip 4,0
+ 1042               		.comm buffer,9,1
+ 1043               		.comm nrf_last_status,1,1
+ 1044               		.comm spi_bytes_sent,1,1
+ 1045               		.comm spi_command,1,1
+ 1046               		.comm spi_state,1,1
+ 1064               		.text
+ 1066               	.Letext0:
+DEFINED SYMBOLS
+                            *ABS*:00000000 main.c
+     /tmp/cczfYCpP.s:2      *ABS*:0000003f __SREG__
+     /tmp/cczfYCpP.s:3      *ABS*:0000003e __SP_H__
+     /tmp/cczfYCpP.s:4      *ABS*:0000003d __SP_L__
+     /tmp/cczfYCpP.s:5      *ABS*:00000000 __tmp_reg__
+     /tmp/cczfYCpP.s:6      *ABS*:00000001 __zero_reg__
+     /tmp/cczfYCpP.s:109    .text.startup:00000000 main
+                            *COM*:000000a0 tilt_rb
+     /tmp/cczfYCpP.s:1040   .bss:00000010 tilt
+     /tmp/cczfYCpP.s:996    .bss:00000009 calibrate_count
+     /tmp/cczfYCpP.s:1002   .data:00000028 tilt_zero
+     /tmp/cczfYCpP.s:1010   .data:0000002c gyro_steadystate
+     /tmp/cczfYCpP.s:1034   .bss:0000000c gyro
+                            *COM*:00000009 buffer
+     /tmp/cczfYCpP.s:414    .text:00000000 __vector_16
+                            *COM*:00000014 gyro_rb
+     /tmp/cczfYCpP.s:990    .bss:00000008 tilt_count
+     /tmp/cczfYCpP.s:984    .bss:00000004 tilt_min
+     /tmp/cczfYCpP.s:978    .bss:00000000 tilt_max
+     /tmp/cczfYCpP.s:871    .text:00000398 __vector_21
+     /tmp/cczfYCpP.s:1020   .bss:0000000a gyro_index
+     /tmp/cczfYCpP.s:1026   .bss:0000000b tilt_index
+                            *COM*:00000001 nrf_last_status
+                            *COM*:00000001 spi_bytes_sent
+                            *COM*:00000001 spi_command
+                            *COM*:00000001 spi_state
+
+UNDEFINED SYMBOLS
+__do_copy_data
+__do_clear_bss
+lcd_init
+lcd_clrscr
+lcd_puts
+delay_ms
+__udivmodsi4
+__floatunsisf
+__mulsf3
+__subsf3
+asin
+dtostrf
+__ltsf2
+__divsf3
+__addsf3
+__gtsf2

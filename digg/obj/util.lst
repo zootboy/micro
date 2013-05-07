@@ -1,0 +1,159 @@
+   1               		.file	"util.c"
+   2               	__SREG__ = 0x3f
+   3               	__SP_H__ = 0x3e
+   4               	__SP_L__ = 0x3d
+   5               	__tmp_reg__ = 0
+   6               	__zero_reg__ = 1
+   7               		.global __do_copy_data
+   8               		.global __do_clear_bss
+  16               	.Ltext0:
+  17               	.global	delay_ms
+  19               	delay_ms:
+  20               	.LFB2:
+  21               	.LM1:
+  22               	/* prologue: frame size=0 */
+  23               	/* prologue end (size=0) */
+  24               	.LVL0:
+  25               	.LM2:
+  26 0000 2AEF      		ldi r18,lo8(250)
+  27 0002 30E0      		ldi r19,hi8(250)
+  28               	/* #APP */
+  29               		
+  30               	L_dl18:
+  31 0004 E22F      		mov r30, r18
+  32 0006 F32F      		mov r31, r19
+  33               	L_dl28:
+  34 0008 3197      		sbiw r30, 1
+  35 000a 01F4      		brne L_dl28
+  36 000c A895      		wdr
+  37 000e 8A95      		dec r24
+  38 0010 01F4      		brne L_dl18
+  39               		
+  40               	/* #NOAPP */
+  41               	/* epilogue: frame size=0 */
+  42 0012 0895      		ret
+  43               	/* epilogue end (size=1) */
+  44               	/* function delay_ms size 25 (24) */
+  45               	.LFE2:
+  47               	.global	digits
+  49               	digits:
+  50               	.LFB3:
+  51               	.LM3:
+  52               	/* prologue: frame size=0 */
+  53               	/* prologue end (size=0) */
+  54               	.LVL1:
+  55               	.LM4:
+  56 0014 8436      		cpi r24,100
+  57 0016 9105      		cpc r25,__zero_reg__
+  58 0018 00F0      		brlo .L4
+  59               	.LM5:
+  60 001a 83E0      		ldi r24,lo8(3)
+  61 001c 90E0      		ldi r25,hi8(3)
+  62               	.LVL2:
+  63 001e 0895      		ret
+  64               	.LVL3:
+  65               	.L4:
+  66 0020 82E0      		ldi r24,lo8(2)
+  67 0022 90E0      		ldi r25,hi8(2)
+  68               	.LVL4:
+  69               	.LM6:
+  70 0024 0895      		ret
+  71               	/* epilogue: frame size=0 */
+  72               	/* epilogue: noreturn */
+  73               	/* epilogue end (size=0) */
+  74               	/* function digits size 9 (9) */
+  75               	.LFE3:
+  77               	.global	hundreds
+  79               	hundreds:
+  80               	.LFB4:
+  81               	.LM7:
+  82               	/* prologue: frame size=0 */
+  83               	/* prologue end (size=0) */
+  84               	.LVL5:
+  85 0026 20E0      		ldi r18,lo8(0)
+  86 0028 30E0      		ldi r19,hi8(0)
+  87 002a 00C0      		rjmp .L9
+  88               	.LVL6:
+  89               	.L10:
+  90               	.LM8:
+  91 002c 8456      		subi r24,lo8(-(-100))
+  92 002e 9040      		sbci r25,hi8(-(-100))
+  93               	.LVL7:
+  94               	.L9:
+  95 0030 422F      		mov r20,r18
+  96 0032 2F5F      		subi r18,lo8(-(1))
+  97 0034 3F4F      		sbci r19,hi8(-(1))
+  98               	.LM9:
+  99 0036 8436      		cpi r24,100
+ 100 0038 9105      		cpc r25,__zero_reg__
+ 101 003a 00F4      		brsh .L10
+ 102               	.LM10:
+ 103 003c 842F      		mov r24,r20
+ 104               	.LVL8:
+ 105 003e 90E0      		ldi r25,lo8(0)
+ 106               	/* epilogue: frame size=0 */
+ 107 0040 0895      		ret
+ 108               	/* epilogue end (size=1) */
+ 109               	/* function hundreds size 14 (13) */
+ 110               	.LFE4:
+ 112               	.global	tens
+ 114               	tens:
+ 115               	.LFB5:
+ 116               	.LM11:
+ 117               	/* prologue: frame size=0 */
+ 118               	/* prologue end (size=0) */
+ 119               	.LVL9:
+ 120 0042 00C0      		rjmp .L14
+ 121               	.L15:
+ 122               	.LM12:
+ 123 0044 8456      		subi r24,lo8(-(-100))
+ 124 0046 9040      		sbci r25,hi8(-(-100))
+ 125               	.LVL10:
+ 126               	.L14:
+ 127               	.LM13:
+ 128 0048 8436      		cpi r24,100
+ 129 004a 9105      		cpc r25,__zero_reg__
+ 130 004c 00F4      		brsh .L15
+ 131 004e 20E0      		ldi r18,lo8(0)
+ 132 0050 30E0      		ldi r19,hi8(0)
+ 133 0052 00C0      		rjmp .L17
+ 134               	.LVL11:
+ 135               	.L18:
+ 136               	.LM14:
+ 137 0054 0A97      		sbiw r24,10
+ 138               	.LVL12:
+ 139               	.L17:
+ 140 0056 422F      		mov r20,r18
+ 141 0058 2F5F      		subi r18,lo8(-(1))
+ 142 005a 3F4F      		sbci r19,hi8(-(1))
+ 143               	.LM15:
+ 144 005c 8A30      		cpi r24,10
+ 145 005e 9105      		cpc r25,__zero_reg__
+ 146 0060 00F4      		brsh .L18
+ 147               	.LM16:
+ 148 0062 842F      		mov r24,r20
+ 149               	.LVL13:
+ 150 0064 90E0      		ldi r25,lo8(0)
+ 151               	/* epilogue: frame size=0 */
+ 152 0066 0895      		ret
+ 153               	/* epilogue end (size=1) */
+ 154               	/* function tens size 19 (18) */
+ 155               	.LFE5:
+ 205               	.Letext0:
+DEFINED SYMBOLS
+                            *ABS*:00000000 util.c
+C:\DOCUME~1\SEAN~1.GRE\LOCALS~1\Temp/cchlbEjf.s:2      *ABS*:0000003f __SREG__
+C:\DOCUME~1\SEAN~1.GRE\LOCALS~1\Temp/cchlbEjf.s:3      *ABS*:0000003e __SP_H__
+C:\DOCUME~1\SEAN~1.GRE\LOCALS~1\Temp/cchlbEjf.s:4      *ABS*:0000003d __SP_L__
+C:\DOCUME~1\SEAN~1.GRE\LOCALS~1\Temp/cchlbEjf.s:5      *ABS*:00000000 __tmp_reg__
+C:\DOCUME~1\SEAN~1.GRE\LOCALS~1\Temp/cchlbEjf.s:6      *ABS*:00000001 __zero_reg__
+C:\DOCUME~1\SEAN~1.GRE\LOCALS~1\Temp/cchlbEjf.s:19     .text:00000000 delay_ms
+C:\DOCUME~1\SEAN~1.GRE\LOCALS~1\Temp/cchlbEjf.s:30     .text:00000004 L_dl18
+C:\DOCUME~1\SEAN~1.GRE\LOCALS~1\Temp/cchlbEjf.s:33     .text:00000008 L_dl28
+C:\DOCUME~1\SEAN~1.GRE\LOCALS~1\Temp/cchlbEjf.s:49     .text:00000014 digits
+C:\DOCUME~1\SEAN~1.GRE\LOCALS~1\Temp/cchlbEjf.s:79     .text:00000026 hundreds
+C:\DOCUME~1\SEAN~1.GRE\LOCALS~1\Temp/cchlbEjf.s:114    .text:00000042 tens
+
+UNDEFINED SYMBOLS
+__do_copy_data
+__do_clear_bss

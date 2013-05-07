@@ -1,0 +1,1411 @@
+   1               		.file	"nrf.c"
+   2               	__SP_H__ = 0x3e
+   3               	__SP_L__ = 0x3d
+   4               	__SREG__ = 0x3f
+   5               	__tmp_reg__ = 0
+   6               	__zero_reg__ = 1
+   7               		.text
+   8               	.Ltext0:
+   9               		.cfi_sections	.debug_frame
+  10               		.section	.rodata.str1.1,"aMS",@progbits,1
+  11               	.LC0:
+  12 0000 0D0A 496E 		.string	"\r\nInitializing nRF...\r\n"
+  12      6974 6961 
+  12      6C69 7A69 
+  12      6E67 206E 
+  12      5246 2E2E 
+  13               	.LC1:
+  14 0018 5374 6174 		.string	"Status register: 0x"
+  14      7573 2072 
+  14      6567 6973 
+  14      7465 723A 
+  14      2030 7800 
+  15               	.LC2:
+  16 002c 0D0A 00   		.string	"\r\n"
+  17               	.LC3:
+  18 002f 4E6F 206E 		.string	"No nRF detected...\r\n"
+  18      5246 2064 
+  18      6574 6563 
+  18      7465 642E 
+  18      2E2E 0D0A 
+  19               		.section	.text.nrf_init,"ax",@progbits
+  20               	.global	nrf_init
+  22               	nrf_init:
+  23               	.LFB108:
+  24               		.file 1 "nrf.c"
+   1:nrf.c         **** /* nrf.c - nRF24L01 radio functions */
+   2:nrf.c         **** 
+   3:nrf.c         **** #include "nrf.h"
+   4:nrf.c         **** #include "util.h"
+   5:nrf.c         **** #include <stdlib.h>
+   6:nrf.c         **** 
+   7:nrf.c         **** // Vars.
+   8:nrf.c         **** /* States:
+   9:nrf.c         ****  * 0 = Doing nothing
+  10:nrf.c         ****  * 1 = sending command
+  11:nrf.c         ****  * 2 = sending nulls to do an RX (maybe)
+  12:nrf.c         ****  * 3 = sending real data
+  13:nrf.c         ****  */
+  14:nrf.c         **** uint8_t spi_state = 0;
+  15:nrf.c         **** uint8_t spi_command = 0x00; // The command being sent/last sent.
+  16:nrf.c         **** uint8_t spi_bytes_sent = 0; // Counter for multibyte data transfers.
+  17:nrf.c         **** uint8_t nrf_last_status = 0; // Last status register received.
+  18:nrf.c         **** 
+  19:nrf.c         **** char buffer[7]; // Buffer for string conversion.
+  20:nrf.c         **** 
+  21:nrf.c         **** // Functions.
+  22:nrf.c         **** void nrf_init(void)
+  23:nrf.c         **** {
+  25               		.loc 1 23 0
+  26               		.cfi_startproc
+  27               	/* prologue: function */
+  28               	/* frame size = 0 */
+  29               	/* stack size = 0 */
+  30               	.L__stack_usage = 0
+  24:nrf.c         **** 	//lcd_clrscr(); lcd_puts("Setup running...");
+  25:nrf.c         **** 	fputs("\r\nInitializing nRF...\r\n", &USBSerialStream);
+  31               		.loc 1 25 0
+  32 0000 60E0      		ldi r22,lo8(USBSerialStream)
+  33 0002 70E0      		ldi r23,hi8(USBSerialStream)
+  34 0004 80E0      		ldi r24,lo8(.LC0)
+  35 0006 90E0      		ldi r25,hi8(.LC0)
+  36 0008 0E94 0000 		call fputs
+  37               	.LVL0:
+  26:nrf.c         **** 	
+  27:nrf.c         **** 	NRF_SS_DDR |= (1<<NRF_SS_PIN); NRF_SS_PORT |= (1<<NRF_SS_PIN); // SS starts high.
+  38               		.loc 1 27 0
+  39 000c 209A      		sbi 0x4,0
+  40 000e 289A      		sbi 0x5,0
+  28:nrf.c         **** 	NRF_CE_DDR |= (1<<NRF_CE_PIN); NRF_CE_PORT &= ~(1<<NRF_CE_PIN); // CE (radio enable) starts low.
+  41               		.loc 1 28 0
+  42 0010 249A      		sbi 0x4,4
+  43 0012 2C98      		cbi 0x5,4
+  29:nrf.c         **** 	SPI_DDR |= (1<<SPI_MOSI)|(1<<SPI_SCK); SPI_DDR &= ~(1<<SPI_MISO); // Set the correct directions fo
+  44               		.loc 1 29 0
+  45 0014 84B1      		in r24,0x4
+  46 0016 8660      		ori r24,lo8(6)
+  47 0018 84B9      		out 0x4,r24
+  48 001a 2398      		cbi 0x4,3
+  30:nrf.c         **** 	
+  31:nrf.c         **** 	SPCR = NRF_SPCR; // Set registers. This officially turns on the SPI hardware.
+  49               		.loc 1 31 0
+  50 001c 81E5      		ldi r24,lo8(81)
+  51 001e 8CBD      		out 0x2c,r24
+  32:nrf.c         **** 
+  33:nrf.c         **** 	delay_us(200);
+  52               		.loc 1 33 0
+  53 0020 88EC      		ldi r24,lo8(-56)
+  54 0022 90E0      		ldi r25,0
+  55 0024 0E94 0000 		call delay_us
+  56               	.LVL1:
+  34:nrf.c         **** 	
+  35:nrf.c         **** 	// Do a test call to the nRF
+  36:nrf.c         **** 	SS_DOWN; // Bring the nRF SS line low to begin transaction.
+  57               		.loc 1 36 0
+  58 0028 2898      		cbi 0x5,0
+  37:nrf.c         **** 	SPI_WRITE(NOP); // Start up the SPI transfer.
+  59               		.loc 1 37 0
+  60 002a 8FEF      		ldi r24,lo8(-1)
+  61 002c 8EBD      		out 0x2e,r24
+  62               	.L3:
+  63               		.loc 1 37 0 is_stmt 0 discriminator 2
+  64 002e 85E0      		ldi r24,lo8(5)
+  65 0030 90E0      		ldi r25,0
+  66 0032 0E94 0000 		call delay_us
+  67               	.LVL2:
+  68 0036 0DB4      		in __tmp_reg__,0x2d
+  69 0038 07FE      		sbrs __tmp_reg__,7
+  70 003a 00C0      		rjmp .L3
+  38:nrf.c         **** 	nrf_last_status = SPDR;
+  71               		.loc 1 38 0 is_stmt 1
+  72 003c 8EB5      		in r24,0x2e
+  73 003e 8093 0000 		sts nrf_last_status,r24
+  39:nrf.c         **** 	SS_UP;
+  74               		.loc 1 39 0
+  75 0042 289A      		sbi 0x5,0
+  40:nrf.c         **** 	itoa(nrf_last_status, buffer, 16);
+  76               		.loc 1 40 0
+  77 0044 40E1      		ldi r20,lo8(16)
+  78 0046 50E0      		ldi r21,0
+  79 0048 60E0      		ldi r22,lo8(buffer)
+  80 004a 70E0      		ldi r23,hi8(buffer)
+  81 004c 90E0      		ldi r25,0
+  82 004e 0E94 0000 		call itoa
+  83               	.LVL3:
+  41:nrf.c         **** 	fputs("Status register: 0x", &USBSerialStream);
+  84               		.loc 1 41 0
+  85 0052 60E0      		ldi r22,lo8(USBSerialStream)
+  86 0054 70E0      		ldi r23,hi8(USBSerialStream)
+  87 0056 80E0      		ldi r24,lo8(.LC1)
+  88 0058 90E0      		ldi r25,hi8(.LC1)
+  89 005a 0E94 0000 		call fputs
+  90               	.LVL4:
+  42:nrf.c         **** 	fputs(buffer, &USBSerialStream);
+  91               		.loc 1 42 0
+  92 005e 60E0      		ldi r22,lo8(USBSerialStream)
+  93 0060 70E0      		ldi r23,hi8(USBSerialStream)
+  94 0062 80E0      		ldi r24,lo8(buffer)
+  95 0064 90E0      		ldi r25,hi8(buffer)
+  96 0066 0E94 0000 		call fputs
+  97               	.LVL5:
+  43:nrf.c         **** 	fputs("\r\n", &USBSerialStream);
+  98               		.loc 1 43 0
+  99 006a 60E0      		ldi r22,lo8(USBSerialStream)
+ 100 006c 70E0      		ldi r23,hi8(USBSerialStream)
+ 101 006e 80E0      		ldi r24,lo8(.LC2)
+ 102 0070 90E0      		ldi r25,hi8(.LC2)
+ 103 0072 0E94 0000 		call fputs
+ 104               	.LVL6:
+  44:nrf.c         **** 	
+  45:nrf.c         **** 	if(!nrf_last_status || (nrf_last_status & (1<<7))) // On reset, the RX FIFO should be empty (setti
+ 105               		.loc 1 45 0
+ 106 0076 8091 0000 		lds r24,nrf_last_status
+ 107 007a 1816      		cp __zero_reg__,r24
+ 108 007c 04F0      		brlt .L4
+  46:nrf.c         **** 	{
+  47:nrf.c         **** 		//lcd_clrscr();
+  48:nrf.c         **** 		//lcd_puts("no nRF detected");
+  49:nrf.c         **** 		fputs("No nRF detected...\r\n", &USBSerialStream);
+ 109               		.loc 1 49 0
+ 110 007e 60E0      		ldi r22,lo8(USBSerialStream)
+ 111 0080 70E0      		ldi r23,hi8(USBSerialStream)
+ 112 0082 80E0      		ldi r24,lo8(.LC3)
+ 113 0084 90E0      		ldi r25,hi8(.LC3)
+ 114 0086 0E94 0000 		call fputs
+ 115               	.LVL7:
+  50:nrf.c         **** 		delay_ms(2000);
+ 116               		.loc 1 50 0
+ 117 008a 80ED      		ldi r24,lo8(-48)
+ 118 008c 97E0      		ldi r25,lo8(7)
+ 119 008e 0C94 0000 		jmp delay_ms
+ 120               	.LVL8:
+ 121               	.L4:
+  51:nrf.c         **** 	}
+  52:nrf.c         **** 	else
+  53:nrf.c         **** 	{
+  54:nrf.c         **** 		// Set all addresses.
+  55:nrf.c         **** 		SS_DOWN;
+ 122               		.loc 1 55 0
+ 123 0092 2898      		cbi 0x5,0
+  56:nrf.c         **** 		SPI_WRITE(W_REGISTER | NRG_SETUP_AW);
+ 124               		.loc 1 56 0
+ 125 0094 83E2      		ldi r24,lo8(35)
+ 126 0096 8EBD      		out 0x2e,r24
+ 127               	.L6:
+ 128               		.loc 1 56 0 is_stmt 0 discriminator 2
+ 129 0098 85E0      		ldi r24,lo8(5)
+ 130 009a 90E0      		ldi r25,0
+ 131 009c 0E94 0000 		call delay_us
+ 132               	.LVL9:
+ 133 00a0 0DB4      		in __tmp_reg__,0x2d
+ 134 00a2 07FE      		sbrs __tmp_reg__,7
+ 135 00a4 00C0      		rjmp .L6
+  57:nrf.c         **** 		SPI_WRITE(0x03); // 5-byte addresses.
+ 136               		.loc 1 57 0 is_stmt 1
+ 137 00a6 83E0      		ldi r24,lo8(3)
+ 138 00a8 8EBD      		out 0x2e,r24
+ 139               	.L8:
+ 140               		.loc 1 57 0 is_stmt 0 discriminator 2
+ 141 00aa 85E0      		ldi r24,lo8(5)
+ 142 00ac 90E0      		ldi r25,0
+ 143 00ae 0E94 0000 		call delay_us
+ 144               	.LVL10:
+ 145 00b2 0DB4      		in __tmp_reg__,0x2d
+ 146 00b4 07FE      		sbrs __tmp_reg__,7
+ 147 00b6 00C0      		rjmp .L8
+  58:nrf.c         **** 		SS_UP;
+ 148               		.loc 1 58 0 is_stmt 1
+ 149 00b8 289A      		sbi 0x5,0
+  59:nrf.c         **** 		delay_us(1);
+ 150               		.loc 1 59 0
+ 151 00ba 81E0      		ldi r24,lo8(1)
+ 152 00bc 90E0      		ldi r25,0
+ 153 00be 0E94 0000 		call delay_us
+ 154               	.LVL11:
+  60:nrf.c         **** 		SS_DOWN;
+ 155               		.loc 1 60 0
+ 156 00c2 2898      		cbi 0x5,0
+  61:nrf.c         **** 		SPI_WRITE(W_REGISTER | NRG_TX_ADDR); // Transmitting address.
+ 157               		.loc 1 61 0
+ 158 00c4 80E3      		ldi r24,lo8(48)
+ 159 00c6 8EBD      		out 0x2e,r24
+ 160               	.L10:
+ 161               		.loc 1 61 0 is_stmt 0 discriminator 2
+ 162 00c8 85E0      		ldi r24,lo8(5)
+ 163 00ca 90E0      		ldi r25,0
+ 164 00cc 0E94 0000 		call delay_us
+ 165               	.LVL12:
+ 166 00d0 0DB4      		in __tmp_reg__,0x2d
+ 167 00d2 07FE      		sbrs __tmp_reg__,7
+ 168 00d4 00C0      		rjmp .L10
+  62:nrf.c         **** 		SPI_WRITE(0xFF & (NRF_ADDRESS >> 0));
+ 169               		.loc 1 62 0 is_stmt 1
+ 170 00d6 8AEA      		ldi r24,lo8(-86)
+ 171 00d8 8EBD      		out 0x2e,r24
+ 172               	.L12:
+ 173               		.loc 1 62 0 is_stmt 0 discriminator 2
+ 174 00da 85E0      		ldi r24,lo8(5)
+ 175 00dc 90E0      		ldi r25,0
+ 176 00de 0E94 0000 		call delay_us
+ 177               	.LVL13:
+ 178 00e2 0DB4      		in __tmp_reg__,0x2d
+ 179 00e4 07FE      		sbrs __tmp_reg__,7
+ 180 00e6 00C0      		rjmp .L12
+  63:nrf.c         **** 		SPI_WRITE(0xFF & (NRF_ADDRESS >> 8));
+ 181               		.loc 1 63 0 is_stmt 1
+ 182 00e8 82E2      		ldi r24,lo8(34)
+ 183 00ea 8EBD      		out 0x2e,r24
+ 184               	.L14:
+ 185               		.loc 1 63 0 is_stmt 0 discriminator 2
+ 186 00ec 85E0      		ldi r24,lo8(5)
+ 187 00ee 90E0      		ldi r25,0
+ 188 00f0 0E94 0000 		call delay_us
+ 189               	.LVL14:
+ 190 00f4 0DB4      		in __tmp_reg__,0x2d
+ 191 00f6 07FE      		sbrs __tmp_reg__,7
+ 192 00f8 00C0      		rjmp .L14
+  64:nrf.c         **** 		SPI_WRITE(0xFF & (NRF_ADDRESS >> 16));
+ 193               		.loc 1 64 0 is_stmt 1
+ 194 00fa 84E4      		ldi r24,lo8(68)
+ 195 00fc 8EBD      		out 0x2e,r24
+ 196               	.L16:
+ 197               		.loc 1 64 0 is_stmt 0 discriminator 2
+ 198 00fe 85E0      		ldi r24,lo8(5)
+ 199 0100 90E0      		ldi r25,0
+ 200 0102 0E94 0000 		call delay_us
+ 201               	.LVL15:
+ 202 0106 0DB4      		in __tmp_reg__,0x2d
+ 203 0108 07FE      		sbrs __tmp_reg__,7
+ 204 010a 00C0      		rjmp .L16
+  65:nrf.c         **** 		SPI_WRITE(0xFF & (NRF_ADDRESS >> 24));
+ 205               		.loc 1 65 0 is_stmt 1
+ 206 010c 1EBC      		out 0x2e,__zero_reg__
+ 207               	.L18:
+ 208               		.loc 1 65 0 is_stmt 0 discriminator 2
+ 209 010e 85E0      		ldi r24,lo8(5)
+ 210 0110 90E0      		ldi r25,0
+ 211 0112 0E94 0000 		call delay_us
+ 212               	.LVL16:
+ 213 0116 0DB4      		in __tmp_reg__,0x2d
+ 214 0118 07FE      		sbrs __tmp_reg__,7
+ 215 011a 00C0      		rjmp .L18
+  66:nrf.c         **** 		SPI_WRITE(0xFF & (NRF_ADDRESS >> 32));
+ 216               		.loc 1 66 0 is_stmt 1
+ 217 011c 81E1      		ldi r24,lo8(17)
+ 218 011e 8EBD      		out 0x2e,r24
+ 219               	.L20:
+ 220               		.loc 1 66 0 is_stmt 0 discriminator 2
+ 221 0120 85E0      		ldi r24,lo8(5)
+ 222 0122 90E0      		ldi r25,0
+ 223 0124 0E94 0000 		call delay_us
+ 224               	.LVL17:
+ 225 0128 0DB4      		in __tmp_reg__,0x2d
+ 226 012a 07FE      		sbrs __tmp_reg__,7
+ 227 012c 00C0      		rjmp .L20
+  67:nrf.c         **** 		SS_UP;
+ 228               		.loc 1 67 0 is_stmt 1
+ 229 012e 289A      		sbi 0x5,0
+  68:nrf.c         **** 		delay_us(1);
+ 230               		.loc 1 68 0
+ 231 0130 81E0      		ldi r24,lo8(1)
+ 232 0132 90E0      		ldi r25,0
+ 233 0134 0E94 0000 		call delay_us
+ 234               	.LVL18:
+  69:nrf.c         **** 		SS_DOWN;
+ 235               		.loc 1 69 0
+ 236 0138 2898      		cbi 0x5,0
+  70:nrf.c         **** 		SPI_WRITE(W_REGISTER | NRG_RX_ADDR_P0); // Ack/Receiving address.
+ 237               		.loc 1 70 0
+ 238 013a 8AE2      		ldi r24,lo8(42)
+ 239 013c 8EBD      		out 0x2e,r24
+ 240               	.L22:
+ 241               		.loc 1 70 0 is_stmt 0 discriminator 2
+ 242 013e 85E0      		ldi r24,lo8(5)
+ 243 0140 90E0      		ldi r25,0
+ 244 0142 0E94 0000 		call delay_us
+ 245               	.LVL19:
+ 246 0146 0DB4      		in __tmp_reg__,0x2d
+ 247 0148 07FE      		sbrs __tmp_reg__,7
+ 248 014a 00C0      		rjmp .L22
+  71:nrf.c         **** 		SPI_WRITE(0xFF & (NRF_ADDRESS >> 0));
+ 249               		.loc 1 71 0 is_stmt 1
+ 250 014c 8AEA      		ldi r24,lo8(-86)
+ 251 014e 8EBD      		out 0x2e,r24
+ 252               	.L24:
+ 253               		.loc 1 71 0 is_stmt 0 discriminator 2
+ 254 0150 85E0      		ldi r24,lo8(5)
+ 255 0152 90E0      		ldi r25,0
+ 256 0154 0E94 0000 		call delay_us
+ 257               	.LVL20:
+ 258 0158 0DB4      		in __tmp_reg__,0x2d
+ 259 015a 07FE      		sbrs __tmp_reg__,7
+ 260 015c 00C0      		rjmp .L24
+  72:nrf.c         **** 		SPI_WRITE(0xFF & (NRF_ADDRESS >> 8));
+ 261               		.loc 1 72 0 is_stmt 1
+ 262 015e 82E2      		ldi r24,lo8(34)
+ 263 0160 8EBD      		out 0x2e,r24
+ 264               	.L26:
+ 265               		.loc 1 72 0 is_stmt 0 discriminator 2
+ 266 0162 85E0      		ldi r24,lo8(5)
+ 267 0164 90E0      		ldi r25,0
+ 268 0166 0E94 0000 		call delay_us
+ 269               	.LVL21:
+ 270 016a 0DB4      		in __tmp_reg__,0x2d
+ 271 016c 07FE      		sbrs __tmp_reg__,7
+ 272 016e 00C0      		rjmp .L26
+  73:nrf.c         **** 		SPI_WRITE(0xFF & (NRF_ADDRESS >> 16));
+ 273               		.loc 1 73 0 is_stmt 1
+ 274 0170 84E4      		ldi r24,lo8(68)
+ 275 0172 8EBD      		out 0x2e,r24
+ 276               	.L28:
+ 277               		.loc 1 73 0 is_stmt 0 discriminator 2
+ 278 0174 85E0      		ldi r24,lo8(5)
+ 279 0176 90E0      		ldi r25,0
+ 280 0178 0E94 0000 		call delay_us
+ 281               	.LVL22:
+ 282 017c 0DB4      		in __tmp_reg__,0x2d
+ 283 017e 07FE      		sbrs __tmp_reg__,7
+ 284 0180 00C0      		rjmp .L28
+  74:nrf.c         **** 		SPI_WRITE(0xFF & (NRF_ADDRESS >> 24));
+ 285               		.loc 1 74 0 is_stmt 1
+ 286 0182 1EBC      		out 0x2e,__zero_reg__
+ 287               	.L30:
+ 288               		.loc 1 74 0 is_stmt 0 discriminator 2
+ 289 0184 85E0      		ldi r24,lo8(5)
+ 290 0186 90E0      		ldi r25,0
+ 291 0188 0E94 0000 		call delay_us
+ 292               	.LVL23:
+ 293 018c 0DB4      		in __tmp_reg__,0x2d
+ 294 018e 07FE      		sbrs __tmp_reg__,7
+ 295 0190 00C0      		rjmp .L30
+  75:nrf.c         **** 		SPI_WRITE(0xFF & (NRF_ADDRESS >> 32));
+ 296               		.loc 1 75 0 is_stmt 1
+ 297 0192 81E1      		ldi r24,lo8(17)
+ 298 0194 8EBD      		out 0x2e,r24
+ 299               	.L32:
+ 300               		.loc 1 75 0 is_stmt 0 discriminator 2
+ 301 0196 85E0      		ldi r24,lo8(5)
+ 302 0198 90E0      		ldi r25,0
+ 303 019a 0E94 0000 		call delay_us
+ 304               	.LVL24:
+ 305 019e 0DB4      		in __tmp_reg__,0x2d
+ 306 01a0 07FE      		sbrs __tmp_reg__,7
+ 307 01a2 00C0      		rjmp .L32
+  76:nrf.c         **** 		SS_UP;
+ 308               		.loc 1 76 0 is_stmt 1
+ 309 01a4 289A      		sbi 0x5,0
+  77:nrf.c         **** 		delay_us(1);
+ 310               		.loc 1 77 0
+ 311 01a6 81E0      		ldi r24,lo8(1)
+ 312 01a8 90E0      		ldi r25,0
+ 313 01aa 0E94 0000 		call delay_us
+ 314               	.LVL25:
+  78:nrf.c         **** 		SS_DOWN;
+ 315               		.loc 1 78 0
+ 316 01ae 2898      		cbi 0x5,0
+  79:nrf.c         **** 		SPI_WRITE(W_REGISTER | NRG_RX_PW_P0);
+ 317               		.loc 1 79 0
+ 318 01b0 81E3      		ldi r24,lo8(49)
+ 319 01b2 8EBD      		out 0x2e,r24
+ 320               	.L34:
+ 321               		.loc 1 79 0 is_stmt 0 discriminator 2
+ 322 01b4 85E0      		ldi r24,lo8(5)
+ 323 01b6 90E0      		ldi r25,0
+ 324 01b8 0E94 0000 		call delay_us
+ 325               	.LVL26:
+ 326 01bc 0DB4      		in __tmp_reg__,0x2d
+ 327 01be 07FE      		sbrs __tmp_reg__,7
+ 328 01c0 00C0      		rjmp .L34
+  80:nrf.c         **** 		SPI_WRITE(0x3F & NRF_PAYLOADBYTES);
+ 329               		.loc 1 80 0 is_stmt 1
+ 330 01c2 82E0      		ldi r24,lo8(2)
+ 331 01c4 8EBD      		out 0x2e,r24
+ 332               	.L36:
+ 333               		.loc 1 80 0 is_stmt 0 discriminator 2
+ 334 01c6 85E0      		ldi r24,lo8(5)
+ 335 01c8 90E0      		ldi r25,0
+ 336 01ca 0E94 0000 		call delay_us
+ 337               	.LVL27:
+ 338 01ce 0DB4      		in __tmp_reg__,0x2d
+ 339 01d0 07FE      		sbrs __tmp_reg__,7
+ 340 01d2 00C0      		rjmp .L36
+  81:nrf.c         **** 		SS_UP;
+ 341               		.loc 1 81 0 is_stmt 1
+ 342 01d4 289A      		sbi 0x5,0
+  82:nrf.c         **** 		delay_us(1);
+ 343               		.loc 1 82 0
+ 344 01d6 81E0      		ldi r24,lo8(1)
+ 345 01d8 90E0      		ldi r25,0
+ 346 01da 0E94 0000 		call delay_us
+ 347               	.LVL28:
+  83:nrf.c         **** 		SS_DOWN;
+ 348               		.loc 1 83 0
+ 349 01de 2898      		cbi 0x5,0
+  84:nrf.c         **** 		SPI_WRITE(W_REGISTER | NRG_EN_RXADDR);
+ 350               		.loc 1 84 0
+ 351 01e0 82E2      		ldi r24,lo8(34)
+ 352 01e2 8EBD      		out 0x2e,r24
+ 353               	.L38:
+ 354               		.loc 1 84 0 is_stmt 0 discriminator 2
+ 355 01e4 85E0      		ldi r24,lo8(5)
+ 356 01e6 90E0      		ldi r25,0
+ 357 01e8 0E94 0000 		call delay_us
+ 358               	.LVL29:
+ 359 01ec 0DB4      		in __tmp_reg__,0x2d
+ 360 01ee 07FE      		sbrs __tmp_reg__,7
+ 361 01f0 00C0      		rjmp .L38
+  85:nrf.c         **** 		SPI_WRITE(0x01); // Only enable pipe 0.
+ 362               		.loc 1 85 0 is_stmt 1
+ 363 01f2 81E0      		ldi r24,lo8(1)
+ 364 01f4 8EBD      		out 0x2e,r24
+ 365               	.L40:
+ 366               		.loc 1 85 0 is_stmt 0 discriminator 2
+ 367 01f6 85E0      		ldi r24,lo8(5)
+ 368 01f8 90E0      		ldi r25,0
+ 369 01fa 0E94 0000 		call delay_us
+ 370               	.LVL30:
+ 371 01fe 0DB4      		in __tmp_reg__,0x2d
+ 372 0200 07FE      		sbrs __tmp_reg__,7
+ 373 0202 00C0      		rjmp .L40
+  86:nrf.c         **** 		SS_UP;
+ 374               		.loc 1 86 0 is_stmt 1
+ 375 0204 289A      		sbi 0x5,0
+  87:nrf.c         **** 		delay_us(1);
+ 376               		.loc 1 87 0
+ 377 0206 81E0      		ldi r24,lo8(1)
+ 378 0208 90E0      		ldi r25,0
+ 379 020a 0E94 0000 		call delay_us
+ 380               	.LVL31:
+  88:nrf.c         **** 		SS_DOWN;
+ 381               		.loc 1 88 0
+ 382 020e 2898      		cbi 0x5,0
+  89:nrf.c         **** 		SPI_WRITE(W_REGISTER | NRG_RF_CH);
+ 383               		.loc 1 89 0
+ 384 0210 85E2      		ldi r24,lo8(37)
+ 385 0212 8EBD      		out 0x2e,r24
+ 386               	.L42:
+ 387               		.loc 1 89 0 is_stmt 0 discriminator 2
+ 388 0214 85E0      		ldi r24,lo8(5)
+ 389 0216 90E0      		ldi r25,0
+ 390 0218 0E94 0000 		call delay_us
+ 391               	.LVL32:
+ 392 021c 0DB4      		in __tmp_reg__,0x2d
+ 393 021e 07FE      		sbrs __tmp_reg__,7
+ 394 0220 00C0      		rjmp .L42
+  90:nrf.c         **** 		SPI_WRITE(0x7F & NRF_CHANNEL);
+ 395               		.loc 1 90 0 is_stmt 1
+ 396 0222 88E1      		ldi r24,lo8(24)
+ 397 0224 8EBD      		out 0x2e,r24
+ 398               	.L44:
+ 399               		.loc 1 90 0 is_stmt 0 discriminator 2
+ 400 0226 85E0      		ldi r24,lo8(5)
+ 401 0228 90E0      		ldi r25,0
+ 402 022a 0E94 0000 		call delay_us
+ 403               	.LVL33:
+ 404 022e 0DB4      		in __tmp_reg__,0x2d
+ 405 0230 07FE      		sbrs __tmp_reg__,7
+ 406 0232 00C0      		rjmp .L44
+  91:nrf.c         **** 		SS_UP;
+ 407               		.loc 1 91 0 is_stmt 1
+ 408 0234 289A      		sbi 0x5,0
+  92:nrf.c         **** 		delay_us(1);
+ 409               		.loc 1 92 0
+ 410 0236 81E0      		ldi r24,lo8(1)
+ 411 0238 90E0      		ldi r25,0
+ 412 023a 0E94 0000 		call delay_us
+ 413               	.LVL34:
+  93:nrf.c         **** 		SS_DOWN;
+ 414               		.loc 1 93 0
+ 415 023e 2898      		cbi 0x5,0
+  94:nrf.c         **** 		SPI_WRITE(W_REGISTER | NRG_RF_SETUP);
+ 416               		.loc 1 94 0
+ 417 0240 86E2      		ldi r24,lo8(38)
+ 418 0242 8EBD      		out 0x2e,r24
+ 419               	.L46:
+ 420               		.loc 1 94 0 is_stmt 0 discriminator 2
+ 421 0244 85E0      		ldi r24,lo8(5)
+ 422 0246 90E0      		ldi r25,0
+ 423 0248 0E94 0000 		call delay_us
+ 424               	.LVL35:
+ 425 024c 0DB4      		in __tmp_reg__,0x2d
+ 426 024e 07FE      		sbrs __tmp_reg__,7
+ 427 0250 00C0      		rjmp .L46
+  95:nrf.c         **** 		SPI_WRITE(0x0F & ((NRF_RATE<<RF_DR)|(NRF_POWER<<RF_PWR)|(NRF_RXGAIN<<LNA_HCURR)));
+ 428               		.loc 1 95 0 is_stmt 1
+ 429 0252 87E0      		ldi r24,lo8(7)
+ 430 0254 8EBD      		out 0x2e,r24
+ 431               	.L48:
+ 432               		.loc 1 95 0 is_stmt 0 discriminator 2
+ 433 0256 85E0      		ldi r24,lo8(5)
+ 434 0258 90E0      		ldi r25,0
+ 435 025a 0E94 0000 		call delay_us
+ 436               	.LVL36:
+ 437 025e 0DB4      		in __tmp_reg__,0x2d
+ 438 0260 07FE      		sbrs __tmp_reg__,7
+ 439 0262 00C0      		rjmp .L48
+  96:nrf.c         **** 		SS_UP;
+ 440               		.loc 1 96 0 is_stmt 1
+ 441 0264 289A      		sbi 0x5,0
+  97:nrf.c         **** 		delay_us(1);
+ 442               		.loc 1 97 0
+ 443 0266 81E0      		ldi r24,lo8(1)
+ 444 0268 90E0      		ldi r25,0
+ 445 026a 0E94 0000 		call delay_us
+ 446               	.LVL37:
+  98:nrf.c         **** 		SS_DOWN;
+ 447               		.loc 1 98 0
+ 448 026e 2898      		cbi 0x5,0
+  99:nrf.c         **** 		SPI_WRITE(W_REGISTER | NRG_EN_AA);
+ 449               		.loc 1 99 0
+ 450 0270 81E2      		ldi r24,lo8(33)
+ 451 0272 8EBD      		out 0x2e,r24
+ 452               	.L50:
+ 453               		.loc 1 99 0 is_stmt 0 discriminator 2
+ 454 0274 85E0      		ldi r24,lo8(5)
+ 455 0276 90E0      		ldi r25,0
+ 456 0278 0E94 0000 		call delay_us
+ 457               	.LVL38:
+ 458 027c 0DB4      		in __tmp_reg__,0x2d
+ 459 027e 07FE      		sbrs __tmp_reg__,7
+ 460 0280 00C0      		rjmp .L50
+ 100:nrf.c         **** 		SPI_WRITE(0x01 & NRF_AUTOACK);
+ 461               		.loc 1 100 0 is_stmt 1
+ 462 0282 81E0      		ldi r24,lo8(1)
+ 463 0284 8EBD      		out 0x2e,r24
+ 464               	.L52:
+ 465               		.loc 1 100 0 is_stmt 0 discriminator 2
+ 466 0286 85E0      		ldi r24,lo8(5)
+ 467 0288 90E0      		ldi r25,0
+ 468 028a 0E94 0000 		call delay_us
+ 469               	.LVL39:
+ 470 028e 0DB4      		in __tmp_reg__,0x2d
+ 471 0290 07FE      		sbrs __tmp_reg__,7
+ 472 0292 00C0      		rjmp .L52
+ 101:nrf.c         **** 		SS_UP;
+ 473               		.loc 1 101 0 is_stmt 1
+ 474 0294 289A      		sbi 0x5,0
+ 102:nrf.c         **** 		delay_us(1);
+ 475               		.loc 1 102 0
+ 476 0296 81E0      		ldi r24,lo8(1)
+ 477 0298 90E0      		ldi r25,0
+ 478 029a 0E94 0000 		call delay_us
+ 479               	.LVL40:
+ 103:nrf.c         **** 		SS_DOWN;
+ 480               		.loc 1 103 0
+ 481 029e 2898      		cbi 0x5,0
+ 104:nrf.c         **** 		SPI_WRITE(W_REGISTER | NRG_CONFIG);
+ 482               		.loc 1 104 0
+ 483 02a0 80E2      		ldi r24,lo8(32)
+ 484 02a2 8EBD      		out 0x2e,r24
+ 485               	.L54:
+ 486               		.loc 1 104 0 is_stmt 0 discriminator 2
+ 487 02a4 85E0      		ldi r24,lo8(5)
+ 488 02a6 90E0      		ldi r25,0
+ 489 02a8 0E94 0000 		call delay_us
+ 490               	.LVL41:
+ 491 02ac 0DB4      		in __tmp_reg__,0x2d
+ 492 02ae 07FE      		sbrs __tmp_reg__,7
+ 493 02b0 00C0      		rjmp .L54
+ 105:nrf.c         **** 		SPI_WRITE(0x7F & ((NRF_INTERRUPTS<<MASK_ALL)|(NRF_CRCEN<<EN_CRC)|(NRF_CRCTWO<<CRCO)|(1<<PWR_UP)|(
+ 494               		.loc 1 105 0 is_stmt 1
+ 495 02b2 8AE7      		ldi r24,lo8(122)
+ 496 02b4 8EBD      		out 0x2e,r24
+ 497               	.L56:
+ 498               		.loc 1 105 0 is_stmt 0 discriminator 2
+ 499 02b6 85E0      		ldi r24,lo8(5)
+ 500 02b8 90E0      		ldi r25,0
+ 501 02ba 0E94 0000 		call delay_us
+ 502               	.LVL42:
+ 503 02be 0DB4      		in __tmp_reg__,0x2d
+ 504 02c0 07FE      		sbrs __tmp_reg__,7
+ 505 02c2 00C0      		rjmp .L56
+ 106:nrf.c         **** 		SS_UP;
+ 506               		.loc 1 106 0 is_stmt 1
+ 507 02c4 289A      		sbi 0x5,0
+ 107:nrf.c         **** 		delay_us(10);
+ 508               		.loc 1 107 0
+ 509 02c6 8AE0      		ldi r24,lo8(10)
+ 510 02c8 90E0      		ldi r25,0
+ 511 02ca 0C94 0000 		jmp delay_us
+ 512               	.LVL43:
+ 513               		.cfi_endproc
+ 514               	.LFE108:
+ 516               		.section	.text.nrf_tx,"ax",@progbits
+ 517               	.global	nrf_tx
+ 519               	nrf_tx:
+ 520               	.LFB109:
+ 108:nrf.c         **** 		//lcd_clrscr(); lcd_puts("Setup complete. ");
+ 109:nrf.c         **** 	}
+ 110:nrf.c         **** 	
+ 111:nrf.c         **** }
+ 112:nrf.c         **** 
+ 113:nrf.c         **** void nrf_tx(uint16_t payload)
+ 114:nrf.c         **** {
+ 521               		.loc 1 114 0
+ 522               		.cfi_startproc
+ 523               	.LVL44:
+ 524 0000 CF93      		push r28
+ 525               	.LCFI0:
+ 526               		.cfi_def_cfa_offset 3
+ 527               		.cfi_offset 28, -2
+ 528 0002 DF93      		push r29
+ 529               	.LCFI1:
+ 530               		.cfi_def_cfa_offset 4
+ 531               		.cfi_offset 29, -3
+ 532               	/* prologue: function */
+ 533               	/* frame size = 0 */
+ 534               	/* stack size = 2 */
+ 535               	.L__stack_usage = 2
+ 536 0004 D82F      		mov r29,r24
+ 537 0006 C92F      		mov r28,r25
+ 115:nrf.c         **** 	SS_DOWN;
+ 538               		.loc 1 115 0
+ 539 0008 2898      		cbi 0x5,0
+ 116:nrf.c         **** 	SPI_WRITE(W_TX_PAYLOAD);
+ 540               		.loc 1 116 0
+ 541 000a 80EA      		ldi r24,lo8(-96)
+ 542               	.LVL45:
+ 543 000c 8EBD      		out 0x2e,r24
+ 544               	.L59:
+ 545               		.loc 1 116 0 is_stmt 0 discriminator 2
+ 546 000e 85E0      		ldi r24,lo8(5)
+ 547 0010 90E0      		ldi r25,0
+ 548 0012 0E94 0000 		call delay_us
+ 549               	.LVL46:
+ 550 0016 0DB4      		in __tmp_reg__,0x2d
+ 551 0018 07FE      		sbrs __tmp_reg__,7
+ 552 001a 00C0      		rjmp .L59
+ 117:nrf.c         **** 	nrf_last_status = SPDR;
+ 553               		.loc 1 117 0 is_stmt 1
+ 554 001c 8EB5      		in r24,0x2e
+ 555 001e 8093 0000 		sts nrf_last_status,r24
+ 118:nrf.c         **** 	SPI_WRITE(0xFF & payload);
+ 556               		.loc 1 118 0
+ 557 0022 DEBD      		out 0x2e,r29
+ 558               	.L61:
+ 559               		.loc 1 118 0 is_stmt 0 discriminator 2
+ 560 0024 85E0      		ldi r24,lo8(5)
+ 561 0026 90E0      		ldi r25,0
+ 562 0028 0E94 0000 		call delay_us
+ 563               	.LVL47:
+ 564 002c 0DB4      		in __tmp_reg__,0x2d
+ 565 002e 07FE      		sbrs __tmp_reg__,7
+ 566 0030 00C0      		rjmp .L61
+ 119:nrf.c         **** 	SPI_WRITE(0xFF & (payload >> 8));
+ 567               		.loc 1 119 0 is_stmt 1
+ 568 0032 CEBD      		out 0x2e,r28
+ 569               	.L63:
+ 570               		.loc 1 119 0 is_stmt 0 discriminator 2
+ 571 0034 85E0      		ldi r24,lo8(5)
+ 572 0036 90E0      		ldi r25,0
+ 573 0038 0E94 0000 		call delay_us
+ 574               	.LVL48:
+ 575 003c 0DB4      		in __tmp_reg__,0x2d
+ 576 003e 07FE      		sbrs __tmp_reg__,7
+ 577 0040 00C0      		rjmp .L63
+ 120:nrf.c         **** 	SS_UP;
+ 578               		.loc 1 120 0 is_stmt 1
+ 579 0042 289A      		sbi 0x5,0
+ 121:nrf.c         **** 	delay_us(5);
+ 580               		.loc 1 121 0
+ 581 0044 85E0      		ldi r24,lo8(5)
+ 582 0046 90E0      		ldi r25,0
+ 583 0048 0E94 0000 		call delay_us
+ 584               	.LVL49:
+ 122:nrf.c         **** 	// Strobe CE to start transmission.
+ 123:nrf.c         **** 	CE_UP;
+ 585               		.loc 1 123 0
+ 586 004c 2C9A      		sbi 0x5,4
+ 124:nrf.c         **** 	delay_us(20);
+ 587               		.loc 1 124 0
+ 588 004e 84E1      		ldi r24,lo8(20)
+ 589 0050 90E0      		ldi r25,0
+ 590 0052 0E94 0000 		call delay_us
+ 591               	.LVL50:
+ 125:nrf.c         **** 	CE_DOWN;
+ 592               		.loc 1 125 0
+ 593 0056 2C98      		cbi 0x5,4
+ 594               	/* epilogue start */
+ 126:nrf.c         **** }
+ 595               		.loc 1 126 0
+ 596 0058 DF91      		pop r29
+ 597 005a CF91      		pop r28
+ 598 005c 0895      		ret
+ 599               		.cfi_endproc
+ 600               	.LFE109:
+ 602               		.section	.text.nrf_rx,"ax",@progbits
+ 603               	.global	nrf_rx
+ 605               	nrf_rx:
+ 606               	.LFB110:
+ 127:nrf.c         **** 
+ 128:nrf.c         **** uint16_t nrf_rx(void)
+ 129:nrf.c         **** {
+ 607               		.loc 1 129 0
+ 608               		.cfi_startproc
+ 609               	/* prologue: function */
+ 610               	/* frame size = 0 */
+ 611               	/* stack size = 0 */
+ 612               	.L__stack_usage = 0
+ 130:nrf.c         **** 	uint16_t payload;
+ 131:nrf.c         **** 	if(!NRF_RX) return 0;
+ 132:nrf.c         **** 	SS_DOWN; // Bring the nRF SS line low to begin transaction.
+ 133:nrf.c         **** 	SPI_WRITE(NOP); // Start up the SPI transfer.
+ 134:nrf.c         **** 	nrf_last_status = SPDR;
+ 135:nrf.c         **** 	SS_UP;
+ 136:nrf.c         **** 	if(nrf_last_status & (1<<RX_DR))
+ 137:nrf.c         **** 	{
+ 138:nrf.c         **** 		delay_us(1);
+ 139:nrf.c         **** 		SS_DOWN;
+ 140:nrf.c         **** 		SPI_WRITE(R_RX_PAYLOAD);
+ 141:nrf.c         **** 		SPI_WRITE(0x00); payload = SPDR;
+ 142:nrf.c         **** 		SPI_WRITE(0x00); payload |= ((uint16_t)SPDR << 8);
+ 143:nrf.c         **** 		SS_UP;
+ 144:nrf.c         **** 		delay_us(1);
+ 145:nrf.c         **** 		SS_DOWN;
+ 146:nrf.c         **** 		SPI_WRITE(R_REGISTER | NRG_FIFO_STATUS);
+ 147:nrf.c         **** 		nrf_last_status = SPDR;
+ 148:nrf.c         **** 		SPI_WRITE(0x00); 
+ 149:nrf.c         **** 		SS_UP;
+ 150:nrf.c         **** 		if(SPDR & (1<<RX_EMPTY))
+ 151:nrf.c         **** 		{
+ 152:nrf.c         **** 			delay_us(1);
+ 153:nrf.c         **** 			SS_DOWN;
+ 154:nrf.c         **** 			SPI_WRITE(W_REGISTER | NRG_STATUS);
+ 155:nrf.c         **** 			SPI_WRITE(0x7f & (1<<RX_DR));
+ 156:nrf.c         **** 		}
+ 157:nrf.c         **** 		return payload;
+ 158:nrf.c         **** 	}
+ 159:nrf.c         **** 	else return 0;
+ 160:nrf.c         **** 	
+ 161:nrf.c         **** }
+ 613               		.loc 1 161 0
+ 614 0000 80E0      		ldi r24,0
+ 615 0002 90E0      		ldi r25,0
+ 616 0004 0895      		ret
+ 617               		.cfi_endproc
+ 618               	.LFE110:
+ 620               		.section	.rodata.str1.1
+ 621               	.LC4:
+ 622 0044 5370 696C 		.string	"Spilling registers...\r\n"
+ 622      6C69 6E67 
+ 622      2072 6567 
+ 622      6973 7465 
+ 622      7273 2E2E 
+ 623               	.LC5:
+ 624 005c 454E 5F41 		.string	"EN_AA register: 0x"
+ 624      4120 7265 
+ 624      6769 7374 
+ 624      6572 3A20 
+ 624      3078 00
+ 625               	.LC6:
+ 626 006f 454E 5F52 		.string	"EN_RXADDR register: 0x"
+ 626      5841 4444 
+ 626      5220 7265 
+ 626      6769 7374 
+ 626      6572 3A20 
+ 627               	.LC7:
+ 628 0086 5243 5F43 		.string	"RC_CH register: 0x"
+ 628      4820 7265 
+ 628      6769 7374 
+ 628      6572 3A20 
+ 628      3078 00
+ 629               	.LC8:
+ 630 0099 4F62 7365 		.string	"Observe TX register: 0x"
+ 630      7276 6520 
+ 630      5458 2072 
+ 630      6567 6973 
+ 630      7465 723A 
+ 631               	.LC9:
+ 632 00b1 4649 464F 		.string	"FIFO Status register: 0x"
+ 632      2053 7461 
+ 632      7475 7320 
+ 632      7265 6769 
+ 632      7374 6572 
+ 633               		.section	.text.nrf_spillRegisters,"ax",@progbits
+ 634               	.global	nrf_spillRegisters
+ 636               	nrf_spillRegisters:
+ 637               	.LFB111:
+ 162:nrf.c         **** 
+ 163:nrf.c         **** // Spill contents of all relevent registers.
+ 164:nrf.c         **** void nrf_spillRegisters(void)
+ 165:nrf.c         **** {
+ 638               		.loc 1 165 0
+ 639               		.cfi_startproc
+ 640               	/* prologue: function */
+ 641               	/* frame size = 0 */
+ 642               	/* stack size = 0 */
+ 643               	.L__stack_usage = 0
+ 166:nrf.c         **** 	fputs("Spilling registers...\r\n", &USBSerialStream);
+ 644               		.loc 1 166 0
+ 645 0000 60E0      		ldi r22,lo8(USBSerialStream)
+ 646 0002 70E0      		ldi r23,hi8(USBSerialStream)
+ 647 0004 80E0      		ldi r24,lo8(.LC4)
+ 648 0006 90E0      		ldi r25,hi8(.LC4)
+ 649 0008 0E94 0000 		call fputs
+ 650               	.LVL51:
+ 167:nrf.c         **** 	
+ 168:nrf.c         **** 	delay_us(1);
+ 651               		.loc 1 168 0
+ 652 000c 81E0      		ldi r24,lo8(1)
+ 653 000e 90E0      		ldi r25,0
+ 654 0010 0E94 0000 		call delay_us
+ 655               	.LVL52:
+ 169:nrf.c         **** 	SS_DOWN;
+ 656               		.loc 1 169 0
+ 657 0014 2898      		cbi 0x5,0
+ 170:nrf.c         **** 	SPI_WRITE(R_REGISTER | NRG_CONFIG);
+ 658               		.loc 1 170 0
+ 659 0016 1EBC      		out 0x2e,__zero_reg__
+ 660               	.L67:
+ 661               		.loc 1 170 0 is_stmt 0 discriminator 2
+ 662 0018 85E0      		ldi r24,lo8(5)
+ 663 001a 90E0      		ldi r25,0
+ 664 001c 0E94 0000 		call delay_us
+ 665               	.LVL53:
+ 666 0020 0DB4      		in __tmp_reg__,0x2d
+ 667 0022 07FE      		sbrs __tmp_reg__,7
+ 668 0024 00C0      		rjmp .L67
+ 171:nrf.c         **** 	SPI_WRITE(0xFF);
+ 669               		.loc 1 171 0 is_stmt 1
+ 670 0026 8FEF      		ldi r24,lo8(-1)
+ 671 0028 8EBD      		out 0x2e,r24
+ 672               	.L69:
+ 673               		.loc 1 171 0 is_stmt 0 discriminator 2
+ 674 002a 85E0      		ldi r24,lo8(5)
+ 675 002c 90E0      		ldi r25,0
+ 676 002e 0E94 0000 		call delay_us
+ 677               	.LVL54:
+ 678 0032 0DB4      		in __tmp_reg__,0x2d
+ 679 0034 07FE      		sbrs __tmp_reg__,7
+ 680 0036 00C0      		rjmp .L69
+ 172:nrf.c         **** 	SS_UP;
+ 681               		.loc 1 172 0 is_stmt 1
+ 682 0038 289A      		sbi 0x5,0
+ 173:nrf.c         **** 	itoa(SPDR, buffer, 16);
+ 683               		.loc 1 173 0
+ 684 003a 8EB5      		in r24,0x2e
+ 685 003c 40E1      		ldi r20,lo8(16)
+ 686 003e 50E0      		ldi r21,0
+ 687 0040 60E0      		ldi r22,lo8(buffer)
+ 688 0042 70E0      		ldi r23,hi8(buffer)
+ 689 0044 90E0      		ldi r25,0
+ 690 0046 0E94 0000 		call itoa
+ 691               	.LVL55:
+ 174:nrf.c         **** 	fputs("Status register: 0x", &USBSerialStream);
+ 692               		.loc 1 174 0
+ 693 004a 60E0      		ldi r22,lo8(USBSerialStream)
+ 694 004c 70E0      		ldi r23,hi8(USBSerialStream)
+ 695 004e 80E0      		ldi r24,lo8(.LC1)
+ 696 0050 90E0      		ldi r25,hi8(.LC1)
+ 697 0052 0E94 0000 		call fputs
+ 698               	.LVL56:
+ 175:nrf.c         **** 	fputs(buffer, &USBSerialStream);
+ 699               		.loc 1 175 0
+ 700 0056 60E0      		ldi r22,lo8(USBSerialStream)
+ 701 0058 70E0      		ldi r23,hi8(USBSerialStream)
+ 702 005a 80E0      		ldi r24,lo8(buffer)
+ 703 005c 90E0      		ldi r25,hi8(buffer)
+ 704 005e 0E94 0000 		call fputs
+ 705               	.LVL57:
+ 176:nrf.c         **** 	fputs("\r\n", &USBSerialStream);
+ 706               		.loc 1 176 0
+ 707 0062 60E0      		ldi r22,lo8(USBSerialStream)
+ 708 0064 70E0      		ldi r23,hi8(USBSerialStream)
+ 709 0066 80E0      		ldi r24,lo8(.LC2)
+ 710 0068 90E0      		ldi r25,hi8(.LC2)
+ 711 006a 0E94 0000 		call fputs
+ 712               	.LVL58:
+ 177:nrf.c         **** 	
+ 178:nrf.c         **** 	delay_us(1);
+ 713               		.loc 1 178 0
+ 714 006e 81E0      		ldi r24,lo8(1)
+ 715 0070 90E0      		ldi r25,0
+ 716 0072 0E94 0000 		call delay_us
+ 717               	.LVL59:
+ 179:nrf.c         **** 	SS_DOWN;
+ 718               		.loc 1 179 0
+ 719 0076 2898      		cbi 0x5,0
+ 180:nrf.c         **** 	SPI_WRITE(R_REGISTER | NRG_EN_AA);
+ 720               		.loc 1 180 0
+ 721 0078 81E0      		ldi r24,lo8(1)
+ 722 007a 8EBD      		out 0x2e,r24
+ 723               	.L71:
+ 724               		.loc 1 180 0 is_stmt 0 discriminator 2
+ 725 007c 85E0      		ldi r24,lo8(5)
+ 726 007e 90E0      		ldi r25,0
+ 727 0080 0E94 0000 		call delay_us
+ 728               	.LVL60:
+ 729 0084 0DB4      		in __tmp_reg__,0x2d
+ 730 0086 07FE      		sbrs __tmp_reg__,7
+ 731 0088 00C0      		rjmp .L71
+ 181:nrf.c         **** 	SPI_WRITE(0xFF);
+ 732               		.loc 1 181 0 is_stmt 1
+ 733 008a 8FEF      		ldi r24,lo8(-1)
+ 734 008c 8EBD      		out 0x2e,r24
+ 735               	.L73:
+ 736               		.loc 1 181 0 is_stmt 0 discriminator 2
+ 737 008e 85E0      		ldi r24,lo8(5)
+ 738 0090 90E0      		ldi r25,0
+ 739 0092 0E94 0000 		call delay_us
+ 740               	.LVL61:
+ 741 0096 0DB4      		in __tmp_reg__,0x2d
+ 742 0098 07FE      		sbrs __tmp_reg__,7
+ 743 009a 00C0      		rjmp .L73
+ 182:nrf.c         **** 	SS_UP;
+ 744               		.loc 1 182 0 is_stmt 1
+ 745 009c 289A      		sbi 0x5,0
+ 183:nrf.c         **** 	itoa(SPDR, buffer, 16);
+ 746               		.loc 1 183 0
+ 747 009e 8EB5      		in r24,0x2e
+ 748 00a0 40E1      		ldi r20,lo8(16)
+ 749 00a2 50E0      		ldi r21,0
+ 750 00a4 60E0      		ldi r22,lo8(buffer)
+ 751 00a6 70E0      		ldi r23,hi8(buffer)
+ 752 00a8 90E0      		ldi r25,0
+ 753 00aa 0E94 0000 		call itoa
+ 754               	.LVL62:
+ 184:nrf.c         **** 	fputs("EN_AA register: 0x", &USBSerialStream);
+ 755               		.loc 1 184 0
+ 756 00ae 60E0      		ldi r22,lo8(USBSerialStream)
+ 757 00b0 70E0      		ldi r23,hi8(USBSerialStream)
+ 758 00b2 80E0      		ldi r24,lo8(.LC5)
+ 759 00b4 90E0      		ldi r25,hi8(.LC5)
+ 760 00b6 0E94 0000 		call fputs
+ 761               	.LVL63:
+ 185:nrf.c         **** 	fputs(buffer, &USBSerialStream);
+ 762               		.loc 1 185 0
+ 763 00ba 60E0      		ldi r22,lo8(USBSerialStream)
+ 764 00bc 70E0      		ldi r23,hi8(USBSerialStream)
+ 765 00be 80E0      		ldi r24,lo8(buffer)
+ 766 00c0 90E0      		ldi r25,hi8(buffer)
+ 767 00c2 0E94 0000 		call fputs
+ 768               	.LVL64:
+ 186:nrf.c         **** 	fputs("\r\n", &USBSerialStream);
+ 769               		.loc 1 186 0
+ 770 00c6 60E0      		ldi r22,lo8(USBSerialStream)
+ 771 00c8 70E0      		ldi r23,hi8(USBSerialStream)
+ 772 00ca 80E0      		ldi r24,lo8(.LC2)
+ 773 00cc 90E0      		ldi r25,hi8(.LC2)
+ 774 00ce 0E94 0000 		call fputs
+ 775               	.LVL65:
+ 187:nrf.c         **** 
+ 188:nrf.c         **** 	delay_us(1);
+ 776               		.loc 1 188 0
+ 777 00d2 81E0      		ldi r24,lo8(1)
+ 778 00d4 90E0      		ldi r25,0
+ 779 00d6 0E94 0000 		call delay_us
+ 780               	.LVL66:
+ 189:nrf.c         **** 	SS_DOWN;
+ 781               		.loc 1 189 0
+ 782 00da 2898      		cbi 0x5,0
+ 190:nrf.c         **** 	SPI_WRITE(R_REGISTER | NRG_EN_RXADDR);
+ 783               		.loc 1 190 0
+ 784 00dc 82E0      		ldi r24,lo8(2)
+ 785 00de 8EBD      		out 0x2e,r24
+ 786               	.L75:
+ 787               		.loc 1 190 0 is_stmt 0 discriminator 2
+ 788 00e0 85E0      		ldi r24,lo8(5)
+ 789 00e2 90E0      		ldi r25,0
+ 790 00e4 0E94 0000 		call delay_us
+ 791               	.LVL67:
+ 792 00e8 0DB4      		in __tmp_reg__,0x2d
+ 793 00ea 07FE      		sbrs __tmp_reg__,7
+ 794 00ec 00C0      		rjmp .L75
+ 191:nrf.c         **** 	SPI_WRITE(0xFF);
+ 795               		.loc 1 191 0 is_stmt 1
+ 796 00ee 8FEF      		ldi r24,lo8(-1)
+ 797 00f0 8EBD      		out 0x2e,r24
+ 798               	.L77:
+ 799               		.loc 1 191 0 is_stmt 0 discriminator 2
+ 800 00f2 85E0      		ldi r24,lo8(5)
+ 801 00f4 90E0      		ldi r25,0
+ 802 00f6 0E94 0000 		call delay_us
+ 803               	.LVL68:
+ 804 00fa 0DB4      		in __tmp_reg__,0x2d
+ 805 00fc 07FE      		sbrs __tmp_reg__,7
+ 806 00fe 00C0      		rjmp .L77
+ 192:nrf.c         **** 	SS_UP;
+ 807               		.loc 1 192 0 is_stmt 1
+ 808 0100 289A      		sbi 0x5,0
+ 193:nrf.c         **** 	itoa(SPDR, buffer, 16);
+ 809               		.loc 1 193 0
+ 810 0102 8EB5      		in r24,0x2e
+ 811 0104 40E1      		ldi r20,lo8(16)
+ 812 0106 50E0      		ldi r21,0
+ 813 0108 60E0      		ldi r22,lo8(buffer)
+ 814 010a 70E0      		ldi r23,hi8(buffer)
+ 815 010c 90E0      		ldi r25,0
+ 816 010e 0E94 0000 		call itoa
+ 817               	.LVL69:
+ 194:nrf.c         **** 	fputs("EN_RXADDR register: 0x", &USBSerialStream);
+ 818               		.loc 1 194 0
+ 819 0112 60E0      		ldi r22,lo8(USBSerialStream)
+ 820 0114 70E0      		ldi r23,hi8(USBSerialStream)
+ 821 0116 80E0      		ldi r24,lo8(.LC6)
+ 822 0118 90E0      		ldi r25,hi8(.LC6)
+ 823 011a 0E94 0000 		call fputs
+ 824               	.LVL70:
+ 195:nrf.c         **** 	fputs(buffer, &USBSerialStream);
+ 825               		.loc 1 195 0
+ 826 011e 60E0      		ldi r22,lo8(USBSerialStream)
+ 827 0120 70E0      		ldi r23,hi8(USBSerialStream)
+ 828 0122 80E0      		ldi r24,lo8(buffer)
+ 829 0124 90E0      		ldi r25,hi8(buffer)
+ 830 0126 0E94 0000 		call fputs
+ 831               	.LVL71:
+ 196:nrf.c         **** 	fputs("\r\n", &USBSerialStream);
+ 832               		.loc 1 196 0
+ 833 012a 60E0      		ldi r22,lo8(USBSerialStream)
+ 834 012c 70E0      		ldi r23,hi8(USBSerialStream)
+ 835 012e 80E0      		ldi r24,lo8(.LC2)
+ 836 0130 90E0      		ldi r25,hi8(.LC2)
+ 837 0132 0E94 0000 		call fputs
+ 838               	.LVL72:
+ 197:nrf.c         **** 	
+ 198:nrf.c         **** 	delay_us(1);
+ 839               		.loc 1 198 0
+ 840 0136 81E0      		ldi r24,lo8(1)
+ 841 0138 90E0      		ldi r25,0
+ 842 013a 0E94 0000 		call delay_us
+ 843               	.LVL73:
+ 199:nrf.c         **** 	SS_DOWN;
+ 844               		.loc 1 199 0
+ 845 013e 2898      		cbi 0x5,0
+ 200:nrf.c         **** 	SPI_WRITE(R_REGISTER | NRG_RF_CH);
+ 846               		.loc 1 200 0
+ 847 0140 85E0      		ldi r24,lo8(5)
+ 848 0142 8EBD      		out 0x2e,r24
+ 849               	.L79:
+ 850               		.loc 1 200 0 is_stmt 0 discriminator 2
+ 851 0144 85E0      		ldi r24,lo8(5)
+ 852 0146 90E0      		ldi r25,0
+ 853 0148 0E94 0000 		call delay_us
+ 854               	.LVL74:
+ 855 014c 0DB4      		in __tmp_reg__,0x2d
+ 856 014e 07FE      		sbrs __tmp_reg__,7
+ 857 0150 00C0      		rjmp .L79
+ 201:nrf.c         **** 	SPI_WRITE(0xFF);
+ 858               		.loc 1 201 0 is_stmt 1
+ 859 0152 8FEF      		ldi r24,lo8(-1)
+ 860 0154 8EBD      		out 0x2e,r24
+ 861               	.L81:
+ 862               		.loc 1 201 0 is_stmt 0 discriminator 2
+ 863 0156 85E0      		ldi r24,lo8(5)
+ 864 0158 90E0      		ldi r25,0
+ 865 015a 0E94 0000 		call delay_us
+ 866               	.LVL75:
+ 867 015e 0DB4      		in __tmp_reg__,0x2d
+ 868 0160 07FE      		sbrs __tmp_reg__,7
+ 869 0162 00C0      		rjmp .L81
+ 202:nrf.c         **** 	SS_UP;
+ 870               		.loc 1 202 0 is_stmt 1
+ 871 0164 289A      		sbi 0x5,0
+ 203:nrf.c         **** 	itoa(SPDR, buffer, 16);
+ 872               		.loc 1 203 0
+ 873 0166 8EB5      		in r24,0x2e
+ 874 0168 40E1      		ldi r20,lo8(16)
+ 875 016a 50E0      		ldi r21,0
+ 876 016c 60E0      		ldi r22,lo8(buffer)
+ 877 016e 70E0      		ldi r23,hi8(buffer)
+ 878 0170 90E0      		ldi r25,0
+ 879 0172 0E94 0000 		call itoa
+ 880               	.LVL76:
+ 204:nrf.c         **** 	fputs("RC_CH register: 0x", &USBSerialStream);
+ 881               		.loc 1 204 0
+ 882 0176 60E0      		ldi r22,lo8(USBSerialStream)
+ 883 0178 70E0      		ldi r23,hi8(USBSerialStream)
+ 884 017a 80E0      		ldi r24,lo8(.LC7)
+ 885 017c 90E0      		ldi r25,hi8(.LC7)
+ 886 017e 0E94 0000 		call fputs
+ 887               	.LVL77:
+ 205:nrf.c         **** 	fputs(buffer, &USBSerialStream);
+ 888               		.loc 1 205 0
+ 889 0182 60E0      		ldi r22,lo8(USBSerialStream)
+ 890 0184 70E0      		ldi r23,hi8(USBSerialStream)
+ 891 0186 80E0      		ldi r24,lo8(buffer)
+ 892 0188 90E0      		ldi r25,hi8(buffer)
+ 893 018a 0E94 0000 		call fputs
+ 894               	.LVL78:
+ 206:nrf.c         **** 	fputs("\r\n", &USBSerialStream);
+ 895               		.loc 1 206 0
+ 896 018e 60E0      		ldi r22,lo8(USBSerialStream)
+ 897 0190 70E0      		ldi r23,hi8(USBSerialStream)
+ 898 0192 80E0      		ldi r24,lo8(.LC2)
+ 899 0194 90E0      		ldi r25,hi8(.LC2)
+ 900 0196 0E94 0000 		call fputs
+ 901               	.LVL79:
+ 207:nrf.c         **** 	
+ 208:nrf.c         **** 	delay_us(1);
+ 902               		.loc 1 208 0
+ 903 019a 81E0      		ldi r24,lo8(1)
+ 904 019c 90E0      		ldi r25,0
+ 905 019e 0E94 0000 		call delay_us
+ 906               	.LVL80:
+ 209:nrf.c         **** 	SS_DOWN;
+ 907               		.loc 1 209 0
+ 908 01a2 2898      		cbi 0x5,0
+ 210:nrf.c         **** 	SPI_WRITE(R_REGISTER | NRG_STATUS);
+ 909               		.loc 1 210 0
+ 910 01a4 87E0      		ldi r24,lo8(7)
+ 911 01a6 8EBD      		out 0x2e,r24
+ 912               	.L83:
+ 913               		.loc 1 210 0 is_stmt 0 discriminator 2
+ 914 01a8 85E0      		ldi r24,lo8(5)
+ 915 01aa 90E0      		ldi r25,0
+ 916 01ac 0E94 0000 		call delay_us
+ 917               	.LVL81:
+ 918 01b0 0DB4      		in __tmp_reg__,0x2d
+ 919 01b2 07FE      		sbrs __tmp_reg__,7
+ 920 01b4 00C0      		rjmp .L83
+ 211:nrf.c         **** 	SPI_WRITE(0xFF);
+ 921               		.loc 1 211 0 is_stmt 1
+ 922 01b6 8FEF      		ldi r24,lo8(-1)
+ 923 01b8 8EBD      		out 0x2e,r24
+ 924               	.L85:
+ 925               		.loc 1 211 0 is_stmt 0 discriminator 2
+ 926 01ba 85E0      		ldi r24,lo8(5)
+ 927 01bc 90E0      		ldi r25,0
+ 928 01be 0E94 0000 		call delay_us
+ 929               	.LVL82:
+ 930 01c2 0DB4      		in __tmp_reg__,0x2d
+ 931 01c4 07FE      		sbrs __tmp_reg__,7
+ 932 01c6 00C0      		rjmp .L85
+ 212:nrf.c         **** 	SS_UP;
+ 933               		.loc 1 212 0 is_stmt 1
+ 934 01c8 289A      		sbi 0x5,0
+ 213:nrf.c         **** 	itoa(SPDR, buffer, 16);
+ 935               		.loc 1 213 0
+ 936 01ca 8EB5      		in r24,0x2e
+ 937 01cc 40E1      		ldi r20,lo8(16)
+ 938 01ce 50E0      		ldi r21,0
+ 939 01d0 60E0      		ldi r22,lo8(buffer)
+ 940 01d2 70E0      		ldi r23,hi8(buffer)
+ 941 01d4 90E0      		ldi r25,0
+ 942 01d6 0E94 0000 		call itoa
+ 943               	.LVL83:
+ 214:nrf.c         **** 	fputs("Status register: 0x", &USBSerialStream);
+ 944               		.loc 1 214 0
+ 945 01da 60E0      		ldi r22,lo8(USBSerialStream)
+ 946 01dc 70E0      		ldi r23,hi8(USBSerialStream)
+ 947 01de 80E0      		ldi r24,lo8(.LC1)
+ 948 01e0 90E0      		ldi r25,hi8(.LC1)
+ 949 01e2 0E94 0000 		call fputs
+ 950               	.LVL84:
+ 215:nrf.c         **** 	fputs(buffer, &USBSerialStream);
+ 951               		.loc 1 215 0
+ 952 01e6 60E0      		ldi r22,lo8(USBSerialStream)
+ 953 01e8 70E0      		ldi r23,hi8(USBSerialStream)
+ 954 01ea 80E0      		ldi r24,lo8(buffer)
+ 955 01ec 90E0      		ldi r25,hi8(buffer)
+ 956 01ee 0E94 0000 		call fputs
+ 957               	.LVL85:
+ 216:nrf.c         **** 	fputs("\r\n", &USBSerialStream);
+ 958               		.loc 1 216 0
+ 959 01f2 60E0      		ldi r22,lo8(USBSerialStream)
+ 960 01f4 70E0      		ldi r23,hi8(USBSerialStream)
+ 961 01f6 80E0      		ldi r24,lo8(.LC2)
+ 962 01f8 90E0      		ldi r25,hi8(.LC2)
+ 963 01fa 0E94 0000 		call fputs
+ 964               	.LVL86:
+ 217:nrf.c         **** 	
+ 218:nrf.c         **** 	delay_us(1);
+ 965               		.loc 1 218 0
+ 966 01fe 81E0      		ldi r24,lo8(1)
+ 967 0200 90E0      		ldi r25,0
+ 968 0202 0E94 0000 		call delay_us
+ 969               	.LVL87:
+ 219:nrf.c         **** 	SS_DOWN;
+ 970               		.loc 1 219 0
+ 971 0206 2898      		cbi 0x5,0
+ 220:nrf.c         **** 	SPI_WRITE(R_REGISTER | NRG_OBSERVE_TX);
+ 972               		.loc 1 220 0
+ 973 0208 88E0      		ldi r24,lo8(8)
+ 974 020a 8EBD      		out 0x2e,r24
+ 975               	.L87:
+ 976               		.loc 1 220 0 is_stmt 0 discriminator 2
+ 977 020c 85E0      		ldi r24,lo8(5)
+ 978 020e 90E0      		ldi r25,0
+ 979 0210 0E94 0000 		call delay_us
+ 980               	.LVL88:
+ 981 0214 0DB4      		in __tmp_reg__,0x2d
+ 982 0216 07FE      		sbrs __tmp_reg__,7
+ 983 0218 00C0      		rjmp .L87
+ 221:nrf.c         **** 	SPI_WRITE(0xFF);
+ 984               		.loc 1 221 0 is_stmt 1
+ 985 021a 8FEF      		ldi r24,lo8(-1)
+ 986 021c 8EBD      		out 0x2e,r24
+ 987               	.L89:
+ 988               		.loc 1 221 0 is_stmt 0 discriminator 2
+ 989 021e 85E0      		ldi r24,lo8(5)
+ 990 0220 90E0      		ldi r25,0
+ 991 0222 0E94 0000 		call delay_us
+ 992               	.LVL89:
+ 993 0226 0DB4      		in __tmp_reg__,0x2d
+ 994 0228 07FE      		sbrs __tmp_reg__,7
+ 995 022a 00C0      		rjmp .L89
+ 222:nrf.c         **** 	SS_UP;
+ 996               		.loc 1 222 0 is_stmt 1
+ 997 022c 289A      		sbi 0x5,0
+ 223:nrf.c         **** 	itoa(SPDR, buffer, 16);
+ 998               		.loc 1 223 0
+ 999 022e 8EB5      		in r24,0x2e
+ 1000 0230 40E1      		ldi r20,lo8(16)
+ 1001 0232 50E0      		ldi r21,0
+ 1002 0234 60E0      		ldi r22,lo8(buffer)
+ 1003 0236 70E0      		ldi r23,hi8(buffer)
+ 1004 0238 90E0      		ldi r25,0
+ 1005 023a 0E94 0000 		call itoa
+ 1006               	.LVL90:
+ 224:nrf.c         **** 	fputs("Observe TX register: 0x", &USBSerialStream);
+ 1007               		.loc 1 224 0
+ 1008 023e 60E0      		ldi r22,lo8(USBSerialStream)
+ 1009 0240 70E0      		ldi r23,hi8(USBSerialStream)
+ 1010 0242 80E0      		ldi r24,lo8(.LC8)
+ 1011 0244 90E0      		ldi r25,hi8(.LC8)
+ 1012 0246 0E94 0000 		call fputs
+ 1013               	.LVL91:
+ 225:nrf.c         **** 	fputs(buffer, &USBSerialStream);
+ 1014               		.loc 1 225 0
+ 1015 024a 60E0      		ldi r22,lo8(USBSerialStream)
+ 1016 024c 70E0      		ldi r23,hi8(USBSerialStream)
+ 1017 024e 80E0      		ldi r24,lo8(buffer)
+ 1018 0250 90E0      		ldi r25,hi8(buffer)
+ 1019 0252 0E94 0000 		call fputs
+ 1020               	.LVL92:
+ 226:nrf.c         **** 	fputs("\r\n", &USBSerialStream);
+ 1021               		.loc 1 226 0
+ 1022 0256 60E0      		ldi r22,lo8(USBSerialStream)
+ 1023 0258 70E0      		ldi r23,hi8(USBSerialStream)
+ 1024 025a 80E0      		ldi r24,lo8(.LC2)
+ 1025 025c 90E0      		ldi r25,hi8(.LC2)
+ 1026 025e 0E94 0000 		call fputs
+ 1027               	.LVL93:
+ 227:nrf.c         **** 	
+ 228:nrf.c         **** 	delay_us(1);
+ 1028               		.loc 1 228 0
+ 1029 0262 81E0      		ldi r24,lo8(1)
+ 1030 0264 90E0      		ldi r25,0
+ 1031 0266 0E94 0000 		call delay_us
+ 1032               	.LVL94:
+ 229:nrf.c         **** 	SS_DOWN;
+ 1033               		.loc 1 229 0
+ 1034 026a 2898      		cbi 0x5,0
+ 230:nrf.c         **** 	SPI_WRITE(R_REGISTER | NRG_FIFO_STATUS);
+ 1035               		.loc 1 230 0
+ 1036 026c 87E1      		ldi r24,lo8(23)
+ 1037 026e 8EBD      		out 0x2e,r24
+ 1038               	.L91:
+ 1039               		.loc 1 230 0 is_stmt 0 discriminator 2
+ 1040 0270 85E0      		ldi r24,lo8(5)
+ 1041 0272 90E0      		ldi r25,0
+ 1042 0274 0E94 0000 		call delay_us
+ 1043               	.LVL95:
+ 1044 0278 0DB4      		in __tmp_reg__,0x2d
+ 1045 027a 07FE      		sbrs __tmp_reg__,7
+ 1046 027c 00C0      		rjmp .L91
+ 231:nrf.c         **** 	SPI_WRITE(0xFF);
+ 1047               		.loc 1 231 0 is_stmt 1
+ 1048 027e 8FEF      		ldi r24,lo8(-1)
+ 1049 0280 8EBD      		out 0x2e,r24
+ 1050               	.L93:
+ 1051               		.loc 1 231 0 is_stmt 0 discriminator 2
+ 1052 0282 85E0      		ldi r24,lo8(5)
+ 1053 0284 90E0      		ldi r25,0
+ 1054 0286 0E94 0000 		call delay_us
+ 1055               	.LVL96:
+ 1056 028a 0DB4      		in __tmp_reg__,0x2d
+ 1057 028c 07FE      		sbrs __tmp_reg__,7
+ 1058 028e 00C0      		rjmp .L93
+ 232:nrf.c         **** 	SS_UP;
+ 1059               		.loc 1 232 0 is_stmt 1
+ 1060 0290 289A      		sbi 0x5,0
+ 233:nrf.c         **** 	itoa(SPDR, buffer, 16);
+ 1061               		.loc 1 233 0
+ 1062 0292 8EB5      		in r24,0x2e
+ 1063 0294 40E1      		ldi r20,lo8(16)
+ 1064 0296 50E0      		ldi r21,0
+ 1065 0298 60E0      		ldi r22,lo8(buffer)
+ 1066 029a 70E0      		ldi r23,hi8(buffer)
+ 1067 029c 90E0      		ldi r25,0
+ 1068 029e 0E94 0000 		call itoa
+ 1069               	.LVL97:
+ 234:nrf.c         **** 	fputs("FIFO Status register: 0x", &USBSerialStream);
+ 1070               		.loc 1 234 0
+ 1071 02a2 60E0      		ldi r22,lo8(USBSerialStream)
+ 1072 02a4 70E0      		ldi r23,hi8(USBSerialStream)
+ 1073 02a6 80E0      		ldi r24,lo8(.LC9)
+ 1074 02a8 90E0      		ldi r25,hi8(.LC9)
+ 1075 02aa 0E94 0000 		call fputs
+ 1076               	.LVL98:
+ 235:nrf.c         **** 	fputs(buffer, &USBSerialStream);
+ 1077               		.loc 1 235 0
+ 1078 02ae 60E0      		ldi r22,lo8(USBSerialStream)
+ 1079 02b0 70E0      		ldi r23,hi8(USBSerialStream)
+ 1080 02b2 80E0      		ldi r24,lo8(buffer)
+ 1081 02b4 90E0      		ldi r25,hi8(buffer)
+ 1082 02b6 0E94 0000 		call fputs
+ 1083               	.LVL99:
+ 236:nrf.c         **** 	fputs("\r\n", &USBSerialStream);
+ 1084               		.loc 1 236 0
+ 1085 02ba 60E0      		ldi r22,lo8(USBSerialStream)
+ 1086 02bc 70E0      		ldi r23,hi8(USBSerialStream)
+ 1087 02be 80E0      		ldi r24,lo8(.LC2)
+ 1088 02c0 90E0      		ldi r25,hi8(.LC2)
+ 1089 02c2 0C94 0000 		jmp fputs
+ 1090               	.LVL100:
+ 1091               		.cfi_endproc
+ 1092               	.LFE111:
+ 1094               		.comm	buffer,7,1
+ 1095               	.global	nrf_last_status
+ 1096               		.section .bss
+ 1099               	nrf_last_status:
+ 1100 0000 00        		.zero	1
+ 1101               	.global	spi_bytes_sent
+ 1104               	spi_bytes_sent:
+ 1105 0001 00        		.zero	1
+ 1106               	.global	spi_command
+ 1109               	spi_command:
+ 1110 0002 00        		.zero	1
+ 1111               	.global	spi_state
+ 1114               	spi_state:
+ 1115 0003 00        		.zero	1
+ 1116               		.comm	USBSerialStream,14,1
+ 1117               		.comm	VirtualSerial_CDC_Interface,24,1
+ 1118               		.comm	rxByte,2,1
+ 1119               		.text
+ 1120               	.Letext0:
+ 1121               		.file 2 "/usr/lib/gcc/avr/4.7.2/../../../../avr/include/stdint.h"
+ 1122               		.file 3 "/usr/lib/gcc/avr/4.7.2/../../../../avr/include/stdio.h"
+ 1123               		.file 4 "../LUFA-120219/LUFA/Drivers/USB/Class/Device/../Common/CDCClassCommon.h"
+ 1124               		.file 5 "../LUFA-120219/LUFA/Drivers/USB/Class/Device/CDCClassDevice.h"
+ 1125               		.file 6 "../LUFA-120219/LUFA/Drivers/USB/Core/USBTask.h"
+ 1126               		.file 7 "VirtualSerial.h"
+ 1127               		.file 8 "/usr/lib/gcc/avr/4.7.2/../../../../avr/include/stdlib.h"
+ 1128               		.file 9 "util.h"
+DEFINED SYMBOLS
+                            *ABS*:0000000000000000 nrf.c
+     /tmp/ccK56aMu.s:2      *ABS*:000000000000003e __SP_H__
+     /tmp/ccK56aMu.s:3      *ABS*:000000000000003d __SP_L__
+     /tmp/ccK56aMu.s:4      *ABS*:000000000000003f __SREG__
+     /tmp/ccK56aMu.s:5      *ABS*:0000000000000000 __tmp_reg__
+     /tmp/ccK56aMu.s:6      *ABS*:0000000000000001 __zero_reg__
+     /tmp/ccK56aMu.s:22     .text.nrf_init:0000000000000000 nrf_init
+                            *COM*:000000000000000e USBSerialStream
+     /tmp/ccK56aMu.s:1099   .bss:0000000000000000 nrf_last_status
+                            *COM*:0000000000000007 buffer
+     /tmp/ccK56aMu.s:519    .text.nrf_tx:0000000000000000 nrf_tx
+     /tmp/ccK56aMu.s:605    .text.nrf_rx:0000000000000000 nrf_rx
+     /tmp/ccK56aMu.s:636    .text.nrf_spillRegisters:0000000000000000 nrf_spillRegisters
+     /tmp/ccK56aMu.s:1104   .bss:0000000000000001 spi_bytes_sent
+     /tmp/ccK56aMu.s:1109   .bss:0000000000000002 spi_command
+     /tmp/ccK56aMu.s:1114   .bss:0000000000000003 spi_state
+                            *COM*:0000000000000018 VirtualSerial_CDC_Interface
+                            *COM*:0000000000000002 rxByte
+
+UNDEFINED SYMBOLS
+fputs
+delay_us
+itoa
+delay_ms
+__do_copy_data
+__do_clear_bss

@@ -1,0 +1,1754 @@
+
+stm.o:     file format elf32-littlearm
+
+
+Disassembly of section .text:
+
+080001e4 <SystemInit-0x14>:
+ 80001e4:	08000d64 	.word	0x08000d64
+ 80001e8:	20000000 	.word	0x20000000
+ 80001ec:	20000000 	.word	0x20000000
+ 80001f0:	20000000 	.word	0x20000000
+ 80001f4:	20000068 	.word	0x20000068
+
+080001f8 <SystemInit>:
+#include "stm32f10x.h"
+
+void SystemInit(void); //called from crt0.s
+
+void SystemInit()
+{ //sets clock to 72MHz - no error checks - assumes 8MHz xtal
+ 80001f8:	b480      	push	{r7}
+ 80001fa:	af00      	add	r7, sp, #0
+  FLASH->ACR = FLASH_ACR_PRFTBE | FLASH_ACR_LATENCY_2;
+ 80001fc:	f44f 5300 	mov.w	r3, #8192	; 0x2000
+ 8000200:	f2c4 0302 	movt	r3, #16386	; 0x4002
+ 8000204:	f04f 0212 	mov.w	r2, #18
+ 8000208:	601a      	str	r2, [r3, #0]
+  RCC->CR |= RCC_CR_HSEON;
+ 800020a:	f44f 5380 	mov.w	r3, #4096	; 0x1000
+ 800020e:	f2c4 0302 	movt	r3, #16386	; 0x4002
+ 8000212:	f44f 5280 	mov.w	r2, #4096	; 0x1000
+ 8000216:	f2c4 0202 	movt	r2, #16386	; 0x4002
+ 800021a:	6812      	ldr	r2, [r2, #0]
+ 800021c:	f442 3280 	orr.w	r2, r2, #65536	; 0x10000
+ 8000220:	601a      	str	r2, [r3, #0]
+  while ((RCC->CR & RCC_CR_HSERDY) == 0);
+ 8000222:	bf00      	nop
+ 8000224:	f44f 5380 	mov.w	r3, #4096	; 0x1000
+ 8000228:	f2c4 0302 	movt	r3, #16386	; 0x4002
+ 800022c:	681b      	ldr	r3, [r3, #0]
+ 800022e:	f403 3300 	and.w	r3, r3, #131072	; 0x20000
+ 8000232:	2b00      	cmp	r3, #0
+ 8000234:	d0f6      	beq.n	8000224 <SystemInit+0x2c>
+  //RCC->CFGR = RCC_CFGR_PLLMULL9 | RCC_CFGR_PLLSRC_HSE | RCC_CFGR_PPRE1_DIV2; 
+  RCC->CFGR = RCC_CFGR_PLLMULL2 | RCC_CFGR_PLLSRC_HSE | RCC_CFGR_PPRE1_DIV2; 
+ 8000236:	f44f 5380 	mov.w	r3, #4096	; 0x1000
+ 800023a:	f2c4 0302 	movt	r3, #16386	; 0x4002
+ 800023e:	f44f 3282 	mov.w	r2, #66560	; 0x10400
+ 8000242:	605a      	str	r2, [r3, #4]
+  RCC->CR |= RCC_CR_PLLON;
+ 8000244:	f44f 5380 	mov.w	r3, #4096	; 0x1000
+ 8000248:	f2c4 0302 	movt	r3, #16386	; 0x4002
+ 800024c:	f44f 5280 	mov.w	r2, #4096	; 0x1000
+ 8000250:	f2c4 0202 	movt	r2, #16386	; 0x4002
+ 8000254:	6812      	ldr	r2, [r2, #0]
+ 8000256:	f042 7280 	orr.w	r2, r2, #16777216	; 0x1000000
+ 800025a:	601a      	str	r2, [r3, #0]
+  while ((RCC->CR & RCC_CR_PLLRDY) == 0);
+ 800025c:	bf00      	nop
+ 800025e:	f44f 5380 	mov.w	r3, #4096	; 0x1000
+ 8000262:	f2c4 0302 	movt	r3, #16386	; 0x4002
+ 8000266:	681b      	ldr	r3, [r3, #0]
+ 8000268:	f003 7300 	and.w	r3, r3, #33554432	; 0x2000000
+ 800026c:	2b00      	cmp	r3, #0
+ 800026e:	d0f6      	beq.n	800025e <SystemInit+0x66>
+  RCC->CFGR |= RCC_CFGR_SW_PLL;
+ 8000270:	f44f 5380 	mov.w	r3, #4096	; 0x1000
+ 8000274:	f2c4 0302 	movt	r3, #16386	; 0x4002
+ 8000278:	f44f 5280 	mov.w	r2, #4096	; 0x1000
+ 800027c:	f2c4 0202 	movt	r2, #16386	; 0x4002
+ 8000280:	6852      	ldr	r2, [r2, #4]
+ 8000282:	f042 0202 	orr.w	r2, r2, #2
+ 8000286:	605a      	str	r2, [r3, #4]
+}
+ 8000288:	46bd      	mov	sp, r7
+ 800028a:	bc80      	pop	{r7}
+ 800028c:	4770      	bx	lr
+ 800028e:	bf00      	nop
+
+08000290 <__enable_irq>:
+
+
+#elif (defined (__GNUC__)) /*------------------ GNU Compiler ---------------------*/
+/* GNU gcc specific functions */
+
+static __INLINE void __enable_irq()               { __ASM volatile ("cpsie i"); }
+ 8000290:	b480      	push	{r7}
+ 8000292:	af00      	add	r7, sp, #0
+ 8000294:	b662      	cpsie	i
+ 8000296:	46bd      	mov	sp, r7
+ 8000298:	bc80      	pop	{r7}
+ 800029a:	4770      	bx	lr
+
+0800029c <NVIC_EnableIRQ>:
+ *
+ * Enable a device specific interupt in the NVIC interrupt controller.
+ * The interrupt number cannot be a negative value.
+ */
+static __INLINE void NVIC_EnableIRQ(IRQn_Type IRQn)
+{
+ 800029c:	b480      	push	{r7}
+ 800029e:	b083      	sub	sp, #12
+ 80002a0:	af00      	add	r7, sp, #0
+ 80002a2:	4603      	mov	r3, r0
+ 80002a4:	71fb      	strb	r3, [r7, #7]
+  NVIC->ISER[((uint32_t)(IRQn) >> 5)] = (1 << ((uint32_t)(IRQn) & 0x1F)); /* enable interrupt */
+ 80002a6:	f44f 4361 	mov.w	r3, #57600	; 0xe100
+ 80002aa:	f2ce 0300 	movt	r3, #57344	; 0xe000
+ 80002ae:	f997 2007 	ldrsb.w	r2, [r7, #7]
+ 80002b2:	ea4f 1252 	mov.w	r2, r2, lsr #5
+ 80002b6:	79f9      	ldrb	r1, [r7, #7]
+ 80002b8:	f001 011f 	and.w	r1, r1, #31
+ 80002bc:	f04f 0001 	mov.w	r0, #1
+ 80002c0:	fa00 f101 	lsl.w	r1, r0, r1
+ 80002c4:	f843 1022 	str.w	r1, [r3, r2, lsl #2]
+}
+ 80002c8:	f107 070c 	add.w	r7, r7, #12
+ 80002cc:	46bd      	mov	sp, r7
+ 80002ce:	bc80      	pop	{r7}
+ 80002d0:	4770      	bx	lr
+ 80002d2:	bf00      	nop
+
+080002d4 <EXTI15_10_IRQHandler>:
+#define LCD_REG              (*((volatile uint32_t *) 0x60000000)) // RS = 0 
+#define LCD_RAM              (*((volatile uint32_t *) 0x60020000)) // RS = 1 
+volatile uint32_t valTest;
+// User Key A = PC13
+void EXTI15_10_IRQHandler(void)
+{
+ 80002d4:	b480      	push	{r7}
+ 80002d6:	af00      	add	r7, sp, #0
+	if(EXTI->PR & (1<<13))
+ 80002d8:	f44f 6380 	mov.w	r3, #1024	; 0x400
+ 80002dc:	f2c4 0301 	movt	r3, #16385	; 0x4001
+ 80002e0:	695b      	ldr	r3, [r3, #20]
+ 80002e2:	f403 5300 	and.w	r3, r3, #8192	; 0x2000
+ 80002e6:	2b00      	cmp	r3, #0
+ 80002e8:	d02d      	beq.n	8000346 <EXTI15_10_IRQHandler+0x72>
+	{
+		LCD_REG = 0x0001;
+ 80002ea:	f04f 43c0 	mov.w	r3, #1610612736	; 0x60000000
+ 80002ee:	f04f 0201 	mov.w	r2, #1
+ 80002f2:	601a      	str	r2, [r3, #0]
+		valTest = LCD_RAM;
+ 80002f4:	f04f 0300 	mov.w	r3, #0
+ 80002f8:	f2c6 0302 	movt	r3, #24578	; 0x6002
+ 80002fc:	681a      	ldr	r2, [r3, #0]
+ 80002fe:	f240 0300 	movw	r3, #0
+ 8000302:	f2c2 0300 	movt	r3, #8192	; 0x2000
+ 8000306:	601a      	str	r2, [r3, #0]
+		EXTI->PR = (1<<13); // Clear the interrupt.
+ 8000308:	f44f 6380 	mov.w	r3, #1024	; 0x400
+ 800030c:	f2c4 0301 	movt	r3, #16385	; 0x4001
+ 8000310:	f44f 5200 	mov.w	r2, #8192	; 0x2000
+ 8000314:	615a      	str	r2, [r3, #20]
+		if(GPIOB->ODR & LED2) 
+ 8000316:	f44f 6340 	mov.w	r3, #3072	; 0xc00
+ 800031a:	f2c4 0301 	movt	r3, #16385	; 0x4001
+ 800031e:	68db      	ldr	r3, [r3, #12]
+ 8000320:	f003 0302 	and.w	r3, r3, #2
+ 8000324:	2b00      	cmp	r3, #0
+ 8000326:	d007      	beq.n	8000338 <EXTI15_10_IRQHandler+0x64>
+		{
+			GPIOB->BRR = LED2;
+ 8000328:	f44f 6340 	mov.w	r3, #3072	; 0xc00
+ 800032c:	f2c4 0301 	movt	r3, #16385	; 0x4001
+ 8000330:	f04f 0202 	mov.w	r2, #2
+ 8000334:	615a      	str	r2, [r3, #20]
+ 8000336:	e006      	b.n	8000346 <EXTI15_10_IRQHandler+0x72>
+		}
+		else
+		{
+			GPIOB->BSRR = LED2;
+ 8000338:	f44f 6340 	mov.w	r3, #3072	; 0xc00
+ 800033c:	f2c4 0301 	movt	r3, #16385	; 0x4001
+ 8000340:	f04f 0202 	mov.w	r2, #2
+ 8000344:	611a      	str	r2, [r3, #16]
+			//(*((volatile uint32_t *) 0x60000000)) = 0x0000;
+		}
+
+
+	}
+}
+ 8000346:	46bd      	mov	sp, r7
+ 8000348:	bc80      	pop	{r7}
+ 800034a:	4770      	bx	lr
+
+0800034c <main>:
+
+int main(void)
+{
+ 800034c:	b580      	push	{r7, lr}
+ 800034e:	b082      	sub	sp, #8
+ 8000350:	af00      	add	r7, sp, #0
+  	int d;
+
+  	RCC->APB2ENR |= RCC_APB2ENR_IOPAEN | RCC_APB2ENR_IOPBEN | RCC_APB2ENR_IOPCEN | RCC_APB2ENR_AFIOEN; // Enable GPIOB, AltFuncIO.
+ 8000352:	f44f 5380 	mov.w	r3, #4096	; 0x1000
+ 8000356:	f2c4 0302 	movt	r3, #16386	; 0x4002
+ 800035a:	f44f 5280 	mov.w	r2, #4096	; 0x1000
+ 800035e:	f2c4 0202 	movt	r2, #16386	; 0x4002
+ 8000362:	6992      	ldr	r2, [r2, #24]
+ 8000364:	f042 021d 	orr.w	r2, r2, #29
+ 8000368:	619a      	str	r2, [r3, #24]
+	GPIOB->CRL = 0x44244422;            // Cfg GPIOB.0,1 as output
+ 800036a:	f44f 6340 	mov.w	r3, #3072	; 0xc00
+ 800036e:	f2c4 0301 	movt	r3, #16385	; 0x4001
+ 8000372:	f244 4222 	movw	r2, #17442	; 0x4422
+ 8000376:	f2c4 4224 	movt	r2, #17444	; 0x4424
+ 800037a:	601a      	str	r2, [r3, #0]
+	GPIOA->CRH = 0x444444B4; // USART1 TX alt. function output.
+ 800037c:	f44f 6300 	mov.w	r3, #2048	; 0x800
+ 8000380:	f2c4 0301 	movt	r3, #16385	; 0x4001
+ 8000384:	f244 42b4 	movw	r2, #17588	; 0x44b4
+ 8000388:	f2c4 4244 	movt	r2, #17476	; 0x4444
+ 800038c:	605a      	str	r2, [r3, #4]
+
+	// External interrupt stuff.
+	AFIO->EXTICR[3] &= 0xFF0F; // Clear the section we want to write.
+ 800038e:	f04f 0300 	mov.w	r3, #0
+ 8000392:	f2c4 0301 	movt	r3, #16385	; 0x4001
+ 8000396:	f04f 0200 	mov.w	r2, #0
+ 800039a:	f2c4 0201 	movt	r2, #16385	; 0x4001
+ 800039e:	6951      	ldr	r1, [r2, #20]
+ 80003a0:	f64f 720f 	movw	r2, #65295	; 0xff0f
+ 80003a4:	400a      	ands	r2, r1
+ 80003a6:	615a      	str	r2, [r3, #20]
+	AFIO->EXTICR[3] = AFIO_EXTICR4_EXTI13_PC; // Set external interrupt 13 to port C.
+ 80003a8:	f04f 0300 	mov.w	r3, #0
+ 80003ac:	f2c4 0301 	movt	r3, #16385	; 0x4001
+ 80003b0:	f04f 0220 	mov.w	r2, #32
+ 80003b4:	615a      	str	r2, [r3, #20]
+	EXTI->IMR = EXTI_IMR_MR13; // Unmask EXT13 interrupt.
+ 80003b6:	f44f 6380 	mov.w	r3, #1024	; 0x400
+ 80003ba:	f2c4 0301 	movt	r3, #16385	; 0x4001
+ 80003be:	f44f 5200 	mov.w	r2, #8192	; 0x2000
+ 80003c2:	601a      	str	r2, [r3, #0]
+	EXTI->FTSR = EXTI_FTSR_TR13; // Enable interrupt on falling edge.	
+ 80003c4:	f44f 6380 	mov.w	r3, #1024	; 0x400
+ 80003c8:	f2c4 0301 	movt	r3, #16385	; 0x4001
+ 80003cc:	f44f 5200 	mov.w	r2, #8192	; 0x2000
+ 80003d0:	60da      	str	r2, [r3, #12]
+	////NVIC->ISER[0] |= NVIC_ISER_SETENA_8; // Enable IRQ 8 (EXTI2)
+	NVIC_EnableIRQ(EXTI15_10_IRQn);
+ 80003d2:	f04f 0028 	mov.w	r0, #40	; 0x28
+ 80003d6:	f7ff ff61 	bl	800029c <NVIC_EnableIRQ>
+	__enable_irq(); // Enable interrupts globally.
+ 80003da:	f7ff ff59 	bl	8000290 <__enable_irq>
+  	// PWM stuff.
+  	//TIM1->CR1 |= TIM_CR1_CEN; // Enable counter.
+  	//TIM1->CR2 |= 0;
+
+	// Initialize UART and buffer.
+	uart_init();	
+ 80003de:	f000 fb31 	bl	8000a44 <uart_init>
+	
+	lcdInit();
+ 80003e2:	f000 f9cd 	bl	8000780 <lcdInit>
+	for(i=0; i<200; i++)
+	{
+		lcdSetPixel(i, 15, 0x001f);
+	}*/
+
+	txStr("Initialization complete.\r\n");
+ 80003e6:	f640 5048 	movw	r0, #3400	; 0xd48
+ 80003ea:	f6c0 0000 	movt	r0, #2048	; 0x800
+ 80003ee:	f000 fb6f 	bl	8000ad0 <txStr>
+
+	GPIOB->BSRR |= (1<<5); // Turn on backlight.
+ 80003f2:	f44f 6340 	mov.w	r3, #3072	; 0xc00
+ 80003f6:	f2c4 0301 	movt	r3, #16385	; 0x4001
+ 80003fa:	f44f 6240 	mov.w	r2, #3072	; 0xc00
+ 80003fe:	f2c4 0201 	movt	r2, #16385	; 0x4001
+ 8000402:	6912      	ldr	r2, [r2, #16]
+ 8000404:	f042 0220 	orr.w	r2, r2, #32
+ 8000408:	611a      	str	r2, [r3, #16]
+
+  	while (1) 
+	{
+     	GPIOB->BSRR = LED1;// | (1<<5);
+ 800040a:	f44f 6340 	mov.w	r3, #3072	; 0xc00
+ 800040e:	f2c4 0301 	movt	r3, #16385	; 0x4001
+ 8000412:	f04f 0201 	mov.w	r2, #1
+ 8000416:	611a      	str	r2, [r3, #16]
+		for (d = DELAY; d; d--);
+ 8000418:	f44f 3300 	mov.w	r3, #131072	; 0x20000
+ 800041c:	607b      	str	r3, [r7, #4]
+ 800041e:	e003      	b.n	8000428 <main+0xdc>
+ 8000420:	687b      	ldr	r3, [r7, #4]
+ 8000422:	f103 33ff 	add.w	r3, r3, #4294967295
+ 8000426:	607b      	str	r3, [r7, #4]
+ 8000428:	687b      	ldr	r3, [r7, #4]
+ 800042a:	2b00      	cmp	r3, #0
+ 800042c:	d1f8      	bne.n	8000420 <main+0xd4>
+     	GPIOB->BRR = LED1;// | (1<<5);
+ 800042e:	f44f 6340 	mov.w	r3, #3072	; 0xc00
+ 8000432:	f2c4 0301 	movt	r3, #16385	; 0x4001
+ 8000436:	f04f 0201 	mov.w	r2, #1
+ 800043a:	615a      	str	r2, [r3, #20]
+     	for (d = DELAY << 2; d; d--);
+ 800043c:	f44f 2300 	mov.w	r3, #524288	; 0x80000
+ 8000440:	607b      	str	r3, [r7, #4]
+ 8000442:	e003      	b.n	800044c <main+0x100>
+ 8000444:	687b      	ldr	r3, [r7, #4]
+ 8000446:	f103 33ff 	add.w	r3, r3, #4294967295
+ 800044a:	607b      	str	r3, [r7, #4]
+ 800044c:	687b      	ldr	r3, [r7, #4]
+ 800044e:	2b00      	cmp	r3, #0
+ 8000450:	d1f8      	bne.n	8000444 <main+0xf8>
+		//if(!(GPIOC->IDR & (1<<13))) GPIOB->BSRR = LED2;
+		//else GPIOB->BRR = LED2;
+
+  	}
+ 8000452:	e7da      	b.n	800040a <main+0xbe>
+
+08000454 <reverse>:
+
+///////// ITOA //////////
+
+/* reverse:  reverse string s in place */
+void reverse(char s[])
+{
+ 8000454:	b580      	push	{r7, lr}
+ 8000456:	b086      	sub	sp, #24
+ 8000458:	af00      	add	r7, sp, #0
+ 800045a:	6078      	str	r0, [r7, #4]
+    int c, i, j;
+
+	for (i = 0, j = strlen(s)-1; i<j; i++, j--) {
+ 800045c:	f04f 0300 	mov.w	r3, #0
+ 8000460:	617b      	str	r3, [r7, #20]
+ 8000462:	6878      	ldr	r0, [r7, #4]
+ 8000464:	f000 fc12 	bl	8000c8c <strlen>
+ 8000468:	4603      	mov	r3, r0
+ 800046a:	f103 33ff 	add.w	r3, r3, #4294967295
+ 800046e:	613b      	str	r3, [r7, #16]
+ 8000470:	e01a      	b.n	80004a8 <reverse+0x54>
+	    c = s[i];
+ 8000472:	697b      	ldr	r3, [r7, #20]
+ 8000474:	687a      	ldr	r2, [r7, #4]
+ 8000476:	18d3      	adds	r3, r2, r3
+ 8000478:	781b      	ldrb	r3, [r3, #0]
+ 800047a:	60fb      	str	r3, [r7, #12]
+	    s[i] = s[j];
+ 800047c:	697b      	ldr	r3, [r7, #20]
+ 800047e:	687a      	ldr	r2, [r7, #4]
+ 8000480:	18d3      	adds	r3, r2, r3
+ 8000482:	693a      	ldr	r2, [r7, #16]
+ 8000484:	6879      	ldr	r1, [r7, #4]
+ 8000486:	188a      	adds	r2, r1, r2
+ 8000488:	7812      	ldrb	r2, [r2, #0]
+ 800048a:	701a      	strb	r2, [r3, #0]
+	    s[j] = c;
+ 800048c:	693b      	ldr	r3, [r7, #16]
+ 800048e:	687a      	ldr	r2, [r7, #4]
+ 8000490:	18d3      	adds	r3, r2, r3
+ 8000492:	68fa      	ldr	r2, [r7, #12]
+ 8000494:	b2d2      	uxtb	r2, r2
+ 8000496:	701a      	strb	r2, [r3, #0]
+/* reverse:  reverse string s in place */
+void reverse(char s[])
+{
+    int c, i, j;
+
+	for (i = 0, j = strlen(s)-1; i<j; i++, j--) {
+ 8000498:	697b      	ldr	r3, [r7, #20]
+ 800049a:	f103 0301 	add.w	r3, r3, #1
+ 800049e:	617b      	str	r3, [r7, #20]
+ 80004a0:	693b      	ldr	r3, [r7, #16]
+ 80004a2:	f103 33ff 	add.w	r3, r3, #4294967295
+ 80004a6:	613b      	str	r3, [r7, #16]
+ 80004a8:	697a      	ldr	r2, [r7, #20]
+ 80004aa:	693b      	ldr	r3, [r7, #16]
+ 80004ac:	429a      	cmp	r2, r3
+ 80004ae:	dbe0      	blt.n	8000472 <reverse+0x1e>
+	    c = s[i];
+	    s[i] = s[j];
+	    s[j] = c;
+   	}
+}
+ 80004b0:	f107 0718 	add.w	r7, r7, #24
+ 80004b4:	46bd      	mov	sp, r7
+ 80004b6:	bd80      	pop	{r7, pc}
+
+080004b8 <itoa>:
+
+/* itoa:  convert n to characters in s */
+void itoa(int n, char s[])
+{
+ 80004b8:	b580      	push	{r7, lr}
+ 80004ba:	b084      	sub	sp, #16
+ 80004bc:	af00      	add	r7, sp, #0
+ 80004be:	6078      	str	r0, [r7, #4]
+ 80004c0:	6039      	str	r1, [r7, #0]
+	int i, sign;
+
+	if ((sign = n) < 0)  /* record sign */
+ 80004c2:	687b      	ldr	r3, [r7, #4]
+ 80004c4:	60bb      	str	r3, [r7, #8]
+ 80004c6:	68bb      	ldr	r3, [r7, #8]
+ 80004c8:	2b00      	cmp	r3, #0
+ 80004ca:	da03      	bge.n	80004d4 <itoa+0x1c>
+		n = -n;          /* make n positive */
+ 80004cc:	687b      	ldr	r3, [r7, #4]
+ 80004ce:	f1c3 0300 	rsb	r3, r3, #0
+ 80004d2:	607b      	str	r3, [r7, #4]
+	i = 0;
+ 80004d4:	f04f 0300 	mov.w	r3, #0
+ 80004d8:	60fb      	str	r3, [r7, #12]
+	do {       /* generate digits in reverse order */
+		s[i++] = n % 10 + '0';   /* get next digit */
+ 80004da:	68fb      	ldr	r3, [r7, #12]
+ 80004dc:	683a      	ldr	r2, [r7, #0]
+ 80004de:	18d0      	adds	r0, r2, r3
+ 80004e0:	6879      	ldr	r1, [r7, #4]
+ 80004e2:	f246 6367 	movw	r3, #26215	; 0x6667
+ 80004e6:	f2c6 6366 	movt	r3, #26214	; 0x6666
+ 80004ea:	fb83 2301 	smull	r2, r3, r3, r1
+ 80004ee:	ea4f 02a3 	mov.w	r2, r3, asr #2
+ 80004f2:	ea4f 73e1 	mov.w	r3, r1, asr #31
+ 80004f6:	1ad2      	subs	r2, r2, r3
+ 80004f8:	4613      	mov	r3, r2
+ 80004fa:	ea4f 0383 	mov.w	r3, r3, lsl #2
+ 80004fe:	189b      	adds	r3, r3, r2
+ 8000500:	ea4f 0343 	mov.w	r3, r3, lsl #1
+ 8000504:	1aca      	subs	r2, r1, r3
+ 8000506:	b2d3      	uxtb	r3, r2
+ 8000508:	f103 0330 	add.w	r3, r3, #48	; 0x30
+ 800050c:	b2db      	uxtb	r3, r3
+ 800050e:	7003      	strb	r3, [r0, #0]
+ 8000510:	68fb      	ldr	r3, [r7, #12]
+ 8000512:	f103 0301 	add.w	r3, r3, #1
+ 8000516:	60fb      	str	r3, [r7, #12]
+	} while ((n /= 10) > 0);     /* delete it */
+ 8000518:	687a      	ldr	r2, [r7, #4]
+ 800051a:	f246 6367 	movw	r3, #26215	; 0x6667
+ 800051e:	f2c6 6366 	movt	r3, #26214	; 0x6666
+ 8000522:	fb83 1302 	smull	r1, r3, r3, r2
+ 8000526:	ea4f 01a3 	mov.w	r1, r3, asr #2
+ 800052a:	ea4f 73e2 	mov.w	r3, r2, asr #31
+ 800052e:	1acb      	subs	r3, r1, r3
+ 8000530:	607b      	str	r3, [r7, #4]
+ 8000532:	687b      	ldr	r3, [r7, #4]
+ 8000534:	2b00      	cmp	r3, #0
+ 8000536:	dcd0      	bgt.n	80004da <itoa+0x22>
+	if (sign < 0)
+ 8000538:	68bb      	ldr	r3, [r7, #8]
+ 800053a:	2b00      	cmp	r3, #0
+ 800053c:	da09      	bge.n	8000552 <itoa+0x9a>
+		s[i++] = '-';
+ 800053e:	68fb      	ldr	r3, [r7, #12]
+ 8000540:	683a      	ldr	r2, [r7, #0]
+ 8000542:	18d3      	adds	r3, r2, r3
+ 8000544:	f04f 022d 	mov.w	r2, #45	; 0x2d
+ 8000548:	701a      	strb	r2, [r3, #0]
+ 800054a:	68fb      	ldr	r3, [r7, #12]
+ 800054c:	f103 0301 	add.w	r3, r3, #1
+ 8000550:	60fb      	str	r3, [r7, #12]
+	s[i] = '\0';
+ 8000552:	68fb      	ldr	r3, [r7, #12]
+ 8000554:	683a      	ldr	r2, [r7, #0]
+ 8000556:	18d3      	adds	r3, r2, r3
+ 8000558:	f04f 0200 	mov.w	r2, #0
+ 800055c:	701a      	strb	r2, [r3, #0]
+	reverse(s);
+ 800055e:	6838      	ldr	r0, [r7, #0]
+ 8000560:	f7ff ff78 	bl	8000454 <reverse>
+}
+ 8000564:	f107 0710 	add.w	r7, r7, #16
+ 8000568:	46bd      	mov	sp, r7
+ 800056a:	bd80      	pop	{r7, pc}
+
+0800056c <FSMC_NORSRAMInit>:
+
+/////// END ITOA ////////
+
+
+void FSMC_NORSRAMInit(FSMC_NORSRAMInitTypeDef* FSMC_NORSRAMInitStruct)
+{ 
+ 800056c:	b490      	push	{r4, r7}
+ 800056e:	b082      	sub	sp, #8
+ 8000570:	af00      	add	r7, sp, #0
+ 8000572:	6078      	str	r0, [r7, #4]
+  /* Bank1 NOR/SRAM control register configuration */ 
+  FSMC_Bank1->BTCR[FSMC_NORSRAMInitStruct->FSMC_Bank] = 
+ 8000574:	f04f 4020 	mov.w	r0, #2684354560	; 0xa0000000
+ 8000578:	687b      	ldr	r3, [r7, #4]
+ 800057a:	681a      	ldr	r2, [r3, #0]
+            (uint32_t)FSMC_NORSRAMInitStruct->FSMC_DataAddressMux |
+ 800057c:	687b      	ldr	r3, [r7, #4]
+ 800057e:	6859      	ldr	r1, [r3, #4]
+            FSMC_NORSRAMInitStruct->FSMC_MemoryType |
+ 8000580:	687b      	ldr	r3, [r7, #4]
+ 8000582:	689b      	ldr	r3, [r3, #8]
+
+void FSMC_NORSRAMInit(FSMC_NORSRAMInitTypeDef* FSMC_NORSRAMInitStruct)
+{ 
+  /* Bank1 NOR/SRAM control register configuration */ 
+  FSMC_Bank1->BTCR[FSMC_NORSRAMInitStruct->FSMC_Bank] = 
+            (uint32_t)FSMC_NORSRAMInitStruct->FSMC_DataAddressMux |
+ 8000584:	4319      	orrs	r1, r3
+            FSMC_NORSRAMInitStruct->FSMC_MemoryType |
+            FSMC_NORSRAMInitStruct->FSMC_MemoryDataWidth |
+ 8000586:	687b      	ldr	r3, [r7, #4]
+ 8000588:	68db      	ldr	r3, [r3, #12]
+void FSMC_NORSRAMInit(FSMC_NORSRAMInitTypeDef* FSMC_NORSRAMInitStruct)
+{ 
+  /* Bank1 NOR/SRAM control register configuration */ 
+  FSMC_Bank1->BTCR[FSMC_NORSRAMInitStruct->FSMC_Bank] = 
+            (uint32_t)FSMC_NORSRAMInitStruct->FSMC_DataAddressMux |
+            FSMC_NORSRAMInitStruct->FSMC_MemoryType |
+ 800058a:	4319      	orrs	r1, r3
+            FSMC_NORSRAMInitStruct->FSMC_MemoryDataWidth |
+            FSMC_NORSRAMInitStruct->FSMC_BurstAccessMode |
+ 800058c:	687b      	ldr	r3, [r7, #4]
+ 800058e:	691b      	ldr	r3, [r3, #16]
+{ 
+  /* Bank1 NOR/SRAM control register configuration */ 
+  FSMC_Bank1->BTCR[FSMC_NORSRAMInitStruct->FSMC_Bank] = 
+            (uint32_t)FSMC_NORSRAMInitStruct->FSMC_DataAddressMux |
+            FSMC_NORSRAMInitStruct->FSMC_MemoryType |
+            FSMC_NORSRAMInitStruct->FSMC_MemoryDataWidth |
+ 8000590:	4319      	orrs	r1, r3
+            FSMC_NORSRAMInitStruct->FSMC_BurstAccessMode |
+            FSMC_NORSRAMInitStruct->FSMC_AsynchronousWait |
+ 8000592:	687b      	ldr	r3, [r7, #4]
+ 8000594:	695b      	ldr	r3, [r3, #20]
+  /* Bank1 NOR/SRAM control register configuration */ 
+  FSMC_Bank1->BTCR[FSMC_NORSRAMInitStruct->FSMC_Bank] = 
+            (uint32_t)FSMC_NORSRAMInitStruct->FSMC_DataAddressMux |
+            FSMC_NORSRAMInitStruct->FSMC_MemoryType |
+            FSMC_NORSRAMInitStruct->FSMC_MemoryDataWidth |
+            FSMC_NORSRAMInitStruct->FSMC_BurstAccessMode |
+ 8000596:	4319      	orrs	r1, r3
+            FSMC_NORSRAMInitStruct->FSMC_AsynchronousWait |
+            FSMC_NORSRAMInitStruct->FSMC_WaitSignalPolarity |
+ 8000598:	687b      	ldr	r3, [r7, #4]
+ 800059a:	699b      	ldr	r3, [r3, #24]
+  FSMC_Bank1->BTCR[FSMC_NORSRAMInitStruct->FSMC_Bank] = 
+            (uint32_t)FSMC_NORSRAMInitStruct->FSMC_DataAddressMux |
+            FSMC_NORSRAMInitStruct->FSMC_MemoryType |
+            FSMC_NORSRAMInitStruct->FSMC_MemoryDataWidth |
+            FSMC_NORSRAMInitStruct->FSMC_BurstAccessMode |
+            FSMC_NORSRAMInitStruct->FSMC_AsynchronousWait |
+ 800059c:	4319      	orrs	r1, r3
+            FSMC_NORSRAMInitStruct->FSMC_WaitSignalPolarity |
+            FSMC_NORSRAMInitStruct->FSMC_WrapMode |
+ 800059e:	687b      	ldr	r3, [r7, #4]
+ 80005a0:	69db      	ldr	r3, [r3, #28]
+            (uint32_t)FSMC_NORSRAMInitStruct->FSMC_DataAddressMux |
+            FSMC_NORSRAMInitStruct->FSMC_MemoryType |
+            FSMC_NORSRAMInitStruct->FSMC_MemoryDataWidth |
+            FSMC_NORSRAMInitStruct->FSMC_BurstAccessMode |
+            FSMC_NORSRAMInitStruct->FSMC_AsynchronousWait |
+            FSMC_NORSRAMInitStruct->FSMC_WaitSignalPolarity |
+ 80005a2:	4319      	orrs	r1, r3
+            FSMC_NORSRAMInitStruct->FSMC_WrapMode |
+            FSMC_NORSRAMInitStruct->FSMC_WaitSignalActive |
+ 80005a4:	687b      	ldr	r3, [r7, #4]
+ 80005a6:	6a1b      	ldr	r3, [r3, #32]
+            FSMC_NORSRAMInitStruct->FSMC_MemoryType |
+            FSMC_NORSRAMInitStruct->FSMC_MemoryDataWidth |
+            FSMC_NORSRAMInitStruct->FSMC_BurstAccessMode |
+            FSMC_NORSRAMInitStruct->FSMC_AsynchronousWait |
+            FSMC_NORSRAMInitStruct->FSMC_WaitSignalPolarity |
+            FSMC_NORSRAMInitStruct->FSMC_WrapMode |
+ 80005a8:	4319      	orrs	r1, r3
+            FSMC_NORSRAMInitStruct->FSMC_WaitSignalActive |
+            FSMC_NORSRAMInitStruct->FSMC_WriteOperation |
+ 80005aa:	687b      	ldr	r3, [r7, #4]
+ 80005ac:	6a5b      	ldr	r3, [r3, #36]	; 0x24
+            FSMC_NORSRAMInitStruct->FSMC_MemoryDataWidth |
+            FSMC_NORSRAMInitStruct->FSMC_BurstAccessMode |
+            FSMC_NORSRAMInitStruct->FSMC_AsynchronousWait |
+            FSMC_NORSRAMInitStruct->FSMC_WaitSignalPolarity |
+            FSMC_NORSRAMInitStruct->FSMC_WrapMode |
+            FSMC_NORSRAMInitStruct->FSMC_WaitSignalActive |
+ 80005ae:	4319      	orrs	r1, r3
+            FSMC_NORSRAMInitStruct->FSMC_WriteOperation |
+            FSMC_NORSRAMInitStruct->FSMC_WaitSignal |
+ 80005b0:	687b      	ldr	r3, [r7, #4]
+ 80005b2:	6a9b      	ldr	r3, [r3, #40]	; 0x28
+            FSMC_NORSRAMInitStruct->FSMC_BurstAccessMode |
+            FSMC_NORSRAMInitStruct->FSMC_AsynchronousWait |
+            FSMC_NORSRAMInitStruct->FSMC_WaitSignalPolarity |
+            FSMC_NORSRAMInitStruct->FSMC_WrapMode |
+            FSMC_NORSRAMInitStruct->FSMC_WaitSignalActive |
+            FSMC_NORSRAMInitStruct->FSMC_WriteOperation |
+ 80005b4:	4319      	orrs	r1, r3
+            FSMC_NORSRAMInitStruct->FSMC_WaitSignal |
+            FSMC_NORSRAMInitStruct->FSMC_ExtendedMode |
+ 80005b6:	687b      	ldr	r3, [r7, #4]
+ 80005b8:	6adb      	ldr	r3, [r3, #44]	; 0x2c
+            FSMC_NORSRAMInitStruct->FSMC_AsynchronousWait |
+            FSMC_NORSRAMInitStruct->FSMC_WaitSignalPolarity |
+            FSMC_NORSRAMInitStruct->FSMC_WrapMode |
+            FSMC_NORSRAMInitStruct->FSMC_WaitSignalActive |
+            FSMC_NORSRAMInitStruct->FSMC_WriteOperation |
+            FSMC_NORSRAMInitStruct->FSMC_WaitSignal |
+ 80005ba:	4319      	orrs	r1, r3
+            FSMC_NORSRAMInitStruct->FSMC_ExtendedMode |
+            FSMC_NORSRAMInitStruct->FSMC_WriteBurst;
+ 80005bc:	687b      	ldr	r3, [r7, #4]
+ 80005be:	6b1b      	ldr	r3, [r3, #48]	; 0x30
+            FSMC_NORSRAMInitStruct->FSMC_WaitSignalPolarity |
+            FSMC_NORSRAMInitStruct->FSMC_WrapMode |
+            FSMC_NORSRAMInitStruct->FSMC_WaitSignalActive |
+            FSMC_NORSRAMInitStruct->FSMC_WriteOperation |
+            FSMC_NORSRAMInitStruct->FSMC_WaitSignal |
+            FSMC_NORSRAMInitStruct->FSMC_ExtendedMode |
+ 80005c0:	4319      	orrs	r1, r3
+
+
+void FSMC_NORSRAMInit(FSMC_NORSRAMInitTypeDef* FSMC_NORSRAMInitStruct)
+{ 
+  /* Bank1 NOR/SRAM control register configuration */ 
+  FSMC_Bank1->BTCR[FSMC_NORSRAMInitStruct->FSMC_Bank] = 
+ 80005c2:	4603      	mov	r3, r0
+ 80005c4:	f843 1022 	str.w	r1, [r3, r2, lsl #2]
+            FSMC_NORSRAMInitStruct->FSMC_WriteOperation |
+            FSMC_NORSRAMInitStruct->FSMC_WaitSignal |
+            FSMC_NORSRAMInitStruct->FSMC_ExtendedMode |
+            FSMC_NORSRAMInitStruct->FSMC_WriteBurst;
+
+  if(FSMC_NORSRAMInitStruct->FSMC_MemoryType == FSMC_MemoryType_NOR)
+ 80005c8:	687b      	ldr	r3, [r7, #4]
+ 80005ca:	689b      	ldr	r3, [r3, #8]
+ 80005cc:	2b08      	cmp	r3, #8
+ 80005ce:	d10f      	bne.n	80005f0 <FSMC_NORSRAMInit+0x84>
+  {
+    FSMC_Bank1->BTCR[FSMC_NORSRAMInitStruct->FSMC_Bank] |= (uint32_t)BCR_FACCEN_Set;
+ 80005d0:	f04f 4020 	mov.w	r0, #2684354560	; 0xa0000000
+ 80005d4:	687b      	ldr	r3, [r7, #4]
+ 80005d6:	681a      	ldr	r2, [r3, #0]
+ 80005d8:	f04f 4420 	mov.w	r4, #2684354560	; 0xa0000000
+ 80005dc:	687b      	ldr	r3, [r7, #4]
+ 80005de:	6819      	ldr	r1, [r3, #0]
+ 80005e0:	4623      	mov	r3, r4
+ 80005e2:	f853 3021 	ldr.w	r3, [r3, r1, lsl #2]
+ 80005e6:	f043 0140 	orr.w	r1, r3, #64	; 0x40
+ 80005ea:	4603      	mov	r3, r0
+ 80005ec:	f843 1022 	str.w	r1, [r3, r2, lsl #2]
+  }
+  
+  /* Bank1 NOR/SRAM timing register configuration */
+  FSMC_Bank1->BTCR[FSMC_NORSRAMInitStruct->FSMC_Bank+1] = 
+ 80005f0:	f04f 4020 	mov.w	r0, #2684354560	; 0xa0000000
+ 80005f4:	687b      	ldr	r3, [r7, #4]
+ 80005f6:	681b      	ldr	r3, [r3, #0]
+ 80005f8:	f103 0201 	add.w	r2, r3, #1
+            (uint32_t)FSMC_NORSRAMInitStruct->FSMC_ReadWriteTimingStruct->FSMC_AddressSetupTime |
+ 80005fc:	687b      	ldr	r3, [r7, #4]
+ 80005fe:	6b5b      	ldr	r3, [r3, #52]	; 0x34
+ 8000600:	6819      	ldr	r1, [r3, #0]
+            (FSMC_NORSRAMInitStruct->FSMC_ReadWriteTimingStruct->FSMC_AddressHoldTime << 4) |
+ 8000602:	687b      	ldr	r3, [r7, #4]
+ 8000604:	6b5b      	ldr	r3, [r3, #52]	; 0x34
+ 8000606:	685b      	ldr	r3, [r3, #4]
+ 8000608:	ea4f 1303 	mov.w	r3, r3, lsl #4
+    FSMC_Bank1->BTCR[FSMC_NORSRAMInitStruct->FSMC_Bank] |= (uint32_t)BCR_FACCEN_Set;
+  }
+  
+  /* Bank1 NOR/SRAM timing register configuration */
+  FSMC_Bank1->BTCR[FSMC_NORSRAMInitStruct->FSMC_Bank+1] = 
+            (uint32_t)FSMC_NORSRAMInitStruct->FSMC_ReadWriteTimingStruct->FSMC_AddressSetupTime |
+ 800060c:	4319      	orrs	r1, r3
+            (FSMC_NORSRAMInitStruct->FSMC_ReadWriteTimingStruct->FSMC_AddressHoldTime << 4) |
+            (FSMC_NORSRAMInitStruct->FSMC_ReadWriteTimingStruct->FSMC_DataSetupTime << 8) |
+ 800060e:	687b      	ldr	r3, [r7, #4]
+ 8000610:	6b5b      	ldr	r3, [r3, #52]	; 0x34
+ 8000612:	689b      	ldr	r3, [r3, #8]
+ 8000614:	ea4f 2303 	mov.w	r3, r3, lsl #8
+  }
+  
+  /* Bank1 NOR/SRAM timing register configuration */
+  FSMC_Bank1->BTCR[FSMC_NORSRAMInitStruct->FSMC_Bank+1] = 
+            (uint32_t)FSMC_NORSRAMInitStruct->FSMC_ReadWriteTimingStruct->FSMC_AddressSetupTime |
+            (FSMC_NORSRAMInitStruct->FSMC_ReadWriteTimingStruct->FSMC_AddressHoldTime << 4) |
+ 8000618:	4319      	orrs	r1, r3
+            (FSMC_NORSRAMInitStruct->FSMC_ReadWriteTimingStruct->FSMC_DataSetupTime << 8) |
+            (FSMC_NORSRAMInitStruct->FSMC_ReadWriteTimingStruct->FSMC_BusTurnAroundDuration << 16) |
+ 800061a:	687b      	ldr	r3, [r7, #4]
+ 800061c:	6b5b      	ldr	r3, [r3, #52]	; 0x34
+ 800061e:	68db      	ldr	r3, [r3, #12]
+ 8000620:	ea4f 4303 	mov.w	r3, r3, lsl #16
+  
+  /* Bank1 NOR/SRAM timing register configuration */
+  FSMC_Bank1->BTCR[FSMC_NORSRAMInitStruct->FSMC_Bank+1] = 
+            (uint32_t)FSMC_NORSRAMInitStruct->FSMC_ReadWriteTimingStruct->FSMC_AddressSetupTime |
+            (FSMC_NORSRAMInitStruct->FSMC_ReadWriteTimingStruct->FSMC_AddressHoldTime << 4) |
+            (FSMC_NORSRAMInitStruct->FSMC_ReadWriteTimingStruct->FSMC_DataSetupTime << 8) |
+ 8000624:	4319      	orrs	r1, r3
+            (FSMC_NORSRAMInitStruct->FSMC_ReadWriteTimingStruct->FSMC_BusTurnAroundDuration << 16) |
+            (FSMC_NORSRAMInitStruct->FSMC_ReadWriteTimingStruct->FSMC_CLKDivision << 20) |
+ 8000626:	687b      	ldr	r3, [r7, #4]
+ 8000628:	6b5b      	ldr	r3, [r3, #52]	; 0x34
+ 800062a:	691b      	ldr	r3, [r3, #16]
+ 800062c:	ea4f 5303 	mov.w	r3, r3, lsl #20
+  /* Bank1 NOR/SRAM timing register configuration */
+  FSMC_Bank1->BTCR[FSMC_NORSRAMInitStruct->FSMC_Bank+1] = 
+            (uint32_t)FSMC_NORSRAMInitStruct->FSMC_ReadWriteTimingStruct->FSMC_AddressSetupTime |
+            (FSMC_NORSRAMInitStruct->FSMC_ReadWriteTimingStruct->FSMC_AddressHoldTime << 4) |
+            (FSMC_NORSRAMInitStruct->FSMC_ReadWriteTimingStruct->FSMC_DataSetupTime << 8) |
+            (FSMC_NORSRAMInitStruct->FSMC_ReadWriteTimingStruct->FSMC_BusTurnAroundDuration << 16) |
+ 8000630:	4319      	orrs	r1, r3
+            (FSMC_NORSRAMInitStruct->FSMC_ReadWriteTimingStruct->FSMC_CLKDivision << 20) |
+            (FSMC_NORSRAMInitStruct->FSMC_ReadWriteTimingStruct->FSMC_DataLatency << 24) |
+ 8000632:	687b      	ldr	r3, [r7, #4]
+ 8000634:	6b5b      	ldr	r3, [r3, #52]	; 0x34
+ 8000636:	695b      	ldr	r3, [r3, #20]
+ 8000638:	ea4f 6303 	mov.w	r3, r3, lsl #24
+  FSMC_Bank1->BTCR[FSMC_NORSRAMInitStruct->FSMC_Bank+1] = 
+            (uint32_t)FSMC_NORSRAMInitStruct->FSMC_ReadWriteTimingStruct->FSMC_AddressSetupTime |
+            (FSMC_NORSRAMInitStruct->FSMC_ReadWriteTimingStruct->FSMC_AddressHoldTime << 4) |
+            (FSMC_NORSRAMInitStruct->FSMC_ReadWriteTimingStruct->FSMC_DataSetupTime << 8) |
+            (FSMC_NORSRAMInitStruct->FSMC_ReadWriteTimingStruct->FSMC_BusTurnAroundDuration << 16) |
+            (FSMC_NORSRAMInitStruct->FSMC_ReadWriteTimingStruct->FSMC_CLKDivision << 20) |
+ 800063c:	4319      	orrs	r1, r3
+            (FSMC_NORSRAMInitStruct->FSMC_ReadWriteTimingStruct->FSMC_DataLatency << 24) |
+             FSMC_NORSRAMInitStruct->FSMC_ReadWriteTimingStruct->FSMC_AccessMode;
+ 800063e:	687b      	ldr	r3, [r7, #4]
+ 8000640:	6b5b      	ldr	r3, [r3, #52]	; 0x34
+ 8000642:	699b      	ldr	r3, [r3, #24]
+            (uint32_t)FSMC_NORSRAMInitStruct->FSMC_ReadWriteTimingStruct->FSMC_AddressSetupTime |
+            (FSMC_NORSRAMInitStruct->FSMC_ReadWriteTimingStruct->FSMC_AddressHoldTime << 4) |
+            (FSMC_NORSRAMInitStruct->FSMC_ReadWriteTimingStruct->FSMC_DataSetupTime << 8) |
+            (FSMC_NORSRAMInitStruct->FSMC_ReadWriteTimingStruct->FSMC_BusTurnAroundDuration << 16) |
+            (FSMC_NORSRAMInitStruct->FSMC_ReadWriteTimingStruct->FSMC_CLKDivision << 20) |
+            (FSMC_NORSRAMInitStruct->FSMC_ReadWriteTimingStruct->FSMC_DataLatency << 24) |
+ 8000644:	4319      	orrs	r1, r3
+  {
+    FSMC_Bank1->BTCR[FSMC_NORSRAMInitStruct->FSMC_Bank] |= (uint32_t)BCR_FACCEN_Set;
+  }
+  
+  /* Bank1 NOR/SRAM timing register configuration */
+  FSMC_Bank1->BTCR[FSMC_NORSRAMInitStruct->FSMC_Bank+1] = 
+ 8000646:	4603      	mov	r3, r0
+ 8000648:	f843 1022 	str.w	r1, [r3, r2, lsl #2]
+            (FSMC_NORSRAMInitStruct->FSMC_ReadWriteTimingStruct->FSMC_DataLatency << 24) |
+             FSMC_NORSRAMInitStruct->FSMC_ReadWriteTimingStruct->FSMC_AccessMode;
+            
+    
+  /* Bank1 NOR/SRAM timing register for write configuration, if extended mode is used */
+  if(FSMC_NORSRAMInitStruct->FSMC_ExtendedMode == FSMC_ExtendedMode_Enable)
+ 800064c:	687b      	ldr	r3, [r7, #4]
+ 800064e:	6adb      	ldr	r3, [r3, #44]	; 0x2c
+ 8000650:	f5b3 4f80 	cmp.w	r3, #16384	; 0x4000
+ 8000654:	d127      	bne.n	80006a6 <FSMC_NORSRAMInit+0x13a>
+  {
+        FSMC_Bank1E->BWTR[FSMC_NORSRAMInitStruct->FSMC_Bank] = 
+ 8000656:	f44f 7382 	mov.w	r3, #260	; 0x104
+ 800065a:	f2ca 0300 	movt	r3, #40960	; 0xa000
+ 800065e:	687a      	ldr	r2, [r7, #4]
+ 8000660:	6812      	ldr	r2, [r2, #0]
+              (uint32_t)FSMC_NORSRAMInitStruct->FSMC_WriteTimingStruct->FSMC_AddressSetupTime |
+ 8000662:	6879      	ldr	r1, [r7, #4]
+ 8000664:	6b89      	ldr	r1, [r1, #56]	; 0x38
+ 8000666:	6808      	ldr	r0, [r1, #0]
+              (FSMC_NORSRAMInitStruct->FSMC_WriteTimingStruct->FSMC_AddressHoldTime << 4 )|
+ 8000668:	6879      	ldr	r1, [r7, #4]
+ 800066a:	6b89      	ldr	r1, [r1, #56]	; 0x38
+ 800066c:	6849      	ldr	r1, [r1, #4]
+ 800066e:	ea4f 1101 	mov.w	r1, r1, lsl #4
+    
+  /* Bank1 NOR/SRAM timing register for write configuration, if extended mode is used */
+  if(FSMC_NORSRAMInitStruct->FSMC_ExtendedMode == FSMC_ExtendedMode_Enable)
+  {
+        FSMC_Bank1E->BWTR[FSMC_NORSRAMInitStruct->FSMC_Bank] = 
+              (uint32_t)FSMC_NORSRAMInitStruct->FSMC_WriteTimingStruct->FSMC_AddressSetupTime |
+ 8000672:	4308      	orrs	r0, r1
+              (FSMC_NORSRAMInitStruct->FSMC_WriteTimingStruct->FSMC_AddressHoldTime << 4 )|
+              (FSMC_NORSRAMInitStruct->FSMC_WriteTimingStruct->FSMC_DataSetupTime << 8) |
+ 8000674:	6879      	ldr	r1, [r7, #4]
+ 8000676:	6b89      	ldr	r1, [r1, #56]	; 0x38
+ 8000678:	6889      	ldr	r1, [r1, #8]
+ 800067a:	ea4f 2101 	mov.w	r1, r1, lsl #8
+  /* Bank1 NOR/SRAM timing register for write configuration, if extended mode is used */
+  if(FSMC_NORSRAMInitStruct->FSMC_ExtendedMode == FSMC_ExtendedMode_Enable)
+  {
+        FSMC_Bank1E->BWTR[FSMC_NORSRAMInitStruct->FSMC_Bank] = 
+              (uint32_t)FSMC_NORSRAMInitStruct->FSMC_WriteTimingStruct->FSMC_AddressSetupTime |
+              (FSMC_NORSRAMInitStruct->FSMC_WriteTimingStruct->FSMC_AddressHoldTime << 4 )|
+ 800067e:	4308      	orrs	r0, r1
+              (FSMC_NORSRAMInitStruct->FSMC_WriteTimingStruct->FSMC_DataSetupTime << 8) |
+              (FSMC_NORSRAMInitStruct->FSMC_WriteTimingStruct->FSMC_CLKDivision << 20) |
+ 8000680:	6879      	ldr	r1, [r7, #4]
+ 8000682:	6b89      	ldr	r1, [r1, #56]	; 0x38
+ 8000684:	6909      	ldr	r1, [r1, #16]
+ 8000686:	ea4f 5101 	mov.w	r1, r1, lsl #20
+  if(FSMC_NORSRAMInitStruct->FSMC_ExtendedMode == FSMC_ExtendedMode_Enable)
+  {
+        FSMC_Bank1E->BWTR[FSMC_NORSRAMInitStruct->FSMC_Bank] = 
+              (uint32_t)FSMC_NORSRAMInitStruct->FSMC_WriteTimingStruct->FSMC_AddressSetupTime |
+              (FSMC_NORSRAMInitStruct->FSMC_WriteTimingStruct->FSMC_AddressHoldTime << 4 )|
+              (FSMC_NORSRAMInitStruct->FSMC_WriteTimingStruct->FSMC_DataSetupTime << 8) |
+ 800068a:	4308      	orrs	r0, r1
+              (FSMC_NORSRAMInitStruct->FSMC_WriteTimingStruct->FSMC_CLKDivision << 20) |
+              (FSMC_NORSRAMInitStruct->FSMC_WriteTimingStruct->FSMC_DataLatency << 24) |
+ 800068c:	6879      	ldr	r1, [r7, #4]
+ 800068e:	6b89      	ldr	r1, [r1, #56]	; 0x38
+ 8000690:	6949      	ldr	r1, [r1, #20]
+ 8000692:	ea4f 6101 	mov.w	r1, r1, lsl #24
+  {
+        FSMC_Bank1E->BWTR[FSMC_NORSRAMInitStruct->FSMC_Bank] = 
+              (uint32_t)FSMC_NORSRAMInitStruct->FSMC_WriteTimingStruct->FSMC_AddressSetupTime |
+              (FSMC_NORSRAMInitStruct->FSMC_WriteTimingStruct->FSMC_AddressHoldTime << 4 )|
+              (FSMC_NORSRAMInitStruct->FSMC_WriteTimingStruct->FSMC_DataSetupTime << 8) |
+              (FSMC_NORSRAMInitStruct->FSMC_WriteTimingStruct->FSMC_CLKDivision << 20) |
+ 8000696:	4308      	orrs	r0, r1
+              (FSMC_NORSRAMInitStruct->FSMC_WriteTimingStruct->FSMC_DataLatency << 24) |
+               FSMC_NORSRAMInitStruct->FSMC_WriteTimingStruct->FSMC_AccessMode;
+ 8000698:	6879      	ldr	r1, [r7, #4]
+ 800069a:	6b89      	ldr	r1, [r1, #56]	; 0x38
+ 800069c:	6989      	ldr	r1, [r1, #24]
+        FSMC_Bank1E->BWTR[FSMC_NORSRAMInitStruct->FSMC_Bank] = 
+              (uint32_t)FSMC_NORSRAMInitStruct->FSMC_WriteTimingStruct->FSMC_AddressSetupTime |
+              (FSMC_NORSRAMInitStruct->FSMC_WriteTimingStruct->FSMC_AddressHoldTime << 4 )|
+              (FSMC_NORSRAMInitStruct->FSMC_WriteTimingStruct->FSMC_DataSetupTime << 8) |
+              (FSMC_NORSRAMInitStruct->FSMC_WriteTimingStruct->FSMC_CLKDivision << 20) |
+              (FSMC_NORSRAMInitStruct->FSMC_WriteTimingStruct->FSMC_DataLatency << 24) |
+ 800069e:	4301      	orrs	r1, r0
+            
+    
+  /* Bank1 NOR/SRAM timing register for write configuration, if extended mode is used */
+  if(FSMC_NORSRAMInitStruct->FSMC_ExtendedMode == FSMC_ExtendedMode_Enable)
+  {
+        FSMC_Bank1E->BWTR[FSMC_NORSRAMInitStruct->FSMC_Bank] = 
+ 80006a0:	f843 1022 	str.w	r1, [r3, r2, lsl #2]
+ 80006a4:	e009      	b.n	80006ba <FSMC_NORSRAMInit+0x14e>
+              (FSMC_NORSRAMInitStruct->FSMC_WriteTimingStruct->FSMC_DataLatency << 24) |
+               FSMC_NORSRAMInitStruct->FSMC_WriteTimingStruct->FSMC_AccessMode;
+  }
+  else
+  {
+    FSMC_Bank1E->BWTR[FSMC_NORSRAMInitStruct->FSMC_Bank] = 0x0FFFFFFF;
+ 80006a6:	f44f 7382 	mov.w	r3, #260	; 0x104
+ 80006aa:	f2ca 0300 	movt	r3, #40960	; 0xa000
+ 80006ae:	687a      	ldr	r2, [r7, #4]
+ 80006b0:	6812      	ldr	r2, [r2, #0]
+ 80006b2:	f06f 4170 	mvn.w	r1, #4026531840	; 0xf0000000
+ 80006b6:	f843 1022 	str.w	r1, [r3, r2, lsl #2]
+  }
+}
+ 80006ba:	f107 0708 	add.w	r7, r7, #8
+ 80006be:	46bd      	mov	sp, r7
+ 80006c0:	bc90      	pop	{r4, r7}
+ 80006c2:	4770      	bx	lr
+
+080006c4 <write_cmd>:
+
+void write_cmd(unsigned short cmd)
+{
+ 80006c4:	b480      	push	{r7}
+ 80006c6:	b083      	sub	sp, #12
+ 80006c8:	af00      	add	r7, sp, #0
+ 80006ca:	4603      	mov	r3, r0
+ 80006cc:	80fb      	strh	r3, [r7, #6]
+    LCD_REG = cmd;
+ 80006ce:	f04f 43c0 	mov.w	r3, #1610612736	; 0x60000000
+ 80006d2:	88fa      	ldrh	r2, [r7, #6]
+ 80006d4:	601a      	str	r2, [r3, #0]
+}
+ 80006d6:	f107 070c 	add.w	r7, r7, #12
+ 80006da:	46bd      	mov	sp, r7
+ 80006dc:	bc80      	pop	{r7}
+ 80006de:	4770      	bx	lr
+
+080006e0 <read_data>:
+
+
+unsigned short read_data(void)
+{
+ 80006e0:	b480      	push	{r7}
+ 80006e2:	af00      	add	r7, sp, #0
+    return LCD_RAM;
+ 80006e4:	f04f 0300 	mov.w	r3, #0
+ 80006e8:	f2c6 0302 	movt	r3, #24578	; 0x6002
+ 80006ec:	681b      	ldr	r3, [r3, #0]
+ 80006ee:	b29b      	uxth	r3, r3
+}
+ 80006f0:	4618      	mov	r0, r3
+ 80006f2:	46bd      	mov	sp, r7
+ 80006f4:	bc80      	pop	{r7}
+ 80006f6:	4770      	bx	lr
+
+080006f8 <read_reg>:
+
+unsigned short read_reg(unsigned char reg_addr)
+{
+ 80006f8:	b580      	push	{r7, lr}
+ 80006fa:	b084      	sub	sp, #16
+ 80006fc:	af00      	add	r7, sp, #0
+ 80006fe:	4603      	mov	r3, r0
+ 8000700:	71fb      	strb	r3, [r7, #7]
+    unsigned short val=0;
+ 8000702:	f04f 0300 	mov.w	r3, #0
+ 8000706:	81fb      	strh	r3, [r7, #14]
+    write_cmd(reg_addr);
+ 8000708:	79fb      	ldrb	r3, [r7, #7]
+ 800070a:	b29b      	uxth	r3, r3
+ 800070c:	4618      	mov	r0, r3
+ 800070e:	f7ff ffd9 	bl	80006c4 <write_cmd>
+    val = read_data();
+ 8000712:	f7ff ffe5 	bl	80006e0 <read_data>
+ 8000716:	4603      	mov	r3, r0
+ 8000718:	81fb      	strh	r3, [r7, #14]
+    return (val);
+ 800071a:	89fb      	ldrh	r3, [r7, #14]
+}
+ 800071c:	4618      	mov	r0, r3
+ 800071e:	f107 0710 	add.w	r7, r7, #16
+ 8000722:	46bd      	mov	sp, r7
+ 8000724:	bd80      	pop	{r7, pc}
+ 8000726:	bf00      	nop
+
+08000728 <FSMC_NORSRAMCmd>:
+
+
+void FSMC_NORSRAMCmd(uint32_t FSMC_Bank, FunctionalState NewState)
+{
+ 8000728:	b480      	push	{r7}
+ 800072a:	b083      	sub	sp, #12
+ 800072c:	af00      	add	r7, sp, #0
+ 800072e:	6078      	str	r0, [r7, #4]
+ 8000730:	460b      	mov	r3, r1
+ 8000732:	70fb      	strb	r3, [r7, #3]
+	if (NewState != DISABLE)
+ 8000734:	78fb      	ldrb	r3, [r7, #3]
+ 8000736:	2b00      	cmp	r3, #0
+ 8000738:	d00d      	beq.n	8000756 <FSMC_NORSRAMCmd+0x2e>
+	{
+		/* Enable the selected NOR/SRAM Bank by setting the PBKEN bit in the BCRx register */
+		FSMC_Bank1->BTCR[FSMC_Bank] |= BCR_MBKEN_Set;
+ 800073a:	f04f 4020 	mov.w	r0, #2684354560	; 0xa0000000
+ 800073e:	f04f 4320 	mov.w	r3, #2684354560	; 0xa0000000
+ 8000742:	687a      	ldr	r2, [r7, #4]
+ 8000744:	f853 3022 	ldr.w	r3, [r3, r2, lsl #2]
+ 8000748:	f043 0101 	orr.w	r1, r3, #1
+ 800074c:	687a      	ldr	r2, [r7, #4]
+ 800074e:	4603      	mov	r3, r0
+ 8000750:	f843 1022 	str.w	r1, [r3, r2, lsl #2]
+ 8000754:	e00f      	b.n	8000776 <FSMC_NORSRAMCmd+0x4e>
+	}
+	else
+	{
+		/* Disable the selected NOR/SRAM Bank by clearing the PBKEN bit in the BCRx register */
+		FSMC_Bank1->BTCR[FSMC_Bank] &= BCR_MBKEN_Reset;
+ 8000756:	f04f 4020 	mov.w	r0, #2684354560	; 0xa0000000
+ 800075a:	f04f 4320 	mov.w	r3, #2684354560	; 0xa0000000
+ 800075e:	687a      	ldr	r2, [r7, #4]
+ 8000760:	f853 2022 	ldr.w	r2, [r3, r2, lsl #2]
+ 8000764:	f64f 73fe 	movw	r3, #65534	; 0xfffe
+ 8000768:	f2c0 030f 	movt	r3, #15
+ 800076c:	4013      	ands	r3, r2
+ 800076e:	6879      	ldr	r1, [r7, #4]
+ 8000770:	4602      	mov	r2, r0
+ 8000772:	f842 3021 	str.w	r3, [r2, r1, lsl #2]
+	}
+}
+ 8000776:	f107 070c 	add.w	r7, r7, #12
+ 800077a:	46bd      	mov	sp, r7
+ 800077c:	bc80      	pop	{r7}
+ 800077e:	4770      	bx	lr
+
+08000780 <lcdInit>:
+
+
+void lcdInit(void)
+{
+ 8000780:	b580      	push	{r7, lr}
+ 8000782:	b09e      	sub	sp, #120	; 0x78
+ 8000784:	af00      	add	r7, sp, #0
+	// Enable domain clocks.
+	RCC->AHBENR |= RCC_AHBENR_FSMCEN; // Memory controller.
+ 8000786:	f44f 5380 	mov.w	r3, #4096	; 0x1000
+ 800078a:	f2c4 0302 	movt	r3, #16386	; 0x4002
+ 800078e:	f44f 5280 	mov.w	r2, #4096	; 0x1000
+ 8000792:	f2c4 0202 	movt	r2, #16386	; 0x4002
+ 8000796:	6952      	ldr	r2, [r2, #20]
+ 8000798:	f442 7280 	orr.w	r2, r2, #256	; 0x100
+ 800079c:	615a      	str	r2, [r3, #20]
+	RCC->APB2ENR |= RCC_APB2ENR_AFIOEN | RCC_APB2ENR_IOPDEN | RCC_APB2ENR_IOPEEN; // Port D,E (for control lines).
+ 800079e:	f44f 5380 	mov.w	r3, #4096	; 0x1000
+ 80007a2:	f2c4 0302 	movt	r3, #16386	; 0x4002
+ 80007a6:	f44f 5280 	mov.w	r2, #4096	; 0x1000
+ 80007aa:	f2c4 0202 	movt	r2, #16386	; 0x4002
+ 80007ae:	6992      	ldr	r2, [r2, #24]
+ 80007b0:	f042 0261 	orr.w	r2, r2, #97	; 0x61
+ 80007b4:	619a      	str	r2, [r3, #24]
+	GPIOD->CRL |= 0xB0BB00BB; // AFIO outputs for data lines. D4 = RD, D5 = WR, D7 = CS
+ 80007b6:	f44f 52a0 	mov.w	r2, #5120	; 0x1400
+ 80007ba:	f2c4 0201 	movt	r2, #16385	; 0x4001
+ 80007be:	f44f 53a0 	mov.w	r3, #5120	; 0x1400
+ 80007c2:	f2c4 0301 	movt	r3, #16385	; 0x4001
+ 80007c6:	6819      	ldr	r1, [r3, #0]
+ 80007c8:	f04f 03bb 	mov.w	r3, #187	; 0xbb
+ 80007cc:	f2cb 03bb 	movt	r3, #45243	; 0xb0bb
+ 80007d0:	430b      	orrs	r3, r1
+ 80007d2:	6013      	str	r3, [r2, #0]
+	GPIOD->CRH |= 0xBB00BBBB; // D11 = RS
+ 80007d4:	f44f 52a0 	mov.w	r2, #5120	; 0x1400
+ 80007d8:	f2c4 0201 	movt	r2, #16385	; 0x4001
+ 80007dc:	f44f 53a0 	mov.w	r3, #5120	; 0x1400
+ 80007e0:	f2c4 0301 	movt	r3, #16385	; 0x4001
+ 80007e4:	6859      	ldr	r1, [r3, #4]
+ 80007e6:	f64b 33bb 	movw	r3, #48059	; 0xbbbb
+ 80007ea:	f6cb 3300 	movt	r3, #47872	; 0xbb00
+ 80007ee:	430b      	orrs	r3, r1
+ 80007f0:	6053      	str	r3, [r2, #4]
+	GPIOE->CRL |= 0xB0000000;
+ 80007f2:	f44f 53c0 	mov.w	r3, #6144	; 0x1800
+ 80007f6:	f2c4 0301 	movt	r3, #16385	; 0x4001
+ 80007fa:	f44f 52c0 	mov.w	r2, #6144	; 0x1800
+ 80007fe:	f2c4 0201 	movt	r2, #16385	; 0x4001
+ 8000802:	6812      	ldr	r2, [r2, #0]
+ 8000804:	f042 4230 	orr.w	r2, r2, #2952790016	; 0xb0000000
+ 8000808:	601a      	str	r2, [r3, #0]
+	GPIOE->CRH |= 0xBBBBBBBB;
+ 800080a:	f44f 53c0 	mov.w	r3, #6144	; 0x1800
+ 800080e:	f2c4 0301 	movt	r3, #16385	; 0x4001
+ 8000812:	f44f 52c0 	mov.w	r2, #6144	; 0x1800
+ 8000816:	f2c4 0201 	movt	r2, #16385	; 0x4001
+ 800081a:	6852      	ldr	r2, [r2, #4]
+ 800081c:	f042 32bb 	orr.w	r2, r2, #3149642683	; 0xbbbbbbbb
+ 8000820:	605a      	str	r2, [r3, #4]
+	///////////////////////////////////////////
+	FSMC_NORSRAMInitTypeDef  FSMC_NORSRAMInitStructure;
+    FSMC_NORSRAMTimingInitTypeDef  Timing_read,Timing_write;
+
+    /*-- FSMC Configuration -------------------------------------------------*/
+    Timing_read.FSMC_AddressSetupTime = 30;             /* µØÖ·½¨Á¢Ê±¼ä  */
+ 8000822:	f04f 031e 	mov.w	r3, #30
+ 8000826:	623b      	str	r3, [r7, #32]
+    Timing_read.FSMC_DataSetupTime = 30;                /* Êý¾Ý½¨Á¢Ê±¼ä  */
+ 8000828:	f04f 031e 	mov.w	r3, #30
+ 800082c:	62bb      	str	r3, [r7, #40]	; 0x28
+    Timing_read.FSMC_AccessMode = FSMC_AccessMode_A;    /* FSMC ·ÃÎÊÄ£Ê½ */
+ 800082e:	f04f 0300 	mov.w	r3, #0
+ 8000832:	63bb      	str	r3, [r7, #56]	; 0x38
+
+    Timing_write.FSMC_AddressSetupTime = 30;             /* µØÖ·½¨Á¢Ê±¼ä  */
+ 8000834:	f04f 031e 	mov.w	r3, #30
+ 8000838:	607b      	str	r3, [r7, #4]
+    Timing_write.FSMC_DataSetupTime = 30;                /* Êý¾Ý½¨Á¢Ê±¼ä  */
+ 800083a:	f04f 031e 	mov.w	r3, #30
+ 800083e:	60fb      	str	r3, [r7, #12]
+    Timing_write.FSMC_AccessMode = FSMC_AccessMode_A;   /* FSMC ·ÃÎÊÄ£Ê½ */
+ 8000840:	f04f 0300 	mov.w	r3, #0
+ 8000844:	61fb      	str	r3, [r7, #28]
+          - Memory Type = SRAM
+          - Data Width = 16bit
+          - Write Operation = Enable
+          - Extended Mode = Enable
+          - Asynchronous Wait = Disable */
+    FSMC_NORSRAMInitStructure.FSMC_Bank = FSMC_Bank1_NORSRAM1;
+ 8000846:	f04f 0300 	mov.w	r3, #0
+ 800084a:	63fb      	str	r3, [r7, #60]	; 0x3c
+    FSMC_NORSRAMInitStructure.FSMC_DataAddressMux = FSMC_DataAddressMux_Disable;
+ 800084c:	f04f 0300 	mov.w	r3, #0
+ 8000850:	643b      	str	r3, [r7, #64]	; 0x40
+    FSMC_NORSRAMInitStructure.FSMC_MemoryType = FSMC_MemoryType_SRAM;
+ 8000852:	f04f 0300 	mov.w	r3, #0
+ 8000856:	647b      	str	r3, [r7, #68]	; 0x44
+    FSMC_NORSRAMInitStructure.FSMC_MemoryDataWidth = FSMC_MemoryDataWidth_16b;
+ 8000858:	f04f 0310 	mov.w	r3, #16
+ 800085c:	64bb      	str	r3, [r7, #72]	; 0x48
+    FSMC_NORSRAMInitStructure.FSMC_BurstAccessMode = FSMC_BurstAccessMode_Disable;
+ 800085e:	f04f 0300 	mov.w	r3, #0
+ 8000862:	64fb      	str	r3, [r7, #76]	; 0x4c
+    //FSMC_NORSRAMInitStructure.FSMC_AsynchronousWait = FSMC_AsynchronousWait_Disable;
+    FSMC_NORSRAMInitStructure.FSMC_WaitSignalPolarity = FSMC_WaitSignalPolarity_Low;
+ 8000864:	f04f 0300 	mov.w	r3, #0
+ 8000868:	657b      	str	r3, [r7, #84]	; 0x54
+    FSMC_NORSRAMInitStructure.FSMC_WrapMode = FSMC_WrapMode_Disable;
+ 800086a:	f04f 0300 	mov.w	r3, #0
+ 800086e:	65bb      	str	r3, [r7, #88]	; 0x58
+    FSMC_NORSRAMInitStructure.FSMC_WaitSignalActive = FSMC_WaitSignalActive_BeforeWaitState;
+ 8000870:	f04f 0300 	mov.w	r3, #0
+ 8000874:	65fb      	str	r3, [r7, #92]	; 0x5c
+    FSMC_NORSRAMInitStructure.FSMC_WriteOperation = FSMC_WriteOperation_Enable;
+ 8000876:	f44f 5380 	mov.w	r3, #4096	; 0x1000
+ 800087a:	663b      	str	r3, [r7, #96]	; 0x60
+    FSMC_NORSRAMInitStructure.FSMC_WaitSignal = FSMC_WaitSignal_Disable;
+ 800087c:	f04f 0300 	mov.w	r3, #0
+ 8000880:	667b      	str	r3, [r7, #100]	; 0x64
+    FSMC_NORSRAMInitStructure.FSMC_ExtendedMode = FSMC_ExtendedMode_Disable;
+ 8000882:	f04f 0300 	mov.w	r3, #0
+ 8000886:	66bb      	str	r3, [r7, #104]	; 0x68
+    FSMC_NORSRAMInitStructure.FSMC_WriteBurst = FSMC_WriteBurst_Disable;
+ 8000888:	f04f 0300 	mov.w	r3, #0
+ 800088c:	66fb      	str	r3, [r7, #108]	; 0x6c
+    FSMC_NORSRAMInitStructure.FSMC_ReadWriteTimingStruct = &Timing_read;
+ 800088e:	f107 0320 	add.w	r3, r7, #32
+ 8000892:	673b      	str	r3, [r7, #112]	; 0x70
+    FSMC_NORSRAMInitStructure.FSMC_WriteTimingStruct = &Timing_write;
+ 8000894:	f107 0304 	add.w	r3, r7, #4
+ 8000898:	677b      	str	r3, [r7, #116]	; 0x74
+
+    FSMC_NORSRAMInit(&FSMC_NORSRAMInitStructure);
+ 800089a:	f107 033c 	add.w	r3, r7, #60	; 0x3c
+ 800089e:	4618      	mov	r0, r3
+ 80008a0:	f7ff fe64 	bl	800056c <FSMC_NORSRAMInit>
+	// Correct erroneous setting.
+	FSMC_Bank1->BTCR[0] &= ~(FSMC_BCR1_MTYP_0 | FSMC_BCR1_MTYP_1 | FSMC_BCR1_FACCEN | FSMC_BCR1_BURSTEN | FSMC_BCR1_WRAPMOD | FSMC_BCR1_WAITCFG);
+ 80008a4:	f04f 4220 	mov.w	r2, #2684354560	; 0xa0000000
+ 80008a8:	f04f 4320 	mov.w	r3, #2684354560	; 0xa0000000
+ 80008ac:	681b      	ldr	r3, [r3, #0]
+ 80008ae:	f423 6354 	bic.w	r3, r3, #3392	; 0xd40
+ 80008b2:	f023 030c 	bic.w	r3, r3, #12
+ 80008b6:	6013      	str	r3, [r2, #0]
+	(*((uint32_t *)(0xa0000000))) = 0x00005011;
+ 80008b8:	f04f 4320 	mov.w	r3, #2684354560	; 0xa0000000
+ 80008bc:	f245 0211 	movw	r2, #20497	; 0x5011
+ 80008c0:	601a      	str	r2, [r3, #0]
+	(*((uint32_t *)(0xa0000004))) = 0x00100813;
+ 80008c2:	f04f 0304 	mov.w	r3, #4
+ 80008c6:	f2ca 0300 	movt	r3, #40960	; 0xa000
+ 80008ca:	f640 0213 	movw	r2, #2067	; 0x813
+ 80008ce:	f2c0 0210 	movt	r2, #16
+ 80008d2:	601a      	str	r2, [r3, #0]
+	(*((uint32_t *)(0xa0000104))) = 0x00100813;
+ 80008d4:	f44f 7382 	mov.w	r3, #260	; 0x104
+ 80008d8:	f2ca 0300 	movt	r3, #40960	; 0xa000
+ 80008dc:	f640 0213 	movw	r2, #2067	; 0x813
+ 80008e0:	f2c0 0210 	movt	r2, #16
+ 80008e4:	601a      	str	r2, [r3, #0]
+	FSMC_NORSRAMCmd(FSMC_Bank1_NORSRAM1, ENABLE);
+ 80008e6:	f04f 0000 	mov.w	r0, #0
+ 80008ea:	f04f 0101 	mov.w	r1, #1
+ 80008ee:	f7ff ff1b 	bl	8000728 <FSMC_NORSRAMCmd>
+
+	///////////////////////////////////////////
+
+    delay(3000);
+ 80008f2:	f640 30b8 	movw	r0, #3000	; 0xbb8
+ 80008f6:	f000 f841 	bl	800097c <delay>
+
+	// power supply setting
+    // set R07h at 0021h (GON=1,DTE=0,D[1:0]=01)
+    write_reg(0x0007,0x0021);
+ 80008fa:	f04f 43c0 	mov.w	r3, #1610612736	; 0x60000000
+ 80008fe:	f04f 0207 	mov.w	r2, #7
+ 8000902:	601a      	str	r2, [r3, #0]
+ 8000904:	f04f 0300 	mov.w	r3, #0
+ 8000908:	f2c6 0302 	movt	r3, #24578	; 0x6002
+ 800090c:	f04f 0221 	mov.w	r2, #33	; 0x21
+ 8000910:	601a      	str	r2, [r3, #0]
+	txStr("\r\n");
+	itoa(deviceid, did);
+	txStr(did);
+    GPIOB->BSRR = (1<<1);
+*/
+}
+ 8000912:	f107 0778 	add.w	r7, r7, #120	; 0x78
+ 8000916:	46bd      	mov	sp, r7
+ 8000918:	bd80      	pop	{r7, pc}
+ 800091a:	bf00      	nop
+
+0800091c <lcdSetPixel>:
+
+void lcdSetPixel(uint16_t x, uint16_t y, uint16_t pixel)
+{
+ 800091c:	b480      	push	{r7}
+ 800091e:	b083      	sub	sp, #12
+ 8000920:	af00      	add	r7, sp, #0
+ 8000922:	4613      	mov	r3, r2
+ 8000924:	4602      	mov	r2, r0
+ 8000926:	80fa      	strh	r2, [r7, #6]
+ 8000928:	460a      	mov	r2, r1
+ 800092a:	80ba      	strh	r2, [r7, #4]
+ 800092c:	807b      	strh	r3, [r7, #2]
+	write_reg(0x004e,x);
+ 800092e:	f04f 43c0 	mov.w	r3, #1610612736	; 0x60000000
+ 8000932:	f04f 024e 	mov.w	r2, #78	; 0x4e
+ 8000936:	601a      	str	r2, [r3, #0]
+ 8000938:	f04f 0300 	mov.w	r3, #0
+ 800093c:	f2c6 0302 	movt	r3, #24578	; 0x6002
+ 8000940:	88fa      	ldrh	r2, [r7, #6]
+ 8000942:	601a      	str	r2, [r3, #0]
+	write_reg(0x004f,y);
+ 8000944:	f04f 43c0 	mov.w	r3, #1610612736	; 0x60000000
+ 8000948:	f04f 024f 	mov.w	r2, #79	; 0x4f
+ 800094c:	601a      	str	r2, [r3, #0]
+ 800094e:	f04f 0300 	mov.w	r3, #0
+ 8000952:	f2c6 0302 	movt	r3, #24578	; 0x6002
+ 8000956:	88ba      	ldrh	r2, [r7, #4]
+ 8000958:	601a      	str	r2, [r3, #0]
+
+	rw_data_prepare();
+ 800095a:	f04f 43c0 	mov.w	r3, #1610612736	; 0x60000000
+ 800095e:	f04f 0222 	mov.w	r2, #34	; 0x22
+ 8000962:	601a      	str	r2, [r3, #0]
+	write_data(pixel);
+ 8000964:	f04f 0300 	mov.w	r3, #0
+ 8000968:	f2c6 0302 	movt	r3, #24578	; 0x6002
+ 800096c:	887a      	ldrh	r2, [r7, #2]
+ 800096e:	601a      	str	r2, [r3, #0]
+}
+ 8000970:	f107 070c 	add.w	r7, r7, #12
+ 8000974:	46bd      	mov	sp, r7
+ 8000976:	bc80      	pop	{r7}
+ 8000978:	4770      	bx	lr
+ 800097a:	bf00      	nop
+
+0800097c <delay>:
+
+static void delay(int cnt)
+{
+ 800097c:	b480      	push	{r7}
+ 800097e:	b085      	sub	sp, #20
+ 8000980:	af00      	add	r7, sp, #0
+ 8000982:	6078      	str	r0, [r7, #4]
+	volatile unsigned int dl;
+	while(cnt--)
+ 8000984:	e00c      	b.n	80009a0 <delay+0x24>
+	{
+		for(dl=0; dl<500; dl++);
+ 8000986:	f04f 0300 	mov.w	r3, #0
+ 800098a:	60fb      	str	r3, [r7, #12]
+ 800098c:	e003      	b.n	8000996 <delay+0x1a>
+ 800098e:	68fb      	ldr	r3, [r7, #12]
+ 8000990:	f103 0301 	add.w	r3, r3, #1
+ 8000994:	60fb      	str	r3, [r7, #12]
+ 8000996:	68fa      	ldr	r2, [r7, #12]
+ 8000998:	f240 13f3 	movw	r3, #499	; 0x1f3
+ 800099c:	429a      	cmp	r2, r3
+ 800099e:	d9f6      	bls.n	800098e <delay+0x12>
+}
+
+static void delay(int cnt)
+{
+	volatile unsigned int dl;
+	while(cnt--)
+ 80009a0:	687b      	ldr	r3, [r7, #4]
+ 80009a2:	2b00      	cmp	r3, #0
+ 80009a4:	bf0c      	ite	eq
+ 80009a6:	2300      	moveq	r3, #0
+ 80009a8:	2301      	movne	r3, #1
+ 80009aa:	b2db      	uxtb	r3, r3
+ 80009ac:	687a      	ldr	r2, [r7, #4]
+ 80009ae:	f102 32ff 	add.w	r2, r2, #4294967295
+ 80009b2:	607a      	str	r2, [r7, #4]
+ 80009b4:	2b00      	cmp	r3, #0
+ 80009b6:	d1e6      	bne.n	8000986 <delay+0xa>
+	{
+		for(dl=0; dl<500; dl++);
+	}
+}
+ 80009b8:	f107 0714 	add.w	r7, r7, #20
+ 80009bc:	46bd      	mov	sp, r7
+ 80009be:	bc80      	pop	{r7}
+ 80009c0:	4770      	bx	lr
+ 80009c2:	bf00      	nop
+
+080009c4 <__enable_irq>:
+
+
+#elif (defined (__GNUC__)) /*------------------ GNU Compiler ---------------------*/
+/* GNU gcc specific functions */
+
+static __INLINE void __enable_irq()               { __ASM volatile ("cpsie i"); }
+ 80009c4:	b480      	push	{r7}
+ 80009c6:	af00      	add	r7, sp, #0
+ 80009c8:	b662      	cpsie	i
+ 80009ca:	46bd      	mov	sp, r7
+ 80009cc:	bc80      	pop	{r7}
+ 80009ce:	4770      	bx	lr
+
+080009d0 <NVIC_EnableIRQ>:
+ *
+ * Enable a device specific interupt in the NVIC interrupt controller.
+ * The interrupt number cannot be a negative value.
+ */
+static __INLINE void NVIC_EnableIRQ(IRQn_Type IRQn)
+{
+ 80009d0:	b480      	push	{r7}
+ 80009d2:	b083      	sub	sp, #12
+ 80009d4:	af00      	add	r7, sp, #0
+ 80009d6:	4603      	mov	r3, r0
+ 80009d8:	71fb      	strb	r3, [r7, #7]
+  NVIC->ISER[((uint32_t)(IRQn) >> 5)] = (1 << ((uint32_t)(IRQn) & 0x1F)); /* enable interrupt */
+ 80009da:	f44f 4361 	mov.w	r3, #57600	; 0xe100
+ 80009de:	f2ce 0300 	movt	r3, #57344	; 0xe000
+ 80009e2:	f997 2007 	ldrsb.w	r2, [r7, #7]
+ 80009e6:	ea4f 1252 	mov.w	r2, r2, lsr #5
+ 80009ea:	79f9      	ldrb	r1, [r7, #7]
+ 80009ec:	f001 011f 	and.w	r1, r1, #31
+ 80009f0:	f04f 0001 	mov.w	r0, #1
+ 80009f4:	fa00 f101 	lsl.w	r1, r0, r1
+ 80009f8:	f843 1022 	str.w	r1, [r3, r2, lsl #2]
+}
+ 80009fc:	f107 070c 	add.w	r7, r7, #12
+ 8000a00:	46bd      	mov	sp, r7
+ 8000a02:	bc80      	pop	{r7}
+ 8000a04:	4770      	bx	lr
+ 8000a06:	bf00      	nop
+
+08000a08 <NVIC_DisableIRQ>:
+ * 
+ * Disable a device specific interupt in the NVIC interrupt controller.
+ * The interrupt number cannot be a negative value.
+ */
+static __INLINE void NVIC_DisableIRQ(IRQn_Type IRQn)
+{
+ 8000a08:	b480      	push	{r7}
+ 8000a0a:	b083      	sub	sp, #12
+ 8000a0c:	af00      	add	r7, sp, #0
+ 8000a0e:	4603      	mov	r3, r0
+ 8000a10:	71fb      	strb	r3, [r7, #7]
+  NVIC->ICER[((uint32_t)(IRQn) >> 5)] = (1 << ((uint32_t)(IRQn) & 0x1F)); /* disable interrupt */
+ 8000a12:	f44f 4361 	mov.w	r3, #57600	; 0xe100
+ 8000a16:	f2ce 0300 	movt	r3, #57344	; 0xe000
+ 8000a1a:	f997 2007 	ldrsb.w	r2, [r7, #7]
+ 8000a1e:	ea4f 1252 	mov.w	r2, r2, lsr #5
+ 8000a22:	79f9      	ldrb	r1, [r7, #7]
+ 8000a24:	f001 011f 	and.w	r1, r1, #31
+ 8000a28:	f04f 0001 	mov.w	r0, #1
+ 8000a2c:	fa00 f101 	lsl.w	r1, r0, r1
+ 8000a30:	f102 0220 	add.w	r2, r2, #32
+ 8000a34:	f843 1022 	str.w	r1, [r3, r2, lsl #2]
+}
+ 8000a38:	f107 070c 	add.w	r7, r7, #12
+ 8000a3c:	46bd      	mov	sp, r7
+ 8000a3e:	bc80      	pop	{r7}
+ 8000a40:	4770      	bx	lr
+ 8000a42:	bf00      	nop
+
+08000a44 <uart_init>:
+// Globals
+char uartTX[80]; // UART transmit buffer.
+c_buffer_t uartBuf; // Circular buffer descriptor.
+
+void uart_init(void)
+{
+ 8000a44:	b5b0      	push	{r4, r5, r7, lr}
+ 8000a46:	b086      	sub	sp, #24
+ 8000a48:	af00      	add	r7, sp, #0
+	RCC->APB2ENR |= (RCC_APB2ENR_USART1EN | RCC_APB2ENR_AFIOEN); // Enable USART and AFIO clock.
+ 8000a4a:	f44f 5380 	mov.w	r3, #4096	; 0x1000
+ 8000a4e:	f2c4 0302 	movt	r3, #16386	; 0x4002
+ 8000a52:	f44f 5280 	mov.w	r2, #4096	; 0x1000
+ 8000a56:	f2c4 0202 	movt	r2, #16386	; 0x4002
+ 8000a5a:	6992      	ldr	r2, [r2, #24]
+ 8000a5c:	f442 4280 	orr.w	r2, r2, #16384	; 0x4000
+ 8000a60:	f042 0201 	orr.w	r2, r2, #1
+ 8000a64:	619a      	str	r2, [r3, #24]
+	USART1->CR1 |= (USART_CR1_UE | USART_CR1_TE | USART_CR1_RE | USART_CR1_TXEIE); // Enable everything, including TX ready interrupt.
+ 8000a66:	f44f 5360 	mov.w	r3, #14336	; 0x3800
+ 8000a6a:	f2c4 0301 	movt	r3, #16385	; 0x4001
+ 8000a6e:	f44f 5260 	mov.w	r2, #14336	; 0x3800
+ 8000a72:	f2c4 0201 	movt	r2, #16385	; 0x4001
+ 8000a76:	8992      	ldrh	r2, [r2, #12]
+ 8000a78:	b292      	uxth	r2, r2
+ 8000a7a:	f442 5202 	orr.w	r2, r2, #8320	; 0x2080
+ 8000a7e:	f042 020c 	orr.w	r2, r2, #12
+ 8000a82:	b292      	uxth	r2, r2
+ 8000a84:	819a      	strh	r2, [r3, #12]
+	USART1->BRR = ((DIV_MANT << 4) | DIV_FRAC); // Set BRR for 115200.
+ 8000a86:	f44f 5360 	mov.w	r3, #14336	; 0x3800
+ 8000a8a:	f2c4 0301 	movt	r3, #16385	; 0x4001
+ 8000a8e:	f240 2271 	movw	r2, #625	; 0x271
+ 8000a92:	811a      	strh	r2, [r3, #8]
+	
+	uartBuf = c_buffer_init(uartTX, 80); // Initialize buffer.
+ 8000a94:	f240 0404 	movw	r4, #4
+ 8000a98:	f2c2 0400 	movt	r4, #8192	; 0x2000
+ 8000a9c:	463b      	mov	r3, r7
+ 8000a9e:	4618      	mov	r0, r3
+ 8000aa0:	f240 0118 	movw	r1, #24
+ 8000aa4:	f2c2 0100 	movt	r1, #8192	; 0x2000
+ 8000aa8:	f04f 0250 	mov.w	r2, #80	; 0x50
+ 8000aac:	f000 f866 	bl	8000b7c <c_buffer_init>
+ 8000ab0:	463d      	mov	r5, r7
+ 8000ab2:	cd0f      	ldmia	r5!, {r0, r1, r2, r3}
+ 8000ab4:	c40f      	stmia	r4!, {r0, r1, r2, r3}
+ 8000ab6:	682b      	ldr	r3, [r5, #0]
+ 8000ab8:	6023      	str	r3, [r4, #0]
+	
+	NVIC_EnableIRQ(USART1_IRQn); // Enable USART1 interrupt.
+ 8000aba:	f04f 0025 	mov.w	r0, #37	; 0x25
+ 8000abe:	f7ff ff87 	bl	80009d0 <NVIC_EnableIRQ>
+	__enable_irq(); // Enable interrupts globally.
+ 8000ac2:	f7ff ff7f 	bl	80009c4 <__enable_irq>
+}
+ 8000ac6:	f107 0718 	add.w	r7, r7, #24
+ 8000aca:	46bd      	mov	sp, r7
+ 8000acc:	bdb0      	pop	{r4, r5, r7, pc}
+ 8000ace:	bf00      	nop
+
+08000ad0 <txStr>:
+
+void txStr(char str[])
+{
+ 8000ad0:	b580      	push	{r7, lr}
+ 8000ad2:	b084      	sub	sp, #16
+ 8000ad4:	af00      	add	r7, sp, #0
+ 8000ad6:	6078      	str	r0, [r7, #4]
+	uint8_t i;
+	for(i=0; str[i] != '\0' && i<255; i++)
+ 8000ad8:	f04f 0300 	mov.w	r3, #0
+ 8000adc:	73fb      	strb	r3, [r7, #15]
+ 8000ade:	e011      	b.n	8000b04 <txStr+0x34>
+	{
+		if(c_buffer_write(&uartBuf, str[i])) break;
+ 8000ae0:	7bfb      	ldrb	r3, [r7, #15]
+ 8000ae2:	687a      	ldr	r2, [r7, #4]
+ 8000ae4:	18d3      	adds	r3, r2, r3
+ 8000ae6:	781b      	ldrb	r3, [r3, #0]
+ 8000ae8:	f240 0004 	movw	r0, #4
+ 8000aec:	f2c2 0000 	movt	r0, #8192	; 0x2000
+ 8000af0:	4619      	mov	r1, r3
+ 8000af2:	f000 f865 	bl	8000bc0 <c_buffer_write>
+ 8000af6:	4603      	mov	r3, r0
+ 8000af8:	2b00      	cmp	r3, #0
+ 8000afa:	d10d      	bne.n	8000b18 <txStr+0x48>
+}
+
+void txStr(char str[])
+{
+	uint8_t i;
+	for(i=0; str[i] != '\0' && i<255; i++)
+ 8000afc:	7bfb      	ldrb	r3, [r7, #15]
+ 8000afe:	f103 0301 	add.w	r3, r3, #1
+ 8000b02:	73fb      	strb	r3, [r7, #15]
+ 8000b04:	7bfb      	ldrb	r3, [r7, #15]
+ 8000b06:	687a      	ldr	r2, [r7, #4]
+ 8000b08:	18d3      	adds	r3, r2, r3
+ 8000b0a:	781b      	ldrb	r3, [r3, #0]
+ 8000b0c:	2b00      	cmp	r3, #0
+ 8000b0e:	d004      	beq.n	8000b1a <txStr+0x4a>
+ 8000b10:	7bfb      	ldrb	r3, [r7, #15]
+ 8000b12:	2bff      	cmp	r3, #255	; 0xff
+ 8000b14:	d1e4      	bne.n	8000ae0 <txStr+0x10>
+ 8000b16:	e000      	b.n	8000b1a <txStr+0x4a>
+	{
+		if(c_buffer_write(&uartBuf, str[i])) break;
+ 8000b18:	bf00      	nop
+	}
+	NVIC_EnableIRQ(USART1_IRQn); // Enable USART1 interrupt.
+ 8000b1a:	f04f 0025 	mov.w	r0, #37	; 0x25
+ 8000b1e:	f7ff ff57 	bl	80009d0 <NVIC_EnableIRQ>
+}
+ 8000b22:	f107 0710 	add.w	r7, r7, #16
+ 8000b26:	46bd      	mov	sp, r7
+ 8000b28:	bd80      	pop	{r7, pc}
+ 8000b2a:	bf00      	nop
+
+08000b2c <USART1_IRQHandler>:
+
+void USART1_IRQHandler(void)
+{
+ 8000b2c:	b580      	push	{r7, lr}
+ 8000b2e:	b082      	sub	sp, #8
+ 8000b30:	af00      	add	r7, sp, #0
+	if(USART1->SR & USART_SR_TXE)
+ 8000b32:	f44f 5360 	mov.w	r3, #14336	; 0x3800
+ 8000b36:	f2c4 0301 	movt	r3, #16385	; 0x4001
+ 8000b3a:	881b      	ldrh	r3, [r3, #0]
+ 8000b3c:	b29b      	uxth	r3, r3
+ 8000b3e:	f003 0380 	and.w	r3, r3, #128	; 0x80
+ 8000b42:	2b00      	cmp	r3, #0
+ 8000b44:	d016      	beq.n	8000b74 <USART1_IRQHandler+0x48>
+	{
+		char out;
+		if(c_buffer_read(&uartBuf, &out ) == 0)
+ 8000b46:	f240 0004 	movw	r0, #4
+ 8000b4a:	f2c2 0000 	movt	r0, #8192	; 0x2000
+ 8000b4e:	f107 0307 	add.w	r3, r7, #7
+ 8000b52:	4619      	mov	r1, r3
+ 8000b54:	f000 f868 	bl	8000c28 <c_buffer_read>
+ 8000b58:	4603      	mov	r3, r0
+ 8000b5a:	2b00      	cmp	r3, #0
+ 8000b5c:	d106      	bne.n	8000b6c <USART1_IRQHandler+0x40>
+		{
+			USART1->DR = out;
+ 8000b5e:	f44f 5360 	mov.w	r3, #14336	; 0x3800
+ 8000b62:	f2c4 0301 	movt	r3, #16385	; 0x4001
+ 8000b66:	79fa      	ldrb	r2, [r7, #7]
+ 8000b68:	809a      	strh	r2, [r3, #4]
+ 8000b6a:	e003      	b.n	8000b74 <USART1_IRQHandler+0x48>
+		}
+		else
+		{ // We're out of characters, stop the interrupt.
+			NVIC_DisableIRQ(USART1_IRQn); 
+ 8000b6c:	f04f 0025 	mov.w	r0, #37	; 0x25
+ 8000b70:	f7ff ff4a 	bl	8000a08 <NVIC_DisableIRQ>
+		}
+	}	
+}
+ 8000b74:	f107 0708 	add.w	r7, r7, #8
+ 8000b78:	46bd      	mov	sp, r7
+ 8000b7a:	bd80      	pop	{r7, pc}
+
+08000b7c <c_buffer_init>:
+ * 	buffer_size:	The size of the data buffer
+ *
+ * 	return:	buffer struct
+ */
+c_buffer_t c_buffer_init( char *buffer, size_t buffer_size )
+{
+ 8000b7c:	b4b0      	push	{r4, r5, r7}
+ 8000b7e:	b08b      	sub	sp, #44	; 0x2c
+ 8000b80:	af00      	add	r7, sp, #0
+ 8000b82:	60f8      	str	r0, [r7, #12]
+ 8000b84:	60b9      	str	r1, [r7, #8]
+ 8000b86:	607a      	str	r2, [r7, #4]
+	c_buffer_t buf_struct;
+
+	buf_struct.buffer = buffer;
+ 8000b88:	68bb      	ldr	r3, [r7, #8]
+ 8000b8a:	617b      	str	r3, [r7, #20]
+	buf_struct.buf_size = buffer_size;
+ 8000b8c:	687b      	ldr	r3, [r7, #4]
+ 8000b8e:	61bb      	str	r3, [r7, #24]
+	buf_struct.head = 0;
+ 8000b90:	f04f 0300 	mov.w	r3, #0
+ 8000b94:	61fb      	str	r3, [r7, #28]
+	buf_struct.tail = 0;
+ 8000b96:	f04f 0300 	mov.w	r3, #0
+ 8000b9a:	623b      	str	r3, [r7, #32]
+	buf_struct.size = 0;
+ 8000b9c:	f04f 0300 	mov.w	r3, #0
+ 8000ba0:	627b      	str	r3, [r7, #36]	; 0x24
+
+	return buf_struct;
+ 8000ba2:	68fb      	ldr	r3, [r7, #12]
+ 8000ba4:	461c      	mov	r4, r3
+ 8000ba6:	f107 0514 	add.w	r5, r7, #20
+ 8000baa:	cd0f      	ldmia	r5!, {r0, r1, r2, r3}
+ 8000bac:	c40f      	stmia	r4!, {r0, r1, r2, r3}
+ 8000bae:	682b      	ldr	r3, [r5, #0]
+ 8000bb0:	6023      	str	r3, [r4, #0]
+}
+ 8000bb2:	68f8      	ldr	r0, [r7, #12]
+ 8000bb4:	f107 072c 	add.w	r7, r7, #44	; 0x2c
+ 8000bb8:	46bd      	mov	sp, r7
+ 8000bba:	bcb0      	pop	{r4, r5, r7}
+ 8000bbc:	4770      	bx	lr
+ 8000bbe:	bf00      	nop
+
+08000bc0 <c_buffer_write>:
+ * return:
+ *	0:				The character was written to the buffer
+ *	other:			The buffer is full
+ */
+int c_buffer_write( c_buffer_t *buf, char c )
+{
+ 8000bc0:	b480      	push	{r7}
+ 8000bc2:	b083      	sub	sp, #12
+ 8000bc4:	af00      	add	r7, sp, #0
+ 8000bc6:	6078      	str	r0, [r7, #4]
+ 8000bc8:	460b      	mov	r3, r1
+ 8000bca:	70fb      	strb	r3, [r7, #3]
+	if( buf->size == buf->buf_size )
+ 8000bcc:	687b      	ldr	r3, [r7, #4]
+ 8000bce:	691a      	ldr	r2, [r3, #16]
+ 8000bd0:	687b      	ldr	r3, [r7, #4]
+ 8000bd2:	685b      	ldr	r3, [r3, #4]
+ 8000bd4:	429a      	cmp	r2, r3
+ 8000bd6:	d102      	bne.n	8000bde <c_buffer_write+0x1e>
+	{
+		return -1;
+ 8000bd8:	f04f 33ff 	mov.w	r3, #4294967295
+ 8000bdc:	e01d      	b.n	8000c1a <c_buffer_write+0x5a>
+	}
+	else
+	{
+		buf->buffer[buf->tail++] = c;
+ 8000bde:	687b      	ldr	r3, [r7, #4]
+ 8000be0:	681a      	ldr	r2, [r3, #0]
+ 8000be2:	687b      	ldr	r3, [r7, #4]
+ 8000be4:	68db      	ldr	r3, [r3, #12]
+ 8000be6:	18d2      	adds	r2, r2, r3
+ 8000be8:	78f9      	ldrb	r1, [r7, #3]
+ 8000bea:	7011      	strb	r1, [r2, #0]
+ 8000bec:	f103 0201 	add.w	r2, r3, #1
+ 8000bf0:	687b      	ldr	r3, [r7, #4]
+ 8000bf2:	60da      	str	r2, [r3, #12]
+		
+		buf->tail = buf->tail % buf->buf_size;
+ 8000bf4:	687b      	ldr	r3, [r7, #4]
+ 8000bf6:	68db      	ldr	r3, [r3, #12]
+ 8000bf8:	687a      	ldr	r2, [r7, #4]
+ 8000bfa:	6852      	ldr	r2, [r2, #4]
+ 8000bfc:	fbb3 f1f2 	udiv	r1, r3, r2
+ 8000c00:	fb02 f201 	mul.w	r2, r2, r1
+ 8000c04:	1a9a      	subs	r2, r3, r2
+ 8000c06:	687b      	ldr	r3, [r7, #4]
+ 8000c08:	60da      	str	r2, [r3, #12]
+		buf->size++;
+ 8000c0a:	687b      	ldr	r3, [r7, #4]
+ 8000c0c:	691b      	ldr	r3, [r3, #16]
+ 8000c0e:	f103 0201 	add.w	r2, r3, #1
+ 8000c12:	687b      	ldr	r3, [r7, #4]
+ 8000c14:	611a      	str	r2, [r3, #16]
+
+	}
+	return 0;
+ 8000c16:	f04f 0300 	mov.w	r3, #0
+}
+ 8000c1a:	4618      	mov	r0, r3
+ 8000c1c:	f107 070c 	add.w	r7, r7, #12
+ 8000c20:	46bd      	mov	sp, r7
+ 8000c22:	bc80      	pop	{r7}
+ 8000c24:	4770      	bx	lr
+ 8000c26:	bf00      	nop
+
+08000c28 <c_buffer_read>:
+ * return:
+ *	0:				The character was read from the buffer
+ *	other:			The buffer is empty
+ */
+int c_buffer_read( c_buffer_t *buf, char *c )
+{
+ 8000c28:	b480      	push	{r7}
+ 8000c2a:	b083      	sub	sp, #12
+ 8000c2c:	af00      	add	r7, sp, #0
+ 8000c2e:	6078      	str	r0, [r7, #4]
+ 8000c30:	6039      	str	r1, [r7, #0]
+	if( buf->size == 0 )
+ 8000c32:	687b      	ldr	r3, [r7, #4]
+ 8000c34:	691b      	ldr	r3, [r3, #16]
+ 8000c36:	2b00      	cmp	r3, #0
+ 8000c38:	d102      	bne.n	8000c40 <c_buffer_read+0x18>
+	{
+		return -1;
+ 8000c3a:	f04f 33ff 	mov.w	r3, #4294967295
+ 8000c3e:	e01e      	b.n	8000c7e <c_buffer_read+0x56>
+	}
+	else
+	{
+		*c = buf->buffer[buf->head++];
+ 8000c40:	687b      	ldr	r3, [r7, #4]
+ 8000c42:	681a      	ldr	r2, [r3, #0]
+ 8000c44:	687b      	ldr	r3, [r7, #4]
+ 8000c46:	689b      	ldr	r3, [r3, #8]
+ 8000c48:	18d2      	adds	r2, r2, r3
+ 8000c4a:	7811      	ldrb	r1, [r2, #0]
+ 8000c4c:	683a      	ldr	r2, [r7, #0]
+ 8000c4e:	7011      	strb	r1, [r2, #0]
+ 8000c50:	f103 0201 	add.w	r2, r3, #1
+ 8000c54:	687b      	ldr	r3, [r7, #4]
+ 8000c56:	609a      	str	r2, [r3, #8]
+
+		buf->head = buf->head % buf->buf_size;
+ 8000c58:	687b      	ldr	r3, [r7, #4]
+ 8000c5a:	689b      	ldr	r3, [r3, #8]
+ 8000c5c:	687a      	ldr	r2, [r7, #4]
+ 8000c5e:	6852      	ldr	r2, [r2, #4]
+ 8000c60:	fbb3 f1f2 	udiv	r1, r3, r2
+ 8000c64:	fb02 f201 	mul.w	r2, r2, r1
+ 8000c68:	1a9a      	subs	r2, r3, r2
+ 8000c6a:	687b      	ldr	r3, [r7, #4]
+ 8000c6c:	609a      	str	r2, [r3, #8]
+		buf->size--;
+ 8000c6e:	687b      	ldr	r3, [r7, #4]
+ 8000c70:	691b      	ldr	r3, [r3, #16]
+ 8000c72:	f103 32ff 	add.w	r2, r3, #4294967295
+ 8000c76:	687b      	ldr	r3, [r7, #4]
+ 8000c78:	611a      	str	r2, [r3, #16]
+	}
+	return 0;
+ 8000c7a:	f04f 0300 	mov.w	r3, #0
+}
+ 8000c7e:	4618      	mov	r0, r3
+ 8000c80:	f107 070c 	add.w	r7, r7, #12
+ 8000c84:	46bd      	mov	sp, r7
+ 8000c86:	bc80      	pop	{r7}
+ 8000c88:	4770      	bx	lr
+ 8000c8a:	bf00      	nop
+
+08000c8c <strlen>:
+ 8000c8c:	f020 0103 	bic.w	r1, r0, #3
+ 8000c90:	f010 0003 	ands.w	r0, r0, #3
+ 8000c94:	f1c0 0000 	rsb	r0, r0, #0
+ 8000c98:	f851 3b04 	ldr.w	r3, [r1], #4
+ 8000c9c:	f100 0c04 	add.w	ip, r0, #4
+ 8000ca0:	ea4f 0ccc 	mov.w	ip, ip, lsl #3
+ 8000ca4:	f06f 0200 	mvn.w	r2, #0
+ 8000ca8:	bf1c      	itt	ne
+ 8000caa:	fa22 f20c 	lsrne.w	r2, r2, ip
+ 8000cae:	4313      	orrne	r3, r2
+ 8000cb0:	f04f 0c01 	mov.w	ip, #1
+ 8000cb4:	ea4c 2c0c 	orr.w	ip, ip, ip, lsl #8
+ 8000cb8:	ea4c 4c0c 	orr.w	ip, ip, ip, lsl #16
+ 8000cbc:	eba3 020c 	sub.w	r2, r3, ip
+ 8000cc0:	ea22 0203 	bic.w	r2, r2, r3
+ 8000cc4:	ea12 12cc 	ands.w	r2, r2, ip, lsl #7
+ 8000cc8:	bf04      	itt	eq
+ 8000cca:	f851 3b04 	ldreq.w	r3, [r1], #4
+ 8000cce:	3004      	addeq	r0, #4
+ 8000cd0:	d0f4      	beq.n	8000cbc <strlen+0x30>
+ 8000cd2:	f013 0fff 	tst.w	r3, #255	; 0xff
+ 8000cd6:	bf1f      	itttt	ne
+ 8000cd8:	3001      	addne	r0, #1
+ 8000cda:	f413 4f7f 	tstne.w	r3, #65280	; 0xff00
+ 8000cde:	3001      	addne	r0, #1
+ 8000ce0:	f413 0f7f 	tstne.w	r3, #16711680	; 0xff0000
+ 8000ce4:	bf18      	it	ne
+ 8000ce6:	3001      	addne	r0, #1
+ 8000ce8:	4770      	bx	lr
+ 8000cea:	bf00      	nop
+
+08000cec <Reset_Handler>:
+ 8000cec:	2100      	movs	r1, #0
+ 8000cee:	f000 b804 	b.w	8000cfa <LoopCopyDataInit>
+
+08000cf2 <CopyDataInit>:
+ 8000cf2:	4b0e      	ldr	r3, [pc, #56]	; (8000d2c <LoopFillZerobss+0x1a>)
+ 8000cf4:	585b      	ldr	r3, [r3, r1]
+ 8000cf6:	5043      	str	r3, [r0, r1]
+ 8000cf8:	3104      	adds	r1, #4
+
+08000cfa <LoopCopyDataInit>:
+ 8000cfa:	480d      	ldr	r0, [pc, #52]	; (8000d30 <LoopFillZerobss+0x1e>)
+ 8000cfc:	4b0d      	ldr	r3, [pc, #52]	; (8000d34 <LoopFillZerobss+0x22>)
+ 8000cfe:	1842      	adds	r2, r0, r1
+ 8000d00:	429a      	cmp	r2, r3
+ 8000d02:	f4ff aff6 	bcc.w	8000cf2 <CopyDataInit>
+ 8000d06:	4a0c      	ldr	r2, [pc, #48]	; (8000d38 <LoopFillZerobss+0x26>)
+ 8000d08:	f000 b803 	b.w	8000d12 <LoopFillZerobss>
+
+08000d0c <FillZerobss>:
+ 8000d0c:	2300      	movs	r3, #0
+ 8000d0e:	f842 3b04 	str.w	r3, [r2], #4
+
+08000d12 <LoopFillZerobss>:
+ 8000d12:	4b0a      	ldr	r3, [pc, #40]	; (8000d3c <LoopFillZerobss+0x2a>)
+ 8000d14:	429a      	cmp	r2, r3
+ 8000d16:	f4ff aff9 	bcc.w	8000d0c <FillZerobss>
+ 8000d1a:	f7ff fa6d 	bl	80001f8 <SystemInit>
+ 8000d1e:	4808      	ldr	r0, [pc, #32]	; (8000d40 <LoopFillZerobss+0x2e>)
+ 8000d20:	f380 8808 	msr	MSP, r0
+ 8000d24:	f7ff fb12 	bl	800034c <main>
+ 8000d28:	4770      	bx	lr
+ 8000d2a:	0000      	.short	0x0000
+ 8000d2c:	08000d64 	.word	0x08000d64
+ 8000d30:	20000000 	.word	0x20000000
+ 8000d34:	20000000 	.word	0x20000000
+ 8000d38:	20000000 	.word	0x20000000
+ 8000d3c:	20000068 	.word	0x20000068
+ 8000d40:	2000c000 	.word	0x2000c000
+
+08000d44 <ADC1_2_IRQHandler>:
+ 8000d44:	f7ff bffe 	b.w	8000d44 <ADC1_2_IRQHandler>
+
+08000d48 <.LC0>:
+ 8000d48:	74696e49 	.word	0x74696e49
+ 8000d4c:	696c6169 	.word	0x696c6169
+ 8000d50:	6974617a 	.word	0x6974617a
+ 8000d54:	63206e6f 	.word	0x63206e6f
+ 8000d58:	6c706d6f 	.word	0x6c706d6f
+ 8000d5c:	2e657465 	.word	0x2e657465
+ 8000d60:	00000a0d 	.word	0x00000a0d

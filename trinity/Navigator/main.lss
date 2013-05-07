@@ -1,0 +1,493 @@
+
+main.elf:     file format elf32-avr
+
+Sections:
+Idx Name          Size      VMA       LMA       File off  Algn
+  0 .text         000002fa  00000000  00000000  00000074  2**1
+                  CONTENTS, ALLOC, LOAD, READONLY, CODE
+  1 .bss          00000022  00800100  00800100  0000036e  2**0
+                  ALLOC
+  2 .stab         000015d8  00000000  00000000  00000370  2**2
+                  CONTENTS, READONLY, DEBUGGING
+  3 .stabstr      00000b69  00000000  00000000  00001948  2**0
+                  CONTENTS, READONLY, DEBUGGING
+
+Disassembly of section .text:
+
+00000000 <__vectors>:
+   0:	0c 94 34 00 	jmp	0x68	; 0x68 <__ctors_end>
+   4:	0c 94 51 00 	jmp	0xa2	; 0xa2 <__bad_interrupt>
+   8:	0c 94 51 00 	jmp	0xa2	; 0xa2 <__bad_interrupt>
+   c:	0c 94 51 00 	jmp	0xa2	; 0xa2 <__bad_interrupt>
+  10:	0c 94 51 00 	jmp	0xa2	; 0xa2 <__bad_interrupt>
+  14:	0c 94 51 00 	jmp	0xa2	; 0xa2 <__bad_interrupt>
+  18:	0c 94 51 00 	jmp	0xa2	; 0xa2 <__bad_interrupt>
+  1c:	0c 94 51 00 	jmp	0xa2	; 0xa2 <__bad_interrupt>
+  20:	0c 94 51 00 	jmp	0xa2	; 0xa2 <__bad_interrupt>
+  24:	0c 94 51 00 	jmp	0xa2	; 0xa2 <__bad_interrupt>
+  28:	0c 94 51 00 	jmp	0xa2	; 0xa2 <__bad_interrupt>
+  2c:	0c 94 51 00 	jmp	0xa2	; 0xa2 <__bad_interrupt>
+  30:	0c 94 51 00 	jmp	0xa2	; 0xa2 <__bad_interrupt>
+  34:	0c 94 51 00 	jmp	0xa2	; 0xa2 <__bad_interrupt>
+  38:	0c 94 51 00 	jmp	0xa2	; 0xa2 <__bad_interrupt>
+  3c:	0c 94 51 00 	jmp	0xa2	; 0xa2 <__bad_interrupt>
+  40:	0c 94 51 00 	jmp	0xa2	; 0xa2 <__bad_interrupt>
+  44:	0c 94 51 00 	jmp	0xa2	; 0xa2 <__bad_interrupt>
+  48:	0c 94 51 00 	jmp	0xa2	; 0xa2 <__bad_interrupt>
+  4c:	0c 94 51 00 	jmp	0xa2	; 0xa2 <__bad_interrupt>
+  50:	0c 94 51 00 	jmp	0xa2	; 0xa2 <__bad_interrupt>
+  54:	0c 94 51 00 	jmp	0xa2	; 0xa2 <__bad_interrupt>
+  58:	0c 94 51 00 	jmp	0xa2	; 0xa2 <__bad_interrupt>
+  5c:	0c 94 51 00 	jmp	0xa2	; 0xa2 <__bad_interrupt>
+  60:	0c 94 53 00 	jmp	0xa6	; 0xa6 <__vector_24>
+  64:	0c 94 51 00 	jmp	0xa2	; 0xa2 <__bad_interrupt>
+
+00000068 <__ctors_end>:
+  68:	11 24       	eor	r1, r1
+  6a:	1f be       	out	0x3f, r1	; 63
+  6c:	cf ef       	ldi	r28, 0xFF	; 255
+  6e:	d8 e0       	ldi	r29, 0x08	; 8
+  70:	de bf       	out	0x3e, r29	; 62
+  72:	cd bf       	out	0x3d, r28	; 61
+
+00000074 <__do_copy_data>:
+  74:	11 e0       	ldi	r17, 0x01	; 1
+  76:	a0 e0       	ldi	r26, 0x00	; 0
+  78:	b1 e0       	ldi	r27, 0x01	; 1
+  7a:	ea ef       	ldi	r30, 0xFA	; 250
+  7c:	f2 e0       	ldi	r31, 0x02	; 2
+  7e:	02 c0       	rjmp	.+4      	; 0x84 <__do_copy_data+0x10>
+  80:	05 90       	lpm	r0, Z+
+  82:	0d 92       	st	X+, r0
+  84:	a0 30       	cpi	r26, 0x00	; 0
+  86:	b1 07       	cpc	r27, r17
+  88:	d9 f7       	brne	.-10     	; 0x80 <__do_copy_data+0xc>
+
+0000008a <__do_clear_bss>:
+  8a:	11 e0       	ldi	r17, 0x01	; 1
+  8c:	a0 e0       	ldi	r26, 0x00	; 0
+  8e:	b1 e0       	ldi	r27, 0x01	; 1
+  90:	01 c0       	rjmp	.+2      	; 0x94 <.do_clear_bss_start>
+
+00000092 <.do_clear_bss_loop>:
+  92:	1d 92       	st	X+, r1
+
+00000094 <.do_clear_bss_start>:
+  94:	a2 32       	cpi	r26, 0x22	; 34
+  96:	b1 07       	cpc	r27, r17
+  98:	e1 f7       	brne	.-8      	; 0x92 <.do_clear_bss_loop>
+  9a:	0e 94 5f 01 	call	0x2be	; 0x2be <main>
+  9e:	0c 94 7b 01 	jmp	0x2f6	; 0x2f6 <_exit>
+
+000000a2 <__bad_interrupt>:
+  a2:	0c 94 00 00 	jmp	0	; 0x0 <__vectors>
+
+000000a6 <__vector_24>:
+// Globals.
+#define STEP_INDEX_SIZE 4
+
+/// Interupt Service Routines ///
+ISR(TWI_vect)
+{
+  a6:	1f 92       	push	r1
+  a8:	0f 92       	push	r0
+  aa:	0f b6       	in	r0, 0x3f	; 63
+  ac:	0f 92       	push	r0
+  ae:	11 24       	eor	r1, r1
+  b0:	2f 93       	push	r18
+  b2:	3f 93       	push	r19
+  b4:	4f 93       	push	r20
+  b6:	5f 93       	push	r21
+  b8:	6f 93       	push	r22
+  ba:	7f 93       	push	r23
+  bc:	8f 93       	push	r24
+  be:	9f 93       	push	r25
+  c0:	af 93       	push	r26
+  c2:	bf 93       	push	r27
+  c4:	ef 93       	push	r30
+  c6:	ff 93       	push	r31
+	uint8_t status = TW_STATUS; // Get status register.
+  c8:	80 91 b9 00 	lds	r24, 0x00B9
+  cc:	88 7f       	andi	r24, 0xF8	; 248
+	
+	/// RX ///
+	if(status == TW_SR_SLA_ACK) // SLA+W received, ACK response sent.
+  ce:	80 36       	cpi	r24, 0x60	; 96
+  d0:	d9 f0       	breq	.+54     	; 0x108 <__vector_24+0x62>
+	{
+		TWCR |= (1<<TWEA); // Read and ACK the next byte.
+	}
+	else if(status == TW_SR_DATA_ACK) // Data from SLA+W received, ACK'd.
+  d2:	80 38       	cpi	r24, 0x80	; 128
+  d4:	29 f4       	brne	.+10     	; 0xe0 <__vector_24+0x3a>
+	{
+		rxDataHandler(TWDR); // Handle the received data.
+  d6:	80 91 bb 00 	lds	r24, 0x00BB
+  da:	0e 94 b2 00 	call	0x164	; 0x164 <rxDataHandler>
+  de:	19 c0       	rjmp	.+50     	; 0x112 <__vector_24+0x6c>
+	}
+	else if(status == TW_SR_STOP)
+  e0:	80 3a       	cpi	r24, 0xA0	; 160
+  e2:	91 f0       	breq	.+36     	; 0x108 <__vector_24+0x62>
+		TWCR |= (1<<TWEA); // ACK it.
+		// And we're done.
+	}
+	
+	/// TX ///
+	else if(status == TW_ST_SLA_ACK) // SLA+R received, ACK'd.
+  e4:	88 3a       	cpi	r24, 0xA8	; 168
+  e6:	19 f4       	brne	.+6      	; 0xee <__vector_24+0x48>
+	{
+		bytesCount = 0;
+  e8:	10 92 04 01 	sts	0x0104, r1
+  ec:	02 c0       	rjmp	.+4      	; 0xf2 <__vector_24+0x4c>
+		txDataHandler(); // This auto-fills TWDR.
+	}
+	else if(status == TW_ST_DATA_ACK) // Data ACK'd.
+  ee:	88 3b       	cpi	r24, 0xB8	; 184
+  f0:	19 f4       	brne	.+6      	; 0xf8 <__vector_24+0x52>
+	{
+		txDataHandler();
+  f2:	0e 94 ce 00 	call	0x19c	; 0x19c <txDataHandler>
+  f6:	0d c0       	rjmp	.+26     	; 0x112 <__vector_24+0x6c>
+	}
+	else if(status == TW_ST_LAST_DATA || status == TW_ST_DATA_NACK) // Data NACK'd or last byte ACK'd.
+  f8:	88 3c       	cpi	r24, 0xC8	; 200
+  fa:	11 f0       	breq	.+4      	; 0x100 <__vector_24+0x5a>
+  fc:	80 3c       	cpi	r24, 0xC0	; 192
+  fe:	49 f4       	brne	.+18     	; 0x112 <__vector_24+0x6c>
+	{
+		i2cMode = 0;
+ 100:	10 92 07 01 	sts	0x0107, r1
+		bytesCount = 0;
+ 104:	10 92 04 01 	sts	0x0104, r1
+		TWCR |= (1<<TWEA);
+ 108:	80 91 bc 00 	lds	r24, 0x00BC
+ 10c:	80 64       	ori	r24, 0x40	; 64
+ 10e:	80 93 bc 00 	sts	0x00BC, r24
+	}
+	
+	TWCR |= (1<<TWINT)|(1<<TWIE); // Clear the interrupt flag (seriously), allowing the TWI to continue.
+ 112:	80 91 bc 00 	lds	r24, 0x00BC
+ 116:	81 68       	ori	r24, 0x81	; 129
+ 118:	80 93 bc 00 	sts	0x00BC, r24
+}
+ 11c:	ff 91       	pop	r31
+ 11e:	ef 91       	pop	r30
+ 120:	bf 91       	pop	r27
+ 122:	af 91       	pop	r26
+ 124:	9f 91       	pop	r25
+ 126:	8f 91       	pop	r24
+ 128:	7f 91       	pop	r23
+ 12a:	6f 91       	pop	r22
+ 12c:	5f 91       	pop	r21
+ 12e:	4f 91       	pop	r20
+ 130:	3f 91       	pop	r19
+ 132:	2f 91       	pop	r18
+ 134:	0f 90       	pop	r0
+ 136:	0f be       	out	0x3f, r0	; 63
+ 138:	0f 90       	pop	r0
+ 13a:	1f 90       	pop	r1
+ 13c:	18 95       	reti
+
+0000013e <delay_us>:
+    can be achieved.
+*/
+void
+_delay_loop_1(uint8_t __count)
+{
+	__asm__ volatile (
+ 13e:	32 e0       	ldi	r19, 0x02	; 2
+uint8_t i2cTxMode = 0; // Mode to use when i2c ST mode called.
+uint8_t bytesCount = 0;
+
+void delay_us(uint16_t delah)
+{
+	while(delah)
+ 140:	04 c0       	rjmp	.+8      	; 0x14a <delay_us+0xc>
+ 142:	23 2f       	mov	r18, r19
+ 144:	2a 95       	dec	r18
+ 146:	f1 f7       	brne	.-4      	; 0x144 <delay_us+0x6>
+	{
+		_delay_us(1);
+		delah--;
+ 148:	01 97       	sbiw	r24, 0x01	; 1
+uint8_t i2cTxMode = 0; // Mode to use when i2c ST mode called.
+uint8_t bytesCount = 0;
+
+void delay_us(uint16_t delah)
+{
+	while(delah)
+ 14a:	00 97       	sbiw	r24, 0x00	; 0
+ 14c:	d1 f7       	brne	.-12     	; 0x142 <delay_us+0x4>
+	{
+		_delay_us(1);
+		delah--;
+	}
+}
+ 14e:	08 95       	ret
+
+00000150 <delay_ms>:
+    milliseconds can be achieved.
+ */
+void
+_delay_loop_2(uint16_t __count)
+{
+	__asm__ volatile (
+ 150:	20 ed       	ldi	r18, 0xD0	; 208
+ 152:	37 e0       	ldi	r19, 0x07	; 7
+
+void delay_ms(uint16_t delah)
+{
+	while(delah)
+ 154:	04 c0       	rjmp	.+8      	; 0x15e <delay_ms+0xe>
+ 156:	f9 01       	movw	r30, r18
+ 158:	31 97       	sbiw	r30, 0x01	; 1
+ 15a:	f1 f7       	brne	.-4      	; 0x158 <delay_ms+0x8>
+	{
+		_delay_ms(1);
+		delah--;
+ 15c:	01 97       	sbiw	r24, 0x01	; 1
+	}
+}
+
+void delay_ms(uint16_t delah)
+{
+	while(delah)
+ 15e:	00 97       	sbiw	r24, 0x00	; 0
+ 160:	d1 f7       	brne	.-12     	; 0x156 <delay_ms+0x6>
+	{
+		_delay_ms(1);
+		delah--;
+	}
+}
+ 162:	08 95       	ret
+
+00000164 <rxDataHandler>:
+
+void rxDataHandler(uint8_t data)
+{
+	if(i2cMode == 0)
+ 164:	90 91 07 01 	lds	r25, 0x0107
+ 168:	99 23       	and	r25, r25
+ 16a:	19 f4       	brne	.+6      	; 0x172 <rxDataHandler+0xe>
+	{
+		i2cMode = data;
+ 16c:	80 93 07 01 	sts	0x0107, r24
+ 170:	08 95       	ret
+		//setServo(1,21);
+	}
+	else
+	{
+		switch (i2cMode)
+ 172:	91 30       	cpi	r25, 0x01	; 1
+ 174:	19 f0       	breq	.+6      	; 0x17c <rxDataHandler+0x18>
+ 176:	99 30       	cpi	r25, 0x09	; 9
+ 178:	59 f4       	brne	.+22     	; 0x190 <rxDataHandler+0x2c>
+ 17a:	03 c0       	rjmp	.+6      	; 0x182 <rxDataHandler+0x1e>
+		{
+			case 1:
+				gState = data;
+ 17c:	80 93 06 01 	sts	0x0106, r24
+ 180:	02 c0       	rjmp	.+4      	; 0x186 <rxDataHandler+0x22>
+				bytesCount = 0;
+				i2cMode = 0;
+				break;
+			case 9: // Slave TX mode set.
+				i2cTxMode = data;
+ 182:	80 93 05 01 	sts	0x0105, r24
+				bytesCount = 0;
+ 186:	10 92 04 01 	sts	0x0104, r1
+				i2cMode = 0;
+ 18a:	10 92 07 01 	sts	0x0107, r1
+				break;
+ 18e:	08 95       	ret
+			default: // Unknown command
+				i2cMode = 0;
+ 190:	10 92 07 01 	sts	0x0107, r1
+				globalError = 2;
+ 194:	82 e0       	ldi	r24, 0x02	; 2
+ 196:	80 93 08 01 	sts	0x0108, r24
+ 19a:	08 95       	ret
+
+0000019c <txDataHandler>:
+
+uint32_t holder = 0;
+
+void txDataHandler(void) // Generates the data to be transmitted over i2c.
+{
+	switch (i2cTxMode)
+ 19c:	80 91 05 01 	lds	r24, 0x0105
+ 1a0:	8f 35       	cpi	r24, 0x5F	; 95
+ 1a2:	19 f0       	breq	.+6      	; 0x1aa <txDataHandler+0xe>
+ 1a4:	83 36       	cpi	r24, 0x63	; 99
+ 1a6:	01 f5       	brne	.+64     	; 0x1e8 <txDataHandler+0x4c>
+ 1a8:	08 95       	ret
+					break;
+			}
+			bytesCount++;
+			break;*/
+		case 95:
+			if(!bytesCount)
+ 1aa:	80 91 04 01 	lds	r24, 0x0104
+ 1ae:	88 23       	and	r24, r24
+ 1b0:	69 f4       	brne	.+26     	; 0x1cc <txDataHandler+0x30>
+			{
+				TWDR =  (uint8_t)(sonar[0] >> 8);
+ 1b2:	80 91 0b 01 	lds	r24, 0x010B
+ 1b6:	80 93 bb 00 	sts	0x00BB, r24
+				TWCR |= (1<<TWEA);
+ 1ba:	80 91 bc 00 	lds	r24, 0x00BC
+ 1be:	80 64       	ori	r24, 0x40	; 64
+ 1c0:	80 93 bc 00 	sts	0x00BC, r24
+				bytesCount++;
+ 1c4:	81 e0       	ldi	r24, 0x01	; 1
+ 1c6:	80 93 04 01 	sts	0x0104, r24
+ 1ca:	08 95       	ret
+			}
+			else
+			{
+				TWDR = (uint8_t)(sonar[0]);
+ 1cc:	80 91 0a 01 	lds	r24, 0x010A
+ 1d0:	80 93 bb 00 	sts	0x00BB, r24
+				TWCR &= ~(1<<TWEA);
+ 1d4:	80 91 bc 00 	lds	r24, 0x00BC
+ 1d8:	8f 7b       	andi	r24, 0xBF	; 191
+ 1da:	80 93 bc 00 	sts	0x00BC, r24
+				i2cTxMode = 0;
+ 1de:	10 92 05 01 	sts	0x0105, r1
+				bytesCount = 0;
+ 1e2:	10 92 04 01 	sts	0x0104, r1
+ 1e6:	08 95       	ret
+			}
+			break;
+		case 99: // Send error condition, if any.
+			break;
+		default:
+			globalError = 3;
+ 1e8:	83 e0       	ldi	r24, 0x03	; 3
+ 1ea:	80 93 08 01 	sts	0x0108, r24
+ 1ee:	08 95       	ret
+
+000001f0 <adcInit>:
+
+uint8_t arrayIndex = 0; // Which index in the arrays we're on.
+
+void adcInit(void)
+{
+	ADMUX = ADC_MUX;
+ 1f0:	80 e4       	ldi	r24, 0x40	; 64
+ 1f2:	80 93 7c 00 	sts	0x007C, r24
+	ADCSRA = ADC_SRA; 
+ 1f6:	86 e8       	ldi	r24, 0x86	; 134
+ 1f8:	80 93 7a 00 	sts	0x007A, r24
+	DIDR0 = 0b00001111;
+ 1fc:	8f e0       	ldi	r24, 0x0F	; 15
+ 1fe:	80 93 7e 00 	sts	0x007E, r24
+	DDRC = 0x00;
+ 202:	17 b8       	out	0x07, r1	; 7
+	sei(); // Enable interrupts globally.
+ 204:	78 94       	sei
+}
+ 206:	08 95       	ret
+
+00000208 <analogGather>:
+ 208:	1f 93       	push	r17
+ 20a:	10 e0       	ldi	r17, 0x00	; 0
+ 20c:	80 91 7a 00 	lds	r24, 0x007A
+ 210:	80 64       	ori	r24, 0x40	; 64
+ 212:	80 93 7a 00 	sts	0x007A, r24
+ 216:	04 c0       	rjmp	.+8      	; 0x220 <analogGather+0x18>
+ 218:	81 e0       	ldi	r24, 0x01	; 1
+ 21a:	90 e0       	ldi	r25, 0x00	; 0
+ 21c:	0e 94 9f 00 	call	0x13e	; 0x13e <delay_us>
+ 220:	80 91 7a 00 	lds	r24, 0x007A
+ 224:	84 ff       	sbrs	r24, 4
+ 226:	f8 cf       	rjmp	.-16     	; 0x218 <analogGather+0x10>
+ 228:	13 30       	cpi	r17, 0x03	; 3
+ 22a:	b1 f0       	breq	.+44     	; 0x258 <analogGather+0x50>
+ 22c:	15 30       	cpi	r17, 0x05	; 5
+ 22e:	31 f1       	breq	.+76     	; 0x27c <analogGather+0x74>
+ 230:	11 30       	cpi	r17, 0x01	; 1
+ 232:	b1 f5       	brne	.+108    	; 0x2a0 <analogGather+0x98>
+ 234:	80 91 78 00 	lds	r24, 0x0078
+ 238:	90 91 79 00 	lds	r25, 0x0079
+ 23c:	e0 91 09 01 	lds	r30, 0x0109
+ 240:	f0 e0       	ldi	r31, 0x00	; 0
+ 242:	ee 0f       	add	r30, r30
+ 244:	ff 1f       	adc	r31, r31
+ 246:	ee 5e       	subi	r30, 0xEE	; 238
+ 248:	fe 4f       	sbci	r31, 0xFE	; 254
+ 24a:	91 83       	std	Z+1, r25	; 0x01
+ 24c:	80 83       	st	Z, r24
+ 24e:	80 91 7c 00 	lds	r24, 0x007C
+ 252:	80 7e       	andi	r24, 0xE0	; 224
+ 254:	81 60       	ori	r24, 0x01	; 1
+ 256:	22 c0       	rjmp	.+68     	; 0x29c <analogGather+0x94>
+ 258:	80 91 78 00 	lds	r24, 0x0078
+ 25c:	90 91 79 00 	lds	r25, 0x0079
+ 260:	e0 91 09 01 	lds	r30, 0x0109
+ 264:	f0 e0       	ldi	r31, 0x00	; 0
+ 266:	ee 0f       	add	r30, r30
+ 268:	ff 1f       	adc	r31, r31
+ 26a:	e6 5e       	subi	r30, 0xE6	; 230
+ 26c:	fe 4f       	sbci	r31, 0xFE	; 254
+ 26e:	91 83       	std	Z+1, r25	; 0x01
+ 270:	80 83       	st	Z, r24
+ 272:	80 91 7c 00 	lds	r24, 0x007C
+ 276:	80 7e       	andi	r24, 0xE0	; 224
+ 278:	82 60       	ori	r24, 0x02	; 2
+ 27a:	10 c0       	rjmp	.+32     	; 0x29c <analogGather+0x94>
+ 27c:	80 91 78 00 	lds	r24, 0x0078
+ 280:	90 91 79 00 	lds	r25, 0x0079
+ 284:	e0 91 09 01 	lds	r30, 0x0109
+ 288:	f0 e0       	ldi	r31, 0x00	; 0
+ 28a:	ee 0f       	add	r30, r30
+ 28c:	ff 1f       	adc	r31, r31
+ 28e:	e6 5f       	subi	r30, 0xF6	; 246
+ 290:	fe 4f       	sbci	r31, 0xFE	; 254
+ 292:	91 83       	std	Z+1, r25	; 0x01
+ 294:	80 83       	st	Z, r24
+ 296:	80 91 7c 00 	lds	r24, 0x007C
+ 29a:	80 7e       	andi	r24, 0xE0	; 224
+ 29c:	80 93 7c 00 	sts	0x007C, r24
+ 2a0:	1f 5f       	subi	r17, 0xFF	; 255
+ 2a2:	16 30       	cpi	r17, 0x06	; 6
+ 2a4:	09 f0       	breq	.+2      	; 0x2a8 <analogGather+0xa0>
+ 2a6:	b2 cf       	rjmp	.-156    	; 0x20c <analogGather+0x4>
+ 2a8:	80 91 09 01 	lds	r24, 0x0109
+ 2ac:	8f 5f       	subi	r24, 0xFF	; 255
+ 2ae:	80 93 09 01 	sts	0x0109, r24
+ 2b2:	84 30       	cpi	r24, 0x04	; 4
+ 2b4:	10 f0       	brcs	.+4      	; 0x2ba <analogGather+0xb2>
+ 2b6:	10 92 09 01 	sts	0x0109, r1
+ 2ba:	1f 91       	pop	r17
+ 2bc:	08 95       	ret
+
+000002be <main>:
+ 2be:	8f ef       	ldi	r24, 0xFF	; 255
+ 2c0:	84 b9       	out	0x04, r24	; 4
+ 2c2:	8a e4       	ldi	r24, 0x4A	; 74
+ 2c4:	80 93 ba 00 	sts	0x00BA, r24
+ 2c8:	82 e0       	ldi	r24, 0x02	; 2
+ 2ca:	80 93 b8 00 	sts	0x00B8, r24
+ 2ce:	81 e0       	ldi	r24, 0x01	; 1
+ 2d0:	80 93 b9 00 	sts	0x00B9, r24
+ 2d4:	85 e4       	ldi	r24, 0x45	; 69
+ 2d6:	80 93 bc 00 	sts	0x00BC, r24
+ 2da:	0e 94 f8 00 	call	0x1f0	; 0x1f0 <adcInit>
+ 2de:	84 e6       	ldi	r24, 0x64	; 100
+ 2e0:	90 e0       	ldi	r25, 0x00	; 0
+ 2e2:	0e 94 a8 00 	call	0x150	; 0x150 <delay_ms>
+ 2e6:	78 94       	sei
+ 2e8:	0e 94 04 01 	call	0x208	; 0x208 <analogGather>
+ 2ec:	84 e1       	ldi	r24, 0x14	; 20
+ 2ee:	90 e0       	ldi	r25, 0x00	; 0
+ 2f0:	0e 94 a8 00 	call	0x150	; 0x150 <delay_ms>
+ 2f4:	f9 cf       	rjmp	.-14     	; 0x2e8 <main+0x2a>
+
+000002f6 <_exit>:
+ 2f6:	f8 94       	cli
+
+000002f8 <__stop_program>:
+ 2f8:	ff cf       	rjmp	.-2      	; 0x2f8 <__stop_program>

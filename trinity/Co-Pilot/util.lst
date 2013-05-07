@@ -1,0 +1,824 @@
+   1               		.file	"util.c"
+   2               	__SREG__ = 0x3f
+   3               	__SP_H__ = 0x3e
+   4               	__SP_L__ = 0x3d
+   5               	__tmp_reg__ = 0
+   6               	__zero_reg__ = 1
+   7               		.global __do_copy_data
+   8               		.global __do_clear_bss
+  11               		.text
+  12               	.Ltext0:
+  83               	.global	delay_us
+  85               	delay_us:
+  86               		.stabd	46,0,0
+   0:util.c        **** #include "util.h"
+   1:util.c        **** #include <avr/io.h>
+   2:util.c        **** #include <util/twi.h>
+   3:util.c        **** 
+   4:util.c        **** /// Globals ///
+   5:util.c        **** uint8_t globalError = 0; // Error condition if non-zero. 1=invalid servo pos, 2=unknown i2c command
+   6:util.c        **** uint8_t i2cMode = 0; // State of i2c receiver/transmitter.
+   7:util.c        **** uint8_t gState = 0; // Global robot system mode.
+   8:util.c        **** uint32_t stepperCountLeft  = 0x00000FFF;
+   9:util.c        **** uint32_t stepperCountRight = 0x00000FFF;
+  10:util.c        **** 
+  11:util.c        **** uint8_t i2cTxMode = 0; // Mode to use when i2c ST mode called.
+  12:util.c        **** uint8_t bytesCount = 0;
+  13:util.c        **** 
+  14:util.c        **** void delay_us(uint16_t delah)
+  15:util.c        **** {
+  88               	.LM0:
+  89               	.LFBB1:
+  90               	/* prologue: function */
+  91               	/* frame size = 0 */
+  92               	/* stack size = 0 */
+  93               	.L__stack_usage = 0
+  94               	.LBB30:
+  95               	.LBB31:
+  96               	.LBB32:
+  97               	.LBB33:
+  99               	.Ltext1:
+   0:/usr/lib/gcc/avr/4.6.1/../../../../avr/include/util/delay_basic.h **** /* Copyright (c) 2002, Marek Michalkiewicz
+   1:/usr/lib/gcc/avr/4.6.1/../../../../avr/include/util/delay_basic.h ****    Copyright (c) 2007 Joerg Wunsch
+   2:/usr/lib/gcc/avr/4.6.1/../../../../avr/include/util/delay_basic.h ****    All rights reserved.
+   3:/usr/lib/gcc/avr/4.6.1/../../../../avr/include/util/delay_basic.h **** 
+   4:/usr/lib/gcc/avr/4.6.1/../../../../avr/include/util/delay_basic.h ****    Redistribution and use in source and binary forms, with or without
+   5:/usr/lib/gcc/avr/4.6.1/../../../../avr/include/util/delay_basic.h ****    modification, are permitted provided that the following conditions are met:
+   6:/usr/lib/gcc/avr/4.6.1/../../../../avr/include/util/delay_basic.h **** 
+   7:/usr/lib/gcc/avr/4.6.1/../../../../avr/include/util/delay_basic.h ****    * Redistributions of source code must retain the above copyright
+   8:/usr/lib/gcc/avr/4.6.1/../../../../avr/include/util/delay_basic.h ****      notice, this list of conditions and the following disclaimer.
+   9:/usr/lib/gcc/avr/4.6.1/../../../../avr/include/util/delay_basic.h **** 
+  10:/usr/lib/gcc/avr/4.6.1/../../../../avr/include/util/delay_basic.h ****    * Redistributions in binary form must reproduce the above copyright
+  11:/usr/lib/gcc/avr/4.6.1/../../../../avr/include/util/delay_basic.h ****      notice, this list of conditions and the following disclaimer in
+  12:/usr/lib/gcc/avr/4.6.1/../../../../avr/include/util/delay_basic.h ****      the documentation and/or other materials provided with the
+  13:/usr/lib/gcc/avr/4.6.1/../../../../avr/include/util/delay_basic.h ****      distribution.
+  14:/usr/lib/gcc/avr/4.6.1/../../../../avr/include/util/delay_basic.h **** 
+  15:/usr/lib/gcc/avr/4.6.1/../../../../avr/include/util/delay_basic.h ****    * Neither the name of the copyright holders nor the names of
+  16:/usr/lib/gcc/avr/4.6.1/../../../../avr/include/util/delay_basic.h ****      contributors may be used to endorse or promote products derived
+  17:/usr/lib/gcc/avr/4.6.1/../../../../avr/include/util/delay_basic.h ****      from this software without specific prior written permission.
+  18:/usr/lib/gcc/avr/4.6.1/../../../../avr/include/util/delay_basic.h **** 
+  19:/usr/lib/gcc/avr/4.6.1/../../../../avr/include/util/delay_basic.h ****   THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+  20:/usr/lib/gcc/avr/4.6.1/../../../../avr/include/util/delay_basic.h ****   AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+  21:/usr/lib/gcc/avr/4.6.1/../../../../avr/include/util/delay_basic.h ****   IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+  22:/usr/lib/gcc/avr/4.6.1/../../../../avr/include/util/delay_basic.h ****   ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE
+  23:/usr/lib/gcc/avr/4.6.1/../../../../avr/include/util/delay_basic.h ****   LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+  24:/usr/lib/gcc/avr/4.6.1/../../../../avr/include/util/delay_basic.h ****   CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+  25:/usr/lib/gcc/avr/4.6.1/../../../../avr/include/util/delay_basic.h ****   SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+  26:/usr/lib/gcc/avr/4.6.1/../../../../avr/include/util/delay_basic.h ****   INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+  27:/usr/lib/gcc/avr/4.6.1/../../../../avr/include/util/delay_basic.h ****   CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+  28:/usr/lib/gcc/avr/4.6.1/../../../../avr/include/util/delay_basic.h ****   ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+  29:/usr/lib/gcc/avr/4.6.1/../../../../avr/include/util/delay_basic.h ****   POSSIBILITY OF SUCH DAMAGE. */
+  30:/usr/lib/gcc/avr/4.6.1/../../../../avr/include/util/delay_basic.h **** 
+  31:/usr/lib/gcc/avr/4.6.1/../../../../avr/include/util/delay_basic.h **** /* $Id: delay_basic.h 2143 2010-06-08 21:19:51Z joerg_wunsch $ */
+  32:/usr/lib/gcc/avr/4.6.1/../../../../avr/include/util/delay_basic.h **** 
+  33:/usr/lib/gcc/avr/4.6.1/../../../../avr/include/util/delay_basic.h **** #ifndef _UTIL_DELAY_BASIC_H_
+  34:/usr/lib/gcc/avr/4.6.1/../../../../avr/include/util/delay_basic.h **** #define _UTIL_DELAY_BASIC_H_ 1
+  35:/usr/lib/gcc/avr/4.6.1/../../../../avr/include/util/delay_basic.h **** 
+  36:/usr/lib/gcc/avr/4.6.1/../../../../avr/include/util/delay_basic.h **** #include <inttypes.h>
+  37:/usr/lib/gcc/avr/4.6.1/../../../../avr/include/util/delay_basic.h **** 
+  38:/usr/lib/gcc/avr/4.6.1/../../../../avr/include/util/delay_basic.h **** #if !defined(__DOXYGEN__)
+  39:/usr/lib/gcc/avr/4.6.1/../../../../avr/include/util/delay_basic.h **** static inline void _delay_loop_1(uint8_t __count) __attribute__((always_inline));
+  40:/usr/lib/gcc/avr/4.6.1/../../../../avr/include/util/delay_basic.h **** static inline void _delay_loop_2(uint16_t __count) __attribute__((always_inline));
+  41:/usr/lib/gcc/avr/4.6.1/../../../../avr/include/util/delay_basic.h **** #endif
+  42:/usr/lib/gcc/avr/4.6.1/../../../../avr/include/util/delay_basic.h **** 
+  43:/usr/lib/gcc/avr/4.6.1/../../../../avr/include/util/delay_basic.h **** /** \file */
+  44:/usr/lib/gcc/avr/4.6.1/../../../../avr/include/util/delay_basic.h **** /** \defgroup util_delay_basic <util/delay_basic.h>: Basic busy-wait delay loops
+  45:/usr/lib/gcc/avr/4.6.1/../../../../avr/include/util/delay_basic.h ****     \code
+  46:/usr/lib/gcc/avr/4.6.1/../../../../avr/include/util/delay_basic.h ****     #include <util/delay_basic.h>
+  47:/usr/lib/gcc/avr/4.6.1/../../../../avr/include/util/delay_basic.h ****     \endcode
+  48:/usr/lib/gcc/avr/4.6.1/../../../../avr/include/util/delay_basic.h **** 
+  49:/usr/lib/gcc/avr/4.6.1/../../../../avr/include/util/delay_basic.h ****     The functions in this header file implement simple delay loops
+  50:/usr/lib/gcc/avr/4.6.1/../../../../avr/include/util/delay_basic.h ****     that perform a busy-waiting.  They are typically used to
+  51:/usr/lib/gcc/avr/4.6.1/../../../../avr/include/util/delay_basic.h ****     facilitate short delays in the program execution.  They are
+  52:/usr/lib/gcc/avr/4.6.1/../../../../avr/include/util/delay_basic.h ****     implemented as count-down loops with a well-known CPU cycle
+  53:/usr/lib/gcc/avr/4.6.1/../../../../avr/include/util/delay_basic.h ****     count per loop iteration.  As such, no other processing can
+  54:/usr/lib/gcc/avr/4.6.1/../../../../avr/include/util/delay_basic.h ****     occur simultaneously.  It should be kept in mind that the
+  55:/usr/lib/gcc/avr/4.6.1/../../../../avr/include/util/delay_basic.h ****     functions described here do not disable interrupts.
+  56:/usr/lib/gcc/avr/4.6.1/../../../../avr/include/util/delay_basic.h **** 
+  57:/usr/lib/gcc/avr/4.6.1/../../../../avr/include/util/delay_basic.h ****     In general, for long delays, the use of hardware timers is
+  58:/usr/lib/gcc/avr/4.6.1/../../../../avr/include/util/delay_basic.h ****     much preferrable, as they free the CPU, and allow for
+  59:/usr/lib/gcc/avr/4.6.1/../../../../avr/include/util/delay_basic.h ****     concurrent processing of other events while the timer is
+  60:/usr/lib/gcc/avr/4.6.1/../../../../avr/include/util/delay_basic.h ****     running.  However, in particular for very short delays, the
+  61:/usr/lib/gcc/avr/4.6.1/../../../../avr/include/util/delay_basic.h ****     overhead of setting up a hardware timer is too much compared
+  62:/usr/lib/gcc/avr/4.6.1/../../../../avr/include/util/delay_basic.h ****     to the overall delay time.
+  63:/usr/lib/gcc/avr/4.6.1/../../../../avr/include/util/delay_basic.h **** 
+  64:/usr/lib/gcc/avr/4.6.1/../../../../avr/include/util/delay_basic.h ****     Two inline functions are provided for the actual delay algorithms.
+  65:/usr/lib/gcc/avr/4.6.1/../../../../avr/include/util/delay_basic.h **** 
+  66:/usr/lib/gcc/avr/4.6.1/../../../../avr/include/util/delay_basic.h **** */
+  67:/usr/lib/gcc/avr/4.6.1/../../../../avr/include/util/delay_basic.h **** 
+  68:/usr/lib/gcc/avr/4.6.1/../../../../avr/include/util/delay_basic.h **** /** \ingroup util_delay_basic
+  69:/usr/lib/gcc/avr/4.6.1/../../../../avr/include/util/delay_basic.h **** 
+  70:/usr/lib/gcc/avr/4.6.1/../../../../avr/include/util/delay_basic.h ****     Delay loop using an 8-bit counter \c __count, so up to 256
+  71:/usr/lib/gcc/avr/4.6.1/../../../../avr/include/util/delay_basic.h ****     iterations are possible.  (The value 256 would have to be passed
+  72:/usr/lib/gcc/avr/4.6.1/../../../../avr/include/util/delay_basic.h ****     as 0.)  The loop executes three CPU cycles per iteration, not
+  73:/usr/lib/gcc/avr/4.6.1/../../../../avr/include/util/delay_basic.h ****     including the overhead the compiler needs to setup the counter
+  74:/usr/lib/gcc/avr/4.6.1/../../../../avr/include/util/delay_basic.h ****     register.
+  75:/usr/lib/gcc/avr/4.6.1/../../../../avr/include/util/delay_basic.h **** 
+  76:/usr/lib/gcc/avr/4.6.1/../../../../avr/include/util/delay_basic.h ****     Thus, at a CPU speed of 1 MHz, delays of up to 768 microseconds
+  77:/usr/lib/gcc/avr/4.6.1/../../../../avr/include/util/delay_basic.h ****     can be achieved.
+  78:/usr/lib/gcc/avr/4.6.1/../../../../avr/include/util/delay_basic.h **** */
+  79:/usr/lib/gcc/avr/4.6.1/../../../../avr/include/util/delay_basic.h **** void
+  80:/usr/lib/gcc/avr/4.6.1/../../../../avr/include/util/delay_basic.h **** _delay_loop_1(uint8_t __count)
+  81:/usr/lib/gcc/avr/4.6.1/../../../../avr/include/util/delay_basic.h **** {
+  82:/usr/lib/gcc/avr/4.6.1/../../../../avr/include/util/delay_basic.h **** 	__asm__ volatile (
+ 101               	.LM1:
+ 102 0000 32E0      		ldi r19,lo8(2)
+ 103               	.LBE33:
+ 104               	.LBE32:
+ 105               	.LBE31:
+ 106               	.LBE30:
+ 108               	.Ltext2:
+  16:util.c        **** 	while(delah)
+ 110               	.LM2:
+ 111 0002 00C0      		rjmp .L2
+ 112               	.L3:
+ 113               	.LBB37:
+ 114               	.LBB36:
+ 115               	.LBB35:
+ 116               	.LBB34:
+ 118               	.Ltext3:
+ 120               	.LM3:
+ 121 0004 232F      		mov r18,r19
+ 122               	/* #APP */
+ 123               	 ;  83 "/usr/lib/gcc/avr/4.6.1/../../../../avr/include/util/delay_basic.h" 1
+ 124 0006 2A95      		1: dec r18
+ 125 0008 01F4      		brne 1b
+ 126               	 ;  0 "" 2
+ 127               	/* #NOAPP */
+ 128               	.LBE34:
+ 129               	.LBE35:
+ 130               	.LBE36:
+ 131               	.LBE37:
+ 133               	.Ltext4:
+  17:util.c        **** 	{
+  18:util.c        **** 		_delay_us(1);
+  19:util.c        **** 		delah--;
+ 135               	.LM4:
+ 136 000a 0197      		sbiw r24,1
+ 137               	.L2:
+  17:util.c        **** 	{
+ 139               	.LM5:
+ 140 000c 0097      		sbiw r24,0
+ 141 000e 01F4      		brne .L3
+ 142               	/* epilogue start */
+  20:util.c        **** 	}
+  21:util.c        **** }
+ 144               	.LM6:
+ 145 0010 0895      		ret
+ 147               	.Lscope1:
+ 149               		.stabd	78,0,0
+ 152               	.global	delay_ms
+ 154               	delay_ms:
+ 155               		.stabd	46,0,0
+  22:util.c        **** 
+  23:util.c        **** void delay_ms(uint16_t delah)
+  24:util.c        **** {
+ 157               	.LM7:
+ 158               	.LFBB2:
+ 159               	/* prologue: function */
+ 160               	/* frame size = 0 */
+ 161               	/* stack size = 0 */
+ 162               	.L__stack_usage = 0
+ 163               	.LBB38:
+ 164               	.LBB39:
+ 165               	.LBB40:
+ 166               	.LBB41:
+ 168               	.Ltext5:
+  83:/usr/lib/gcc/avr/4.6.1/../../../../avr/include/util/delay_basic.h **** 		"1: dec %0" "\n\t"
+  84:/usr/lib/gcc/avr/4.6.1/../../../../avr/include/util/delay_basic.h **** 		"brne 1b"
+  85:/usr/lib/gcc/avr/4.6.1/../../../../avr/include/util/delay_basic.h **** 		: "=r" (__count)
+  86:/usr/lib/gcc/avr/4.6.1/../../../../avr/include/util/delay_basic.h **** 		: "0" (__count)
+  87:/usr/lib/gcc/avr/4.6.1/../../../../avr/include/util/delay_basic.h **** 	);
+  88:/usr/lib/gcc/avr/4.6.1/../../../../avr/include/util/delay_basic.h **** }
+  89:/usr/lib/gcc/avr/4.6.1/../../../../avr/include/util/delay_basic.h **** 
+  90:/usr/lib/gcc/avr/4.6.1/../../../../avr/include/util/delay_basic.h **** /** \ingroup util_delay_basic
+  91:/usr/lib/gcc/avr/4.6.1/../../../../avr/include/util/delay_basic.h **** 
+  92:/usr/lib/gcc/avr/4.6.1/../../../../avr/include/util/delay_basic.h ****     Delay loop using a 16-bit counter \c __count, so up to 65536
+  93:/usr/lib/gcc/avr/4.6.1/../../../../avr/include/util/delay_basic.h ****     iterations are possible.  (The value 65536 would have to be
+  94:/usr/lib/gcc/avr/4.6.1/../../../../avr/include/util/delay_basic.h ****     passed as 0.)  The loop executes four CPU cycles per iteration,
+  95:/usr/lib/gcc/avr/4.6.1/../../../../avr/include/util/delay_basic.h ****     not including the overhead the compiler requires to setup the
+  96:/usr/lib/gcc/avr/4.6.1/../../../../avr/include/util/delay_basic.h ****     counter register pair.
+  97:/usr/lib/gcc/avr/4.6.1/../../../../avr/include/util/delay_basic.h **** 
+  98:/usr/lib/gcc/avr/4.6.1/../../../../avr/include/util/delay_basic.h ****     Thus, at a CPU speed of 1 MHz, delays of up to about 262.1
+  99:/usr/lib/gcc/avr/4.6.1/../../../../avr/include/util/delay_basic.h ****     milliseconds can be achieved.
+ 100:/usr/lib/gcc/avr/4.6.1/../../../../avr/include/util/delay_basic.h ****  */
+ 101:/usr/lib/gcc/avr/4.6.1/../../../../avr/include/util/delay_basic.h **** void
+ 102:/usr/lib/gcc/avr/4.6.1/../../../../avr/include/util/delay_basic.h **** _delay_loop_2(uint16_t __count)
+ 103:/usr/lib/gcc/avr/4.6.1/../../../../avr/include/util/delay_basic.h **** {
+ 104:/usr/lib/gcc/avr/4.6.1/../../../../avr/include/util/delay_basic.h **** 	__asm__ volatile (
+ 170               	.LM8:
+ 171 0012 20ED      		ldi r18,lo8(2000)
+ 172 0014 37E0      		ldi r19,hi8(2000)
+ 173               	.LBE41:
+ 174               	.LBE40:
+ 175               	.LBE39:
+ 176               	.LBE38:
+ 178               	.Ltext6:
+  25:util.c        **** 	while(delah)
+ 180               	.LM9:
+ 181 0016 00C0      		rjmp .L5
+ 182               	.L6:
+ 183               	.LBB45:
+ 184               	.LBB44:
+ 185               	.LBB43:
+ 186               	.LBB42:
+ 188               	.Ltext7:
+ 190               	.LM10:
+ 191 0018 F901      		movw r30,r18
+ 192               	/* #APP */
+ 193               	 ;  105 "/usr/lib/gcc/avr/4.6.1/../../../../avr/include/util/delay_basic.h" 1
+ 194 001a 3197      		1: sbiw r30,1
+ 195 001c 01F4      		brne 1b
+ 196               	 ;  0 "" 2
+ 197               	/* #NOAPP */
+ 198               	.LBE42:
+ 199               	.LBE43:
+ 200               	.LBE44:
+ 201               	.LBE45:
+ 203               	.Ltext8:
+  26:util.c        **** 	{
+  27:util.c        **** 		_delay_ms(1);
+  28:util.c        **** 		delah--;
+ 205               	.LM11:
+ 206 001e 0197      		sbiw r24,1
+ 207               	.L5:
+  26:util.c        **** 	{
+ 209               	.LM12:
+ 210 0020 0097      		sbiw r24,0
+ 211 0022 01F4      		brne .L6
+ 212               	/* epilogue start */
+  29:util.c        **** 	}
+  30:util.c        **** }
+ 214               	.LM13:
+ 215 0024 0895      		ret
+ 217               	.Lscope2:
+ 219               		.stabd	78,0,0
+ 222               	.global	rxDataHandler
+ 224               	rxDataHandler:
+ 225               		.stabd	46,0,0
+  31:util.c        **** 
+  32:util.c        **** void rxDataHandler(uint8_t data)
+  33:util.c        **** {
+ 227               	.LM14:
+ 228               	.LFBB3:
+ 229 0026 8F92      		push r8
+ 230 0028 9F92      		push r9
+ 231 002a AF92      		push r10
+ 232 002c BF92      		push r11
+ 233 002e CF92      		push r12
+ 234 0030 DF92      		push r13
+ 235 0032 EF92      		push r14
+ 236 0034 FF92      		push r15
+ 237 0036 0F93      		push r16
+ 238 0038 1F93      		push r17
+ 239               	/* prologue: function */
+ 240               	/* frame size = 0 */
+ 241               	/* stack size = 10 */
+ 242               	.L__stack_usage = 10
+  34:util.c        **** 	if(i2cMode == 0)
+ 244               	.LM15:
+ 245 003a 9091 0000 		lds r25,i2cMode
+ 246 003e 9923      		tst r25
+ 247 0040 01F4      		brne .L8
+  35:util.c        **** 	{
+  36:util.c        **** 		i2cMode = data;
+ 249               	.LM16:
+ 250 0042 8093 0000 		sts i2cMode,r24
+ 251 0046 00C0      		rjmp .L7
+ 252               	.L8:
+  37:util.c        **** 		//setServo(1,21);
+  38:util.c        **** 	}
+  39:util.c        **** 	else
+  40:util.c        **** 	{
+  41:util.c        **** 		switch (i2cMode)
+ 254               	.LM17:
+ 255 0048 9731      		cpi r25,lo8(23)
+ 256 004a 01F0      		breq .L13
+ 257 004c 9831      		cpi r25,lo8(24)
+ 258 004e 00F4      		brsh .L16
+ 259 0050 9130      		cpi r25,lo8(1)
+ 260 0052 01F0      		breq .L11
+ 261 0054 9930      		cpi r25,lo8(9)
+ 262 0056 01F0      		breq .+2
+ 263 0058 00C0      		rjmp .L10
+ 264 005a 00C0      		rjmp .L24
+ 265               	.L16:
+ 266 005c 9831      		cpi r25,lo8(24)
+ 267 005e 01F0      		breq .L14
+ 268 0060 9931      		cpi r25,lo8(25)
+ 269 0062 01F0      		breq .+2
+ 270 0064 00C0      		rjmp .L10
+ 271 0066 00C0      		rjmp .L25
+ 272               	.L11:
+  42:util.c        **** 		{
+  43:util.c        **** 			case 1:
+  44:util.c        **** 				gState = data;
+ 274               	.LM18:
+ 275 0068 8093 0000 		sts gState,r24
+ 276 006c 00C0      		rjmp .L22
+ 277               	.L24:
+  45:util.c        **** 				bytesCount = 0;
+  46:util.c        **** 				i2cMode = 0;
+  47:util.c        **** 				break;
+  48:util.c        **** 			case 9: // Slave TX mode set.
+  49:util.c        **** 				i2cTxMode = data;
+ 279               	.LM19:
+ 280 006e 8093 0000 		sts i2cTxMode,r24
+ 281               	.L22:
+  50:util.c        **** 				bytesCount = 0;
+ 283               	.LM20:
+ 284 0072 1092 0000 		sts bytesCount,__zero_reg__
+ 285               	.L23:
+  51:util.c        **** 				i2cMode = 0;
+ 287               	.LM21:
+ 288 0076 1092 0000 		sts i2cMode,__zero_reg__
+  52:util.c        **** 				break;
+ 290               	.LM22:
+ 291 007a 00C0      		rjmp .L7
+ 292               	.L13:
+ 293 007c 482F      		mov r20,r24
+ 294 007e 50E0      		ldi r21,lo8(0)
+ 295 0080 60E0      		ldi r22,lo8(0)
+ 296 0082 70E0      		ldi r23,hi8(0)
+ 297 0084 0091 0000 		lds r16,stepperCountLeft
+ 298 0088 1091 0000 		lds r17,stepperCountLeft+1
+ 299 008c 2091 0000 		lds r18,stepperCountLeft+2
+ 300 0090 3091 0000 		lds r19,stepperCountLeft+3
+  53:util.c        **** 			case 23: // Left wheel (mm) input. -127 thru 127, signed magnitude via MSB.
+  54:util.c        **** 				// TODO: convert mm to steps.
+  55:util.c        **** 				if(data & 0x80) stepperCountLeft -= (data & 0x7F); // MSB = 1 = Negative.
+ 302               	.LM23:
+ 303 0094 87FF      		sbrs r24,7
+ 304 0096 00C0      		rjmp .L17
+ 306               	.LM24:
+ 307 0098 4F77      		andi r20,lo8(127)
+ 308 009a 5070      		andi r21,hi8(127)
+ 309 009c 6070      		andi r22,hlo8(127)
+ 310 009e 7070      		andi r23,hhi8(127)
+ 311 00a0 041B      		sub r16,r20
+ 312 00a2 150B      		sbc r17,r21
+ 313 00a4 260B      		sbc r18,r22
+ 314 00a6 370B      		sbc r19,r23
+ 315 00a8 0093 0000 		sts stepperCountLeft,r16
+ 316 00ac 1093 0000 		sts stepperCountLeft+1,r17
+ 317 00b0 2093 0000 		sts stepperCountLeft+2,r18
+ 318 00b4 3093 0000 		sts stepperCountLeft+3,r19
+ 319 00b8 00C0      		rjmp .L23
+ 320               	.L17:
+  56:util.c        **** 				else stepperCountLeft += data;// Positive.
+ 322               	.LM25:
+ 323 00ba 400F      		add r20,r16
+ 324 00bc 511F      		adc r21,r17
+ 325 00be 621F      		adc r22,r18
+ 326 00c0 731F      		adc r23,r19
+ 327 00c2 4093 0000 		sts stepperCountLeft,r20
+ 328 00c6 5093 0000 		sts stepperCountLeft+1,r21
+ 329 00ca 6093 0000 		sts stepperCountLeft+2,r22
+ 330 00ce 7093 0000 		sts stepperCountLeft+3,r23
+ 331 00d2 00C0      		rjmp .L23
+ 332               	.L14:
+ 333 00d4 482F      		mov r20,r24
+ 334 00d6 50E0      		ldi r21,lo8(0)
+ 335 00d8 60E0      		ldi r22,lo8(0)
+ 336 00da 70E0      		ldi r23,hi8(0)
+ 337 00dc 0091 0000 		lds r16,stepperCountRight
+ 338 00e0 1091 0000 		lds r17,stepperCountRight+1
+ 339 00e4 2091 0000 		lds r18,stepperCountRight+2
+ 340 00e8 3091 0000 		lds r19,stepperCountRight+3
+  57:util.c        **** 				i2cMode = 0;
+  58:util.c        **** 				break;
+  59:util.c        **** 			case 24:// Right wheel (mm) input. -127 thru 127, signed magnitude via MSB.
+  60:util.c        **** 				// TODO: convert mm to steps.
+  61:util.c        **** 				if(data & 0x80) stepperCountRight -= (data & 0x7F); // MSB = 1 = Negative.
+ 342               	.LM26:
+ 343 00ec 87FF      		sbrs r24,7
+ 344 00ee 00C0      		rjmp .L19
+ 346               	.LM27:
+ 347 00f0 4F77      		andi r20,lo8(127)
+ 348 00f2 5070      		andi r21,hi8(127)
+ 349 00f4 6070      		andi r22,hlo8(127)
+ 350 00f6 7070      		andi r23,hhi8(127)
+ 351 00f8 041B      		sub r16,r20
+ 352 00fa 150B      		sbc r17,r21
+ 353 00fc 260B      		sbc r18,r22
+ 354 00fe 370B      		sbc r19,r23
+ 355 0100 0093 0000 		sts stepperCountRight,r16
+ 356 0104 1093 0000 		sts stepperCountRight+1,r17
+ 357 0108 2093 0000 		sts stepperCountRight+2,r18
+ 358 010c 3093 0000 		sts stepperCountRight+3,r19
+ 359 0110 00C0      		rjmp .L23
+ 360               	.L19:
+  62:util.c        **** 				else stepperCountRight += data;// Positive.
+ 362               	.LM28:
+ 363 0112 400F      		add r20,r16
+ 364 0114 511F      		adc r21,r17
+ 365 0116 621F      		adc r22,r18
+ 366 0118 731F      		adc r23,r19
+ 367 011a 4093 0000 		sts stepperCountRight,r20
+ 368 011e 5093 0000 		sts stepperCountRight+1,r21
+ 369 0122 6093 0000 		sts stepperCountRight+2,r22
+ 370 0126 7093 0000 		sts stepperCountRight+3,r23
+ 371 012a 00C0      		rjmp .L23
+ 372               	.L25:
+ 373 012c C090 0000 		lds r12,stepperCountLeft
+ 374 0130 D090 0000 		lds r13,stepperCountLeft+1
+ 375 0134 E090 0000 		lds r14,stepperCountLeft+2
+ 376 0138 F090 0000 		lds r15,stepperCountLeft+3
+ 377 013c 8090 0000 		lds r8,stepperCountRight
+ 378 0140 9090 0000 		lds r9,stepperCountRight+1
+ 379 0144 A090 0000 		lds r10,stepperCountRight+2
+ 380 0148 B090 0000 		lds r11,stepperCountRight+3
+  63:util.c        **** 				i2cMode = 0;
+  64:util.c        **** 				break;
+  65:util.c        **** 			case 25:
+  66:util.c        **** 				if(data & 0x80) 
+ 382               	.LM29:
+ 383 014c 87FF      		sbrs r24,7
+ 384 014e 00C0      		rjmp .L21
+  67:util.c        **** 				{
+  68:util.c        **** 					stepperCountLeft  -= (TICKS_PER_CM * (data & 0x7F)); // MSB = 1 = Negative.
+ 386               	.LM30:
+ 387 0150 90E0      		ldi r25,lo8(0)
+ 388 0152 8F77      		andi r24,lo8(127)
+ 389 0154 9070      		andi r25,hi8(127)
+ 390 0156 42E3      		ldi r20,lo8(50)
+ 391 0158 50E0      		ldi r21,hi8(50)
+ 392 015a 849F      		mul r24,r20
+ 393 015c 9001      		movw r18,r0
+ 394 015e 859F      		mul r24,r21
+ 395 0160 300D      		add r19,r0
+ 396 0162 949F      		mul r25,r20
+ 397 0164 300D      		add r19,r0
+ 398 0166 1124      		clr r1
+ 399 0168 C901      		movw r24,r18
+ 400 016a AA27      		clr r26
+ 401 016c 97FD      		sbrc r25,7
+ 402 016e A095      		com r26
+ 403 0170 BA2F      		mov r27,r26
+ 404 0172 C81A      		sub r12,r24
+ 405 0174 D90A      		sbc r13,r25
+ 406 0176 EA0A      		sbc r14,r26
+ 407 0178 FB0A      		sbc r15,r27
+ 408 017a C092 0000 		sts stepperCountLeft,r12
+ 409 017e D092 0000 		sts stepperCountLeft+1,r13
+ 410 0182 E092 0000 		sts stepperCountLeft+2,r14
+ 411 0186 F092 0000 		sts stepperCountLeft+3,r15
+  69:util.c        **** 					stepperCountRight -= (TICKS_PER_CM * (data & 0x7F));
+ 413               	.LM31:
+ 414 018a 881A      		sub r8,r24
+ 415 018c 990A      		sbc r9,r25
+ 416 018e AA0A      		sbc r10,r26
+ 417 0190 BB0A      		sbc r11,r27
+ 418 0192 8092 0000 		sts stepperCountRight,r8
+ 419 0196 9092 0000 		sts stepperCountRight+1,r9
+ 420 019a A092 0000 		sts stepperCountRight+2,r10
+ 421 019e B092 0000 		sts stepperCountRight+3,r11
+ 422 01a2 00C0      		rjmp .L7
+ 423               	.L21:
+  70:util.c        **** 				}
+  71:util.c        **** 				else
+  72:util.c        **** 				{
+  73:util.c        **** 					stepperCountLeft  += (TICKS_PER_CM * data); // Positive.
+ 425               	.LM32:
+ 426 01a4 92E3      		ldi r25,lo8(50)
+ 427 01a6 899F      		mul r24,r25
+ 428 01a8 C001      		movw r24,r0
+ 429 01aa 1124      		clr r1
+ 430 01ac AA27      		clr r26
+ 431 01ae 97FD      		sbrc r25,7
+ 432 01b0 A095      		com r26
+ 433 01b2 BA2F      		mov r27,r26
+ 434 01b4 C80E      		add r12,r24
+ 435 01b6 D91E      		adc r13,r25
+ 436 01b8 EA1E      		adc r14,r26
+ 437 01ba FB1E      		adc r15,r27
+ 438 01bc C092 0000 		sts stepperCountLeft,r12
+ 439 01c0 D092 0000 		sts stepperCountLeft+1,r13
+ 440 01c4 E092 0000 		sts stepperCountLeft+2,r14
+ 441 01c8 F092 0000 		sts stepperCountLeft+3,r15
+  74:util.c        **** 					stepperCountRight += (TICKS_PER_CM * data);
+ 443               	.LM33:
+ 444 01cc 880D      		add r24,r8
+ 445 01ce 991D      		adc r25,r9
+ 446 01d0 AA1D      		adc r26,r10
+ 447 01d2 BB1D      		adc r27,r11
+ 448 01d4 8093 0000 		sts stepperCountRight,r24
+ 449 01d8 9093 0000 		sts stepperCountRight+1,r25
+ 450 01dc A093 0000 		sts stepperCountRight+2,r26
+ 451 01e0 B093 0000 		sts stepperCountRight+3,r27
+ 452 01e4 00C0      		rjmp .L7
+ 453               	.L10:
+  75:util.c        **** 				}
+  76:util.c        **** 				break;
+  77:util.c        **** 			default: // Unknown command
+  78:util.c        **** 				i2cMode = 0;
+ 455               	.LM34:
+ 456 01e6 1092 0000 		sts i2cMode,__zero_reg__
+  79:util.c        **** 				globalError = 2;
+ 458               	.LM35:
+ 459 01ea 82E0      		ldi r24,lo8(2)
+ 460 01ec 8093 0000 		sts globalError,r24
+ 461               	.L7:
+ 462               	/* epilogue start */
+  80:util.c        **** 				break;
+  81:util.c        **** 		}
+  82:util.c        **** 	}
+  83:util.c        **** }
+ 464               	.LM36:
+ 465 01f0 1F91      		pop r17
+ 466 01f2 0F91      		pop r16
+ 467 01f4 FF90      		pop r15
+ 468 01f6 EF90      		pop r14
+ 469 01f8 DF90      		pop r13
+ 470 01fa CF90      		pop r12
+ 471 01fc BF90      		pop r11
+ 472 01fe AF90      		pop r10
+ 473 0200 9F90      		pop r9
+ 474 0202 8F90      		pop r8
+ 475 0204 0895      		ret
+ 477               	.Lscope3:
+ 479               		.stabd	78,0,0
+ 481               	.global	txDataHandler
+ 483               	txDataHandler:
+ 484               		.stabd	46,0,0
+  84:util.c        **** 
+  85:util.c        **** uint32_t holder = 0;
+  86:util.c        **** 
+  87:util.c        **** void txDataHandler(void) // Generates the data to be transmitted over i2c.
+  88:util.c        **** {
+ 486               	.LM37:
+ 487               	.LFBB4:
+ 488               	/* prologue: function */
+ 489               	/* frame size = 0 */
+ 490               	/* stack size = 0 */
+ 491               	.L__stack_usage = 0
+  89:util.c        **** 	switch (i2cTxMode)
+ 493               	.LM38:
+ 494 0206 8091 0000 		lds r24,i2cTxMode
+ 495 020a 8B32      		cpi r24,lo8(43)
+ 496 020c 01F0      		breq .L28
+ 497 020e 8336      		cpi r24,lo8(99)
+ 498 0210 01F0      		breq .+2
+ 499 0212 00C0      		rjmp .L40
+ 500 0214 0895      		ret
+ 501               	.L28:
+  90:util.c        **** 	{
+  91:util.c        **** 		case 43: // IR array data
+  92:util.c        **** 			switch (bytesCount)
+ 503               	.LM39:
+ 504 0216 8091 0000 		lds r24,bytesCount
+ 505 021a 8330      		cpi r24,lo8(3)
+ 506 021c 01F0      		breq .L32
+ 507 021e 8430      		cpi r24,lo8(4)
+ 508 0220 00F4      		brsh .L39
+ 509 0222 8130      		cpi r24,lo8(1)
+ 510 0224 01F0      		breq .L32
+ 511 0226 8230      		cpi r24,lo8(2)
+ 512 0228 00F4      		brsh .L33
+ 513 022a 00C0      		rjmp .L44
+ 514               	.L39:
+ 515 022c 8530      		cpi r24,lo8(5)
+ 516 022e 01F0      		breq .L32
+ 517 0230 8530      		cpi r24,lo8(5)
+ 518 0232 00F0      		brlo .L35
+ 519 0234 8630      		cpi r24,lo8(6)
+ 520 0236 01F4      		brne .+2
+ 521 0238 00C0      		rjmp .L37
+ 522 023a 8730      		cpi r24,lo8(7)
+ 523 023c 01F0      		breq .+2
+ 524 023e 00C0      		rjmp .L30
+ 525 0240 00C0      		rjmp .L45
+ 526               	.L44:
+  93:util.c        **** 			{
+  94:util.c        **** 				case 0:
+  95:util.c        **** 					holder = (arcIR4[0] + arcIR4[1] + arcIR4[2] + arcIR4[3]);
+ 528               	.LM40:
+ 529 0242 8091 0000 		lds r24,arcIR4+2
+ 530 0246 9091 0000 		lds r25,arcIR4+2+1
+ 531 024a 2091 0000 		lds r18,arcIR4
+ 532 024e 3091 0000 		lds r19,arcIR4+1
+ 533 0252 820F      		add r24,r18
+ 534 0254 931F      		adc r25,r19
+ 535 0256 2091 0000 		lds r18,arcIR4+4
+ 536 025a 3091 0000 		lds r19,arcIR4+4+1
+ 537 025e 820F      		add r24,r18
+ 538 0260 931F      		adc r25,r19
+ 539 0262 2091 0000 		lds r18,arcIR4+6
+ 540 0266 3091 0000 		lds r19,arcIR4+6+1
+ 541 026a 00C0      		rjmp .L43
+ 542               	.L32:
+  96:util.c        **** 					holder /= 4;
+  97:util.c        **** 					TWDR = (uint8_t)(holder >> 8);
+  98:util.c        **** 					TWCR |= (1<<TWEA);
+  99:util.c        **** 					break;
+ 100:util.c        **** 				case 1:
+ 101:util.c        **** 					TWDR = (uint8_t)holder;
+ 544               	.LM41:
+ 545 026c 8091 0000 		lds r24,holder
+ 546               	.L42:
+ 547 0270 8093 BB00 		sts 187,r24
+ 102:util.c        **** 					TWCR |= (1<<TWEA);
+ 549               	.LM42:
+ 550 0274 8091 BC00 		lds r24,188
+ 551 0278 8064      		ori r24,lo8(64)
+ 552 027a 8093 BC00 		sts 188,r24
+ 103:util.c        **** 					break;
+ 554               	.LM43:
+ 555 027e 00C0      		rjmp .L30
+ 556               	.L33:
+ 104:util.c        **** 				case 2:
+ 105:util.c        **** 					holder = (arcIR5[0] + arcIR5[1] + arcIR5[2] + arcIR5[3]);
+ 558               	.LM44:
+ 559 0280 8091 0000 		lds r24,arcIR5+2
+ 560 0284 9091 0000 		lds r25,arcIR5+2+1
+ 561 0288 2091 0000 		lds r18,arcIR5
+ 562 028c 3091 0000 		lds r19,arcIR5+1
+ 563 0290 820F      		add r24,r18
+ 564 0292 931F      		adc r25,r19
+ 565 0294 2091 0000 		lds r18,arcIR5+4
+ 566 0298 3091 0000 		lds r19,arcIR5+4+1
+ 567 029c 820F      		add r24,r18
+ 568 029e 931F      		adc r25,r19
+ 569 02a0 2091 0000 		lds r18,arcIR5+6
+ 570 02a4 3091 0000 		lds r19,arcIR5+6+1
+ 571 02a8 00C0      		rjmp .L43
+ 572               	.L35:
+ 106:util.c        **** 					holder /= 4;
+ 107:util.c        **** 					TWDR = (uint8_t)(holder >> 8);
+ 108:util.c        **** 					TWCR |= (1<<TWEA);
+ 109:util.c        **** 					break;
+ 110:util.c        **** 				case 3:
+ 111:util.c        **** 					TWDR = (uint8_t)holder;
+ 112:util.c        **** 					TWCR |= (1<<TWEA);
+ 113:util.c        **** 					break;
+ 114:util.c        **** 				case 4:
+ 115:util.c        **** 					holder = (arcIR6[0] + arcIR6[1] + arcIR6[2] + arcIR6[3]);
+ 574               	.LM45:
+ 575 02aa 8091 0000 		lds r24,arcIR6+2
+ 576 02ae 9091 0000 		lds r25,arcIR6+2+1
+ 577 02b2 2091 0000 		lds r18,arcIR6
+ 578 02b6 3091 0000 		lds r19,arcIR6+1
+ 579 02ba 820F      		add r24,r18
+ 580 02bc 931F      		adc r25,r19
+ 581 02be 2091 0000 		lds r18,arcIR6+4
+ 582 02c2 3091 0000 		lds r19,arcIR6+4+1
+ 583 02c6 820F      		add r24,r18
+ 584 02c8 931F      		adc r25,r19
+ 585 02ca 2091 0000 		lds r18,arcIR6+6
+ 586 02ce 3091 0000 		lds r19,arcIR6+6+1
+ 587 02d2 00C0      		rjmp .L43
+ 588               	.L37:
+ 116:util.c        **** 					holder /= 4;
+ 117:util.c        **** 					TWDR = (uint8_t)(holder >> 8);
+ 118:util.c        **** 					TWCR |= (1<<TWEA);
+ 119:util.c        **** 					break;
+ 120:util.c        **** 				case 5:
+ 121:util.c        **** 					TWDR = (uint8_t)holder;
+ 122:util.c        **** 					TWCR |= (1<<TWEA);
+ 123:util.c        **** 					break;
+ 124:util.c        **** 				case 6:
+ 125:util.c        **** 					holder = (arcIR7[0] + arcIR7[1] + arcIR7[2] + arcIR7[3]);
+ 590               	.LM46:
+ 591 02d4 8091 0000 		lds r24,arcIR7+2
+ 592 02d8 9091 0000 		lds r25,arcIR7+2+1
+ 593 02dc 2091 0000 		lds r18,arcIR7
+ 594 02e0 3091 0000 		lds r19,arcIR7+1
+ 595 02e4 820F      		add r24,r18
+ 596 02e6 931F      		adc r25,r19
+ 597 02e8 2091 0000 		lds r18,arcIR7+4
+ 598 02ec 3091 0000 		lds r19,arcIR7+4+1
+ 599 02f0 820F      		add r24,r18
+ 600 02f2 931F      		adc r25,r19
+ 601 02f4 2091 0000 		lds r18,arcIR7+6
+ 602 02f8 3091 0000 		lds r19,arcIR7+6+1
+ 603               	.L43:
+ 604 02fc 820F      		add r24,r18
+ 605 02fe 931F      		adc r25,r19
+ 606 0300 A0E0      		ldi r26,lo8(0)
+ 607 0302 B0E0      		ldi r27,hi8(0)
+ 126:util.c        **** 					holder /= 4;
+ 609               	.LM47:
+ 610 0304 42E0      		ldi r20,2
+ 611 0306 B695      	1:	lsr r27
+ 612 0308 A795      		ror r26
+ 613 030a 9795      		ror r25
+ 614 030c 8795      		ror r24
+ 615 030e 4A95      		dec r20
+ 616 0310 01F4      		brne 1b
+ 617 0312 8093 0000 		sts holder,r24
+ 618 0316 9093 0000 		sts holder+1,r25
+ 619 031a A093 0000 		sts holder+2,r26
+ 620 031e B093 0000 		sts holder+3,r27
+ 127:util.c        **** 					TWDR = (uint8_t)(holder >> 8);
+ 622               	.LM48:
+ 623 0322 892F      		mov r24,r25
+ 624 0324 9A2F      		mov r25,r26
+ 625 0326 AB2F      		mov r26,r27
+ 626 0328 BB27      		clr r27
+ 627 032a 00C0      		rjmp .L42
+ 628               	.L45:
+ 128:util.c        **** 					TWCR |= (1<<TWEA);
+ 129:util.c        **** 					break;
+ 130:util.c        **** 				case 7:
+ 131:util.c        **** 					TWDR = (uint8_t)holder;
+ 630               	.LM49:
+ 631 032c 8091 0000 		lds r24,holder
+ 632 0330 8093 BB00 		sts 187,r24
+ 132:util.c        **** 					TWCR &= ~(1<<TWEA); // Last byte, expect NACK.
+ 634               	.LM50:
+ 635 0334 8091 BC00 		lds r24,188
+ 636 0338 8F7B      		andi r24,lo8(-65)
+ 637 033a 8093 BC00 		sts 188,r24
+ 133:util.c        **** 					i2cTxMode = 0; // And we're done.
+ 639               	.LM51:
+ 640 033e 1092 0000 		sts i2cTxMode,__zero_reg__
+ 641               	.L30:
+ 134:util.c        **** 					break;
+ 135:util.c        **** 			}
+ 136:util.c        **** 			bytesCount++;
+ 643               	.LM52:
+ 644 0342 8091 0000 		lds r24,bytesCount
+ 645 0346 8F5F      		subi r24,lo8(-(1))
+ 646 0348 8093 0000 		sts bytesCount,r24
+ 137:util.c        **** 			break;
+ 648               	.LM53:
+ 649 034c 0895      		ret
+ 650               	.L40:
+ 138:util.c        **** 		case 99: // Send error condition, if any.
+ 139:util.c        **** 			break;
+ 140:util.c        **** 		default:
+ 141:util.c        **** 			globalError = 3;
+ 652               	.LM54:
+ 653 034e 83E0      		ldi r24,lo8(3)
+ 654 0350 8093 0000 		sts globalError,r24
+ 655 0354 0895      		ret
+ 657               	.Lscope4:
+ 659               		.stabd	78,0,0
+ 660               	.global	holder
+ 661               	.global	holder
+ 662               		.section .bss
+ 665               	holder:
+ 666 0000 0000 0000 		.skip 4,0
+ 667               	.global	bytesCount
+ 668               	.global	bytesCount
+ 671               	bytesCount:
+ 672 0004 00        		.skip 1,0
+ 673               	.global	i2cTxMode
+ 674               	.global	i2cTxMode
+ 677               	i2cTxMode:
+ 678 0005 00        		.skip 1,0
+ 679               	.global	stepperCountRight
+ 680               		.data
+ 683               	stepperCountRight:
+ 684 0000 FF        		.byte	-1
+ 685 0001 0F        		.byte	15
+ 686 0002 00        		.byte	0
+ 687 0003 00        		.byte	0
+ 688               	.global	stepperCountLeft
+ 691               	stepperCountLeft:
+ 692 0004 FF        		.byte	-1
+ 693 0005 0F        		.byte	15
+ 694 0006 00        		.byte	0
+ 695 0007 00        		.byte	0
+ 696               	.global	gState
+ 697               	.global	gState
+ 698               		.section .bss
+ 701               	gState:
+ 702 0006 00        		.skip 1,0
+ 703               	.global	i2cMode
+ 704               	.global	i2cMode
+ 707               	i2cMode:
+ 708 0007 00        		.skip 1,0
+ 709               	.global	globalError
+ 710               	.global	globalError
+ 713               	globalError:
+ 714 0008 00        		.skip 1,0
+ 723               		.text
+ 725               	.Letext0:
+DEFINED SYMBOLS
+                            *ABS*:00000000 util.c
+     /tmp/ccPHZwfu.s:2      *ABS*:0000003f __SREG__
+     /tmp/ccPHZwfu.s:3      *ABS*:0000003e __SP_H__
+     /tmp/ccPHZwfu.s:4      *ABS*:0000003d __SP_L__
+     /tmp/ccPHZwfu.s:5      *ABS*:00000000 __tmp_reg__
+     /tmp/ccPHZwfu.s:6      *ABS*:00000001 __zero_reg__
+     /tmp/ccPHZwfu.s:85     .text:00000000 delay_us
+     /tmp/ccPHZwfu.s:154    .text:00000012 delay_ms
+     /tmp/ccPHZwfu.s:224    .text:00000026 rxDataHandler
+     /tmp/ccPHZwfu.s:707    .bss:00000007 i2cMode
+     /tmp/ccPHZwfu.s:701    .bss:00000006 gState
+     /tmp/ccPHZwfu.s:677    .bss:00000005 i2cTxMode
+     /tmp/ccPHZwfu.s:671    .bss:00000004 bytesCount
+     /tmp/ccPHZwfu.s:691    .data:00000004 stepperCountLeft
+     /tmp/ccPHZwfu.s:683    .data:00000000 stepperCountRight
+     /tmp/ccPHZwfu.s:713    .bss:00000008 globalError
+     /tmp/ccPHZwfu.s:483    .text:00000206 txDataHandler
+     /tmp/ccPHZwfu.s:665    .bss:00000000 holder
+
+UNDEFINED SYMBOLS
+__do_copy_data
+__do_clear_bss
+arcIR4
+arcIR5
+arcIR6
+arcIR7

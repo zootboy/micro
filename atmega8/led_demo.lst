@@ -1,0 +1,348 @@
+   1               		.file	"led_demo.c"
+   2               	__SREG__ = 0x3f
+   3               	__SP_H__ = 0x3e
+   4               	__SP_L__ = 0x3d
+   5               	__tmp_reg__ = 0
+   6               	__zero_reg__ = 1
+   7               		.global __do_copy_data
+   8               		.global __do_clear_bss
+  11               		.text
+  12               	.Ltext0:
+  74               	.global	delay_us
+  76               	delay_us:
+  77               		.stabd	46,0,0
+   0:led_demo.c    **** /* Blinker Demo */
+   1:led_demo.c    **** 
+   2:led_demo.c    **** /* Include useful pre-defined functions */
+   3:led_demo.c    **** //#include <avr/interrupt.h>    // Defines pins, ports, etc to make programs easier to read
+   4:led_demo.c    **** #define F_CPU 8000000	      // Sets up the default speed for delay.h
+   5:led_demo.c    **** #include <avr/io.h>
+   6:led_demo.c    **** #include <util/delay.h>
+   7:led_demo.c    **** 
+   8:led_demo.c    **** uint16_t waittime = 2400;
+   9:led_demo.c    **** uint8_t plus = 0;
+  10:led_demo.c    **** #define LED PB0
+  11:led_demo.c    **** 
+  12:led_demo.c    **** //uint16_t waittime = 600;
+  13:led_demo.c    **** 
+  14:led_demo.c    **** void delay_us(uint16_t delah)
+  15:led_demo.c    **** {
+  79               	.LM0:
+  80               	.LFBB1:
+  81               	/* prologue: function */
+  82               	/* frame size = 0 */
+  83               	/* stack size = 0 */
+  84               	.L__stack_usage = 0
+  85               	.LBB24:
+  86               	.LBB25:
+  87               	.LBB26:
+  88               	.LBB27:
+  90               	.Ltext1:
+   0:/usr/lib/gcc/avr/4.6.1/../../../../avr/include/util/delay_basic.h **** /* Copyright (c) 2002, Marek Michalkiewicz
+   1:/usr/lib/gcc/avr/4.6.1/../../../../avr/include/util/delay_basic.h ****    Copyright (c) 2007 Joerg Wunsch
+   2:/usr/lib/gcc/avr/4.6.1/../../../../avr/include/util/delay_basic.h ****    All rights reserved.
+   3:/usr/lib/gcc/avr/4.6.1/../../../../avr/include/util/delay_basic.h **** 
+   4:/usr/lib/gcc/avr/4.6.1/../../../../avr/include/util/delay_basic.h ****    Redistribution and use in source and binary forms, with or without
+   5:/usr/lib/gcc/avr/4.6.1/../../../../avr/include/util/delay_basic.h ****    modification, are permitted provided that the following conditions are met:
+   6:/usr/lib/gcc/avr/4.6.1/../../../../avr/include/util/delay_basic.h **** 
+   7:/usr/lib/gcc/avr/4.6.1/../../../../avr/include/util/delay_basic.h ****    * Redistributions of source code must retain the above copyright
+   8:/usr/lib/gcc/avr/4.6.1/../../../../avr/include/util/delay_basic.h ****      notice, this list of conditions and the following disclaimer.
+   9:/usr/lib/gcc/avr/4.6.1/../../../../avr/include/util/delay_basic.h **** 
+  10:/usr/lib/gcc/avr/4.6.1/../../../../avr/include/util/delay_basic.h ****    * Redistributions in binary form must reproduce the above copyright
+  11:/usr/lib/gcc/avr/4.6.1/../../../../avr/include/util/delay_basic.h ****      notice, this list of conditions and the following disclaimer in
+  12:/usr/lib/gcc/avr/4.6.1/../../../../avr/include/util/delay_basic.h ****      the documentation and/or other materials provided with the
+  13:/usr/lib/gcc/avr/4.6.1/../../../../avr/include/util/delay_basic.h ****      distribution.
+  14:/usr/lib/gcc/avr/4.6.1/../../../../avr/include/util/delay_basic.h **** 
+  15:/usr/lib/gcc/avr/4.6.1/../../../../avr/include/util/delay_basic.h ****    * Neither the name of the copyright holders nor the names of
+  16:/usr/lib/gcc/avr/4.6.1/../../../../avr/include/util/delay_basic.h ****      contributors may be used to endorse or promote products derived
+  17:/usr/lib/gcc/avr/4.6.1/../../../../avr/include/util/delay_basic.h ****      from this software without specific prior written permission.
+  18:/usr/lib/gcc/avr/4.6.1/../../../../avr/include/util/delay_basic.h **** 
+  19:/usr/lib/gcc/avr/4.6.1/../../../../avr/include/util/delay_basic.h ****   THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+  20:/usr/lib/gcc/avr/4.6.1/../../../../avr/include/util/delay_basic.h ****   AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+  21:/usr/lib/gcc/avr/4.6.1/../../../../avr/include/util/delay_basic.h ****   IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+  22:/usr/lib/gcc/avr/4.6.1/../../../../avr/include/util/delay_basic.h ****   ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE
+  23:/usr/lib/gcc/avr/4.6.1/../../../../avr/include/util/delay_basic.h ****   LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+  24:/usr/lib/gcc/avr/4.6.1/../../../../avr/include/util/delay_basic.h ****   CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+  25:/usr/lib/gcc/avr/4.6.1/../../../../avr/include/util/delay_basic.h ****   SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+  26:/usr/lib/gcc/avr/4.6.1/../../../../avr/include/util/delay_basic.h ****   INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+  27:/usr/lib/gcc/avr/4.6.1/../../../../avr/include/util/delay_basic.h ****   CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+  28:/usr/lib/gcc/avr/4.6.1/../../../../avr/include/util/delay_basic.h ****   ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+  29:/usr/lib/gcc/avr/4.6.1/../../../../avr/include/util/delay_basic.h ****   POSSIBILITY OF SUCH DAMAGE. */
+  30:/usr/lib/gcc/avr/4.6.1/../../../../avr/include/util/delay_basic.h **** 
+  31:/usr/lib/gcc/avr/4.6.1/../../../../avr/include/util/delay_basic.h **** /* $Id: delay_basic.h 2143 2010-06-08 21:19:51Z joerg_wunsch $ */
+  32:/usr/lib/gcc/avr/4.6.1/../../../../avr/include/util/delay_basic.h **** 
+  33:/usr/lib/gcc/avr/4.6.1/../../../../avr/include/util/delay_basic.h **** #ifndef _UTIL_DELAY_BASIC_H_
+  34:/usr/lib/gcc/avr/4.6.1/../../../../avr/include/util/delay_basic.h **** #define _UTIL_DELAY_BASIC_H_ 1
+  35:/usr/lib/gcc/avr/4.6.1/../../../../avr/include/util/delay_basic.h **** 
+  36:/usr/lib/gcc/avr/4.6.1/../../../../avr/include/util/delay_basic.h **** #include <inttypes.h>
+  37:/usr/lib/gcc/avr/4.6.1/../../../../avr/include/util/delay_basic.h **** 
+  38:/usr/lib/gcc/avr/4.6.1/../../../../avr/include/util/delay_basic.h **** #if !defined(__DOXYGEN__)
+  39:/usr/lib/gcc/avr/4.6.1/../../../../avr/include/util/delay_basic.h **** static inline void _delay_loop_1(uint8_t __count) __attribute__((always_inline));
+  40:/usr/lib/gcc/avr/4.6.1/../../../../avr/include/util/delay_basic.h **** static inline void _delay_loop_2(uint16_t __count) __attribute__((always_inline));
+  41:/usr/lib/gcc/avr/4.6.1/../../../../avr/include/util/delay_basic.h **** #endif
+  42:/usr/lib/gcc/avr/4.6.1/../../../../avr/include/util/delay_basic.h **** 
+  43:/usr/lib/gcc/avr/4.6.1/../../../../avr/include/util/delay_basic.h **** /** \file */
+  44:/usr/lib/gcc/avr/4.6.1/../../../../avr/include/util/delay_basic.h **** /** \defgroup util_delay_basic <util/delay_basic.h>: Basic busy-wait delay loops
+  45:/usr/lib/gcc/avr/4.6.1/../../../../avr/include/util/delay_basic.h ****     \code
+  46:/usr/lib/gcc/avr/4.6.1/../../../../avr/include/util/delay_basic.h ****     #include <util/delay_basic.h>
+  47:/usr/lib/gcc/avr/4.6.1/../../../../avr/include/util/delay_basic.h ****     \endcode
+  48:/usr/lib/gcc/avr/4.6.1/../../../../avr/include/util/delay_basic.h **** 
+  49:/usr/lib/gcc/avr/4.6.1/../../../../avr/include/util/delay_basic.h ****     The functions in this header file implement simple delay loops
+  50:/usr/lib/gcc/avr/4.6.1/../../../../avr/include/util/delay_basic.h ****     that perform a busy-waiting.  They are typically used to
+  51:/usr/lib/gcc/avr/4.6.1/../../../../avr/include/util/delay_basic.h ****     facilitate short delays in the program execution.  They are
+  52:/usr/lib/gcc/avr/4.6.1/../../../../avr/include/util/delay_basic.h ****     implemented as count-down loops with a well-known CPU cycle
+  53:/usr/lib/gcc/avr/4.6.1/../../../../avr/include/util/delay_basic.h ****     count per loop iteration.  As such, no other processing can
+  54:/usr/lib/gcc/avr/4.6.1/../../../../avr/include/util/delay_basic.h ****     occur simultaneously.  It should be kept in mind that the
+  55:/usr/lib/gcc/avr/4.6.1/../../../../avr/include/util/delay_basic.h ****     functions described here do not disable interrupts.
+  56:/usr/lib/gcc/avr/4.6.1/../../../../avr/include/util/delay_basic.h **** 
+  57:/usr/lib/gcc/avr/4.6.1/../../../../avr/include/util/delay_basic.h ****     In general, for long delays, the use of hardware timers is
+  58:/usr/lib/gcc/avr/4.6.1/../../../../avr/include/util/delay_basic.h ****     much preferrable, as they free the CPU, and allow for
+  59:/usr/lib/gcc/avr/4.6.1/../../../../avr/include/util/delay_basic.h ****     concurrent processing of other events while the timer is
+  60:/usr/lib/gcc/avr/4.6.1/../../../../avr/include/util/delay_basic.h ****     running.  However, in particular for very short delays, the
+  61:/usr/lib/gcc/avr/4.6.1/../../../../avr/include/util/delay_basic.h ****     overhead of setting up a hardware timer is too much compared
+  62:/usr/lib/gcc/avr/4.6.1/../../../../avr/include/util/delay_basic.h ****     to the overall delay time.
+  63:/usr/lib/gcc/avr/4.6.1/../../../../avr/include/util/delay_basic.h **** 
+  64:/usr/lib/gcc/avr/4.6.1/../../../../avr/include/util/delay_basic.h ****     Two inline functions are provided for the actual delay algorithms.
+  65:/usr/lib/gcc/avr/4.6.1/../../../../avr/include/util/delay_basic.h **** 
+  66:/usr/lib/gcc/avr/4.6.1/../../../../avr/include/util/delay_basic.h **** */
+  67:/usr/lib/gcc/avr/4.6.1/../../../../avr/include/util/delay_basic.h **** 
+  68:/usr/lib/gcc/avr/4.6.1/../../../../avr/include/util/delay_basic.h **** /** \ingroup util_delay_basic
+  69:/usr/lib/gcc/avr/4.6.1/../../../../avr/include/util/delay_basic.h **** 
+  70:/usr/lib/gcc/avr/4.6.1/../../../../avr/include/util/delay_basic.h ****     Delay loop using an 8-bit counter \c __count, so up to 256
+  71:/usr/lib/gcc/avr/4.6.1/../../../../avr/include/util/delay_basic.h ****     iterations are possible.  (The value 256 would have to be passed
+  72:/usr/lib/gcc/avr/4.6.1/../../../../avr/include/util/delay_basic.h ****     as 0.)  The loop executes three CPU cycles per iteration, not
+  73:/usr/lib/gcc/avr/4.6.1/../../../../avr/include/util/delay_basic.h ****     including the overhead the compiler needs to setup the counter
+  74:/usr/lib/gcc/avr/4.6.1/../../../../avr/include/util/delay_basic.h ****     register.
+  75:/usr/lib/gcc/avr/4.6.1/../../../../avr/include/util/delay_basic.h **** 
+  76:/usr/lib/gcc/avr/4.6.1/../../../../avr/include/util/delay_basic.h ****     Thus, at a CPU speed of 1 MHz, delays of up to 768 microseconds
+  77:/usr/lib/gcc/avr/4.6.1/../../../../avr/include/util/delay_basic.h ****     can be achieved.
+  78:/usr/lib/gcc/avr/4.6.1/../../../../avr/include/util/delay_basic.h **** */
+  79:/usr/lib/gcc/avr/4.6.1/../../../../avr/include/util/delay_basic.h **** void
+  80:/usr/lib/gcc/avr/4.6.1/../../../../avr/include/util/delay_basic.h **** _delay_loop_1(uint8_t __count)
+  81:/usr/lib/gcc/avr/4.6.1/../../../../avr/include/util/delay_basic.h **** {
+  82:/usr/lib/gcc/avr/4.6.1/../../../../avr/include/util/delay_basic.h **** 	__asm__ volatile (
+  92               	.LM1:
+  93 0000 32E0      		ldi r19,lo8(2)
+  94               	.LBE27:
+  95               	.LBE26:
+  96               	.LBE25:
+  97               	.LBE24:
+  99               	.Ltext2:
+  16:led_demo.c    **** 	while(delah)
+ 101               	.LM2:
+ 102 0002 00C0      		rjmp .L2
+ 103               	.L3:
+ 104               	.LBB31:
+ 105               	.LBB30:
+ 106               	.LBB29:
+ 107               	.LBB28:
+ 109               	.Ltext3:
+ 111               	.LM3:
+ 112 0004 232F      		mov r18,r19
+ 113               	/* #APP */
+ 114               	 ;  83 "/usr/lib/gcc/avr/4.6.1/../../../../avr/include/util/delay_basic.h" 1
+ 115 0006 2A95      		1: dec r18
+ 116 0008 01F4      		brne 1b
+ 117               	 ;  0 "" 2
+ 118               	/* #NOAPP */
+ 119               	.LBE28:
+ 120               	.LBE29:
+ 121               	.LBE30:
+ 122               	.LBE31:
+ 124               	.Ltext4:
+  17:led_demo.c    **** 	{
+  18:led_demo.c    **** 		_delay_us(1);
+  19:led_demo.c    **** 		delah--;
+ 126               	.LM4:
+ 127 000a 0197      		sbiw r24,1
+ 128               	.L2:
+  17:led_demo.c    **** 	{
+ 130               	.LM5:
+ 131 000c 0097      		sbiw r24,0
+ 132 000e 01F4      		brne .L3
+ 133               	/* epilogue start */
+  20:led_demo.c    **** 	}
+  21:led_demo.c    **** }
+ 135               	.LM6:
+ 136 0010 0895      		ret
+ 138               	.Lscope1:
+ 140               		.stabd	78,0,0
+ 141               		.section	.text.startup,"ax",@progbits
+ 143               	.global	main
+ 145               	main:
+ 146               		.stabd	46,0,0
+  22:led_demo.c    **** /*
+  23:led_demo.c    **** #define PAT4  0b10000001
+  24:led_demo.c    **** #define PAT3  0b01000010
+  25:led_demo.c    **** #define PAT2  0b00100100
+  26:led_demo.c    **** #define PAT1  0b00011000
+  27:led_demo.c    **** **/
+  28:led_demo.c    **** 
+  29:led_demo.c    **** #define PAT4  0b11000011
+  30:led_demo.c    **** #define PAT3  0b01100110
+  31:led_demo.c    **** #define PAT2  0b00111100
+  32:led_demo.c    **** #define PAT1  0b10011001
+  33:led_demo.c    **** 
+  34:led_demo.c    **** /*
+  35:led_demo.c    **** #define PAT15 0b11000011
+  36:led_demo.c    **** #define PAT25 0b01100110
+  37:led_demo.c    **** #define PAT35 0b00111100
+  38:led_demo.c    **** #define PAT45 0b10011001
+  39:led_demo.c    **** 
+  40:led_demo.c    **** */
+  41:led_demo.c    **** #define PAT15 PAT1
+  42:led_demo.c    **** #define PAT25 PAT2
+  43:led_demo.c    **** #define PAT35 PAT3
+  44:led_demo.c    **** #define PAT45 PAT4
+  45:led_demo.c    **** 
+  46:led_demo.c    **** void main()
+  47:led_demo.c    **** {
+ 148               	.LM7:
+ 149               	.LFBB2:
+ 150               	/* prologue: function */
+ 151               	/* frame size = 0 */
+ 152               	/* stack size = 0 */
+ 153               	.L__stack_usage = 0
+  48:led_demo.c    ****   //DDRB |= _BV(LED); //Enable output on LED pin	
+  49:led_demo.c    ****   DDRB = 0b11111111;
+ 155               	.LM8:
+ 156 0000 8FEF      		ldi r24,lo8(-1)
+ 157 0002 84B9      		out 36-0x20,r24
+  50:led_demo.c    ****   //PORTD = 1;
+  51:led_demo.c    ****   //PORTB = 255;	     
+  52:led_demo.c    ****   while(1){
+  53:led_demo.c    **** 	  //waittime+=plus;
+  54:led_demo.c    **** 	  //plus++;
+  55:led_demo.c    ****   //if(bit_is_clear(DDRD,PD0));
+  56:led_demo.c    ****     PORTB = PAT1;
+ 159               	.LM9:
+ 160 0004 89E9      		ldi r24,lo8(-103)
+ 161 0006 E82E      		mov r14,r24
+  57:led_demo.c    **** 	delay_us(waittime);
+  58:led_demo.c    **** 	
+  59:led_demo.c    **** 	PORTB = PAT15;
+  60:led_demo.c    **** 	delay_us(waittime);
+  61:led_demo.c    **** 	
+  62:led_demo.c    **** 	//PORTB = 0b01010101;
+  63:led_demo.c    **** 	//delay_us(waittime);
+  64:led_demo.c    ****   
+  65:led_demo.c    **** 	PORTB = PAT2;
+ 163               	.LM10:
+ 164 0008 9CE3      		ldi r25,lo8(60)
+ 165 000a F92E      		mov r15,r25
+  66:led_demo.c    **** 	delay_us(waittime);
+  67:led_demo.c    **** 	
+  68:led_demo.c    **** 	PORTB = PAT25;
+  69:led_demo.c    **** 	delay_us(waittime);
+  70:led_demo.c    **** 	
+  71:led_demo.c    **** 	//PORTB = 0b01100110;
+  72:led_demo.c    **** 	//delay_us(waittime);
+  73:led_demo.c    **** 	
+  74:led_demo.c    **** 	PORTB = PAT3;
+ 167               	.LM11:
+ 168 000c 06E6      		ldi r16,lo8(102)
+  75:led_demo.c    **** 	delay_us(waittime);
+  76:led_demo.c    **** 	
+  77:led_demo.c    **** 	PORTB = PAT35;
+  78:led_demo.c    **** 	delay_us(waittime);
+  79:led_demo.c    **** 	
+  80:led_demo.c    **** 	//PORTB = 0b10101010;
+  81:led_demo.c    **** 	//delay_us(waittime);
+  82:led_demo.c    **** 	
+  83:led_demo.c    **** 	PORTB = PAT4;
+ 170               	.LM12:
+ 171 000e 13EC      		ldi r17,lo8(-61)
+ 172               	.L5:
+  57:led_demo.c    ****     PORTB = PAT1;
+ 174               	.LM13:
+ 175 0010 E5B8      		out 37-0x20,r14
+  58:led_demo.c    **** 	delay_us(waittime);
+ 177               	.LM14:
+ 178 0012 8091 0000 		lds r24,waittime
+ 179 0016 9091 0000 		lds r25,waittime+1
+ 180 001a 0E94 0000 		call delay_us
+  60:led_demo.c    **** 	PORTB = PAT15;
+ 182               	.LM15:
+ 183 001e E5B8      		out 37-0x20,r14
+  61:led_demo.c    **** 	delay_us(waittime);
+ 185               	.LM16:
+ 186 0020 8091 0000 		lds r24,waittime
+ 187 0024 9091 0000 		lds r25,waittime+1
+ 188 0028 0E94 0000 		call delay_us
+  66:led_demo.c    **** 	PORTB = PAT2;
+ 190               	.LM17:
+ 191 002c F5B8      		out 37-0x20,r15
+  67:led_demo.c    **** 	delay_us(waittime);
+ 193               	.LM18:
+ 194 002e 8091 0000 		lds r24,waittime
+ 195 0032 9091 0000 		lds r25,waittime+1
+ 196 0036 0E94 0000 		call delay_us
+  69:led_demo.c    **** 	PORTB = PAT25;
+ 198               	.LM19:
+ 199 003a F5B8      		out 37-0x20,r15
+  70:led_demo.c    **** 	delay_us(waittime);
+ 201               	.LM20:
+ 202 003c 8091 0000 		lds r24,waittime
+ 203 0040 9091 0000 		lds r25,waittime+1
+ 204 0044 0E94 0000 		call delay_us
+  75:led_demo.c    **** 	PORTB = PAT3;
+ 206               	.LM21:
+ 207 0048 05B9      		out 37-0x20,r16
+  76:led_demo.c    **** 	delay_us(waittime);
+ 209               	.LM22:
+ 210 004a 8091 0000 		lds r24,waittime
+ 211 004e 9091 0000 		lds r25,waittime+1
+ 212 0052 0E94 0000 		call delay_us
+  78:led_demo.c    **** 	PORTB = PAT35;
+ 214               	.LM23:
+ 215 0056 05B9      		out 37-0x20,r16
+  79:led_demo.c    **** 	delay_us(waittime);
+ 217               	.LM24:
+ 218 0058 8091 0000 		lds r24,waittime
+ 219 005c 9091 0000 		lds r25,waittime+1
+ 220 0060 0E94 0000 		call delay_us
+ 222               	.LM25:
+ 223 0064 15B9      		out 37-0x20,r17
+  84:led_demo.c    **** 	delay_us(waittime);
+ 225               	.LM26:
+ 226 0066 8091 0000 		lds r24,waittime
+ 227 006a 9091 0000 		lds r25,waittime+1
+ 228 006e 0E94 0000 		call delay_us
+  85:led_demo.c    **** 	
+  86:led_demo.c    **** 	PORTB = PAT45;
+ 230               	.LM27:
+ 231 0072 15B9      		out 37-0x20,r17
+  87:led_demo.c    **** 	delay_us(waittime);
+ 233               	.LM28:
+ 234 0074 8091 0000 		lds r24,waittime
+ 235 0078 9091 0000 		lds r25,waittime+1
+ 236 007c 0E94 0000 		call delay_us
+ 237 0080 00C0      		rjmp .L5
+ 239               	.Lscope2:
+ 241               		.stabd	78,0,0
+ 242               	.global	plus
+ 243               	.global	plus
+ 244               		.section .bss
+ 247               	plus:
+ 248 0000 00        		.skip 1,0
+ 249               	.global	waittime
+ 250               		.data
+ 253               	waittime:
+ 254 0000 6009      		.word	2400
+ 257               		.text
+ 259               	.Letext0:
+DEFINED SYMBOLS
+                            *ABS*:00000000 led_demo.c
+     /tmp/cc11E5uI.s:2      *ABS*:0000003f __SREG__
+     /tmp/cc11E5uI.s:3      *ABS*:0000003e __SP_H__
+     /tmp/cc11E5uI.s:4      *ABS*:0000003d __SP_L__
+     /tmp/cc11E5uI.s:5      *ABS*:00000000 __tmp_reg__
+     /tmp/cc11E5uI.s:6      *ABS*:00000001 __zero_reg__
+     /tmp/cc11E5uI.s:76     .text:00000000 delay_us
+     /tmp/cc11E5uI.s:145    .text.startup:00000000 main
+     /tmp/cc11E5uI.s:253    .data:00000000 waittime
+     /tmp/cc11E5uI.s:247    .bss:00000000 plus
+
+UNDEFINED SYMBOLS
+__do_copy_data
+__do_clear_bss

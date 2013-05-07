@@ -1,0 +1,4 @@
+--cpu Cortex-M3 ".\obj\startup_lpc17xx.o" ".\obj\system_lpc17xx.o" ".\obj\core_cm3.o" ".\obj\main.o" ".\obj\dma.o" --strict --scatter ".\Obj\LandTiger_DMA.sct" 
+--autoat --summary_stderr --info summarysizes --map --xref --callgraph --symbols 
+--info sizes --info totals --info unused --info veneers 
+ --list ".\List\LandTiger_DMA.map" -o ".\Obj\LandTiger_DMA.axf"

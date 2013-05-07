@@ -1,0 +1,31 @@
+*** Creating Trace Output File '.\Obj\FTP_demo.tra' Ok.
+### Preparing for ADS-LD.
+### Creating ADS-LD Command Line
+### List of Objects: adding '".\obj\ftp_demo.o"'
+### List of Objects: adding '".\obj\ftp_uif.o"'
+### List of Objects: adding '".\obj\net_config.o"'
+### List of Objects: adding '".\obj\file_config.o"'
+### List of Objects: adding '".\obj\retarget.o"'
+### List of Objects: adding '".\obj\startup_lpc17xx.o"'
+### List of Objects: adding '".\obj\emac_lpc17xx.o"'
+### List of Objects: adding '".\obj\system_lpc17xx.o"'
+### List of Objects: adding '".\obj\spi_lpc17xx.o"'
+### List of Objects: adding '"..\Library\FS_CM3.lib"'
+### List of Objects: adding '"..\Library\TCP_CM3.lib"'
+### List of Objects: adding '"..\Library\TCPD_CM3.lib"'
+### List of Objects: adding '".\obj\glcd_lpc1700.o"'
+### ADS-LD Command completed:
+--cpu Cortex-M3 ".\obj\ftp_demo.o" ".\obj\ftp_uif.o" ".\obj\net_config.o" ".\obj\file_config.o" ".\obj\retarget.o" ".\obj\startup_lpc17xx.o" ".\obj\emac_lpc17xx.o" ".\obj\system_lpc17xx.o" ".\obj\spi_lpc17xx.o" "..\Library\FS_CM3.lib" "..\Library\TCP_CM3.lib" "..\Library\TCPD_CM3.lib" ".\obj\glcd_lpc1700.o" --strict --scatter ".\Obj\FTP_demo.sct" 
+--autoat --summary_stderr --info summarysizes --map --xref --callgraph --symbols 
+--info sizes --info totals --info unused --info veneers 
+ --list ".\Lst\FTP_demo.map" -o ".\Obj\FTP_demo.axf"### Preparing Environment (PrepEnvAds)
+### ADS-LD Output File: '.\Obj\FTP_demo.axf'
+### ADS-LD Command File: '.\Obj\FTP_demo.lnp'
+### Checking for dirty Components...
+### Creating CmdFile '.\Obj\FTP_demo.lnp', Handle=0x00000368
+### Writing '.lnp' file
+### ADS-LD Command file '.\Obj\FTP_demo.lnp' is ready.
+### ADS-LD: About to start ADS-LD Thread.
+### ADS-LD: executed with 0 errors
+### Updating obj list
+### LDADS_file() completed.

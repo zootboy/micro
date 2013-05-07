@@ -1,0 +1,26 @@
+*** Creating Trace Output File '.\Obj\HID.tra' Ok.
+### Preparing for ADS-LD.
+### Creating ADS-LD Command Line
+### List of Objects: adding '".\obj\startup_lpc17xx.o"'
+### List of Objects: adding '".\obj\system_lpc17xx.o"'
+### List of Objects: adding '".\obj\usbcore.o"'
+### List of Objects: adding '".\obj\usbdesc.o"'
+### List of Objects: adding '".\obj\usbhw.o"'
+### List of Objects: adding '".\obj\usbuser.o"'
+### List of Objects: adding '".\obj\hiduser.o"'
+### List of Objects: adding '".\obj\demo.o"'
+### ADS-LD Command completed:
+--cpu Cortex-M3 ".\obj\startup_lpc17xx.o" ".\obj\system_lpc17xx.o" ".\obj\usbcore.o" ".\obj\usbdesc.o" ".\obj\usbhw.o" ".\obj\usbuser.o" ".\obj\hiduser.o" ".\obj\demo.o" --library_type=microlib --strict --scatter ".\Obj\HID.sct" 
+--autoat --summary_stderr --info summarysizes --map --xref --callgraph --symbols 
+--info sizes --info totals --info unused --info veneers 
+ --list ".\Lst\HID.map" -o ".\Obj\HID.axf"### Preparing Environment (PrepEnvAds)
+### ADS-LD Output File: '.\Obj\HID.axf'
+### ADS-LD Command File: '.\Obj\HID.lnp'
+### Checking for dirty Components...
+### Creating CmdFile '.\Obj\HID.lnp', Handle=0x000001F8
+### Writing '.lnp' file
+### ADS-LD Command file '.\Obj\HID.lnp' is ready.
+### ADS-LD: About to start ADS-LD Thread.
+### ADS-LD: executed with 0 errors
+### Updating obj list
+### LDADS_file() completed.

@@ -1,0 +1,4 @@
+--cpu Cortex-M3 ".\obj\ftp_demo.o" ".\obj\ftp_uif.o" ".\obj\net_config.o" ".\obj\file_config.o" ".\obj\retarget.o" ".\obj\startup_lpc17xx.o" ".\obj\emac_lpc17xx.o" ".\obj\system_lpc17xx.o" ".\obj\spi_lpc17xx.o" "..\Library\FS_CM3.lib" "..\Library\TCP_CM3.lib" "..\Library\TCPD_CM3.lib" ".\obj\glcd_lpc1700.o" --strict --scatter ".\Obj\FTP_demo.sct" 
+--autoat --summary_stderr --info summarysizes --map --xref --callgraph --symbols 
+--info sizes --info totals --info unused --info veneers 
+ --list ".\Lst\FTP_demo.map" -o ".\Obj\FTP_demo.axf"

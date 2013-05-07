@@ -1,0 +1,75 @@
+<html>
+<body>
+<pre>
+<h1>µVision Build Log</h1>
+<h2>Project:</h2>
+C:\Documents and Settings\PowerARM\◊¿√Ê\LPC1768≤‚ ‘≥Ã–Ú\TCPnet\FTP_demo\FTP_demo.uvproj
+Project File Date:  <unknown>
+
+<h2>Output:</h2>
+Build target 'MCB1700'
+compiling FTP_demo.c...
+compiling FTP_uif.c...
+compiling Net_Config.c...
+compiling File_Config.c...
+compiling Retarget.c...
+assembling startup_LPC17xx.s...
+compiling EMAC_LPC17xx.c...
+compiling system_LPC17xx.c...
+compiling SPI_LPC17xx.c...
+compiling GLCD_LPC1700.c...
+linking...
+Program Size: Code=37490 RO-data=6270 RW-data=124 ZI-data=29796  
+".\Obj\FTP_demo.axf" - 0 Error(s), 0 Warning(s).
+Load "C:\\Documents and Settings\\PowerARM\\◊¿√Ê\\LPC1768≤‚ ‘≥Ã–Ú\\TCPnet\\FTP_demo\\Obj\\FTP_demo.AXF" 
+
+JLink info:
+-----------
+DLL: V4.14 , compiled Apr  9 2010 20:43:32
+Firmware: J-Link ARM V8 compiled Dec  1 2009 11:42:48
+Hardware: V8.00
+S/N : 20100214 
+Feature(s) : RDI,FlashDL,FlashBP,JFlash,GDBFull 
+---
+* JLink Info: TotalIRLen = 4, IRPrint = 0x01
+* JLink Info: Found Cortex-M3 r2p0, Little endian.
+* JLink Info: TPIU fitted.
+* JLink Info: ETM fitted.
+* JLink Info:   FPUnit: 6 code (BP) slots and 2 literal slots
+* JLink Info: TotalIRLen = 4, IRPrint = 0x01
+* JLink Info: Found Cortex-M3 r2p0, Little endian.
+* JLink Info: TPIU fitted.
+* JLink Info: ETM fitted.
+* JLink Info:   FPUnit: 6 code (BP) slots and 2 literal slots
+
+Target info:
+------------
+Device: LPC1768
+VTarget = 3.365V
+State of Pins: 
+TCK: 1, TDI: 0, TDO: 1, TMS: 0, TRES: 1, TRST: 1
+* JLink Info: TotalIRLen = 4, IRPrint = 0x01
+* JLink Info: Found Cortex-M3 r2p0, Little endian.
+* JLink Info: TPIU fitted.
+* JLink Info: ETM fitted.
+* JLink Info:   FPUnit: 6 code (BP) slots and 2 literal slots
+Hardware-Breakpoints: 6
+Software-Breakpoints: 2048
+Watchpoints:          4
+JTAG speed: 2000 kHz
+---
+* JLink Info: TotalIRLen = 4, IRPrint = 0x01
+* JLink Info: Found Cortex-M3 r2p0, Little endian.
+* JLink Info: TPIU fitted.
+* JLink Info: ETM fitted.
+* JLink Info:   FPUnit: 6 code (BP) slots and 2 literal slots
+Erase Done.
+Programming Done.
+Verify OK.
+* JLink Info: TotalIRLen = 4, IRPrint = 0x01
+* JLink Info: Found Cortex-M3 r2p0, Little endian.
+* JLink Info: TPIU fitted.
+* JLink Info: ETM fitted.
+* JLink Info:   FPUnit: 6 code (BP) slots and 2 literal slots
+**JLink Warning: CPU did not halt after bootloader.
+Application running ...

@@ -1,0 +1,227 @@
+
+main.elf:     file format elf32-avr
+
+Sections:
+Idx Name          Size      VMA       LMA       File off  Algn
+  0 .text         0000010a  00000000  00000000  00000074  2**1
+                  CONTENTS, ALLOC, LOAD, READONLY, CODE
+  1 .bss          00000002  00800060  00800060  0000017e  2**0
+                  ALLOC
+  2 .stab         00000dd4  00000000  00000000  00000180  2**2
+                  CONTENTS, READONLY, DEBUGGING
+  3 .stabstr      00000a21  00000000  00000000  00000f54  2**0
+                  CONTENTS, READONLY, DEBUGGING
+  4 .comment      00000011  00000000  00000000  00001975  2**0
+                  CONTENTS, READONLY
+
+Disassembly of section .text:
+
+00000000 <__vectors>:
+   0:	09 c0       	rjmp	.+18     	; 0x14 <__ctors_end>
+   2:	16 c0       	rjmp	.+44     	; 0x30 <__bad_interrupt>
+   4:	15 c0       	rjmp	.+42     	; 0x30 <__bad_interrupt>
+   6:	20 c0       	rjmp	.+64     	; 0x48 <__vector_3>
+   8:	13 c0       	rjmp	.+38     	; 0x30 <__bad_interrupt>
+   a:	12 c0       	rjmp	.+36     	; 0x30 <__bad_interrupt>
+   c:	11 c0       	rjmp	.+34     	; 0x30 <__bad_interrupt>
+   e:	10 c0       	rjmp	.+32     	; 0x30 <__bad_interrupt>
+  10:	0f c0       	rjmp	.+30     	; 0x30 <__bad_interrupt>
+  12:	0e c0       	rjmp	.+28     	; 0x30 <__bad_interrupt>
+
+00000014 <__ctors_end>:
+  14:	11 24       	eor	r1, r1
+  16:	1f be       	out	0x3f, r1	; 63
+  18:	cf e9       	ldi	r28, 0x9F	; 159
+  1a:	cd bf       	out	0x3d, r28	; 61
+
+0000001c <__do_clear_bss>:
+  1c:	10 e0       	ldi	r17, 0x00	; 0
+  1e:	a0 e6       	ldi	r26, 0x60	; 96
+  20:	b0 e0       	ldi	r27, 0x00	; 0
+  22:	01 c0       	rjmp	.+2      	; 0x26 <.do_clear_bss_start>
+
+00000024 <.do_clear_bss_loop>:
+  24:	1d 92       	st	X+, r1
+
+00000026 <.do_clear_bss_start>:
+  26:	a2 36       	cpi	r26, 0x62	; 98
+  28:	b1 07       	cpc	r27, r17
+  2a:	e1 f7       	brne	.-8      	; 0x24 <.do_clear_bss_loop>
+  2c:	38 d0       	rcall	.+112    	; 0x9e <main>
+  2e:	6b c0       	rjmp	.+214    	; 0x106 <_exit>
+
+00000030 <__bad_interrupt>:
+  30:	e7 cf       	rjmp	.-50     	; 0x0 <__vectors>
+
+00000032 <delay_ms>:
+#define BTNPRESSTIME 250
+volatile uint16_t timerTick;
+
+void delay_ms(uint16_t ms)
+{
+    while(ms){
+  32:	07 c0       	rjmp	.+14     	; 0x42 <__SREG__+0x3>
+	#else
+		//round up by default
+		__ticks_dc = (uint32_t)(ceil(fabs(__tmp)));
+	#endif
+
+	__builtin_avr_delay_cycles(__ticks_dc);
+  34:	ef e5       	ldi	r30, 0x5F	; 95
+  36:	f9 e0       	ldi	r31, 0x09	; 9
+  38:	31 97       	sbiw	r30, 0x01	; 1
+  3a:	f1 f7       	brne	.-4      	; 0x38 <delay_ms+0x6>
+  3c:	00 c0       	rjmp	.+0      	; 0x3e <__SP_L__+0x1>
+  3e:	00 00       	nop
+        _delay_ms(1);
+        ms--;
+  40:	01 97       	sbiw	r24, 0x01	; 1
+#define BTNPRESSTIME 250
+volatile uint16_t timerTick;
+
+void delay_ms(uint16_t ms)
+{
+    while(ms){
+  42:	00 97       	sbiw	r24, 0x00	; 0
+  44:	b9 f7       	brne	.-18     	; 0x34 <delay_ms+0x2>
+        _delay_ms(1);
+        ms--;
+    }
+}
+  46:	08 95       	ret
+
+00000048 <__vector_3>:
+
+ISR(TIM0_OVF_vect)
+{
+  48:	1f 92       	push	r1
+  4a:	0f 92       	push	r0
+  4c:	0f b6       	in	r0, 0x3f	; 63
+  4e:	0f 92       	push	r0
+  50:	11 24       	eor	r1, r1
+  52:	2f 93       	push	r18
+  54:	8f 93       	push	r24
+  56:	9f 93       	push	r25
+    if(timerTick) 
+  58:	80 91 60 00 	lds	r24, 0x0060
+  5c:	90 91 61 00 	lds	r25, 0x0061
+  60:	89 2b       	or	r24, r25
+  62:	a9 f0       	breq	.+42     	; 0x8e <__vector_3+0x46>
+    {
+        timerTick += 26; // Milliseconds.
+  64:	80 91 60 00 	lds	r24, 0x0060
+  68:	90 91 61 00 	lds	r25, 0x0061
+  6c:	4a 96       	adiw	r24, 0x1a	; 26
+  6e:	90 93 61 00 	sts	0x0061, r25
+  72:	80 93 60 00 	sts	0x0060, r24
+        
+        if(timerTick > 60000)
+  76:	80 91 60 00 	lds	r24, 0x0060
+  7a:	90 91 61 00 	lds	r25, 0x0061
+  7e:	81 36       	cpi	r24, 0x61	; 97
+  80:	9a 4e       	sbci	r25, 0xEA	; 234
+  82:	28 f0       	brcs	.+10     	; 0x8e <__vector_3+0x46>
+        {
+            timerTick = 0;
+  84:	10 92 61 00 	sts	0x0061, r1
+  88:	10 92 60 00 	sts	0x0060, r1
+            PORTB &= ~(1<<PB3); // Turn relay off.
+  8c:	c3 98       	cbi	0x18, 3	; 24
+        }
+    }
+}
+  8e:	9f 91       	pop	r25
+  90:	8f 91       	pop	r24
+  92:	2f 91       	pop	r18
+  94:	0f 90       	pop	r0
+  96:	0f be       	out	0x3f, r0	; 63
+  98:	0f 90       	pop	r0
+  9a:	1f 90       	pop	r1
+  9c:	18 95       	reti
+
+0000009e <main>:
+
+int main(void)
+{
+	delay_ms(10); // Let the power stabilize.
+  9e:	8a e0       	ldi	r24, 0x0A	; 10
+  a0:	90 e0       	ldi	r25, 0x00	; 0
+  a2:	c7 df       	rcall	.-114    	; 0x32 <delay_ms>
+	cli(); // Disable interrupts.
+  a4:	f8 94       	cli
+        
+        DDRB = (1<<PB3)|(1<<PB4); // Two outputs.
+  a6:	88 e1       	ldi	r24, 0x18	; 24
+  a8:	87 bb       	out	0x17, r24	; 23
+	PORTB = (1<<PB1); // Enable internal pullup on reed switch.
+  aa:	82 e0       	ldi	r24, 0x02	; 2
+  ac:	88 bb       	out	0x18, r24	; 24
+        timerTick = 0;
+  ae:	10 92 61 00 	sts	0x0061, r1
+  b2:	10 92 60 00 	sts	0x0060, r1
+        
+        TCCR0A = 0;
+  b6:	1f bc       	out	0x2f, r1	; 47
+        TCCR0B = (1<<CS02)|(1<<CS00); // Prescale /1024
+  b8:	95 e0       	ldi	r25, 0x05	; 5
+  ba:	93 bf       	out	0x33, r25	; 51
+        TIMSK0 = (1<<TOIE0); // Overflow interrupt.
+  bc:	89 bf       	out	0x39, r24	; 57
+        // Interrupt should occur every ~25 ms.
+        
+	sei(); // Enable interrupts.
+  be:	78 94       	sei
+	
+	delay_ms(50);
+  c0:	82 e3       	ldi	r24, 0x32	; 50
+  c2:	90 e0       	ldi	r25, 0x00	; 0
+  c4:	02 c0       	rjmp	.+4      	; 0xca <__stack+0x2b>
+	
+	while(1) // Main loop.
+	{
+            while(bit_is_clear(PINB,PB1)) delay_ms(5);
+  c6:	85 e0       	ldi	r24, 0x05	; 5
+  c8:	90 e0       	ldi	r25, 0x00	; 0
+  ca:	b3 df       	rcall	.-154    	; 0x32 <delay_ms>
+  cc:	b1 9b       	sbis	0x16, 1	; 22
+  ce:	fb cf       	rjmp	.-10     	; 0xc6 <__stack+0x27>
+            delay_ms(20);
+  d0:	84 e1       	ldi	r24, 0x14	; 20
+  d2:	90 e0       	ldi	r25, 0x00	; 0
+  d4:	ae df       	rcall	.-164    	; 0x32 <delay_ms>
+            if(bit_is_set(PINB,PB1))
+  d6:	b1 9b       	sbis	0x16, 1	; 22
+  d8:	f9 cf       	rjmp	.-14     	; 0xcc <__stack+0x2d>
+            {
+                PORTB |= (1<<PB4)|(1<<PB3); // Relay and Play Button on.
+  da:	88 b3       	in	r24, 0x18	; 24
+  dc:	88 61       	ori	r24, 0x18	; 24
+  de:	88 bb       	out	0x18, r24	; 24
+                delay_ms(BTNPRESSTIME);
+  e0:	8a ef       	ldi	r24, 0xFA	; 250
+  e2:	90 e0       	ldi	r25, 0x00	; 0
+  e4:	a6 df       	rcall	.-180    	; 0x32 <delay_ms>
+                PORTB &= ~(1<<PB4);
+  e6:	c4 98       	cbi	0x18, 4	; 24
+                timerTick = BTNPRESSTIME;
+  e8:	8a ef       	ldi	r24, 0xFA	; 250
+  ea:	90 e0       	ldi	r25, 0x00	; 0
+  ec:	90 93 61 00 	sts	0x0061, r25
+  f0:	80 93 60 00 	sts	0x0060, r24
+                delay_ms(15000); // Wait for sound to play out.
+  f4:	88 e9       	ldi	r24, 0x98	; 152
+  f6:	9a e3       	ldi	r25, 0x3A	; 58
+  f8:	02 c0       	rjmp	.+4      	; 0xfe <__stack+0x5f>
+                while(bit_is_set(PINB,PB1)) delay_ms(5);
+  fa:	85 e0       	ldi	r24, 0x05	; 5
+  fc:	90 e0       	ldi	r25, 0x00	; 0
+  fe:	99 df       	rcall	.-206    	; 0x32 <delay_ms>
+ 100:	b1 99       	sbic	0x16, 1	; 22
+ 102:	fb cf       	rjmp	.-10     	; 0xfa <__stack+0x5b>
+ 104:	e3 cf       	rjmp	.-58     	; 0xcc <__stack+0x2d>
+
+00000106 <_exit>:
+ 106:	f8 94       	cli
+
+00000108 <__stop_program>:
+ 108:	ff cf       	rjmp	.-2      	; 0x108 <__stop_program>

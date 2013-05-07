@@ -1,0 +1,148 @@
+   1               		.file	"analog.c"
+   2               	__SREG__ = 0x3f
+   3               	__SP_H__ = 0x3e
+   4               	__SP_L__ = 0x3d
+   5               	__CCP__  = 0x34
+   6               	__tmp_reg__ = 0
+   7               	__zero_reg__ = 1
+  15               	.Ltext0:
+  16               	.global	adcOn
+  18               	adcOn:
+  19               	.LFB4:
+  20               	.LM1:
+  21               	/* prologue: function */
+  22               	/* frame size = 0 */
+  23               	.LM2:
+  24 0000 17B8      		out 39-32,__zero_reg__
+  25               	.LM3:
+  26 0002 83E0      		ldi r24,lo8(3)
+  27 0004 81B9      		out 33-32,r24
+  28               	.LM4:
+  29 0006 8BE8      		ldi r24,lo8(-117)
+  30 0008 86B9      		out 38-32,r24
+  31               	/* epilogue start */
+  32               	.LM5:
+  33 000a 0895      		ret
+  34               	.LFE4:
+  36               	.global	adcOff
+  38               	adcOff:
+  39               	.LFB5:
+  40               	.LM6:
+  41               	/* prologue: function */
+  42               	/* frame size = 0 */
+  43               	.LM7:
+  44 000c 86B1      		in r24,38-32
+  45 000e 8777      		andi r24,lo8(119)
+  46 0010 86B9      		out 38-32,r24
+  47               	/* epilogue start */
+  48               	.LM8:
+  49 0012 0895      		ret
+  50               	.LFE5:
+  52               	.global	analog2v1
+  54               	analog2v1:
+  55               	.LFB6:
+  56               	.LM9:
+  57               	.LVL0:
+  58               	/* prologue: function */
+  59               	/* frame size = 0 */
+  60               	.LM10:
+  61 0014 A0E0      		ldi r26,lo8(0)
+  62 0016 B0E0      		ldi r27,hi8(0)
+  63               	.LVL1:
+  64 0018 BC01      		movw r22,r24
+  65 001a CD01      		movw r24,r26
+  66 001c 00D0      		rcall __floatunsisf
+  67               	.LVL2:
+  68 001e 2DE5      		ldi r18,lo8(0x3f36dc5d)
+  69 0020 3CED      		ldi r19,hi8(0x3f36dc5d)
+  70 0022 46E3      		ldi r20,hlo8(0x3f36dc5d)
+  71 0024 5FE3      		ldi r21,hhi8(0x3f36dc5d)
+  72 0026 00D0      		rcall __mulsf3
+  73 0028 23EA      		ldi r18,lo8(0x3fc923a3)
+  74 002a 33E2      		ldi r19,hi8(0x3fc923a3)
+  75 002c 49EC      		ldi r20,hlo8(0x3fc923a3)
+  76 002e 5FE3      		ldi r21,hhi8(0x3fc923a3)
+  77 0030 00D0      		rcall __addsf3
+  78 0032 00D0      		rcall __fixunssfsi
+  79 0034 DC01      		movw r26,r24
+  80 0036 CB01      		movw r24,r22
+  81               	/* epilogue start */
+  82               	.LM11:
+  83 0038 0895      		ret
+  84               	.LFE6:
+  86               	.global	analog2v2
+  88               	analog2v2:
+  89               	.LFB7:
+  90               	.LM12:
+  91               	.LVL3:
+  92               	/* prologue: function */
+  93               	/* frame size = 0 */
+  94               	.LM13:
+  95 003a A0E0      		ldi r26,lo8(0)
+  96 003c B0E0      		ldi r27,hi8(0)
+  97               	.LVL4:
+  98 003e BC01      		movw r22,r24
+  99 0040 CD01      		movw r24,r26
+ 100 0042 00D0      		rcall __floatunsisf
+ 101               	.LVL5:
+ 102 0044 2DE5      		ldi r18,lo8(0x3f36dc5d)
+ 103 0046 3CED      		ldi r19,hi8(0x3f36dc5d)
+ 104 0048 46E3      		ldi r20,hlo8(0x3f36dc5d)
+ 105 004a 5FE3      		ldi r21,hhi8(0x3f36dc5d)
+ 106 004c 00D0      		rcall __mulsf3
+ 107 004e 23EA      		ldi r18,lo8(0x3fc923a3)
+ 108 0050 33E2      		ldi r19,hi8(0x3fc923a3)
+ 109 0052 49EC      		ldi r20,hlo8(0x3fc923a3)
+ 110 0054 5FE3      		ldi r21,hhi8(0x3fc923a3)
+ 111 0056 00D0      		rcall __addsf3
+ 112 0058 00D0      		rcall __fixunssfsi
+ 113 005a DC01      		movw r26,r24
+ 114 005c CB01      		movw r24,r22
+ 115               	/* epilogue start */
+ 116               	.LM14:
+ 117 005e 0895      		ret
+ 118               	.LFE7:
+ 120               	.global	startConvert
+ 122               	startConvert:
+ 123               	.LFB8:
+ 124               	.LM15:
+ 125               	.LVL6:
+ 126               	/* prologue: function */
+ 127               	/* frame size = 0 */
+ 128               	.LM16:
+ 129 0060 97B1      		in r25,39-32
+ 130 0062 907E      		andi r25,lo8(-32)
+ 131 0064 97B9      		out 39-32,r25
+ 132               	.LM17:
+ 133 0066 97B1      		in r25,39-32
+ 134 0068 8F71      		andi r24,lo8(31)
+ 135               	.LVL7:
+ 136 006a 892B      		or r24,r25
+ 137 006c 87B9      		out 39-32,r24
+ 138               	.LM18:
+ 139 006e 369B      		sbis 38-32,6
+ 140               	.LM19:
+ 141 0070 369A      		sbi 38-32,6
+ 142               	.L11:
+ 143 0072 0895      		ret
+ 144               	.LFE8:
+ 202               	.Letext0:
+DEFINED SYMBOLS
+                            *ABS*:00000000 analog.c
+C:\Users\Sean\AppData\Local\Temp/ccLB3uco.s:2      *ABS*:0000003f __SREG__
+C:\Users\Sean\AppData\Local\Temp/ccLB3uco.s:3      *ABS*:0000003e __SP_H__
+C:\Users\Sean\AppData\Local\Temp/ccLB3uco.s:4      *ABS*:0000003d __SP_L__
+C:\Users\Sean\AppData\Local\Temp/ccLB3uco.s:5      *ABS*:00000034 __CCP__
+C:\Users\Sean\AppData\Local\Temp/ccLB3uco.s:6      *ABS*:00000000 __tmp_reg__
+C:\Users\Sean\AppData\Local\Temp/ccLB3uco.s:7      *ABS*:00000001 __zero_reg__
+C:\Users\Sean\AppData\Local\Temp/ccLB3uco.s:18     .text:00000000 adcOn
+C:\Users\Sean\AppData\Local\Temp/ccLB3uco.s:38     .text:0000000c adcOff
+C:\Users\Sean\AppData\Local\Temp/ccLB3uco.s:54     .text:00000014 analog2v1
+C:\Users\Sean\AppData\Local\Temp/ccLB3uco.s:88     .text:0000003a analog2v2
+C:\Users\Sean\AppData\Local\Temp/ccLB3uco.s:122    .text:00000060 startConvert
+
+UNDEFINED SYMBOLS
+__floatunsisf
+__mulsf3
+__addsf3
+__fixunssfsi

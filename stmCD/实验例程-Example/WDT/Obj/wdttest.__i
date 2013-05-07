@@ -1,0 +1,1 @@
+-c --cpu Cortex-M3 -g -O0 --apcs=interwork -I "d:\Keil\\ARM\INC" -I "d:\Keil\\ARM\INC\NXP\LPC17xx" -o ".\Obj\wdttest.o" --omf_browse ".\Obj\wdttest.crf" --depend ".\Obj\wdttest.d" "Source\App\wdttest.c"

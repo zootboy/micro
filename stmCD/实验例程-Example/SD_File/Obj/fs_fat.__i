@@ -1,0 +1,1 @@
+-c --cpu Cortex-M3 -g -O3 --apcs=interwork --asm --interleave -I.\FlashFS -I "d:\Keil\ARM\INC" -I "d:\Keil\ARM\INC\NXP\LPC17xx" -o ".\Obj\fs_fat.o" --omf_browse ".\Obj\fs_fat.crf" --depend ".\Obj\fs_fat.d" "FlashFS\fs_fat.c"

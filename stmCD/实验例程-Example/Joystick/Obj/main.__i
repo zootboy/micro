@@ -1,0 +1,1 @@
+-c --cpu Cortex-M3 -g -O0 --apcs=interwork -I "d:\Keil\ARM\INC" -I "d:\Keil\ARM\INC\NXP" -o ".\Obj\main.o" --omf_browse ".\Obj\main.crf" --depend ".\Obj\main.d" "Source\APP\main.c"

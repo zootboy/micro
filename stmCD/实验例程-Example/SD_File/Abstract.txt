@@ -1,0 +1,21 @@
+This is an RL Flash File System file manipulation example.
+You can create, read, copy, delete files from the SD/MMC 
+Flash Memory Card and format the card. 
+
+Example functionality:                                                   
+ - Clock Settings:
+   - XTAL   =  12 MHz
+   - PLL0   = 400 MHz
+   - CCLK   = 100 MHz
+
+   - USART1: 115200 baud, 8 data bits, no parity, 1 stop bit
+
+The SD_FILE program is a standalone application loaded into
+on-chip flash and available for one target:
+
+MCB1700:  Standalone application for Keil MCB1700 Board using
+          COM1 port as a communication interface.
+
+          Connect a serial cable to RS232 COM port using
+          HyperTerminal at 115200 baud, 8-bits, no parity,
+          1 stop bit, XON/XOFF.

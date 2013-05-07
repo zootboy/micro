@@ -1,0 +1,256 @@
+   1               		.file	"main.c"
+   2               	__SP_H__ = 0x3e
+   3               	__SP_L__ = 0x3d
+   4               	__SREG__ = 0x3f
+   5               	__tmp_reg__ = 0
+   6               	__zero_reg__ = 1
+   9               		.text
+  10               	.Ltext0:
+  79               		.section	.rodata.str1.1,"aMS",@progbits,1
+  80               	.LC0:
+  81 0000 424F 4F54 		.string	"BOOTING\nWIRELESS"
+  81      494E 470A 
+  81      5749 5245 
+  81      4C45 5353 
+  81      00
+  82               	.LC1:
+  83 0011 503A 2000 		.string	"P: "
+  84               	.LC2:
+  85 0015 0A4D 503A 		.string	"\nMP: "
+  85      2000 
+  86               		.section	.text.startup,"ax",@progbits
+  88               	.global	main
+  90               	main:
+  91               		.stabd	46,0,0
+   1:main.c        **** /* Wireless tester*/
+   2:main.c        **** 
+   3:main.c        **** #include <avr/io.h>
+   4:main.c        **** #include <avr/interrupt.h>    
+   5:main.c        **** #include <stdlib.h>
+   6:main.c        **** #include "lcd.h"
+   7:main.c        **** #include "util.h"
+   8:main.c        **** #include "nrf.h"
+   9:main.c        **** 
+  10:main.c        **** /* --- Pins ---
+  11:main.c        ****  * PORT B:        | PORT C:       | PORT D: 
+  12:main.c        ****  * PBO - radio_ce | PC0 -         | PD0 - LCD D4
+  13:main.c        ****  * PB1 -          | PC1 -         | PD1 - LCD D5 
+  14:main.c        ****  * PB2 - radio_csn| PC2 -         | PD2 - LCD D6  
+  15:main.c        ****  * PB3 - MOSI     | PC3 -         | PD3 - LCD D7
+  16:main.c        ****  * PB4 - MISO     | PC4 - i2c     | PD4 - LCD RS
+  17:main.c        ****  * PB5 - SCK      | PC5 - i2c     | PD5 - LCD RW
+  18:main.c        ****  * PB6 -          |               | PD6 - LCD EN
+  19:main.c        ****  * PB7 -          |               | PD7 - 
+  20:main.c        ****  * 
+  21:main.c        ****  */
+  22:main.c        **** 
+  23:main.c        **** /// Globals ///
+  24:main.c        **** char buffer[7]; // Buffer for string conversion.
+  25:main.c        **** 
+  26:main.c        **** int main(void)
+  27:main.c        **** {
+  93               	.LM0:
+  94               	.LFBB1:
+  95               	/* prologue: function */
+  96               	/* frame size = 0 */
+  97               	/* stack size = 0 */
+  98               	.L__stack_usage = 0
+  28:main.c        **** 	DDRD = 0b01111111; // LCD lines.
+ 100               	.LM1:
+ 101 0000 8FE7      		ldi r24,lo8(127)
+ 102 0002 8AB9      		out 0xa,r24
+  29:main.c        **** 	//DDRC = 0b00001111; // LCD lines.
+  30:main.c        **** 	//PORTB |= (1<<PB0); // Enable pull-up on switch.
+  31:main.c        **** 	
+  32:main.c        **** 	//PORTC = (1<<PC4)|(1<<PC5); // Enable pull-ups on i2c pins.
+  33:main.c        **** 
+  34:main.c        **** 	lcd_init(LCD_DISP_ON); // LCD on, cursor off.
+ 104               	.LM2:
+ 105 0004 8CE0      		ldi r24,lo8(12)
+ 106 0006 0E94 0000 		call lcd_init
+  35:main.c        **** 	lcd_clrscr();
+ 108               	.LM3:
+ 109 000a 0E94 0000 		call lcd_clrscr
+  36:main.c        **** 	//lcd_puts("SYSTEM BOOTING\nWIRELESS TESTER"); // Some debug data for the LCD.
+  37:main.c        **** 	lcd_puts("BOOTING\nWIRELESS"); // Some debug data for the LCD.
+ 111               	.LM4:
+ 112 000e 80E0      		ldi r24,lo8(.LC0)
+ 113 0010 90E0      		ldi r25,hi8(.LC0)
+ 114 0012 0E94 0000 		call lcd_puts
+  38:main.c        **** 	
+  39:main.c        **** 	delay_ms(100);
+ 116               	.LM5:
+ 117 0016 84E6      		ldi r24,lo8(100)
+ 118 0018 90E0      		ldi r25,0
+ 119 001a 0E94 0000 		call delay_ms
+  40:main.c        **** 	
+  41:main.c        **** 	nrf_init();
+ 121               	.LM6:
+ 122 001e 0E94 0000 		call nrf_init
+  42:main.c        **** 	CE_UP; // Enable radio.
+ 124               	.LM7:
+ 125 0022 289A      		sbi 0x5,0
+  43:main.c        **** 	
+  44:main.c        **** 	delay_ms(1000);
+ 127               	.LM8:
+ 128 0024 88EE      		ldi r24,lo8(-24)
+ 129 0026 93E0      		ldi r25,lo8(3)
+ 130 0028 0E94 0000 		call delay_ms
+  45:main.c        **** 	
+  46:main.c        **** 	//lcd_clrscr();
+  47:main.c        **** 	//lcd_puts("Press start..."); // Some debug data for the LCD.
+  48:main.c        **** 	
+  49:main.c        **** 	uint16_t num = 0;
+  50:main.c        **** 	uint16_t missed = 0;
+ 132               	.LM9:
+ 133 002c C0E0      		ldi r28,0
+ 134 002e D0E0      		ldi r29,0
+  49:main.c        **** 	uint16_t num = 0;
+ 136               	.LM10:
+ 137 0030 00E0      		ldi r16,0
+ 138 0032 10E0      		ldi r17,0
+ 139               	.L3:
+ 140               	.LBB2:
+  51:main.c        **** 	
+  52:main.c        **** 	while(1)
+  53:main.c        **** 	{
+  54:main.c        **** 		uint16_t temp = nrf_rx();
+ 142               	.LM11:
+ 143 0034 0E94 0000 		call nrf_rx
+  55:main.c        **** 		if(temp) 
+ 145               	.LM12:
+ 146 0038 0097      		sbiw r24,0
+ 147 003a 01F4      		brne .L4
+  56:main.c        **** 		{
+  57:main.c        **** 			num = temp;
+  58:main.c        **** 			missed = 0;
+  59:main.c        **** 		}
+  60:main.c        **** 		else missed++;
+ 149               	.LM13:
+ 150 003c 2196      		adiw r28,1
+ 151 003e 00C0      		rjmp .L2
+ 152               	.L4:
+  55:main.c        **** 		if(temp) 
+ 154               	.LM14:
+ 155 0040 8C01      		movw r16,r24
+  58:main.c        **** 			missed = 0;
+ 157               	.LM15:
+ 158 0042 C0E0      		ldi r28,0
+ 159 0044 D0E0      		ldi r29,0
+ 160               	.L2:
+  61:main.c        **** 		
+  62:main.c        **** 		lcd_clrscr();
+ 162               	.LM16:
+ 163 0046 0E94 0000 		call lcd_clrscr
+  63:main.c        **** 		//lcd_puts("Payload: ");
+  64:main.c        **** 		lcd_puts("P: ");
+ 165               	.LM17:
+ 166 004a 80E0      		ldi r24,lo8(.LC1)
+ 167 004c 90E0      		ldi r25,hi8(.LC1)
+ 168 004e 0E94 0000 		call lcd_puts
+  65:main.c        **** 		itoa(num, buffer, 16);
+ 170               	.LM18:
+ 171 0052 40E1      		ldi r20,lo8(16)
+ 172 0054 50E0      		ldi r21,0
+ 173 0056 60E0      		ldi r22,lo8(buffer)
+ 174 0058 70E0      		ldi r23,hi8(buffer)
+ 175 005a C801      		movw r24,r16
+ 176 005c 0E94 0000 		call itoa
+  66:main.c        **** 		lcd_puts(buffer);
+ 178               	.LM19:
+ 179 0060 80E0      		ldi r24,lo8(buffer)
+ 180 0062 90E0      		ldi r25,hi8(buffer)
+ 181 0064 0E94 0000 		call lcd_puts
+  67:main.c        **** 		//lcd_puts("\nMsd. pkts: ");
+  68:main.c        **** 		lcd_puts("\nMP: ");
+ 183               	.LM20:
+ 184 0068 80E0      		ldi r24,lo8(.LC2)
+ 185 006a 90E0      		ldi r25,hi8(.LC2)
+ 186 006c 0E94 0000 		call lcd_puts
+  69:main.c        **** 		itoa(missed, buffer, 10);
+ 188               	.LM21:
+ 189 0070 4AE0      		ldi r20,lo8(10)
+ 190 0072 50E0      		ldi r21,0
+ 191 0074 60E0      		ldi r22,lo8(buffer)
+ 192 0076 70E0      		ldi r23,hi8(buffer)
+ 193 0078 CE01      		movw r24,r28
+ 194 007a 0E94 0000 		call itoa
+  70:main.c        **** 		lcd_puts(buffer);
+ 196               	.LM22:
+ 197 007e 80E0      		ldi r24,lo8(buffer)
+ 198 0080 90E0      		ldi r25,hi8(buffer)
+ 199 0082 0E94 0000 		call lcd_puts
+  71:main.c        **** 		
+  72:main.c        **** 		/*if(nrf_last_status & (1<<MAX_RT))
+  73:main.c        **** 		{
+  74:main.c        **** 			lcd_puts("\nRe-tx max hit.");
+  75:main.c        **** 			SS_DOWN;
+  76:main.c        **** 			SPI_WRITE(W_REGISTER | NRG_STATUS);
+  77:main.c        **** 			SPI_WRITE(0x7F & (1<<MAX_RT));
+  78:main.c        **** 			SS_UP;
+  79:main.c        **** 			delay_us(1);
+  80:main.c        **** 			SS_DOWN;
+  81:main.c        **** 			SPI_WRITE(NOP);
+  82:main.c        **** 			SS_UP;
+  83:main.c        **** 			nrf_last_status = SPDR;
+  84:main.c        **** 			delay_us(1);
+  85:main.c        **** 		}*/
+  86:main.c        **** 		
+  87:main.c        **** 		/*delay_us(1);
+  88:main.c        **** 		SS_DOWN;
+  89:main.c        **** 		SPI_WRITE(R_REGISTER | NRG_EN_AA);
+  90:main.c        **** 		SPI_WRITE(0xFF);
+  91:main.c        **** 		SS_UP;
+  92:main.c        **** 		itoa(SPDR, buffer, 16);
+  93:main.c        **** 		lcd_puts("\nREGISTER: 0x");
+  94:main.c        **** 		lcd_puts(buffer);
+  95:main.c        **** 		//if(SPDR & 0xF0) lcd_puts("\nLost packets.");
+  96:main.c        **** 		//else if(SPDR & 0x0F) lcd_puts("\nRe-tx'd packets.);
+  97:main.c        **** 		*/
+  98:main.c        **** 		
+  99:main.c        **** 		delay_ms(500);
+ 201               	.LM23:
+ 202 0086 84EF      		ldi r24,lo8(-12)
+ 203 0088 91E0      		ldi r25,lo8(1)
+ 204 008a 0E94 0000 		call delay_ms
+ 205               	.LBE2:
+ 100:main.c        **** 
+ 101:main.c        **** 	}
+ 207               	.LM24:
+ 208 008e 00C0      		rjmp .L3
+ 217               	.Lscope1:
+ 219               		.stabd	78,0,0
+ 220               		.comm	buffer,7,1
+ 221               		.comm	nrf_last_status,1,1
+ 222               		.comm	spi_bytes_sent,1,1
+ 223               		.comm	spi_command,1,1
+ 224               		.comm	spi_state,1,1
+ 230               		.text
+ 232               	.Letext0:
+ 233               		.ident	"GCC: (GNU) 4.7.2"
+ 234               	.global __do_copy_data
+ 235               	.global __do_clear_bss
+DEFINED SYMBOLS
+                            *ABS*:0000000000000000 main.c
+     /tmp/cc0gkQqW.s:2      *ABS*:000000000000003e __SP_H__
+     /tmp/cc0gkQqW.s:3      *ABS*:000000000000003d __SP_L__
+     /tmp/cc0gkQqW.s:4      *ABS*:000000000000003f __SREG__
+     /tmp/cc0gkQqW.s:5      *ABS*:0000000000000000 __tmp_reg__
+     /tmp/cc0gkQqW.s:6      *ABS*:0000000000000001 __zero_reg__
+     /tmp/cc0gkQqW.s:90     .text.startup:0000000000000000 main
+                            *COM*:0000000000000007 buffer
+                            *COM*:0000000000000001 nrf_last_status
+                            *COM*:0000000000000001 spi_bytes_sent
+                            *COM*:0000000000000001 spi_command
+                            *COM*:0000000000000001 spi_state
+
+UNDEFINED SYMBOLS
+lcd_init
+lcd_clrscr
+lcd_puts
+delay_ms
+nrf_init
+nrf_rx
+itoa
+__do_copy_data
+__do_clear_bss

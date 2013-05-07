@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configurationDescriptor version="79">
+  <logicalFolder name="root" displayName="root" projectFiles="true" kind="ROOT">
+    <df name="wireless_usb" root=".">
+      <df name="Documentation">
+        <df name="html">
+        </df>
+      </df>
+      <in>Descriptors.c</in>
+      <in>Descriptors.h</in>
+      <in>VirtualSerial.c</in>
+      <in>VirtualSerial.h</in>
+      <in>main.c</in>
+      <in>nrf.c</in>
+      <in>nrf.h</in>
+      <in>util.c</in>
+      <in>util.h</in>
+    </df>
+    <logicalFolder name="ExternalFiles"
+                   displayName="Important Files"
+                   projectFiles="false"
+                   kind="IMPORTANT_FILES_FOLDER">
+      <itemPath>makefile</itemPath>
+    </logicalFolder>
+  </logicalFolder>
+  <sourceFolderFilter>^(nbproject)$</sourceFolderFilter>
+  <sourceRootList>
+    <Elem>.</Elem>
+  </sourceRootList>
+  <projectmakefile>makefile</projectmakefile>
+  <confs>
+    <conf name="Default" type="0">
+      <toolsSet>
+        <remote-sources-mode>LOCAL_SOURCES</remote-sources-mode>
+        <compilerSet>default</compilerSet>
+      </toolsSet>
+      <makefileType>
+        <makeTool>
+          <buildCommandWorkingDir>.</buildCommandWorkingDir>
+          <buildCommand>${MAKE} -f Makefile</buildCommand>
+          <cleanCommand>${MAKE} -f Makefile clean</cleanCommand>
+          <executablePath></executablePath>
+          <cTool>
+            <incDir>
+              <pElem>../LUFA-120219/LUFA/Drivers/USB/Class/Common</pElem>
+              <pElem>.</pElem>
+              <pElem>../LUFA-120219/LUFA/Drivers/USB/Core</pElem>
+            </incDir>
+            <preprocessorList>
+              <Elem>__AVR_ATmega32U4__</Elem>
+            </preprocessorList>
+          </cTool>
+        </makeTool>
+      </makefileType>
+      <item path="Descriptors.c" ex="false" tool="0" flavor="2">
+        <cTool>
+          <incDir>
+            <pElem>/usr/lib/gcc/avr/4.6.1/include</pElem>
+          </incDir>
+        </cTool>
+      </item>
+      <item path="VirtualSerial.c" ex="false" tool="0" flavor="2">
+        <cTool>
+          <incDir>
+            <pElem>/usr/avr/include/avr</pElem>
+            <pElem>../LUFA-120219/LUFA/Drivers/USB/Class/Device</pElem>
+            <pElem>../LUFA-120219/LUFA/Drivers/Board/AVR8/USBKEY</pElem>
+          </incDir>
+        </cTool>
+      </item>
+    </conf>
+  </confs>
+</configurationDescriptor>

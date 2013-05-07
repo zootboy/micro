@@ -1,0 +1,24 @@
+*** Creating Trace Output File '.\Obj\EasyWeb.tra' Ok.
+### Preparing for ADS-LD.
+### Creating ADS-LD Command Line
+### List of Objects: adding '".\obj\startup_lpc17xx.o"'
+### List of Objects: adding '".\obj\system_lpc17xx.o"'
+### List of Objects: adding '".\obj\tcpip.o"'
+### List of Objects: adding '".\obj\emac.o"'
+### List of Objects: adding '".\obj\easyweb.o"'
+### List of Objects: adding '".\obj\retarget.o"'
+### ADS-LD Command completed:
+--cpu Cortex-M3 ".\obj\startup_lpc17xx.o" ".\obj\system_lpc17xx.o" ".\obj\tcpip.o" ".\obj\emac.o" ".\obj\easyweb.o" ".\obj\retarget.o" --library_type=microlib --strict --scatter ".\Obj\EasyWeb.sct" 
+--autoat --summary_stderr --info summarysizes --map --xref --callgraph --symbols 
+--info sizes --info totals --info unused --info veneers 
+ --list ".\Lst\EasyWeb.map" -o ".\Obj\EasyWeb.axf"### Preparing Environment (PrepEnvAds)
+### ADS-LD Output File: '.\Obj\EasyWeb.axf'
+### ADS-LD Command File: '.\Obj\EasyWeb.lnp'
+### Checking for dirty Components...
+### Creating CmdFile '.\Obj\EasyWeb.lnp', Handle=0x000001D0
+### Writing '.lnp' file
+### ADS-LD Command file '.\Obj\EasyWeb.lnp' is ready.
+### ADS-LD: About to start ADS-LD Thread.
+### ADS-LD: executed with 0 errors
+### Updating obj list
+### LDADS_file() completed.

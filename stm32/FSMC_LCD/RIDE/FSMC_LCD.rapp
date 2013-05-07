@@ -1,0 +1,178 @@
+
+<ApplicationBuild Header="FSMC_LCD" Extern=".\FSMC_LCD.rapp" Path=".\FSMC_LCD.rapp" OutputFile="..\RIDESTM3210E-EVAL\FSMC_LCD.elf" Config="STM3210E-EVAL" sate="98" >
+	<Group Header="User" Marker="-1" OutputFile="" sate="0" >
+		<NodeC Path="..\src\fsmc_nand.c" Header="fsmc_nand.c" Marker="-1" OutputFile="..\RIDESTM3210E-EVAL\fsmc_nand.o" sate="0" />
+		<NodeC Path="..\src\fsmc_nor.c" Header="fsmc_nor.c" Marker="-1" OutputFile="..\RIDESTM3210E-EVAL\fsmc_nor.o" sate="0" />
+		<NodeC Path="..\src\fsmc_sram.c" Header="fsmc_sram.c" Marker="-1" OutputFile="..\RIDESTM3210E-EVAL\fsmc_sram.o" sate="0" />
+		<NodeC Path="..\src\main.c" Header="main.c" Marker="-1" OutputFile="..\RIDESTM3210E-EVAL\main.o" sate="0" />
+		<NodeC Path="..\src\menu.c" Header="menu.c" Marker="-1" OutputFile="..\RIDESTM3210E-EVAL\menu.o" sate="0" />
+		<NodeC Path="..\src\sdcard.c" Header="sdcard.c" Marker="-1" OutputFile="..\RIDESTM3210E-EVAL\sdcard.o" sate="0" />
+		<NodeC Path="..\src\stm32f10x_it.c" Header="stm32f10x_it.c" Marker="-1" OutputFile="..\RIDESTM3210E-EVAL\stm32f10x_it.o" sate="0" />
+		<NodeC Path="..\src\stm3210e_lcd.c" Header="stm3210e_lcd.c" Marker="-1" OutputFile="..\RIDESTM3210E-EVAL\stm3210e_lcd.o" sate="0" />
+																																																																																																																																																																																																									
+	</Group>
+	<Group Header="StdPeriph_Driver" Marker="-1" OutputFile="" sate="0" >
+		<NodeC Path="..\..\..\Libraries\STM32F10x_StdPeriph_Driver\src\stm32f10x_spi.c" Header="stm32f10x_spi.c" Marker="-1" OutputFile="..\RIDESTM3210E-EVAL\stm32f10x_spi.o" sate="0" />
+		<NodeC Path="..\..\..\Libraries\STM32F10x_StdPeriph_Driver\src\misc.c" Header="misc.c" Marker="-1" OutputFile="..\RIDESTM3210E-EVAL\misc.o" sate="0" />
+		<NodeC Path="..\..\..\Libraries\STM32F10x_StdPeriph_Driver\src\stm32f10x_adc.c" Header="stm32f10x_adc.c" Marker="-1" OutputFile="..\RIDESTM3210E-EVAL\stm32f10x_adc.o" sate="0" />
+		<NodeC Path="..\..\..\Libraries\STM32F10x_StdPeriph_Driver\src\stm32f10x_dma.c" Header="stm32f10x_dma.c" Marker="-1" OutputFile="..\RIDESTM3210E-EVAL\stm32f10x_dma.o" sate="0" />
+		<NodeC Path="..\..\..\Libraries\STM32F10x_StdPeriph_Driver\src\stm32f10x_exti.c" Header="stm32f10x_exti.c" Marker="-1" OutputFile="..\RIDESTM3210E-EVAL\stm32f10x_exti.o" sate="0" />
+		<NodeC Path="..\..\..\Libraries\STM32F10x_StdPeriph_Driver\src\stm32f10x_flash.c" Header="stm32f10x_flash.c" Marker="-1" OutputFile="..\RIDESTM3210E-EVAL\stm32f10x_flash.o" sate="0" />
+		<NodeC Path="..\..\..\Libraries\STM32F10x_StdPeriph_Driver\src\stm32f10x_fsmc.c" Header="stm32f10x_fsmc.c" Marker="-1" OutputFile="..\RIDESTM3210E-EVAL\stm32f10x_fsmc.o" sate="0" />
+		<NodeC Path="..\..\..\Libraries\STM32F10x_StdPeriph_Driver\src\stm32f10x_gpio.c" Header="stm32f10x_gpio.c" Marker="-1" OutputFile="..\RIDESTM3210E-EVAL\stm32f10x_gpio.o" sate="0" />
+		<NodeC Path="..\..\..\Libraries\STM32F10x_StdPeriph_Driver\src\stm32f10x_rcc.c" Header="stm32f10x_rcc.c" Marker="-1" OutputFile="..\RIDESTM3210E-EVAL\stm32f10x_rcc.o" sate="0" />
+		<NodeC Path="..\..\..\Libraries\STM32F10x_StdPeriph_Driver\src\stm32f10x_sdio.c" Header="stm32f10x_sdio.c" Marker="-1" OutputFile="..\RIDESTM3210E-EVAL\stm32f10x_sdio.o" sate="0" />
+		<NodeC Path="..\..\..\Libraries\STM32F10x_StdPeriph_Driver\src\stm32f10x_usart.c" Header="stm32f10x_usart.c" Marker="-1" OutputFile="..\RIDESTM3210E-EVAL\stm32f10x_usart.o" sate="0" />
+																																																																																	
+	</Group>
+	<Group Header="RIDE" Marker="-1" OutputFile="" sate="0" >
+		<NodeC Path="..\..\..\Libraries\CMSIS\Core\CM3\startup\gcc\startup_stm32f10x_hd.c" Header="startup_stm32f10x_hd.c" Marker="-1" OutputFile="..\RIDESTM3210E-EVAL\startup_stm32f10x_hd.o" sate="0" />
+																																																																																	
+	</Group>
+	<Configs>
+		<Config Header="STM3210E-EVAL" />
+																																	
+	</Configs>
+	<Group Header="Doc" Marker="-1" OutputFile="" sate="0" >
+		<NodeText Path="..\readme.txt" Header="readme.txt" Marker="-1" OutputFile="" sate="0" />
+																		
+	</Group>
+	<Group Header="CMSIS" Marker="-1" OutputFile="" sate="0" >
+		<NodeC Path="..\..\..\Libraries\CMSIS\Core\CM3\system_stm32f10x.c" Header="system_stm32f10x.c" Marker="-1" OutputFile="..\RIDESTM3210E-EVAL\system_stm32f10x.o" sate="0" />
+																		
+	</Group>
+	<Options>
+		<Config Header="Standard" >
+			<Set Header="ApplicationBuild" >
+				<Section Header="General" >
+					<Property Header="TargetFamily" Value="ARM" />
+																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																		
+				</Section>
+				<Section Header="Directories" >
+					<Property Header="OutDir" Value="obj" Removable="1" />
+					<Property Header="ListDir" Value="lst" Removable="1" />
+					<Property Header="IncDir" Value="..\..\..\FWLib\library\inc;..\..\include" Removable="1" />
+																																																																																																																																																																																																																																																										
+				</Section>
+																																																																																																																																																																																																		
+			</Set>
+			<Set Header="Target" >
+				<Section Header="ProcessorARM" >
+					<Property Header="Processor" Value="STM32F103VBT6" />
+																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																		
+				</Section>
+				<Section Header="ToolSetARM" >
+					<Property Header="BuildToolSetARM" Value="ARM\\GNU.config" Removable="1" />
+																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																		
+				</Section>
+				<Section Header="DebugARM" >
+					<Property Header="DebugTool_CORTEX" Value="RLINK_CORTEX" Removable="1" />
+																																																																																																																																																																																																																																																																																																																									
+				</Section>
+																																																																																																																																																																																																																																																			
+			</Set>
+			<Set Header="LD" >
+				<Section Header="LIB" >
+					<Property Header="UART0PUTC" Value="0" Removable="1" />
+					<Property Header="SMALLP" Value="0" Removable="1" />
+					<Property Header="STLIB" Value="0" Removable="1" />
+																																																																																																																																																																																																																																																										
+				</Section>
+				<Section Header="Linker" >
+					<Property Header="GC_SECTIONS" Value="-Wl,-static -Wl,--gc-sections" Removable="1" />
+																																																																																																																																																																																																																																								
+				</Section>
+				<Section Header="Startup" >
+					<Property Header="DEFAULTSTARTUP" Value="Yes" Removable="1" />
+																																																																																																																																																																																																				
+				</Section>
+				<Section Header="Scripts" >
+					<Property Header="SCRIPTFILES" Value="Yes" Removable="1" />
+					<Property Header="File" Value="" Removable="1" />
+																																																																																																																																																																
+				</Section>
+																																																																																																																												
+			</Set>
+			<Set Header="GCC" >
+				<Section Header="OPTIMIZE" >
+					<Property Header="Optimize" Value="-Os" Removable="1" />
+																																																																																																																																																																																		
+				</Section>
+																																																																																																																																										
+			</Set>
+																																																																																					
+		</Config>
+		<Config Header="STM3210B-EVAL" >
+			<Set Header="LD" >
+				<Section Header="Startup" >
+					<Property Header="DEFAULTSTARTUP" Value="No" Removable="1" />
+					<Property Header="File" Value="" Removable="1" />
+																																																																																																										
+				</Section>
+				<Section Header="Scripts" >
+					<Property Header="StarterKitLimit" Value="No" Removable="1" />
+																																																																																																										
+				</Section>
+				<Section Header="LIB" >
+					<Property Header="SMALLP" Value="1" Removable="1" />
+																																																																																																										
+				</Section>
+																																																																																		
+			</Set>
+			<Set Header="GCC" >
+				<Section Header="Defines" >
+					<Property Header="Defines" Value="USE_STM32_MD" Removable="1" />
+																																																																																								
+				</Section>
+																																																																				
+			</Set>
+																																													
+		</Config>
+		<Config Header="STM3210E-EVAL" >
+			<Set Header="Target" >
+				<Section Header="ProcessorARM" >
+					<Property Header="Processor" Value="STM32F103ZET6" />
+																																																																																																										
+				</Section>
+																																																																																		
+			</Set>
+			<Set Header="LD" >
+				<Section Header="LIB" >
+					<Property Header="SMALLP" Value="1" Removable="1" />
+					<Property Header="UART0PUTC" Value="1" Removable="1" />
+																																																																															
+				</Section>
+				<Section Header="Scripts" >
+					<Property Header="StarterKitLimit" Value="No" Removable="1" />
+																																																																																																										
+				</Section>
+				<Section Header="Startup" >
+					<Property Header="DEFAULTSTARTUP" Value="No" Removable="1" />
+					<Property Header="File" Value="" Removable="1" />
+																																																																																																										
+				</Section>
+																																																													
+			</Set>
+			<Set Header="GCC" >
+				<Section Header="Defines" >
+					<Property Header="Defines" Value="STM32F10X_HD;USE_STDPERIPH_DRIVER;USE_STM3210E_EVAL" Removable="1" />
+							
+				</Section>
+				<Section Header="OPTIMIZE" >
+					<Property Header="Optimize" Value="-Os" Removable="1" />
+																
+				</Section>
+					
+			</Set>
+			<Set Header="ApplicationBuild" >
+				<Section Header="Directories" >
+					<Property Header="IncDir" Value="..\..\..\Libraries\CMSIS\Core\CM3;..\inc;..\..\..\Libraries\STM32F10x_StdPeriph_Driver\inc" Removable="1" />
+					<Property Header="OutDir" Value="$(ApplicationDir)STM3210E-EVAL" Removable="1" />
+					<Property Header="ListDir" Value="$(ApplicationDir)STM3210E-EVAL" Removable="1" />
+																																											
+				</Section>
+																																	
+			</Set>
+		</Config>
+	</Options>
+</ApplicationBuild>

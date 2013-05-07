@@ -1,0 +1,1974 @@
+   1               		.file	"VirtualSerial.c"
+   2               	__SP_H__ = 0x3e
+   3               	__SP_L__ = 0x3d
+   4               	__SREG__ = 0x3f
+   5               	__tmp_reg__ = 0
+   6               	__zero_reg__ = 1
+   7               		.text
+   8               	.Ltext0:
+   9               		.cfi_sections	.debug_frame
+  10               		.section	.text.SetupHardware,"ax",@progbits
+  11               	.global	SetupHardware
+  13               	SetupHardware:
+  14               	.LFB108:
+  15               		.file 1 "VirtualSerial.c"
+   1:VirtualSerial.c **** /*
+   2:VirtualSerial.c ****              LUFA Library
+   3:VirtualSerial.c ****      Copyright (C) Dean Camera, 2012.
+   4:VirtualSerial.c **** 
+   5:VirtualSerial.c ****   dean [at] fourwalledcubicle [dot] com
+   6:VirtualSerial.c ****            www.lufa-lib.org
+   7:VirtualSerial.c **** */
+   8:VirtualSerial.c **** 
+   9:VirtualSerial.c **** /*
+  10:VirtualSerial.c ****   Copyright 2012  Dean Camera (dean [at] fourwalledcubicle [dot] com)
+  11:VirtualSerial.c **** 
+  12:VirtualSerial.c ****   Permission to use, copy, modify, distribute, and sell this
+  13:VirtualSerial.c ****   software and its documentation for any purpose is hereby granted
+  14:VirtualSerial.c ****   without fee, provided that the above copyright notice appear in
+  15:VirtualSerial.c ****   all copies and that both that the copyright notice and this
+  16:VirtualSerial.c ****   permission notice and warranty disclaimer appear in supporting
+  17:VirtualSerial.c ****   documentation, and that the name of the author not be used in
+  18:VirtualSerial.c ****   advertising or publicity pertaining to distribution of the
+  19:VirtualSerial.c ****   software without specific, written prior permission.
+  20:VirtualSerial.c **** 
+  21:VirtualSerial.c ****   The author disclaim all warranties with regard to this
+  22:VirtualSerial.c ****   software, including all implied warranties of merchantability
+  23:VirtualSerial.c ****   and fitness.  In no event shall the author be liable for any
+  24:VirtualSerial.c ****   special, indirect or consequential damages or any damages
+  25:VirtualSerial.c ****   whatsoever resulting from loss of use, data or profits, whether
+  26:VirtualSerial.c ****   in an action of contract, negligence or other tortious action,
+  27:VirtualSerial.c ****   arising out of or in connection with the use or performance of
+  28:VirtualSerial.c ****   this software.
+  29:VirtualSerial.c **** */
+  30:VirtualSerial.c **** 
+  31:VirtualSerial.c **** /** \file
+  32:VirtualSerial.c ****  *
+  33:VirtualSerial.c ****  *  Main source file for the VirtualSerial demo. This file contains the main tasks of
+  34:VirtualSerial.c ****  *  the demo and is responsible for the initial application hardware configuration.
+  35:VirtualSerial.c ****  */
+  36:VirtualSerial.c **** 
+  37:VirtualSerial.c **** #include "VirtualSerial.h"
+  38:VirtualSerial.c **** 
+  39:VirtualSerial.c **** int16_t rxByte = 0;
+  40:VirtualSerial.c **** 
+  41:VirtualSerial.c **** /** LUFA CDC Class driver interface configuration and state information. This structure is
+  42:VirtualSerial.c ****  *  passed to all CDC Class driver functions, so that multiple instances of the same class
+  43:VirtualSerial.c ****  *  within a device can be differentiated from one another.
+  44:VirtualSerial.c ****  */
+  45:VirtualSerial.c **** USB_ClassInfo_CDC_Device_t VirtualSerial_CDC_Interface =
+  46:VirtualSerial.c **** 	{
+  47:VirtualSerial.c **** 		.Config =
+  48:VirtualSerial.c **** 			{
+  49:VirtualSerial.c **** 				.ControlInterfaceNumber         = 0,
+  50:VirtualSerial.c **** 
+  51:VirtualSerial.c **** 				.DataINEndpointNumber           = CDC_TX_EPNUM,
+  52:VirtualSerial.c **** 				.DataINEndpointSize             = CDC_TXRX_EPSIZE,
+  53:VirtualSerial.c **** 				.DataINEndpointDoubleBank       = false,
+  54:VirtualSerial.c **** 
+  55:VirtualSerial.c **** 				.DataOUTEndpointNumber          = CDC_RX_EPNUM,
+  56:VirtualSerial.c **** 				.DataOUTEndpointSize            = CDC_TXRX_EPSIZE,
+  57:VirtualSerial.c **** 				.DataOUTEndpointDoubleBank      = false,
+  58:VirtualSerial.c **** 
+  59:VirtualSerial.c **** 				.NotificationEndpointNumber     = CDC_NOTIFICATION_EPNUM,
+  60:VirtualSerial.c **** 				.NotificationEndpointSize       = CDC_NOTIFICATION_EPSIZE,
+  61:VirtualSerial.c **** 				.NotificationEndpointDoubleBank = false,
+  62:VirtualSerial.c **** 			},
+  63:VirtualSerial.c **** 	};
+  64:VirtualSerial.c **** 
+  65:VirtualSerial.c **** /** Configures the board hardware and chip peripherals for the demo's functionality. */
+  66:VirtualSerial.c **** void SetupHardware(void)
+  67:VirtualSerial.c **** {
+  16               		.loc 1 67 0
+  17               		.cfi_startproc
+  18               	/* prologue: function */
+  19               	/* frame size = 0 */
+  20               	/* stack size = 0 */
+  21               	.L__stack_usage = 0
+  68:VirtualSerial.c **** 	/* Disable watchdog if enabled by bootloader/fuses */
+  69:VirtualSerial.c **** 	MCUSR &= ~(1 << WDRF);
+  22               		.loc 1 69 0
+  23 0000 84B7      		in r24,0x34
+  24 0002 877F      		andi r24,lo8(-9)
+  25 0004 84BF      		out 0x34,r24
+  70:VirtualSerial.c **** 	wdt_disable();
+  26               		.loc 1 70 0
+  27 0006 88E1      		ldi r24,lo8(24)
+  28               	/* #APP */
+  29               	 ;  70 "VirtualSerial.c" 1
+  30 0008 0FB6      		in __tmp_reg__, __SREG__
+  31 000a F894      		cli
+  32 000c 8093 6000 		sts 96, r24
+  33 0010 1092 6000 		sts 96, __zero_reg__
+  34 0014 0FBE      		out __SREG__,__tmp_reg__
+  35               		
+  36               	 ;  0 "" 2
+  37               	.LVL0:
+  38               	/* #NOAPP */
+  39               	.LBB8:
+  40               	.LBB9:
+  41               		.file 2 "/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h"
+   1:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** /* Copyright (c) 2006, 2007, 2008  Eric B. Weddington
+   2:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h ****    All rights reserved.
+   3:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** 
+   4:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h ****    Redistribution and use in source and binary forms, with or without
+   5:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h ****    modification, are permitted provided that the following conditions are met:
+   6:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** 
+   7:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h ****    * Redistributions of source code must retain the above copyright
+   8:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h ****      notice, this list of conditions and the following disclaimer.
+   9:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h ****    * Redistributions in binary form must reproduce the above copyright
+  10:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h ****      notice, this list of conditions and the following disclaimer in
+  11:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h ****      the documentation and/or other materials provided with the
+  12:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h ****      distribution.
+  13:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h ****    * Neither the name of the copyright holders nor the names of
+  14:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h ****      contributors may be used to endorse or promote products derived
+  15:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h ****      from this software without specific prior written permission.
+  16:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** 
+  17:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h ****   THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+  18:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h ****   AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+  19:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h ****   IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+  20:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h ****   ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE
+  21:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h ****   LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+  22:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h ****   CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+  23:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h ****   SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+  24:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h ****   INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+  25:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h ****   CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+  26:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h ****   ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+  27:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h ****   POSSIBILITY OF SUCH DAMAGE. */
+  28:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** 
+  29:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** /* $Id: power.h 2254 2011-09-26 15:06:50Z arcanum $ */
+  30:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** 
+  31:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** #ifndef _AVR_POWER_H_
+  32:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** #define _AVR_POWER_H_   1
+  33:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** 
+  34:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** #include <avr/io.h>
+  35:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** #include <stdint.h>
+  36:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** 
+  37:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** 
+  38:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** /** \file */
+  39:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** /** \defgroup avr_power <avr/power.h>: Power Reduction Management
+  40:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** 
+  41:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** \code #include <avr/power.h>\endcode
+  42:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** 
+  43:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** Many AVRs contain a Power Reduction Register (PRR) or Registers (PRRx) that 
+  44:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** allow you to reduce power consumption by disabling or enabling various on-board 
+  45:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** peripherals as needed.
+  46:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** 
+  47:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** There are many macros in this header file that provide an easy interface
+  48:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** to enable or disable on-board peripherals to reduce power. See the table below.
+  49:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** 
+  50:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** \note Not all AVR devices have a Power Reduction Register (for example
+  51:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** the ATmega128). On those devices without a Power Reduction Register, these 
+  52:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** macros are not available.
+  53:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** 
+  54:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** \note Not all AVR devices contain the same peripherals (for example, the LCD
+  55:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** interface), or they will be named differently (for example, USART and 
+  56:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** USART0). Please consult your device's datasheet, or the header file, to 
+  57:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** find out which macros are applicable to your device.
+  58:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** 
+  59:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** */
+  60:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** 
+  61:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** 
+  62:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** /** \addtogroup avr_power
+  63:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** 
+  64:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** \anchor avr_powermacros
+  65:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** <small>
+  66:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** <center>
+  67:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** <table border="3">
+  68:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h ****   <tr>
+  69:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h ****     <td width="10%"><strong>Power Macro</strong></td>
+  70:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h ****     <td width="15%"><strong>Description</strong></td>
+  71:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h ****     <td width="75%"><strong>Applicable for device</strong></td>
+  72:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h ****   </tr>
+  73:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** 
+  74:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h ****   <tr>
+  75:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h ****     <td>power_adc_enable()</td>
+  76:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h ****     <td>Enable the Analog to Digital Converter module.</td>
+  77:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h ****     <td>ATmega640, ATmega1280, ATmega1281, ATmega128RFA1, ATmega2560, ATmega2561, AT90USB646, AT90U
+  78:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h ****   </tr>
+  79:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** 
+  80:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h ****   <tr>
+  81:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h ****     <td>power_adc_disable()</td>
+  82:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h ****     <td>Disable the Analog to Digital Converter module.</td>
+  83:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h ****     <td>ATmega640, ATmega1280, ATmega1281, ATmega128RFA1, ATmega2560, ATmega2561, AT90USB646, AT90U
+  84:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h ****   </tr>
+  85:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** 
+  86:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h ****   <tr>
+  87:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h ****     <td>power_lcd_enable()</td>
+  88:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h ****     <td>Enable the LCD module.</td>
+  89:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h ****     <td>ATmega169, ATmega169P, ATmega329, ATmega329A, ATmega3290, ATmega3290A, ATmega649, ATmega649
+  90:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h ****   </tr>
+  91:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** 
+  92:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h ****   <tr>
+  93:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h ****     <td>power_lcd_disable().</td>
+  94:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h ****     <td>Disable the LCD module.</td>
+  95:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h ****     <td>ATmega169, ATmega169P, ATmega329, ATmega329A, ATmega3290, ATmega3290A, ATmega649, ATmega649
+  96:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h ****   </tr>
+  97:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** 
+  98:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h ****   <tr>
+  99:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h ****     <td>power_pscr_enable()</td>
+ 100:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h ****     <td>Enable the Reduced Power Stage Controller module.</td>
+ 101:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h ****     <td>AT90PWM81</td>
+ 102:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h ****   </tr>
+ 103:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** 
+ 104:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h ****   <tr>
+ 105:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h ****     <td>power_pscr_disable()</td>
+ 106:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h ****     <td>Disable the Reduced Power Stage Controller module.</td>
+ 107:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h ****     <td>AT90PWM81</td>
+ 108:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h ****   </tr>
+ 109:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** 
+ 110:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h ****   <tr>
+ 111:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h ****     <td>power_psc0_enable()</td>
+ 112:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h ****     <td>Enable the Power Stage Controller 0 module.</td>
+ 113:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h ****     <td>AT90PWM1, AT90PWM2, AT90PWM2B, AT90PWM3, AT90PWM3B</td>
+ 114:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h ****   </tr>
+ 115:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** 
+ 116:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h ****   <tr>
+ 117:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h ****     <td>power_psc0_disable()</td>
+ 118:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h ****     <td>Disable the Power Stage Controller 0 module.</td>
+ 119:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h ****     <td>AT90PWM1, AT90PWM2, AT90PWM2B, AT90PWM3, AT90PWM3B</td>
+ 120:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h ****   </tr>
+ 121:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** 
+ 122:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h ****   <tr>
+ 123:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h ****     <td>power_psc1_enable()</td>
+ 124:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h ****     <td>Enable the Power Stage Controller 1 module.</td>
+ 125:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h ****     <td>AT90PWM1, AT90PWM2, AT90PWM2B, AT90PWM3, AT90PWM3B</td>
+ 126:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h ****   </tr>
+ 127:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** 
+ 128:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h ****   <tr>
+ 129:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h ****     <td>power_psc1_disable()</td>
+ 130:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h ****     <td>Disable the Power Stage Controller 1 module.</td>
+ 131:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h ****     <td>AT90PWM1, AT90PWM2, AT90PWM2B, AT90PWM3, AT90PWM3B</td>
+ 132:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h ****   </tr>
+ 133:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** 
+ 134:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h ****   <tr>
+ 135:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h ****     <td>power_psc2_enable()</td>
+ 136:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h ****     <td>Enable the Power Stage Controller 2 module.</td>
+ 137:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h ****     <td>AT90PWM1, AT90PWM2, AT90PWM2B, AT90PWM3, AT90PWM3B, AT90PWM81</td>
+ 138:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h ****   </tr>
+ 139:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** 
+ 140:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h ****   <tr>
+ 141:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h ****     <td>power_psc2_disable()</td>
+ 142:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h ****     <td>Disable the Power Stage Controller 2 module.</td>
+ 143:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h ****     <td>AT90PWM1, AT90PWM2, AT90PWM2B, AT90PWM3, AT90PWM3B, AT90PWM81</td>
+ 144:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h ****   </tr>
+ 145:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** 
+ 146:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h ****   <tr>
+ 147:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h ****     <td>power_spi_enable()</td>
+ 148:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h ****     <td>Enable the Serial Peripheral Interface module.</td>
+ 149:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h ****     <td>ATmega640, ATmega1280, ATmega1281, ATmega128RFA1, ATmega2560, ATmega2561, AT90USB646, AT90U
+ 150:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h ****   </tr>
+ 151:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** 
+ 152:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h ****   <tr>
+ 153:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h ****     <td>power_spi_disable()</td>
+ 154:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h ****     <td>Disable the Serial Peripheral Interface module.</td>
+ 155:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h ****     <td>ATmega640, ATmega1280, ATmega1281, ATmega128RFA1, ATmega2560, ATmega2561, AT90USB646, AT90U
+ 156:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h ****   </tr>
+ 157:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** 
+ 158:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h ****   <tr>
+ 159:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h ****     <td>power_timer0_enable()</td>
+ 160:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h ****     <td>Enable the Timer 0 module.</td>
+ 161:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h ****     <td>ATmega640, ATmega1280, ATmega1281, ATmega128RFA1, ATmega2560, ATmega2561, AT90USB646, AT90U
+ 162:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h ****   </tr>
+ 163:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** 
+ 164:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h ****   <tr>
+ 165:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h ****     <td>power_timer0_disable()</td>
+ 166:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h ****     <td>Disable the Timer 0 module.</td>
+ 167:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h ****     <td>ATmega640, ATmega1280, ATmega1281, ATmega128RFA1, ATmega2560, ATmega2561, AT90USB646, AT90U
+ 168:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h ****   </tr>
+ 169:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** 
+ 170:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h ****   <tr>
+ 171:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h ****     <td>power_timer1_enable()</td>
+ 172:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h ****     <td>Enable the Timer 1 module.</td>
+ 173:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h ****     <td>ATmega640, ATmega1280, ATmega1281, ATmega128RFA1, ATmega2560, ATmega2561, AT90USB646, AT90U
+ 174:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h ****   </tr>
+ 175:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** 
+ 176:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h ****   <tr>
+ 177:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h ****     <td>power_timer1_disable()</td>
+ 178:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h ****     <td>Disable the Timer 1 module.</td>
+ 179:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h ****     <td>ATmega640, ATmega1280, ATmega1281, ATmega128RFA1, ATmega2560, ATmega2561, AT90USB646, AT90U
+ 180:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h ****   </tr>
+ 181:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** 
+ 182:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h ****   <tr>
+ 183:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h ****     <td>power_timer2_enable()</td>
+ 184:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h ****     <td>Enable the Timer 2 module.</td>
+ 185:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h ****     <td>ATmega640, ATmega1280, ATmega1281, ATmega128RFA1, ATmega2560, ATmega2561, AT90USB646, AT90U
+ 186:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h ****   </tr>
+ 187:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** 
+ 188:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h ****   <tr>
+ 189:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h ****     <td>power_timer2_disable()</td>
+ 190:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h ****     <td>Disable the Timer 2 module.</td>
+ 191:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h ****     <td>ATmega640, ATmega1280, ATmega1281, ATmega128RFA1, ATmega2560, ATmega2561, AT90USB646, AT90U
+ 192:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h ****   </tr>
+ 193:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** 
+ 194:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h ****   <tr>
+ 195:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h ****     <td>power_timer3_enable()</td>
+ 196:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h ****     <td>Enable the Timer 3 module.</td>
+ 197:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h ****     <td>ATmega640, ATmega1280, ATmega1281, ATmega128RFA1, ATmega2560, ATmega2561, AT90USB646, AT90U
+ 198:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h ****   </tr>
+ 199:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** 
+ 200:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h ****   <tr>
+ 201:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h ****     <td>power_timer3_disable()</td>
+ 202:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h ****     <td>Disable the Timer 3 module.</td>
+ 203:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h ****     <td>ATmega640, ATmega1280, ATmega1281, ATmega128RFA1, ATmega2560, ATmega2561, AT90USB646, AT90U
+ 204:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h ****   </tr>
+ 205:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** 
+ 206:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h ****   <tr>
+ 207:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h ****     <td>power_timer4_enable()</td>
+ 208:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h ****     <td>Enable the Timer 4 module.</td>
+ 209:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h ****     <td>ATmega640, ATmega1280, ATmega1281, ATmega128RFA1, ATmega2560, ATmega2561</td>
+ 210:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h ****   </tr>
+ 211:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** 
+ 212:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h ****   <tr>
+ 213:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h ****     <td>power_timer4_disable()</td>
+ 214:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h ****     <td>Disable the Timer 4 module.</td>
+ 215:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h ****     <td>ATmega640, ATmega1280, ATmega1281, ATmega128RFA1, ATmega2560, ATmega2561</td>
+ 216:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h ****   </tr>
+ 217:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** 
+ 218:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h ****   <tr>
+ 219:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h ****     <td>power_timer5_enable()</td>
+ 220:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h ****     <td>Enable the Timer 5 module.</td>
+ 221:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h ****     <td>ATmega640, ATmega1280, ATmega1281, ATmega128RFA1, ATmega2560, ATmega2561</td>
+ 222:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h ****   </tr>
+ 223:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** 
+ 224:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h ****   <tr>
+ 225:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h ****     <td>power_timer5_disable()</td>
+ 226:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h ****     <td>Disable the Timer 5 module.</td>
+ 227:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h ****     <td>ATmega640, ATmega1280, ATmega1281, ATmega128RFA1, ATmega2560, ATmega2561</td>
+ 228:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h ****   </tr>
+ 229:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** 
+ 230:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h ****   <tr>
+ 231:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h ****     <td>power_twi_enable()</td>
+ 232:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h ****     <td>Enable the Two Wire Interface module.</td>
+ 233:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h ****     <td>ATmega640, ATmega1280, ATmega1281, ATmega128RFA1, ATmega2560, ATmega2561, AT90USB646, AT90U
+ 234:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h ****   </tr>
+ 235:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** 
+ 236:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h ****   <tr>
+ 237:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h ****     <td>power_twi_disable()</td>
+ 238:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h ****     <td>Disable the Two Wire Interface module.</td>
+ 239:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h ****     <td>ATmega640, ATmega1280, ATmega1281, ATmega128RFA1, ATmega2560, ATmega2561, AT90USB646, AT90U
+ 240:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h ****   </tr>
+ 241:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** 
+ 242:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h ****   <tr>
+ 243:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h ****     <td>power_usart_enable()</td>
+ 244:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h ****     <td>Enable the USART module.</td>
+ 245:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h ****     <td>AT90PWM2, AT90PWM2B, AT90PWM3, AT90PWM3B</td>
+ 246:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h ****   </tr>
+ 247:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** 
+ 248:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h ****   <tr>
+ 249:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h ****     <td>power_usart_disable()</td>
+ 250:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h ****     <td>Disable the USART module.</td>
+ 251:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h ****     <td>AT90PWM2, AT90PWM2B, AT90PWM3, AT90PWM3B</td>
+ 252:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h ****   </tr>
+ 253:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** 
+ 254:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h ****   <tr>
+ 255:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h ****     <td>power_usart0_enable()</td>
+ 256:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h ****     <td>Enable the USART 0 module.</td>
+ 257:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h ****     <td>ATmega640, ATmega1280, ATmega1281, ATmega128RFA1, ATmega2560, ATmega2561, ATmega165, ATmega
+ 258:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h ****   </tr>
+ 259:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** 
+ 260:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h ****   <tr>
+ 261:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h ****     <td>power_usart0_disable()</td>
+ 262:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h ****     <td>Disable the USART 0 module.</td>
+ 263:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h ****     <td>ATmega640, ATmega1280, ATmega1281, ATmega128RFA1, ATmega2560, ATmega2561, ATmega165, ATmega
+ 264:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h ****   </tr>
+ 265:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** 
+ 266:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h ****   <tr>
+ 267:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h ****     <td>power_usart1_enable()</td>
+ 268:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h ****     <td>Enable the USART 1 module.</td>
+ 269:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h ****     <td>ATmega640, ATmega1280, ATmega1281, ATmega128RFA1, ATmega2560, ATmega2561, AT90USB646, AT90U
+ 270:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h ****   </tr>
+ 271:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** 
+ 272:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h ****   <tr>
+ 273:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h ****     <td>power_usart1_disable()</td>
+ 274:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h ****     <td>Disable the USART 1 module.</td>
+ 275:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h ****     <td>ATmega640, ATmega1280, ATmega1281, ATmega128RFA1, ATmega2560, ATmega2561, AT90USB646, AT90U
+ 276:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h ****   </tr>
+ 277:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** 
+ 278:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h ****   <tr>
+ 279:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h ****     <td>power_usart2_enable()</td>
+ 280:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h ****     <td>Enable the USART 2 module.</td>
+ 281:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h ****     <td>ATmega640, ATmega1280, ATmega1281, ATmega2560, ATmega2561</td>
+ 282:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h ****   </tr>
+ 283:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** 
+ 284:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h ****   <tr>
+ 285:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h ****     <td>power_usart2_disable()</td>
+ 286:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h ****     <td>Disable the USART 2 module.</td>
+ 287:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h ****     <td>ATmega640, ATmega1280, ATmega1281, ATmega2560, ATmega2561</td>
+ 288:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h ****   </tr>
+ 289:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** 
+ 290:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h ****   <tr>
+ 291:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h ****     <td>power_usart3_enable()</td>
+ 292:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h ****     <td>Enable the USART 3 module.</td>
+ 293:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h ****     <td>ATmega640, ATmega1280, ATmega1281, ATmega2560, ATmega2561</td>
+ 294:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h ****   </tr>
+ 295:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** 
+ 296:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h ****   <tr>
+ 297:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h ****     <td>power_usart3_disable()</td>
+ 298:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h ****     <td>Disable the USART 3 module.</td>
+ 299:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h ****     <td>ATmega640, ATmega1280, ATmega1281, ATmega2560, ATmega2561</td>
+ 300:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h ****   </tr>
+ 301:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** 
+ 302:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h ****   <tr>
+ 303:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h ****     <td>power_usb_enable()</td>
+ 304:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h ****     <td>Enable the USB module.</td>
+ 305:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h ****     <td>AT90USB646, AT90USB647, AT90USB1286, AT90USB1287</td>
+ 306:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h ****   </tr>
+ 307:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** 
+ 308:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h ****   <tr>
+ 309:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h ****     <td>power_usb_disable()</td>
+ 310:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h ****     <td>Disable the USB module.</td>
+ 311:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h ****     <td>AT90USB646, AT90USB647, AT90USB1286, AT90USB1287</td>
+ 312:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h ****   </tr>
+ 313:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** 
+ 314:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h ****   <tr>
+ 315:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h ****     <td>power_usi_enable()</td>
+ 316:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h ****     <td>Enable the Universal Serial Interface module.</td>
+ 317:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h ****     <td>ATtiny24, ATtiny44, ATtiny84, ATtiny84A, ATtiny25, ATtiny45, ATtiny85, ATtiny261, ATtiny461
+ 318:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h ****   </tr>
+ 319:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** 
+ 320:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h ****   <tr>
+ 321:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h ****     <td>power_usi_disable()</td>
+ 322:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h ****     <td>Disable the Universal Serial Interface module.</td>
+ 323:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h ****     <td>ATtiny24, ATtiny44, ATtiny84, ATtiny84A, ATtiny25, ATtiny45, ATtiny85, ATtiny261, ATtiny461
+ 324:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h ****   </tr>
+ 325:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** 
+ 326:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h ****   <tr>
+ 327:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h ****     <td>power_vadc_enable()</td>
+ 328:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h ****     <td>Enable the Voltage ADC module.</td>
+ 329:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h ****     <td>ATmega406</td>
+ 330:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h ****   </tr>
+ 331:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** 
+ 332:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h ****   <tr>
+ 333:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h ****     <td>power_vadc_disable()</td>
+ 334:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h ****     <td>Disable the Voltage ADC module.</td>
+ 335:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h ****     <td>ATmega406</td>
+ 336:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h ****   </tr>
+ 337:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** 
+ 338:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h ****   <tr>
+ 339:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h ****     <td>power_all_enable()</td>
+ 340:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h ****     <td>Enable all modules.</td>
+ 341:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h ****     <td>ATxmega6A4, ATxmega32A4, ATxmega64A1, ATxmega64A1U, ATxmega64A3, ATxmegaA1, ATxmegaA1U, ATx
+ 342:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h ****   </tr>
+ 343:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** 
+ 344:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h ****   <tr>
+ 345:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h ****     <td>power_all_disable()</td>
+ 346:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h ****     <td>Disable all modules.</td>
+ 347:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h ****     <td>ATxmega6A4, ATxmega32A4, ATxmega64A1, ATxmega64A1U, ATxmega64A3, ATxmegaA1, ATxmegaA1U, ATx
+ 348:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h ****   </tr>
+ 349:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** </table>
+ 350:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** </center>
+ 351:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** </small>
+ 352:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** 
+ 353:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** @} */
+ 354:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** 
+ 355:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** // Xmega A series has AES, EBI and DMA bits
+ 356:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** // Include any other device on need basis
+ 357:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** #if defined(__AVR_ATxmega16A4__) \
+ 358:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** || defined(__AVR_ATxmega32A4__) \
+ 359:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** || defined(__AVR_ATxmega64A1__) \
+ 360:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** || defined(__AVR_ATxmega64A1U__) \
+ 361:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** || defined(__AVR_ATxmega64A3__) \
+ 362:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** || defined(__AVR_ATxmega128A1__) \
+ 363:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** || defined(__AVR_ATxmega128A1U__) \
+ 364:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** || defined(__AVR_ATxmega128A3__) \
+ 365:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** || defined(__AVR_ATxmega192A3__) \
+ 366:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** || defined(__AVR_ATxmega256A3__) \
+ 367:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** || defined(__AVR_ATxmega256A3B__)
+ 368:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** 
+ 369:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** #define power_aes_enable()  (PR_PRGEN &= (uint8_t)~(PR_AES_bm))
+ 370:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** #define power_aes_disable() (PR_PRGEN |= (uint8_t)PR_AES_bm)
+ 371:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** 
+ 372:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** #define power_ebi_enable()  (PR_PRGEN &= (uint8_t)~(PR_EBI_bm))
+ 373:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** #define power_ebi_disable() (PR_PRGEN |= (uint8_t)PR_EBI_bm)
+ 374:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** 
+ 375:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** #define power_dma_enable()    (PR_PRGEN &= (uint8_t)~(PR_DMA_bm))
+ 376:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** #define power_dma_disable()   (PR_PRGEN |= (uint8_t)PR_DMA_bm)
+ 377:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** 
+ 378:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** #define power_daca_enable()     (PR_PRPA &= (uint8_t)~(PR_DAC_bm))
+ 379:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** #define power_daca_disable()    (PR_PRPA |= (uint8_t)PR_DAC_bm)
+ 380:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** #define power_dacb_enable()     (PR_PRPB &= (uint8_t)~(PR_DAC_bm))
+ 381:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** #define power_dacb_disable()    (PR_PRPB |= (uint8_t)PR_DAC_bm)
+ 382:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** 
+ 383:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** #define power_usartc1_enable()  (PR_PRPC &= (uint8_t)~(PR_USART1_bm))
+ 384:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** #define power_usartc1_disable() (PR_PRPC |= (uint8_t)PR_USART1_bm)
+ 385:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** #define power_usartd1_enable()  (PR_PRPD &= (uint8_t)~(PR_USART1_bm))
+ 386:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** #define power_usartd1_disable() (PR_PRPD |= (uint8_t)PR_USART1_bm)
+ 387:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** #define power_usarte1_enable()  (PR_PRPE &= (uint8_t)~(PR_USART1_bm))
+ 388:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** #define power_usarte1_disable() (PR_PRPE |= (uint8_t)PR_USART1_bm)
+ 389:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** #define power_usartf1_enable()  (PR_PRPF &= (uint8_t)~(PR_USART1_bm))
+ 390:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** #define power_usartf1_disable() (PR_PRPF |= (uint8_t)PR_USART1_bm)
+ 391:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** 
+ 392:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** #define power_all_enable() \
+ 393:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** do { \
+ 394:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h ****     PR_PRGEN &= (uint8_t)~(PR_AES_bm|PR_EBI_bm|PR_RTC_bm|PR_EVSYS_bm|PR_DMA_bm); \
+ 395:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h ****     PR_PRPA &= (uint8_t)~(PR_DAC_bm|PR_ADC_bm|PR_AC_bm); \
+ 396:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h ****     PR_PRPB &= (uint8_t)~(PR_DAC_bm|PR_ADC_bm|PR_AC_bm); \
+ 397:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h ****     PR_PRPC &= (uint8_t)~(PR_TWI_bm|PR_USART1_bm|PR_USART0_bm|PR_SPI_bm|PR_HIRES_bm|PR_TC1_bm|PR_TC
+ 398:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h ****     PR_PRPD &= (uint8_t)~(PR_TWI_bm|PR_USART1_bm|PR_USART0_bm|PR_SPI_bm|PR_HIRES_bm|PR_TC1_bm|PR_TC
+ 399:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h ****     PR_PRPE &= (uint8_t)~(PR_TWI_bm|PR_USART1_bm|PR_USART0_bm|PR_SPI_bm|PR_HIRES_bm|PR_TC1_bm|PR_TC
+ 400:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h ****     PR_PRPF &= (uint8_t)~(PR_TWI_bm|PR_USART1_bm|PR_USART0_bm|PR_SPI_bm|PR_HIRES_bm|PR_TC1_bm|PR_TC
+ 401:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** } while(0)
+ 402:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** 
+ 403:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** 
+ 404:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** #define power_all_disable() \
+ 405:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** do { \
+ 406:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h ****     PR_PRGEN|= (uint8_t)(PR_AES_bm|PR_EBI_bm|PR_RTC_bm|PR_EVSYS_bm|PR_DMA_bm); \
+ 407:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h ****     PR_PRPA |= (uint8_t)(PR_DAC_bm|PR_ADC_bm|PR_AC_bm); \
+ 408:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h ****     PR_PRPB |= (uint8_t)(PR_DAC_bm|PR_ADC_bm|PR_AC_bm); \
+ 409:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h ****     PR_PRPC |= (uint8_t)(PR_TWI_bm|PR_USART1_bm|PR_USART0_bm|PR_SPI_bm|PR_HIRES_bm|PR_TC1_bm|PR_TC0
+ 410:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h ****     PR_PRPD |= (uint8_t)(PR_TWI_bm|PR_USART1_bm|PR_USART0_bm|PR_SPI_bm|PR_HIRES_bm|PR_TC1_bm|PR_TC0
+ 411:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h ****     PR_PRPE |= (uint8_t)(PR_TWI_bm|PR_USART1_bm|PR_USART0_bm|PR_SPI_bm|PR_HIRES_bm|PR_TC1_bm|PR_TC0
+ 412:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h ****     PR_PRPF |= (uint8_t)(PR_TWI_bm|PR_USART1_bm|PR_USART0_bm|PR_SPI_bm|PR_HIRES_bm|PR_TC1_bm|PR_TC0
+ 413:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** } while(0)
+ 414:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** #endif
+ 415:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** 
+ 416:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** #if defined(__AVR_ATxmega16A4__) \
+ 417:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** || defined(__AVR_ATxmega16D4__) \
+ 418:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** || defined(__AVR_ATxmega32A4__) \
+ 419:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** || defined(__AVR_ATxmega32D4__) \
+ 420:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** || defined(__AVR_ATxmega64A1__) \
+ 421:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** || defined(__AVR_ATxmega64A1U__) \
+ 422:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** || defined(__AVR_ATxmega64A3__) \
+ 423:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** || defined(__AVR_ATxmega64D3__) \
+ 424:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** || defined(__AVR_ATxmega128A1__) \
+ 425:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** || defined(__AVR_ATxmega128A1U__) \
+ 426:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** || defined(__AVR_ATxmega128A3__) \
+ 427:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** || defined(__AVR_ATxmega128D3__) \
+ 428:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** || defined(__AVR_ATxmega192A3__) \
+ 429:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** || defined(__AVR_ATxmega192D3__) \
+ 430:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** || defined(__AVR_ATxmega256A3__) \
+ 431:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** || defined(__AVR_ATxmega256A3B__)
+ 432:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** 
+ 433:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** 
+ 434:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** #define power_rtc_enable()  (PR_PRGEN &= (uint8_t)~(PR_RTC_bm))
+ 435:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** #define power_rtc_disable() (PR_PRGEN |= (uint8_t)PR_RTC_bm)
+ 436:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** 
+ 437:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** #define power_evsys_enable()    (PR_PRGEN &= (uint8_t)~(PR_EVSYS_bm))
+ 438:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** #define power_evsys_disable()   (PR_PRGEN |= (uint8_t)PR_EVSYS_bm)
+ 439:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** 
+ 440:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** #define power_adca_enable()     (PR_PRPA &= (uint8_t)~(PR_ADC_bm))
+ 441:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** #define power_adca_disable()    (PR_PRPA |= (uint8_t)PR_ADC_bm)
+ 442:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** #define power_adcb_enable()     (PR_PRPB &= (uint8_t)~(PR_ADC_bm))
+ 443:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** #define power_adcb_disable()    (PR_PRPB |= (uint8_t)PR_ADC_bm)
+ 444:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** 
+ 445:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** #define power_aca_enable()      (PR_PRPA &= (uint8_t)~(PR_AC_bm))
+ 446:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** #define power_aca_disable()     (PR_PRPA |= (uint8_t)PR_AC_bm)
+ 447:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** #define power_acb_enable()      (PR_PRPB &= (uint8_t)~(PR_AC_bm))
+ 448:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** #define power_acb_disable()     (PR_PRPB |= (uint8_t)PR_AC_bm)
+ 449:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** 
+ 450:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** #define power_twic_enable()     (PR_PRPC &= (uint8_t)~(PR_TWI_bm))
+ 451:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** #define power_twic_disable()    (PR_PRPC |= (uint8_t)PR_TWI_bm)
+ 452:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** #define power_twid_enable()     (PR_PRPD &= (uint8_t)~(PR_TWI_bm))
+ 453:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** #define power_twid_disable()    (PR_PRPD |= (uint8_t)PR_TWI_bm)
+ 454:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** #define power_twie_enable()     (PR_PRPE &= (uint8_t)~(PR_TWI_bm))
+ 455:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** #define power_twie_disable()    (PR_PRPE |= (uint8_t)PR_TWI_bm)
+ 456:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** #define power_twif_enable()     (PR_PRPF &= (uint8_t)~(PR_TWI_bm))
+ 457:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** #define power_twif_disable()    (PR_PRPF |= (uint8_t)PR_TWI_bm)
+ 458:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** 
+ 459:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** #define power_usartc0_enable()  (PR_PRPC &= (uint8_t)~(PR_USART0_bm))
+ 460:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** #define power_usartc0_disable() (PR_PRPC |= (uint8_t)PR_USART0_bm)
+ 461:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** #define power_usartd0_enable()  (PR_PRPD &= (uint8_t)~(PR_USART0_bm))
+ 462:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** #define power_usartd0_disable() (PR_PRPD |= (uint8_t)PR_USART0_bm)
+ 463:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** #define power_usarte0_enable()  (PR_PRPE &= (uint8_t)~(PR_USART0_bm))
+ 464:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** #define power_usarte0_disable() (PR_PRPE |= (uint8_t)PR_USART0_bm)
+ 465:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** #define power_usartf0_enable()  (PR_PRPF &= (uint8_t)~(PR_USART0_bm))
+ 466:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** #define power_usartf0_disable() (PR_PRPF |= (uint8_t)PR_USART0_bm)
+ 467:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** 
+ 468:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** #define power_spic_enable()     (PR_PRPC &= (uint8_t)~(PR_SPI_bm))
+ 469:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** #define power_spic_disable()    (PR_PRPC |= (uint8_t)PR_SPI_bm)
+ 470:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** #define power_spid_enable()     (PR_PRPD &= (uint8_t)~(PR_SPI_bm))
+ 471:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** #define power_spid_disable()    (PR_PRPD |= (uint8_t)PR_SPI_bm)
+ 472:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** #define power_spie_enable()     (PR_PRPE &= (uint8_t)~(PR_SPI_bm))
+ 473:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** #define power_spie_disable()    (PR_PRPE |= (uint8_t)PR_SPI_bm)
+ 474:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** #define power_spif_enable()     (PR_PRPF &= (uint8_t)~(PR_SPI_bm))
+ 475:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** #define power_spif_disable()    (PR_PRPF |= (uint8_t)PR_SPI_bm)
+ 476:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** 
+ 477:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** #define power_hiresc_enable()   (PR_PRPC &= (uint8_t)~(PR_HIRES_bm))
+ 478:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** #define power_hiresc_disable()  (PR_PRPC |= (uint8_t)PR_HIRES_bm)
+ 479:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** #define power_hiresd_enable()   (PR_PRPD &= (uint8_t)~(PR_HIRES_bm))
+ 480:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** #define power_hiresd_disable()  (PR_PRPD |= (uint8_t)PR_HIRES_bm)
+ 481:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** #define power_hirese_enable()   (PR_PRPE &= (uint8_t)~(PR_HIRES_bm))
+ 482:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** #define power_hirese_disable()  (PR_PRPE |= (uint8_t)PR_HIRES_bm)
+ 483:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** #define power_hiresf_enable()   (PR_PRPF &= (uint8_t)~(PR_HIRES_bm))
+ 484:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** #define power_hiresf_disable()  (PR_PRPF |= (uint8_t)PR_HIRES_bm)
+ 485:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** 
+ 486:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** #define power_tc1c_enable()     (PR_PRPC &= (uint8_t)~(PR_TC1_bm))
+ 487:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** #define power_tc1c_disable()    (PR_PRPC |= (uint8_t)PR_TC1_bm)
+ 488:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** #define power_tc1d_enable()     (PR_PRPD &= (uint8_t)~(PR_TC1_bm))
+ 489:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** #define power_tc1d_disable()    (PR_PRPD |= (uint8_t)PR_TC1_bm)
+ 490:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** #define power_tc1e_enable()     (PR_PRPE &= (uint8_t)~(PR_TC1_bm))
+ 491:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** #define power_tc1e_disable()    (PR_PRPE |= (uint8_t)PR_TC1_bm)
+ 492:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** #define power_tc1f_enable()     (PR_PRPF &= (uint8_t)~(PR_TC1_bm))
+ 493:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** #define power_tc1f_disable()    (PR_PRPF |= (uint8_t)PR_TC1_bm)
+ 494:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** 
+ 495:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** #define power_tc0c_enable()     (PR_PRPC &= (uint8_t)~(PR_TC0_bm))
+ 496:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** #define power_tc0c_disable()    (PR_PRPC |= (uint8_t)PR_TC0_bm)
+ 497:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** #define power_tc0d_enable()     (PR_PRPD &= (uint8_t)~(PR_TC0_bm))
+ 498:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** #define power_tc0d_disable()    (PR_PRPD |= (uint8_t)PR_TC0_bm)
+ 499:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** #define power_tc0e_enable()     (PR_PRPE &= (uint8_t)~(PR_TC0_bm))
+ 500:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** #define power_tc0e_disable()    (PR_PRPE |= (uint8_t)PR_TC0_bm)
+ 501:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** #define power_tc0f_enable()     (PR_PRPF &= (uint8_t)~(PR_TC0_bm))
+ 502:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** #define power_tc0f_disable()    (PR_PRPF |= (uint8_t)PR_TC0_bm)
+ 503:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** 
+ 504:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** #endif
+ 505:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** 
+ 506:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** #if defined(__AVR_ATxmega16D4__) \
+ 507:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** || defined(__AVR_ATxmega32D4__) \
+ 508:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** || defined(__AVR_ATxmega64D3__) \
+ 509:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** || defined(__AVR_ATxmega128D3__) \
+ 510:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** || defined(__AVR_ATxmega192D3__) 
+ 511:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** 
+ 512:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** #define power_all_enable() \
+ 513:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** do { \
+ 514:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h ****     PR_PRGEN &= (uint8_t)~(PR_RTC_bm|PR_EVSYS_bm); \
+ 515:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h ****     PR_PRPA &= (uint8_t)~(PR_ADC_bm|PR_AC_bm); \
+ 516:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h ****     PR_PRPB &= (uint8_t)~(PR_ADC_bm|PR_AC_bm); \
+ 517:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h ****     PR_PRPC &= (uint8_t)~(PR_TWI_bm|PR_USART0_bm|PR_SPI_bm|PR_HIRES_bm|PR_TC1_bm|PR_TC0_bm); \
+ 518:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h ****     PR_PRPD &= (uint8_t)~(PR_TWI_bm|PR_USART0_bm|PR_SPI_bm|PR_HIRES_bm|PR_TC1_bm|PR_TC0_bm); \
+ 519:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h ****     PR_PRPE &= (uint8_t)~(PR_TWI_bm|PR_USART0_bm|PR_SPI_bm|PR_HIRES_bm|PR_TC1_bm|PR_TC0_bm); \
+ 520:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h ****     PR_PRPF &= (uint8_t)~(PR_TWI_bm|PR_USART0_bm|PR_SPI_bm|PR_HIRES_bm|PR_TC1_bm|PR_TC0_bm); \
+ 521:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** } while(0)
+ 522:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** 
+ 523:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** 
+ 524:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** #define power_all_disable() \
+ 525:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** do { \
+ 526:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h ****     PR_PRGEN|= (uint8_t)(PR_EBI_bm|PR_RTC_bm|PR_EVSYS_bm|PR_DMA_bm); \
+ 527:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h ****     PR_PRPA |= (uint8_t)(PR_ADC_bm|PR_AC_bm); \
+ 528:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h ****     PR_PRPB |= (uint8_t)(PR_ADC_bm|PR_AC_bm); \
+ 529:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h ****     PR_PRPC |= (uint8_t)(PR_TWI_bm|R_USART0_bm|PR_SPI_bm|PR_HIRES_bm|PR_TC1_bm|PR_TC0_bm); \
+ 530:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h ****     PR_PRPD |= (uint8_t)(PR_TWI_bm|PR_USART0_bm|PR_SPI_bm|PR_HIRES_bm|PR_TC1_bm|PR_TC0_bm); \
+ 531:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h ****     PR_PRPE |= (uint8_t)(PR_TWI_bm|PR_USART0_bm|PR_SPI_bm|PR_HIRES_bm|PR_TC1_bm|PR_TC0_bm); \
+ 532:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h ****     PR_PRPF |= (uint8_t)(PR_TWI_bm|PR_USART0_bm|PR_SPI_bm|PR_HIRES_bm|PR_TC1_bm|PR_TC0_bm); \
+ 533:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** } while(0)
+ 534:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** 
+ 535:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** #elif defined(__AVR_ATmega640__) \
+ 536:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** || defined(__AVR_ATmega1280__) \
+ 537:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** || defined(__AVR_ATmega1281__) \
+ 538:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** || defined(__AVR_ATmega2560__) \
+ 539:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** || defined(__AVR_ATmega2561__) 
+ 540:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** 
+ 541:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** #define power_adc_enable()      (PRR0 &= (uint8_t)~(1 << PRADC))
+ 542:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** #define power_adc_disable()     (PRR0 |= (uint8_t)(1 << PRADC))
+ 543:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** 
+ 544:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** #define power_spi_enable()      (PRR0 &= (uint8_t)~(1 << PRSPI))
+ 545:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** #define power_spi_disable()     (PRR0 |= (uint8_t)(1 << PRSPI))
+ 546:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** 
+ 547:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** #define power_twi_enable()      (PRR0 &= (uint8_t)~(1 << PRTWI))
+ 548:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** #define power_twi_disable()     (PRR0 |= (uint8_t)(1 << PRTWI))
+ 549:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** 
+ 550:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** #define power_timer0_enable()   (PRR0 &= (uint8_t)~(1 << PRTIM0))
+ 551:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** #define power_timer0_disable()  (PRR0 |= (uint8_t)(1 << PRTIM0))
+ 552:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** 
+ 553:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** #define power_timer1_enable()   (PRR0 &= (uint8_t)~(1 << PRTIM1))
+ 554:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** #define power_timer1_disable()  (PRR0 |= (uint8_t)(1 << PRTIM1))
+ 555:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** 
+ 556:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** #define power_timer2_enable()   (PRR0 &= (uint8_t)~(1 << PRTIM2))
+ 557:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** #define power_timer2_disable()  (PRR0 |= (uint8_t)(1 << PRTIM2))
+ 558:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** 
+ 559:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** #define power_timer3_enable()   (PRR1 &= (uint8_t)~(1 << PRTIM3))
+ 560:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** #define power_timer3_disable()  (PRR1 |= (uint8_t)(1 << PRTIM3))
+ 561:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** 
+ 562:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** #define power_timer4_enable()   (PRR1 &= (uint8_t)~(1 << PRTIM4))
+ 563:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** #define power_timer4_disable()  (PRR1 |= (uint8_t)(1 << PRTIM4))
+ 564:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** 
+ 565:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** #define power_timer5_enable()   (PRR1 &= (uint8_t)~(1 << PRTIM5))
+ 566:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** #define power_timer5_disable()  (PRR1 |= (uint8_t)(1 << PRTIM5))
+ 567:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** 
+ 568:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** #define power_usart0_enable()   (PRR0 &= (uint8_t)~(1 << PRUSART0))
+ 569:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** #define power_usart0_disable()  (PRR0 |= (uint8_t)(1 << PRUSART0))
+ 570:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** 
+ 571:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** #define power_usart1_enable()   (PRR1 &= (uint8_t)~(1 << PRUSART1))
+ 572:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** #define power_usart1_disable()  (PRR1 |= (uint8_t)(1 << PRUSART1))
+ 573:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** 
+ 574:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** #define power_usart2_enable()   (PRR1 &= (uint8_t)~(1 << PRUSART2))
+ 575:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** #define power_usart2_disable()  (PRR1 |= (uint8_t)(1 << PRUSART2))
+ 576:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** 
+ 577:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** #define power_usart3_enable()   (PRR1 &= (uint8_t)~(1 << PRUSART3))
+ 578:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** #define power_usart3_disable()  (PRR1 |= (uint8_t)(1 << PRUSART3))
+ 579:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** 
+ 580:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** #define power_all_enable() \
+ 581:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** do{ \
+ 582:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h ****     PRR0 &= (uint8_t)~((1<<PRADC)|(1<<PRSPI)|(1<<PRTWI)|(1<<PRTIM0)|(1<<PRTIM1)|(1<<PRTIM2)|(1<<PRU
+ 583:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h ****     PRR1 &= (uint8_t)~((1<<PRTIM3)|(1<<PRTIM4)|(1<<PRTIM5)|(1<<PRTIM5)|(1<<PRUSART1)|(1<<PRUSART2)|
+ 584:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** }while(0)
+ 585:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** 
+ 586:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** #define power_all_disable() \
+ 587:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** do{ \
+ 588:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h ****     PRR0 |= (uint8_t)((1<<PRADC)|(1<<PRSPI)|(1<<PRTWI)|(1<<PRTIM0)|(1<<PRTIM1)|(1<<PRTIM2)|(1<<PRUS
+ 589:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h ****     PRR1 |= (uint8_t)((1<<PRTIM3)|(1<<PRTIM4)|(1<<PRTIM5)|(1<<PRTIM5)|(1<<PRUSART1)|(1<<PRUSART2)|(
+ 590:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** }while(0)
+ 591:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** 
+ 592:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** 
+ 593:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** #elif defined(__AVR_ATmega128RFA1__)
+ 594:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** 
+ 595:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** #define power_adc_enable()      (PRR0 &= (uint8_t)~(1 << PRADC))
+ 596:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** #define power_adc_disable()     (PRR0 |= (uint8_t)(1 << PRADC))
+ 597:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** 
+ 598:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** #define power_spi_enable()      (PRR0 &= (uint8_t)~(1 << PRSPI))
+ 599:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** #define power_spi_disable()     (PRR0 |= (uint8_t)(1 << PRSPI))
+ 600:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** 
+ 601:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** #define power_twi_enable()      (PRR0 &= (uint8_t)~(1 << PRTWI))
+ 602:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** #define power_twi_disable()     (PRR0 |= (uint8_t)(1 << PRTWI))
+ 603:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** 
+ 604:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** #define power_timer0_enable()   (PRR0 &= (uint8_t)~(1 << PRTIM0))
+ 605:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** #define power_timer0_disable()  (PRR0 |= (uint8_t)(1 << PRTIM0))
+ 606:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** 
+ 607:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** #define power_timer1_enable()   (PRR0 &= (uint8_t)~(1 << PRTIM1))
+ 608:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** #define power_timer1_disable()  (PRR0 |= (uint8_t)(1 << PRTIM1))
+ 609:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** 
+ 610:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** #define power_timer2_enable()   (PRR0 &= (uint8_t)~(1 << PRTIM2))
+ 611:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** #define power_timer2_disable()  (PRR0 |= (uint8_t)(1 << PRTIM2))
+ 612:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** 
+ 613:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** #define power_timer3_enable()   (PRR1 &= (uint8_t)~(1 << PRTIM3))
+ 614:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** #define power_timer3_disable()  (PRR1 |= (uint8_t)(1 << PRTIM3))
+ 615:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** 
+ 616:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** #define power_timer4_enable()   (PRR1 &= (uint8_t)~(1 << PRTIM4))
+ 617:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** #define power_timer4_disable()  (PRR1 |= (uint8_t)(1 << PRTIM4))
+ 618:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** 
+ 619:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** #define power_timer5_enable()   (PRR1 &= (uint8_t)~(1 << PRTIM5))
+ 620:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** #define power_timer5_disable()  (PRR1 |= (uint8_t)(1 << PRTIM5))
+ 621:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** 
+ 622:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** #define power_usart0_enable()   (PRR0 &= (uint8_t)~(1 << PRUSART0))
+ 623:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** #define power_usart0_disable()  (PRR0 |= (uint8_t)(1 << PRUSART0))
+ 624:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** 
+ 625:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** #define power_usart1_enable()   (PRR1 &= (uint8_t)~(1 << PRUSART1))
+ 626:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** #define power_usart1_disable()  (PRR1 |= (uint8_t)(1 << PRUSART1))
+ 627:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** 
+ 628:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** #define power_all_enable() \
+ 629:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** do{ \
+ 630:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h ****     PRR0 &= (uint8_t)~((1<<PRADC)|(1<<PRSPI)|(1<<PRTWI)|(1<<PRTIM0)|(1<<PRTIM1)|(1<<PRTIM2)|(1<<PRU
+ 631:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h ****     PRR1 &= (uint8_t)~((1<<PRTIM3)|(1<<PRTIM4)|(1<<PRTIM5)|(1<<PRTIM5)|(1<<PRUSART1)); \
+ 632:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** }while(0)
+ 633:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** 
+ 634:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** #define power_all_disable() \
+ 635:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** do{ \
+ 636:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h ****     PRR0 |= (uint8_t)((1<<PRADC)|(1<<PRSPI)|(1<<PRTWI)|(1<<PRTIM0)|(1<<PRTIM1)|(1<<PRTIM2)|(1<<PRUS
+ 637:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h ****     PRR1 |= (uint8_t)((1<<PRTIM3)|(1<<PRTIM4)|(1<<PRTIM5)|(1<<PRTIM5)|(1<<PRUSART1)); \
+ 638:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** }while(0)
+ 639:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** 
+ 640:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** 
+ 641:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** #elif defined(__AVR_AT90USB646__) \
+ 642:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** || defined(__AVR_AT90USB647__) \
+ 643:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** || defined(__AVR_AT90USB1286__) \
+ 644:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** || defined(__AVR_AT90USB1287__)
+ 645:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** 
+ 646:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** #define power_adc_enable()      (PRR0 &= (uint8_t)~(1 << PRADC))
+ 647:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** #define power_adc_disable()     (PRR0 |= (uint8_t)(1 << PRADC))
+ 648:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** 
+ 649:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** #define power_spi_enable()      (PRR0 &= (uint8_t)~(1 << PRSPI))
+ 650:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** #define power_spi_disable()     (PRR0 |= (uint8_t)(1 << PRSPI))
+ 651:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** 
+ 652:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** #define power_twi_enable()      (PRR0 &= (uint8_t)~(1 << PRTWI))
+ 653:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** #define power_twi_disable()     (PRR0 |= (uint8_t)(1 << PRTWI))
+ 654:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** 
+ 655:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** #define power_timer0_enable()   (PRR0 &= (uint8_t)~(1 << PRTIM0))
+ 656:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** #define power_timer0_disable()  (PRR0 |= (uint8_t)(1 << PRTIM0))
+ 657:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** 
+ 658:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** #define power_timer1_enable()   (PRR0 &= (uint8_t)~(1 << PRTIM1))
+ 659:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** #define power_timer1_disable()  (PRR0 |= (uint8_t)(1 << PRTIM1))
+ 660:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** 
+ 661:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** #define power_timer2_enable()   (PRR0 &= (uint8_t)~(1 << PRTIM2))
+ 662:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** #define power_timer2_disable()  (PRR0 |= (uint8_t)(1 << PRTIM2))
+ 663:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** 
+ 664:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** #define power_timer3_enable()   (PRR1 &= (uint8_t)~(1 << PRTIM3))
+ 665:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** #define power_timer3_disable()  (PRR1 |= (uint8_t)(1 << PRTIM3))
+ 666:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** 
+ 667:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** #define power_usart1_enable()   (PRR1 &= (uint8_t)~(1 << PRUSART1))
+ 668:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** #define power_usart1_disable()  (PRR1 |= (uint8_t)(1 << PRUSART1))
+ 669:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** 
+ 670:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** #define power_usb_enable()      (PRR1 &= (uint8_t)~(1 << PRUSB))
+ 671:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** #define power_usb_disable()     (PRR1 |= (uint8_t)(1 << PRUSB))
+ 672:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** 
+ 673:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** #define power_all_enable() \
+ 674:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** do{ \
+ 675:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h ****     PRR0 &= (uint8_t)~((1<<PRADC)|(1<<PRSPI)|(1<<PRTWI)|(1<<PRTIM0)|(1<<PRTIM1)|(1<<PRTIM2)); \
+ 676:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h ****     PRR1 &= (uint8_t)~((1<<PRTIM3)|(1<<PRUSART1)|(1<<PRUSB)); \
+ 677:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** }while(0)
+ 678:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** 
+ 679:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** #define power_all_disable() \
+ 680:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** do{ \
+ 681:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h ****     PRR0 |= (uint8_t)((1<<PRADC)|(1<<PRSPI)|(1<<PRTWI)|(1<<PRTIM0)|(1<<PRTIM1)|(1<<PRTIM2)); \
+ 682:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h ****     PRR1 |= (uint8_t)((1<<PRTIM3)|(1<<PRUSART1)|(1<<PRUSB)); \
+ 683:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** }while(0)
+ 684:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** 
+ 685:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** 
+ 686:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** #elif defined(__AVR_ATmega32U4__) \
+ 687:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** || defined(__AVR_ATmega16U4__)
+ 688:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** 
+ 689:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** 
+ 690:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** #define power_adc_enable()      (PRR0 &= (uint8_t)~(1 << PRADC))
+ 691:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** #define power_adc_disable()     (PRR0 |= (uint8_t)(1 << PRADC))
+ 692:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** 
+ 693:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** #define power_usart0_enable()   (PRR0 &= (uint8_t)~(1 << PRUSART0))
+ 694:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** #define power_usart0_disable()  (PRR0 |= (uint8_t)(1 << PRUSART0))
+ 695:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** 
+ 696:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** #define power_spi_enable()      (PRR0 &= (uint8_t)~(1 << PRSPI))
+ 697:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** #define power_spi_disable()     (PRR0 |= (uint8_t)(1 << PRSPI))
+ 698:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** 
+ 699:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** #define power_twi_enable()      (PRR0 &= (uint8_t)~(1 << PRTWI))
+ 700:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** #define power_twi_disable()     (PRR0 |= (uint8_t)(1 << PRTWI))
+ 701:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** 
+ 702:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** #define power_timer0_enable()   (PRR0 &= (uint8_t)~(1 << PRTIM0))
+ 703:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** #define power_timer0_disable()  (PRR0 |= (uint8_t)(1 << PRTIM0))
+ 704:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** 
+ 705:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** #define power_timer1_enable()   (PRR0 &= (uint8_t)~(1 << PRTIM1))
+ 706:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** #define power_timer1_disable()  (PRR0 |= (uint8_t)(1 << PRTIM1))
+ 707:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** 
+ 708:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** #define power_timer2_enable()   (PRR0 &= (uint8_t)~(1 << PRTIM2))
+ 709:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** #define power_timer2_disable()  (PRR0 |= (uint8_t)(1 << PRTIM2))
+ 710:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** 
+ 711:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** #define power_timer3_enable()   (PRR1 &= (uint8_t)~(1 << PRTIM3))
+ 712:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** #define power_timer3_disable()  (PRR1 |= (uint8_t)(1 << PRTIM3))
+ 713:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** 
+ 714:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** #define power_usart1_enable()   (PRR1 &= (uint8_t)~(1 << PRUSART1))
+ 715:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** #define power_usart1_disable()  (PRR1 |= (uint8_t)(1 << PRUSART1))
+ 716:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** 
+ 717:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** #define power_usb_enable()      (PRR1 &= (uint8_t)~(1 << PRUSB))
+ 718:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** #define power_usb_disable()     (PRR1 |= (uint8_t)(1 << PRUSB))
+ 719:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** 
+ 720:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** #define power_all_enable() \
+ 721:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** do{ \
+ 722:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h ****     PRR0 &= (uint8_t)~((1<<PRADC)|(1<<PRUSART0)|(1<<PRSPI)|(1<<PRTWI)|(1<<PRTIM0)|(1<<PRTIM1)|(1<<P
+ 723:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h ****     PRR1 &= (uint8_t)~((1<<PRTIM3)|(1<<PRUSART1)|(1<<PRUSB)); \
+ 724:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** }while(0)
+ 725:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** 
+ 726:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** #define power_all_disable() \
+ 727:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** do{ \
+ 728:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h ****     PRR0 |= (uint8_t)((1<<PRADC)|(1<<PRUSART0)|(1<<PRSPI)|(1<<PRTWI)|(1<<PRTIM0)|(1<<PRTIM1)|(1<<PR
+ 729:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h ****     PRR1 |= (uint8_t)((1<<PRTIM3)|(1<<PRUSART1)|(1<<PRUSB)); \
+ 730:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** }while(0)
+ 731:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** 
+ 732:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** 
+ 733:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** #elif defined(__AVR_ATmega32U6__)
+ 734:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** 
+ 735:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** 
+ 736:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** #define power_adc_enable()      (PRR0 &= (uint8_t)~(1 << PRADC))
+ 737:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** #define power_adc_disable()     (PRR0 |= (uint8_t)(1 << PRADC))
+ 738:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** 
+ 739:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** #define power_spi_enable()      (PRR0 &= (uint8_t)~(1 << PRSPI))
+ 740:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** #define power_spi_disable()     (PRR0 |= (uint8_t)(1 << PRSPI))
+ 741:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** 
+ 742:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** #define power_twi_enable()      (PRR0 &= (uint8_t)~(1 << PRTWI))
+ 743:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** #define power_twi_disable()     (PRR0 |= (uint8_t)(1 << PRTWI))
+ 744:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** 
+ 745:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** #define power_timer0_enable()   (PRR0 &= (uint8_t)~(1 << PRTIM0))
+ 746:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** #define power_timer0_disable()  (PRR0 |= (uint8_t)(1 << PRTIM0))
+ 747:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** 
+ 748:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** #define power_timer1_enable()   (PRR0 &= (uint8_t)~(1 << PRTIM1))
+ 749:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** #define power_timer1_disable()  (PRR0 |= (uint8_t)(1 << PRTIM1))
+ 750:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** 
+ 751:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** #define power_timer2_enable()   (PRR0 &= (uint8_t)~(1 << PRTIM2))
+ 752:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** #define power_timer2_disable()  (PRR0 |= (uint8_t)(1 << PRTIM2))
+ 753:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** 
+ 754:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** #define power_timer3_enable()   (PRR1 &= (uint8_t)~(1 << PRTIM3))
+ 755:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** #define power_timer3_disable()  (PRR1 |= (uint8_t)(1 << PRTIM3))
+ 756:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** 
+ 757:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** #define power_usart1_enable()   (PRR1 &= (uint8_t)~(1 << PRUSART1))
+ 758:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** #define power_usart1_disable()  (PRR1 |= (uint8_t)(1 << PRUSART1))
+ 759:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** 
+ 760:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** #define power_usb_enable()      (PRR1 &= (uint8_t)~(1 << PRUSB))
+ 761:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** #define power_usb_disable()     (PRR1 |= (uint8_t)(1 << PRUSB))
+ 762:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** 
+ 763:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** #define power_all_enable() \
+ 764:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** do{ \
+ 765:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h ****     PRR0 &= (uint8_t)~((1<<PRADC)|(1<<PRSPI)|(1<<PRTWI)|(1<<PRTIM0)|(1<<PRTIM1)|(1<<PRTIM2)); \
+ 766:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h ****     PRR1 &= (uint8_t)~((1<<PRTIM3)|(1<<PRUSART1)|(1<<PRUSB)); \
+ 767:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** }while(0)
+ 768:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** 
+ 769:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** #define power_all_disable() \
+ 770:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** do{ \
+ 771:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h ****     PRR0 |= (uint8_t)((1<<PRADC)|(1<<PRSPI)|(1<<PRTWI)|(1<<PRTIM0)|(1<<PRTIM1)|(1<<PRTIM2)); \
+ 772:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h ****     PRR1 |= (uint8_t)((1<<PRTIM3)|(1<<PRUSART1)|(1<<PRUSB)); \
+ 773:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** }while(0)
+ 774:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** 
+ 775:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** 
+ 776:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** #elif defined(__AVR_AT90PWM1__)
+ 777:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** 
+ 778:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** #define power_adc_enable()      (PRR &= (uint8_t)~(1 << PRADC))
+ 779:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** #define power_adc_disable()     (PRR |= (uint8_t)(1 << PRADC))
+ 780:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** 
+ 781:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** #define power_spi_enable()      (PRR &= (uint8_t)~(1 << PRSPI))
+ 782:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** #define power_spi_disable()     (PRR |= (uint8_t)(1 << PRSPI))
+ 783:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** 
+ 784:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** #define power_timer0_enable()   (PRR &= (uint8_t)~(1 << PRTIM0))
+ 785:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** #define power_timer0_disable()  (PRR |= (uint8_t)(1 << PRTIM0))
+ 786:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** 
+ 787:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** #define power_timer1_enable()   (PRR &= (uint8_t)~(1 << PRTIM1))
+ 788:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** #define power_timer1_disable()  (PRR |= (uint8_t)(1 << PRTIM1))
+ 789:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** 
+ 790:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** /* Power Stage Controller 0 */
+ 791:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** #define power_psc0_enable()     (PRR &= (uint8_t)~(1 << PRPSC0))
+ 792:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** #define power_psc0_disable()    (PRR |= (uint8_t)(1 << PRPSC0))
+ 793:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** 
+ 794:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** /* Power Stage Controller 1 */
+ 795:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** #define power_psc1_enable()     (PRR &= (uint8_t)~(1 << PRPSC1))
+ 796:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** #define power_psc1_disable()    (PRR |= (uint8_t)(1 << PRPSC1))
+ 797:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** 
+ 798:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** /* Power Stage Controller 2 */
+ 799:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** #define power_psc2_enable()     (PRR &= (uint8_t)~(1 << PRPSC2))
+ 800:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** #define power_psc2_disable()    (PRR |= (uint8_t)(1 << PRPSC2))
+ 801:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** 
+ 802:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** #define power_all_enable()      (PRR &= (uint8_t)~((1<<PRADC)|(1<<PRSPI)|(1<<PRTIM0)|(1<<PRTIM1)|(1
+ 803:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** #define power_all_disable()     (PRR |= (uint8_t)((1<<PRADC)|(1<<PRSPI)|(1<<PRTIM0)|(1<<PRTIM1)|(1<
+ 804:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** 
+ 805:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** 
+ 806:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** #elif defined(__AVR_AT90PWM2__) \
+ 807:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** || defined(__AVR_AT90PWM2B__) \
+ 808:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** || defined(__AVR_AT90PWM3__) \
+ 809:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** || defined(__AVR_AT90PWM3B__) \
+ 810:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** || defined(__AVR_AT90PWM216__) \
+ 811:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** || defined(__AVR_AT90PWM316__)
+ 812:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** 
+ 813:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** #define power_adc_enable()      (PRR &= (uint8_t)~(1 << PRADC))
+ 814:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** #define power_adc_disable()     (PRR |= (uint8_t)(1 << PRADC))
+ 815:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** 
+ 816:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** #define power_spi_enable()      (PRR &= (uint8_t)~(1 << PRSPI))
+ 817:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** #define power_spi_disable()     (PRR |= (uint8_t)(1 << PRSPI))
+ 818:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** 
+ 819:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** #define power_usart_enable()    (PRR &= (uint8_t)~(1 << PRUSART))
+ 820:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** #define power_usart_disable()   (PRR |= (uint8_t)(1 << PRUSART))
+ 821:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** 
+ 822:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** #define power_timer0_enable()   (PRR &= (uint8_t)~(1 << PRTIM0))
+ 823:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** #define power_timer0_disable()  (PRR |= (uint8_t)(1 << PRTIM0))
+ 824:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** 
+ 825:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** #define power_timer1_enable()   (PRR &= (uint8_t)~(1 << PRTIM1))
+ 826:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** #define power_timer1_disable()  (PRR |= (uint8_t)(1 << PRTIM1))
+ 827:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** 
+ 828:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** /* Power Stage Controller 0 */
+ 829:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** #define power_psc0_enable()     (PRR &= (uint8_t)~(1 << PRPSC0))
+ 830:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** #define power_psc0_disable()    (PRR |= (uint8_t)(1 << PRPSC0))
+ 831:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** 
+ 832:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** /* Power Stage Controller 1 */
+ 833:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** #define power_psc1_enable()     (PRR &= (uint8_t)~(1 << PRPSC1))
+ 834:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** #define power_psc1_disable()    (PRR |= (uint8_t)(1 << PRPSC1))
+ 835:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** 
+ 836:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** /* Power Stage Controller 2 */
+ 837:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** #define power_psc2_enable()     (PRR &= (uint8_t)~(1 << PRPSC2))
+ 838:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** #define power_psc2_disable()    (PRR |= (uint8_t)(1 << PRPSC2))
+ 839:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** 
+ 840:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** #define power_all_enable()      (PRR &= (uint8_t)~((1<<PRADC)|(1<<PRSPI)|(1<<PRUSART)|(1<<PRTIM0)|(
+ 841:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** #define power_all_disable()     (PRR |= (uint8_t)((1<<PRADC)|(1<<PRSPI)|(1<<PRUSART)|(1<<PRTIM0)|(1
+ 842:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** 
+ 843:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** 
+ 844:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** #elif defined(__AVR_AT90PWM81__)
+ 845:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** 
+ 846:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** #define power_adc_enable()      (PRR &= (uint8_t)~(1 << PRADC))
+ 847:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** #define power_adc_disable()     (PRR |= (uint8_t)(1 << PRADC))
+ 848:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** 
+ 849:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** #define power_spi_enable()      (PRR &= (uint8_t)~(1 << PRSPI))
+ 850:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** #define power_spi_disable()     (PRR |= (uint8_t)(1 << PRSPI))
+ 851:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** 
+ 852:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** #define power_timer1_enable()   (PRR &= (uint8_t)~(1 << PRTIM1))
+ 853:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** #define power_timer1_disable()  (PRR |= (uint8_t)(1 << PRTIM1))
+ 854:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** 
+ 855:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** /* Reduced Power Stage Controller */
+ 856:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** #define power_pscr_enable()     (PRR &= (uint8_t)~(1 << PRPSCR))
+ 857:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** #define power_pscr_disable()    (PRR |= (uint8_t)(1 << PRPSCR))
+ 858:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** 
+ 859:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** /* Power Stage Controller 2 */
+ 860:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** #define power_psc2_enable()     (PRR &= (uint8_t)~(1 << PRPSC2))
+ 861:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** #define power_psc2_disable()    (PRR |= (uint8_t)(1 << PRPSC2))
+ 862:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** 
+ 863:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** #define power_all_enable()      (PRR &= (uint8_t)~((1<<PRADC)|(1<<PRSPI)|(1<<PRTIM1)|(1<<PRPSCR)|(1
+ 864:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** #define power_all_disable()     (PRR |= (uint8_t)((1<<PRADC)|(1<<PRSPI)|(1<<PRTIM1)|(1<<PRPSCR)|(1<
+ 865:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** 
+ 866:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** 
+ 867:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** #elif defined(__AVR_ATmega165__) \
+ 868:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** || defined(__AVR_ATmega165A__) \
+ 869:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** || defined(__AVR_ATmega165P__) \
+ 870:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** || defined(__AVR_ATmega325__) \
+ 871:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** || defined(__AVR_ATmega325A__) \
+ 872:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** || defined(__AVR_ATmega3250__) \
+ 873:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** || defined(__AVR_ATmega3250A__) \
+ 874:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** || defined(__AVR_ATmega645__) \
+ 875:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** || defined(__AVR_ATmega645A__) \
+ 876:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** || defined(__AVR_ATmega645P__) \
+ 877:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** || defined(__AVR_ATmega6450__) \
+ 878:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** || defined(__AVR_ATmega6450A__) \
+ 879:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** || defined(__AVR_ATmega6450P__)
+ 880:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** 
+ 881:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** #define power_adc_enable()      (PRR &= (uint8_t)~(1 << PRADC))
+ 882:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** #define power_adc_disable()     (PRR |= (uint8_t)(1 << PRADC))
+ 883:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** 
+ 884:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** #define power_spi_enable()      (PRR &= (uint8_t)~(1 << PRSPI))
+ 885:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** #define power_spi_disable()     (PRR |= (uint8_t)(1 << PRSPI))
+ 886:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** 
+ 887:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** #define power_usart0_enable()   (PRR &= (uint8_t)~(1 << PRUSART0))
+ 888:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** #define power_usart0_disable()  (PRR |= (uint8_t)(1 << PRUSART0))
+ 889:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** 
+ 890:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** #define power_timer1_enable()   (PRR &= (uint8_t)~(1 << PRTIM1))
+ 891:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** #define power_timer1_disable()  (PRR |= (uint8_t)(1 << PRTIM1))
+ 892:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** 
+ 893:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** #define power_all_enable()      (PRR &= (uint8_t)~((1<<PRADC)|(1<<PRSPI)|(1<<PRUSART0)|(1<<PRTIM1))
+ 894:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** #define power_all_disable()     (PRR |= (uint8_t)((1<<PRADC)|(1<<PRSPI)|(1<<PRUSART0)|(1<<PRTIM1)))
+ 895:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** 
+ 896:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** 
+ 897:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** #elif defined(__AVR_ATmega169__) \
+ 898:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** || defined(__AVR_ATmega169A__) \
+ 899:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** || defined(__AVR_ATmega169P__) \
+ 900:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** || defined(__AVR_ATmega169PA__) \
+ 901:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** || defined(__AVR_ATmega329__) \
+ 902:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** || defined(__AVR_ATmega329A__) \
+ 903:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** || defined(__AVR_ATmega329P__) \
+ 904:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** || defined(__AVR_ATmega329PA__) \
+ 905:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** || defined(__AVR_ATmega3290__) \
+ 906:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** || defined(__AVR_ATmega3290A__) \
+ 907:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** || defined(__AVR_ATmega3290P__) \
+ 908:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** || defined(__AVR_ATmega649__) \
+ 909:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** || defined(__AVR_ATmega649A__) \
+ 910:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** || defined(__AVR_ATmega649P__) \
+ 911:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** || defined(__AVR_ATmega6490__) \
+ 912:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** || defined(__AVR_ATmega6490A__) \
+ 913:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** || defined(__AVR_ATmega6490P__)
+ 914:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** 
+ 915:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** #define power_adc_enable()      (PRR &= (uint8_t)~(1 << PRADC))
+ 916:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** #define power_adc_disable()     (PRR |= (uint8_t)(1 << PRADC))
+ 917:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** 
+ 918:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** #define power_spi_enable()      (PRR &= (uint8_t)~(1 << PRSPI))
+ 919:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** #define power_spi_disable()     (PRR |= (uint8_t)(1 << PRSPI))
+ 920:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** 
+ 921:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** #define power_usart0_enable()   (PRR &= (uint8_t)~(1 << PRUSART0))
+ 922:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** #define power_usart0_disable()  (PRR |= (uint8_t)(1 << PRUSART0))
+ 923:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** 
+ 924:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** #define power_timer1_enable()   (PRR &= (uint8_t)~(1 << PRTIM1))
+ 925:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** #define power_timer1_disable()  (PRR |= (uint8_t)(1 << PRTIM1))
+ 926:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** 
+ 927:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** #define power_lcd_enable()      (PRR &= (uint8_t)~(1 << PRLCD))
+ 928:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** #define power_lcd_disable()     (PRR |= (uint8_t)(1 << PRLCD))
+ 929:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** 
+ 930:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** #define power_all_enable()      (PRR &= (uint8_t)~((1<<PRADC)|(1<<PRSPI)|(1<<PRUSART0)|(1<<PRTIM1)|
+ 931:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** #define power_all_disable()     (PRR |= (uint8_t)((1<<PRADC)|(1<<PRSPI)|(1<<PRUSART0)|(1<<PRTIM1)|(
+ 932:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** 
+ 933:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** 
+ 934:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** #elif defined(__AVR_ATmega164A__) \
+ 935:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** || defined(__AVR_ATmega164P__) \
+ 936:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** || defined(__AVR_ATmega324A__) \
+ 937:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** || defined(__AVR_ATmega324P__) \
+ 938:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** || defined(__AVR_ATmega324PA__) \
+ 939:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** || defined(__AVR_ATmega644P__) \
+ 940:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** || defined(__AVR_ATmega644A__) \
+ 941:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** || defined(__AVR_ATmega644PA__)
+ 942:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** 
+ 943:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** #define power_adc_enable()      (PRR0 &= (uint8_t)~(1 << PRADC))
+ 944:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** #define power_adc_disable()     (PRR0 |= (uint8_t)(1 << PRADC))
+ 945:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** 
+ 946:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** #define power_spi_enable()      (PRR0 &= (uint8_t)~(1 << PRSPI))
+ 947:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** #define power_spi_disable()     (PRR0 |= (uint8_t)(1 << PRSPI))
+ 948:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** 
+ 949:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** #define power_usart0_enable()   (PRR0 &= (uint8_t)~(1 << PRUSART0))
+ 950:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** #define power_usart0_disable()  (PRR0 |= (uint8_t)(1 << PRUSART0))
+ 951:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** 
+ 952:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** #define power_usart1_enable()   (PRR0 &= (uint8_t)~(1 << PRUSART1))
+ 953:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** #define power_usart1_disable()  (PRR0 |= (uint8_t)(1 << PRUSART1))
+ 954:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** 
+ 955:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** #define power_timer0_enable()   (PRR0 &= (uint8_t)~(1 << PRTIM0))
+ 956:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** #define power_timer0_disable()  (PRR0 |= (uint8_t)(1 << PRTIM0))
+ 957:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** 
+ 958:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** #define power_timer1_enable()   (PRR0 &= (uint8_t)~(1 << PRTIM1))
+ 959:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** #define power_timer1_disable()  (PRR0 |= (uint8_t)(1 << PRTIM1))
+ 960:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** 
+ 961:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** #define power_timer2_enable()   (PRR0 &= (uint8_t)~(1 << PRTIM2))
+ 962:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** #define power_timer2_disable()  (PRR0 |= (uint8_t)(1 << PRTIM2))
+ 963:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** 
+ 964:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** #define power_twi_enable()      (PRR0 &= (uint8_t)~(1 << PRTWI))
+ 965:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** #define power_twi_disable()     (PRR0 |= (uint8_t)(1 << PRTWI))
+ 966:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** 
+ 967:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** #define power_all_enable()      (PRR0 &= (uint8_t)~((1<<PRADC)|(1<<PRSPI)|(1<<PRUSART0)|(1<<PRUSART
+ 968:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** #define power_all_disable()     (PRR0 |= (uint8_t)((1<<PRADC)|(1<<PRSPI)|(1<<PRUSART0)|(1<<PRUSART1
+ 969:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** 
+ 970:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** 
+ 971:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** #elif defined(__AVR_ATmega644__)
+ 972:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** 
+ 973:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** #define power_adc_enable()      (PRR0 &= (uint8_t)~(1 << PRADC))
+ 974:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** #define power_adc_disable()     (PRR0 |= (uint8_t)(1 << PRADC))
+ 975:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** 
+ 976:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** #define power_spi_enable()      (PRR0 &= (uint8_t)~(1 << PRSPI))
+ 977:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** #define power_spi_disable()     (PRR0 |= (uint8_t)(1 << PRSPI))
+ 978:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** 
+ 979:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** #define power_usart0_enable()   (PRR0 &= (uint8_t)~(1 << PRUSART0))
+ 980:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** #define power_usart0_disable()  (PRR0 |= (uint8_t)(1 << PRUSART0))
+ 981:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** 
+ 982:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** #define power_timer0_enable()   (PRR0 &= (uint8_t)~(1 << PRTIM0))
+ 983:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** #define power_timer0_disable()  (PRR0 |= (uint8_t)(1 << PRTIM0))
+ 984:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** 
+ 985:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** #define power_timer1_enable()   (PRR0 &= (uint8_t)~(1 << PRTIM1))
+ 986:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** #define power_timer1_disable()  (PRR0 |= (uint8_t)(1 << PRTIM1))
+ 987:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** 
+ 988:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** #define power_timer2_enable()   (PRR0 &= (uint8_t)~(1 << PRTIM2))
+ 989:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** #define power_timer2_disable()  (PRR0 |= (uint8_t)(1 << PRTIM2))
+ 990:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** 
+ 991:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** #define power_twi_enable()      (PRR0 &= (uint8_t)~(1 << PRTWI))
+ 992:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** #define power_twi_disable()     (PRR0 |= (uint8_t)(1 << PRTWI))
+ 993:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** 
+ 994:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** #define power_all_enable()      (PRR0 &= (uint8_t)~((1<<PRADC)|(1<<PRSPI)|(1<<PRUSART0)|(1<<PRTIM0)
+ 995:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** #define power_all_disable()     (PRR0 |= (uint8_t)((1<<PRADC)|(1<<PRSPI)|(1<<PRUSART0)|(1<<PRTIM0)|
+ 996:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** 
+ 997:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** 
+ 998:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** #elif defined(__AVR_ATmega406__)
+ 999:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** 
+1000:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** #define power_twi_enable()      (PRR0 &= (uint8_t)~(1 << PRTWI))
+1001:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** #define power_twi_disable()     (PRR0 |= (uint8_t)(1 << PRTWI))
+1002:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** 
+1003:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** #define power_timer0_enable()   (PRR0 &= (uint8_t)~(1 << PRTIM0))
+1004:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** #define power_timer0_disable()  (PRR0 |= (uint8_t)(1 << PRTIM0))
+1005:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** 
+1006:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** #define power_timer1_enable()   (PRR0 &= (uint8_t)~(1 << PRTIM1))
+1007:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** #define power_timer1_disable()  (PRR0 |= (uint8_t)(1 << PRTIM1))
+1008:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** 
+1009:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** /* Voltage ADC */
+1010:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** #define power_vadc_enable()     (PRR0 &= (uint8_t)~(1 << PRVADC))
+1011:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** #define power_vadc_disable()    (PRR0 |= (uint8_t)(1 << PRVADC))
+1012:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** 
+1013:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** #define power_all_enable()      (PRR0 &= (uint8_t)~((1<<PRTWI)|(1<<PRTIM0)|(1<<PRTIM1)|(1<<PRVADC))
+1014:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** #define power_all_disable()     (PRR0 |= (uint8_t)((1<<PRTWI)|(1<<PRTIM0)|(1<<PRTIM1)|(1<<PRVADC)))
+1015:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** 
+1016:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** 
+1017:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** #elif defined(__AVR_ATmega48__) \
+1018:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** || defined(__AVR_ATmega48A__) \
+1019:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** || defined(__AVR_ATmega48P__) \
+1020:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** || defined(__AVR_ATmega88__) \
+1021:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** || defined(__AVR_ATmega88A__) \
+1022:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** || defined(__AVR_ATmega88P__) \
+1023:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** || defined(__AVR_ATmega88PA__) \
+1024:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** || defined(__AVR_ATmega168__) \
+1025:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** || defined(__AVR_ATmega168A__) \
+1026:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** || defined(__AVR_ATmega168P__) \
+1027:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** || defined(__AVR_ATmega328__) \
+1028:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** || defined(__AVR_ATmega328P__) \
+1029:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** || defined(__AVR_ATtiny48__) \
+1030:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** || defined(__AVR_ATtiny88__)
+1031:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** 
+1032:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** #define power_adc_enable()      (PRR &= (uint8_t)~(1 << PRADC))
+1033:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** #define power_adc_disable()     (PRR |= (uint8_t)(1 << PRADC))
+1034:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** 
+1035:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** #define power_spi_enable()      (PRR &= (uint8_t)~(1 << PRSPI))
+1036:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** #define power_spi_disable()     (PRR |= (uint8_t)(1 << PRSPI))
+1037:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** 
+1038:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** #define power_usart0_enable()   (PRR &= (uint8_t)~(1 << PRUSART0))
+1039:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** #define power_usart0_disable()  (PRR |= (uint8_t)(1 << PRUSART0))
+1040:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** 
+1041:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** #define power_timer0_enable()   (PRR &= (uint8_t)~(1 << PRTIM0))
+1042:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** #define power_timer0_disable()  (PRR |= (uint8_t)(1 << PRTIM0))
+1043:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** 
+1044:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** #define power_timer1_enable()   (PRR &= (uint8_t)~(1 << PRTIM1))
+1045:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** #define power_timer1_disable()  (PRR |= (uint8_t)(1 << PRTIM1))
+1046:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** 
+1047:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** #define power_timer2_enable()   (PRR &= (uint8_t)~(1 << PRTIM2))
+1048:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** #define power_timer2_disable()  (PRR |= (uint8_t)(1 << PRTIM2))
+1049:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** 
+1050:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** #define power_twi_enable()      (PRR &= (uint8_t)~(1 << PRTWI))
+1051:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** #define power_twi_disable()     (PRR |= (uint8_t)(1 << PRTWI))
+1052:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** 
+1053:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** #define power_all_enable()      (PRR &= (uint8_t)~((1<<PRADC)|(1<<PRSPI)|(1<<PRUSART0)|(1<<PRTIM0)|
+1054:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** #define power_all_disable()     (PRR |= (uint8_t)((1<<PRADC)|(1<<PRSPI)|(1<<PRUSART0)|(1<<PRTIM0)|(
+1055:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** 
+1056:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** 
+1057:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** #elif defined(__AVR_ATtiny24__) \
+1058:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** || defined(__AVR_ATtiny24A__) \
+1059:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** || defined(__AVR_ATtiny44__) \
+1060:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** || defined(__AVR_ATtiny44A__) \
+1061:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** || defined(__AVR_ATtiny84__) \
+1062:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** || defined(__AVR_ATtiny84A__) \
+1063:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** || defined(__AVR_ATtiny25__) \
+1064:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** || defined(__AVR_ATtiny45__) \
+1065:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** || defined(__AVR_ATtiny85__) \
+1066:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** || defined(__AVR_ATtiny261__) \
+1067:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** || defined(__AVR_ATtiny261A__) \
+1068:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** || defined(__AVR_ATtiny461__) \
+1069:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** || defined(__AVR_ATtiny461A__) \
+1070:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** || defined(__AVR_ATtiny861__) \
+1071:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** || defined(__AVR_ATtiny861A__) \
+1072:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** || defined(__AVR_ATtiny43U__)
+1073:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** 
+1074:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** #define power_adc_enable()      (PRR &= (uint8_t)~(1 << PRADC))
+1075:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** #define power_adc_disable()     (PRR |= (uint8_t)(1 << PRADC))
+1076:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** 
+1077:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** #define power_timer0_enable()   (PRR &= (uint8_t)~(1 << PRTIM0))
+1078:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** #define power_timer0_disable()  (PRR |= (uint8_t)(1 << PRTIM0))
+1079:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** 
+1080:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** #define power_timer1_enable()   (PRR &= (uint8_t)~(1 << PRTIM1))
+1081:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** #define power_timer1_disable()  (PRR |= (uint8_t)(1 << PRTIM1))
+1082:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** 
+1083:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** /* Universal Serial Interface */
+1084:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** #define power_usi_enable()      (PRR &= (uint8_t)~(1 << PRUSI))
+1085:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** #define power_usi_disable()     (PRR |= (uint8_t)(1 << PRUSI))
+1086:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** 
+1087:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** #define power_all_enable()      (PRR &= (uint8_t)~((1<<PRADC)|(1<<PRTIM0)|(1<<PRTIM1)|(1<<PRUSI)))
+1088:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** #define power_all_disable()     (PRR |= (uint8_t)((1<<PRADC)|(1<<PRTIM0)|(1<<PRTIM1)|(1<<PRUSI)))
+1089:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** 
+1090:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** 
+1091:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** #elif defined(__AVR_ATmega1284P__)
+1092:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** 
+1093:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** 
+1094:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** #define power_adc_enable()      (PRR0 &= (uint8_t)~(1 << PRADC))
+1095:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** #define power_adc_disable()     (PRR0 |= (uint8_t)(1 << PRADC))
+1096:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** 
+1097:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** #define power_spi_enable()      (PRR0 &= (uint8_t)~(1 << PRSPI))
+1098:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** #define power_spi_disable()     (PRR0 |= (uint8_t)(1 << PRSPI))
+1099:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** 
+1100:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** #define power_twi_enable()      (PRR0 &= (uint8_t)~(1 << PRTWI))
+1101:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** #define power_twi_disable()     (PRR0 |= (uint8_t)(1 << PRTWI))
+1102:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** 
+1103:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** #define power_timer0_enable()   (PRR0 &= (uint8_t)~(1 << PRTIM0))
+1104:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** #define power_timer0_disable()  (PRR0 |= (uint8_t)(1 << PRTIM0))
+1105:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** 
+1106:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** #define power_timer1_enable()   (PRR0 &= (uint8_t)~(1 << PRTIM1))
+1107:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** #define power_timer1_disable()  (PRR0 |= (uint8_t)(1 << PRTIM1))
+1108:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** 
+1109:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** #define power_timer2_enable()   (PRR0 &= (uint8_t)~(1 << PRTIM2))
+1110:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** #define power_timer2_disable()  (PRR0 |= (uint8_t)(1 << PRTIM2))
+1111:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** 
+1112:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** #define power_timer3_enable()   (PRR1 &= (uint8_t)~(1 << PRTIM3))
+1113:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** #define power_timer3_disable()  (PRR1 |= (uint8_t)(1 << PRTIM3))
+1114:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** 
+1115:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** #define power_usart0_enable()   (PRR0 &= (uint8_t)~(1 << PRUSART0))
+1116:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** #define power_usart0_disable()  (PRR0 |= (uint8_t)(1 << PRUSART0))
+1117:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** 
+1118:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** #define power_usart1_enable()   (PRR0 &= (uint8_t)~(1 << PRUSART1))
+1119:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** #define power_usart1_disable()  (PRR0 |= (uint8_t)(1 << PRUSART1))
+1120:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** 
+1121:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** #define power_all_enable() \
+1122:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** do{ \
+1123:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h ****     PRR0 &= (uint8_t)~((1<<PRADC)|(1<<PRSPI)|(1<<PRTWI)|(1<<PRTIM0)|(1<<PRTIM1)|(1<<PRTIM2)|(1<<PRU
+1124:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h ****     PRR1 &= (uint8_t)~(1<<PRTIM3); \
+1125:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** }while(0)
+1126:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** 
+1127:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** #define power_all_disable() \
+1128:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** do{ \
+1129:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h ****     PRR0 |= (uint8_t)((1<<PRADC)|(1<<PRSPI)|(1<<PRTWI)|(1<<PRTIM0)|(1<<PRTIM1)|(1<<PRTIM2)|(1<<PRUS
+1130:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h ****     PRR1 |= (uint8_t)(1<<PRTIM3); \
+1131:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** }while(0)
+1132:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** 
+1133:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** 
+1134:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** #elif defined(__AVR_ATmega32HVB__) \
+1135:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** || defined(__AVR_ATmega32HVBREVB__) \
+1136:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** || defined(__AVR_ATmega16HVB__) \
+1137:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** || defined(__AVR_ATmega16HVBREVB__)
+1138:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** 
+1139:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** 
+1140:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** #define power_twi_enable()      (PRR0 &= (uint8_t)~(1 << PRTWI))
+1141:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** #define power_twi_disable()     (PRR0 |= (uint8_t)(1 << PRTWI))
+1142:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** 
+1143:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** #define power_timer0_enable()   (PRR0 &= (uint8_t)~(1 << PRTIM0))
+1144:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** #define power_timer0_disable()  (PRR0 |= (uint8_t)(1 << PRTIM0))
+1145:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** 
+1146:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** #define power_timer1_enable()   (PRR0 &= (uint8_t)~(1 << PRTIM1))
+1147:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** #define power_timer1_disable()  (PRR0 |= (uint8_t)(1 << PRTIM1))
+1148:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** 
+1149:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** /* Voltage ADC */
+1150:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** #define power_vadc_enable()     (PRR0 &= (uint8_t)~(1 << PRVADC))
+1151:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** #define power_vadc_disable()    (PRR0 |= (uint8_t)(1 << PRVADC))
+1152:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** 
+1153:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** #define power_spi_enable()      (PRR0 &= (uint8_t)~(1 << PRSPI))
+1154:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** #define power_spi_disable()     (PRR0 |= (uint8_t)(1 << PRSPI))
+1155:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** 
+1156:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** #define power_vrm_enable()      (PRR0 &= (uint8_t)~(1 << PRVRM))
+1157:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** #define power_vrm_disable()     (PRR0 |= (uint8_t)(1 << PRVRM))
+1158:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** 
+1159:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** #define power_all_enable()      (PRR0 &= (uint8_t)~((1<<PRTWI)|(1<<PRTIM0)|(1<<PRTIM1)|(1<<PRVADC)|
+1160:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** #define power_all_disable()     (PRR0 |= (uint8_t)((1<<PRTWI)|(1<<PRTIM0)|(1<<PRTIM1)|(1<<PRVADC)|(
+1161:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** 
+1162:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** 
+1163:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** #elif defined(__AVR_ATmega16M1__) \
+1164:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** || defined(__AVR_ATmega32C1__) \
+1165:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** || defined(__AVR_ATmega32M1__) \
+1166:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** || defined(__AVR_ATmega64C1__) \
+1167:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** || defined(__AVR_ATmega64M1__)
+1168:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** 
+1169:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** #define power_adc_enable()      (PRR &= (uint8_t)~(1 << PRADC))
+1170:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** #define power_adc_disable()     (PRR |= (uint8_t)(1 << PRADC))
+1171:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** 
+1172:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** #define power_lin_enable()      (PRR &= (uint8_t)~(1 << PRLIN))
+1173:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** #define power_lin_disable()     (PRR |= (uint8_t)(1 << PRLIN))
+1174:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** 
+1175:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** #define power_spi_enable()      (PRR &= (uint8_t)~(1 << PRSPI))
+1176:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** #define power_spi_disable()     (PRR |= (uint8_t)(1 << PRSPI))
+1177:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** 
+1178:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** #define power_timer0_enable()   (PRR &= (uint8_t)~(1 << PRTIM0))
+1179:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** #define power_timer0_disable()  (PRR |= (uint8_t)(1 << PRTIM0))
+1180:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** 
+1181:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** #define power_timer1_enable()   (PRR &= (uint8_t)~(1 << PRTIM1))
+1182:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** #define power_timer1_disable()  (PRR |= (uint8_t)(1 << PRTIM1))
+1183:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** 
+1184:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** #define power_psc_enable()      (PRR &= (uint8_t)~(1 << PRPSC))
+1185:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** #define power_psc_disable()     (PRR |= (uint8_t)(1 << PRPSC))
+1186:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** 
+1187:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** #define power_can_enable()      (PRR &= (uint8_t)~(1 << PRCAN))
+1188:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** #define power_can_disable()     (PRR |= (uint8_t)(1 << PRCAN))
+1189:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** 
+1190:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** #define power_all_enable()      (PRR &= (uint8_t)~((1<<PRADC)|(1<<PRLIN)|(1<<PRSPI)|(1<<PRTIM0)|(1<
+1191:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** #define power_all_disable()     (PRR |= (uint8_t)((1<<PRADC)|(1<<PRLIN)|(1<<PRSPI)|(1<<PRTIM0)|(1<<
+1192:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** 
+1193:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** 
+1194:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** #elif defined(__AVR_ATtiny167__) \
+1195:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** || defined(__AVR_ATtiny87__)
+1196:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** 
+1197:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** 
+1198:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** #define power_adc_enable()      (PRR &= (uint8_t)~(1 << PRADC))
+1199:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** #define power_adc_disable()     (PRR |= (uint8_t)(1 << PRADC))
+1200:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** 
+1201:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** #define power_usi_enable()      (PRR &= (uint8_t)~(1 << PRUSI))
+1202:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** #define power_usi_disable()     (PRR |= (uint8_t)(1 << PRUSI))
+1203:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** 
+1204:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** #define power_timer0_enable()   (PRR &= (uint8_t)~(1 << PRTIM0))
+1205:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** #define power_timer0_disable()  (PRR |= (uint8_t)(1 << PRTIM0))
+1206:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** 
+1207:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** #define power_timer1_enable()   (PRR &= (uint8_t)~(1 << PRTIM1))
+1208:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** #define power_timer1_disable()  (PRR |= (uint8_t)(1 << PRTIM1))
+1209:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** 
+1210:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** #define power_spi_enable()      (PRR &= (uint8_t)~(1 << PRSPI))
+1211:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** #define power_spi_disable()     (PRR |= (uint8_t)(1 << PRSPI))
+1212:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** 
+1213:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** #define power_lin_enable()      (PRR &= (uint8_t)~(1 << PRLIN))
+1214:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** #define power_lin_disable()     (PRR |= (uint8_t)(1 << PRLIN))
+1215:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** 
+1216:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** #define power_all_enable()      (PRR &= (uint8_t)~((1<<PRADC)|(1<<PRUSI)|(1<<PRTIM0)|(1<<PRTIM1)|(1
+1217:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** #define power_all_disable()     (PRR |= (uint8_t)((1<<PRADC)|(1<<PRUSI)|(1<<PRTIM0)|(1<<PRTIM1)|(1<
+1218:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** 
+1219:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** 
+1220:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** #elif defined(__AVR_AT90USB82__) \
+1221:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** || defined(__AVR_AT90USB162__) \
+1222:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** || defined(__AVR_ATmega8U2__) \
+1223:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** || defined(__AVR_ATmega16U2__) \
+1224:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** || defined(__AVR_ATmega32U2__)
+1225:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** 
+1226:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** #define power_spi_enable()      (PRR0 &= (uint8_t)~(1 << PRSPI))
+1227:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** #define power_spi_disable()     (PRR0 |= (uint8_t)(1 << PRSPI))
+1228:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** 
+1229:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** #define power_timer0_enable()   (PRR0 &= (uint8_t)~(1 << PRTIM0))
+1230:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** #define power_timer0_disable()  (PRR0 |= (uint8_t)(1 << PRTIM0))
+1231:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** 
+1232:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** #define power_timer1_enable()   (PRR0 &= (uint8_t)~(1 << PRTIM1))
+1233:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** #define power_timer1_disable()  (PRR0 |= (uint8_t)(1 << PRTIM1))
+1234:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** 
+1235:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** #define power_usb_enable()      (PRR1 &= (uint8_t)~(1 << PRUSB))
+1236:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** #define power_usb_disable()     (PRR1 |= (uint8_t)(1 << PRUSB))
+1237:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** 
+1238:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** #define power_usart1_enable()   (PRR1 &= (uint8_t)~(1 << PRUSART1))
+1239:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** #define power_usart1_disable()  (PRR1 |= (uint8_t)(1 << PRUSART1))
+1240:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** 
+1241:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** #define power_all_enable() \
+1242:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** do{ \
+1243:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h ****     PRR0 &= (uint8_t)~((1<<PRSPI)|(1<<PRTIM0)|(1<<PRTIM1)); \
+1244:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h ****     PRR1 &= (uint8_t)~((1<<PRUSB)|(1<<PRUSART1)); \
+1245:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** }while(0)
+1246:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** 
+1247:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** #define power_all_disable() \
+1248:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** do{ \
+1249:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h ****     PRR0 |= (uint8_t)((1<<PRSPI)|(1<<PRTIM0)|(1<<PRTIM1)); \
+1250:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h ****     PRR1 |= (uint8_t)((1<<PRUSB)|(1<<PRUSART1)); \
+1251:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** }while(0)
+1252:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** 
+1253:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** 
+1254:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** #elif defined(__AVR_AT90SCR100__)
+1255:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** 
+1256:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** #define power_usart0_enable()   (PRR0 &= (uint8_t)~(1 << PRUSART0))
+1257:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** #define power_usart0_disable()  (PRR0 |= (uint8_t)(1 << PRUSART0))
+1258:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** 
+1259:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** #define power_spi_enable()      (PRR0 &= (uint8_t)~(1 << PRSPI))
+1260:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** #define power_spi_disable()     (PRR0 |= (uint8_t)(1 << PRSPI))
+1261:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** 
+1262:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** #define power_timer1_enable()   (PRR0 &= (uint8_t)~(1 << PRTIM1))
+1263:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** #define power_timer1_disable()  (PRR0 |= (uint8_t)(1 << PRTIM1))
+1264:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** 
+1265:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** #define power_timer0_enable()   (PRR0 &= (uint8_t)~(1 << PRTIM0))
+1266:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** #define power_timer0_disable()  (PRR0 |= (uint8_t)(1 << PRTIM0))
+1267:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** 
+1268:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** #define power_timer2_enable()   (PRR0 &= (uint8_t)~(1 << PRTIM2))
+1269:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** #define power_timer2_disable()  (PRR0 |= (uint8_t)(1 << PRTIM2))
+1270:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** 
+1271:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** #define power_twi_enable()      (PRR0 &= (uint8_t)~(1 << PRTWI))
+1272:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** #define power_twi_disable()     (PRR0 |= (uint8_t)(1 << PRTWI))
+1273:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** 
+1274:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** #define power_usbh_enable()     (PRR1 &= (uint8_t)~(1 << PRUSBH))
+1275:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** #define power_usbh_disable()    (PRR1 |= (uint8_t)(1 << PRUSBH))
+1276:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** 
+1277:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** #define power_usb_enable()      (PRR1 &= (uint8_t)~(1 << PRUSB))
+1278:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** #define power_usb_disable()     (PRR1 |= (uint8_t)(1 << PRUSB))
+1279:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** 
+1280:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** #define power_hsspi_enable()    (PRR1 &= (uint8_t)~(1 << PRHSSPI))
+1281:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** #define power_hsspi_disable()   (PRR1 |= (uint8_t)(1 << PRHSSPI))
+1282:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** 
+1283:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** #define power_sci_enable()      (PRR1 &= (uint8_t)~(1 << PRSCI))
+1284:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** #define power_sci_disable()     (PRR1 |= (uint8_t)(1 << PRSCI))
+1285:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** 
+1286:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** #define power_aes_enable()      (PRR1 &= (uint8_t)~(1 << PRAES))
+1287:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** #define power_aes_disable()     (PRR1 |= (uint8_t)(1 << PRAES))
+1288:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** 
+1289:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** #define power_kb_enable()       (PRR1 &= (uint8_t)~(1 << PRKB))
+1290:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** #define power_kb_disable()      (PRR1 |= (uint8_t)(1 << PRKB))
+1291:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** 
+1292:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** #define power_all_enable() \
+1293:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** do{ \
+1294:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h ****     PRR0 &= (uint8_t)~((1<<PRUSART0)|(1<<PRSPI)|(1<<PRTIM1)|(1<<PRTIM0)|(1<<PRTIM2)|(1<<PRTWI)); \
+1295:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h ****     PRR1 &= (uint8_t)~((1<<PRUSBH)|(1<<PRUSB)|(1<<PRHSSPI)|(1<<PRSCI)|(1<<PRAES)|(1<<PRKB)); \
+1296:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** }while(0)
+1297:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** 
+1298:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** #define power_all_disable() \
+1299:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** do{ \
+1300:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h ****     PRR0 |= (uint8_t)((1<<PRUSART0)|(1<<PRSPI)|(1<<PRTIM1)|(1<<PRTIM0)|(1<<PRTIM2)|(1<<PRTWI)); \
+1301:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h ****     PRR1 |= (uint8_t)((1<<PRUSBH)|(1<<PRUSB)|(1<<PRHSSPI)|(1<<PRSCI)|(1<<PRAES)|(1<<PRKB)); \
+1302:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** }while(0)
+1303:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** 
+1304:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** 
+1305:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** #elif defined(__AVR_ATtiny4__) \
+1306:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** || defined(__AVR_ATtiny5__) \
+1307:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** || defined(__AVR_ATtiny9__) \
+1308:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** || defined(__AVR_ATtiny10__) \
+1309:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** || defined(__AVR_ATtiny13A__) \
+1310:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** 
+1311:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** #define power_adc_enable()   (PRR &= (uint8_t)~(1 << PRADC))
+1312:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** #define power_adc_disable()  (PRR |= (uint8_t)(1 << PRADC))
+1313:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** 
+1314:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** #define power_timer0_enable()   (PRR &= (uint8_t)~(1 << PRTIM0))
+1315:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** #define power_timer0_disable()  (PRR |= (uint8_t)(1 << PRTIM0))
+1316:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** 
+1317:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** #define power_all_enable()      (PRR &= (uint8_t)~((1<<PRADC)|(1<<PRTIM0)))
+1318:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** #define power_all_disable()     (PRR |= (uint8_t)((1<<PRADC)|(1<<PRTIM0)))
+1319:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** 
+1320:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** 
+1321:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** #elif defined(__AVR_ATtiny20__) \
+1322:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** || defined(__AVR_ATtiny40__)
+1323:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** 
+1324:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** #define power_adc_enable()   (PRR &= (uint8_t)~(1 << PRADC))
+1325:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** #define power_adc_disable()  (PRR |= (uint8_t)(1 << PRADC))
+1326:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** 
+1327:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** #define power_timer0_enable()   (PRR &= (uint8_t)~(1 << PRTIM0))
+1328:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** #define power_timer0_disable()  (PRR |= (uint8_t)(1 << PRTIM0))
+1329:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** 
+1330:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** #define power_timer1_enable()   (PRR &= (uint8_t)~(1 << PRTIM1))
+1331:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** #define power_timer1_disable()  (PRR |= (uint8_t)(1 << PRTIM1))
+1332:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** 
+1333:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** #define power_spi_enable()   (PRR &= (uint8_t)~(1 << PRSPI))
+1334:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** #define power_spi_disable()  (PRR |= (uint8_t)(1 << PRSPI))
+1335:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** 
+1336:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** #define power_twi_enable()   (PRR &= (uint8_t)~(1 << PRTWI))
+1337:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** #define power_twi_disable()  (PRR |= (uint8_t)(1 << PRTWI))
+1338:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** 
+1339:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** #define power_all_enable()      (PRR &= (uint8_t)~((1<<PRADC)|(1<<PRTIM0)|(1<<PRTIM1)|(1<<PRSPI)|(1
+1340:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** #define power_all_disable()     (PRR |= (uint8_t)((1<<PRADC)|(1<<PRTIM0)|(1<<PRTIM1)|(1<<PRSPI)|(1<
+1341:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** 
+1342:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** #endif
+1343:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** 
+1344:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** 
+1345:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** #if defined(__AVR_AT90CAN32__) \
+1346:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** || defined(__AVR_AT90CAN64__) \
+1347:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** || defined(__AVR_AT90CAN128__) \
+1348:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** || defined(__AVR_AT90PWM1__) \
+1349:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** || defined(__AVR_AT90PWM2__) \
+1350:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** || defined(__AVR_AT90PWM2B__) \
+1351:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** || defined(__AVR_AT90PWM3__) \
+1352:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** || defined(__AVR_AT90PWM3B__) \
+1353:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** || defined(__AVR_AT90PWM216__) \
+1354:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** || defined(__AVR_AT90PWM316__) \
+1355:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** || defined(__AVR_AT90SCR100__) \
+1356:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** || defined(__AVR_AT90USB646__) \
+1357:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** || defined(__AVR_AT90USB647__) \
+1358:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** || defined(__AVR_AT90USB82__) \
+1359:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** || defined(__AVR_AT90USB1286__) \
+1360:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** || defined(__AVR_AT90USB1287__) \
+1361:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** || defined(__AVR_AT90USB162__) \
+1362:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** || defined(__AVR_ATmega1280__) \
+1363:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** || defined(__AVR_ATmega1281__) \
+1364:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** || defined(__AVR_ATmega128RFA1__) \
+1365:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** || defined(__AVR_ATmega1284P__) \
+1366:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** || defined(__AVR_ATmega162__) \
+1367:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** || defined(__AVR_ATmega164A__) \
+1368:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** || defined(__AVR_ATmega164P__) \
+1369:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** || defined(__AVR_ATmega165__) \
+1370:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** || defined(__AVR_ATmega165A__) \
+1371:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** || defined(__AVR_ATmega165P__) \
+1372:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** || defined(__AVR_ATmega168__) \
+1373:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** || defined(__AVR_ATmega168P__) \
+1374:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** || defined(__AVR_ATmega169__) \
+1375:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** || defined(__AVR_ATmega169A__) \
+1376:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** || defined(__AVR_ATmega169P__) \
+1377:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** || defined(__AVR_ATmega169PA__) \
+1378:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** || defined(__AVR_ATmega16U4__) \
+1379:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** || defined(__AVR_ATmega2560__) \
+1380:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** || defined(__AVR_ATmega2561__) \
+1381:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** || defined(__AVR_ATmega324A__) \
+1382:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** || defined(__AVR_ATmega324P__) \
+1383:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** || defined(__AVR_ATmega325__) \
+1384:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** || defined(__AVR_ATmega325A__) \
+1385:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** || defined(__AVR_ATmega3250__) \
+1386:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** || defined(__AVR_ATmega3250A__) \
+1387:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** || defined(__AVR_ATmega328__) \
+1388:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** || defined(__AVR_ATmega328P__) \
+1389:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** || defined(__AVR_ATmega329__) \
+1390:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** || defined(__AVR_ATmega329A__) \
+1391:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** || defined(__AVR_ATmega329P__) \
+1392:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** || defined(__AVR_ATmega329PA__) \
+1393:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** || defined(__AVR_ATmega3290__) \
+1394:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** || defined(__AVR_ATmega3290A__) \
+1395:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** || defined(__AVR_ATmega32C1__) \
+1396:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** || defined(__AVR_ATmega32HVB__) \
+1397:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** || defined(__AVR_ATmega32HVBREVB__) \
+1398:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** || defined(__AVR_ATmega16HVB__) \
+1399:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** || defined(__AVR_ATmega16HVBREVB__) \
+1400:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** || defined(__AVR_ATmega32M1__) \
+1401:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** || defined(__AVR_ATmega32U2__) \
+1402:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** || defined(__AVR_ATmega32U4__) \
+1403:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** || defined(__AVR_ATmega32U6__) \
+1404:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** || defined(__AVR_ATmega48__) \
+1405:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** || defined(__AVR_ATmega48P__) \
+1406:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** || defined(__AVR_ATmega640__) \
+1407:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** || defined(__AVR_ATmega649P__) \
+1408:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** || defined(__AVR_ATmega644__) \
+1409:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** || defined(__AVR_ATmega644A__) \
+1410:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** || defined(__AVR_ATmega644P__) \
+1411:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** || defined(__AVR_ATmega644PA__) \
+1412:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** || defined(__AVR_ATmega645__) \
+1413:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** || defined(__AVR_ATmega645A__) \
+1414:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** || defined(__AVR_ATmega645P__) \
+1415:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** || defined(__AVR_ATmega6450__) \
+1416:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** || defined(__AVR_ATmega6450A__) \
+1417:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** || defined(__AVR_ATmega6450P__) \
+1418:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** || defined(__AVR_ATmega649__) \
+1419:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** || defined(__AVR_ATmega649A__) \
+1420:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** || defined(__AVR_ATmega6490__) \
+1421:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** || defined(__AVR_ATmega6490A__) \
+1422:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** || defined(__AVR_ATmega6490P__) \
+1423:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** || defined(__AVR_ATmega88__) \
+1424:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** || defined(__AVR_ATmega88P__) \
+1425:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** || defined(__AVR_ATmega8U2__) \
+1426:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** || defined(__AVR_ATmega16U2__) \
+1427:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** || defined(__AVR_ATmega32U2__) \
+1428:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** || defined(__AVR_ATtiny48__) \
+1429:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** || defined(__AVR_ATtiny167__) \
+1430:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** || defined(__DOXYGEN__)
+1431:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** 
+1432:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** 
+1433:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** /** \addtogroup avr_power
+1434:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** 
+1435:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** Some of the newer AVRs contain a System Clock Prescale Register (CLKPR) that
+1436:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** allows you to decrease the system clock frequency and the power consumption
+1437:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** when the need for processing power is low. Below are two macros and an
+1438:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** enumerated type that can be used to interface to the Clock Prescale Register.
+1439:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** 
+1440:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** \note Not all AVR devices have a Clock Prescale Register. On those devices
+1441:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** without a Clock Prescale Register, these macros are not available.
+1442:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** */
+1443:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** 
+1444:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** 
+1445:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** /** \addtogroup avr_power
+1446:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** \code 
+1447:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** typedef enum
+1448:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** {
+1449:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h ****     clock_div_1 = 0,
+1450:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h ****     clock_div_2 = 1,
+1451:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h ****     clock_div_4 = 2,
+1452:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h ****     clock_div_8 = 3,
+1453:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h ****     clock_div_16 = 4,
+1454:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h ****     clock_div_32 = 5,
+1455:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h ****     clock_div_64 = 6,
+1456:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h ****     clock_div_128 = 7,
+1457:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h ****     clock_div_256 = 8,
+1458:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h ****     clock_div_1_rc = 15, // ATmega128RFA1 only
+1459:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** } clock_div_t;
+1460:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** \endcode
+1461:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** Clock prescaler setting enumerations.
+1462:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** 
+1463:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** */
+1464:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** typedef enum
+1465:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** {
+1466:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h ****     clock_div_1 = 0,
+1467:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h ****     clock_div_2 = 1,
+1468:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h ****     clock_div_4 = 2,
+1469:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h ****     clock_div_8 = 3,
+1470:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h ****     clock_div_16 = 4,
+1471:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h ****     clock_div_32 = 5,
+1472:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h ****     clock_div_64 = 6,
+1473:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h ****     clock_div_128 = 7,
+1474:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h ****     clock_div_256 = 8
+1475:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** #if defined(__AVR_ATmega128RFA1__)
+1476:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h ****     , clock_div_1_rc = 15
+1477:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** #endif
+1478:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** } clock_div_t;
+1479:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** 
+1480:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** 
+1481:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** static __inline__ void clock_prescale_set(clock_div_t) __attribute__((__always_inline__));
+1482:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** 
+1483:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** /** \addtogroup avr_power
+1484:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** \code clock_prescale_set(x) \endcode
+1485:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** 
+1486:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** Set the clock prescaler register select bits, selecting a system clock
+1487:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** division setting. This function is inlined, even if compiler
+1488:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** optimizations are disabled.
+1489:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** 
+1490:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** The type of x is clock_div_t.
+1491:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** */
+1492:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** void clock_prescale_set(clock_div_t __x)
+1493:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h **** {
+1494:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h ****     uint8_t __tmp = _BV(CLKPCE);
+1495:/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h ****     __asm__ __volatile__ (
+  42               		.loc 2 1495 0
+  43 0016 90E0      		ldi r25,0
+  44 0018 80E8      		ldi r24,lo8(-128)
+  45               	/* #APP */
+  46               	 ;  1495 "/usr/lib/gcc/avr/4.7.2/../../../../avr/include/avr/power.h" 1
+  47 001a 0FB6      		in __tmp_reg__,__SREG__
+  48 001c F894      		cli
+  49 001e 8093 6100 		sts 97, r24
+  50 0022 9093 6100 		sts 97, r25
+  51 0026 0FBE      		out __SREG__, __tmp_reg__
+  52               	 ;  0 "" 2
+  53               	/* #NOAPP */
+  54               	.LBE9:
+  55               	.LBE8:
+  56               	.LBB10:
+  57               	.LBB11:
+  58               		.file 3 "../LUFA-120219/LUFA/Drivers/Board/AVR8/ADAFRUITU4/LEDs.h"
+   1:../LUFA-120219/LUFA/Drivers/Board/AVR8/ADAFRUITU4/LEDs.h **** /*
+   2:../LUFA-120219/LUFA/Drivers/Board/AVR8/ADAFRUITU4/LEDs.h ****              LUFA Library
+   3:../LUFA-120219/LUFA/Drivers/Board/AVR8/ADAFRUITU4/LEDs.h ****      Copyright (C) Dean Camera, 2012.
+   4:../LUFA-120219/LUFA/Drivers/Board/AVR8/ADAFRUITU4/LEDs.h **** 
+   5:../LUFA-120219/LUFA/Drivers/Board/AVR8/ADAFRUITU4/LEDs.h ****   dean [at] fourwalledcubicle [dot] com
+   6:../LUFA-120219/LUFA/Drivers/Board/AVR8/ADAFRUITU4/LEDs.h ****            www.lufa-lib.org
+   7:../LUFA-120219/LUFA/Drivers/Board/AVR8/ADAFRUITU4/LEDs.h **** */
+   8:../LUFA-120219/LUFA/Drivers/Board/AVR8/ADAFRUITU4/LEDs.h **** 
+   9:../LUFA-120219/LUFA/Drivers/Board/AVR8/ADAFRUITU4/LEDs.h **** /*
+  10:../LUFA-120219/LUFA/Drivers/Board/AVR8/ADAFRUITU4/LEDs.h ****   Copyright 2012  Dean Camera (dean [at] fourwalledcubicle [dot] com)
+  11:../LUFA-120219/LUFA/Drivers/Board/AVR8/ADAFRUITU4/LEDs.h **** 
+  12:../LUFA-120219/LUFA/Drivers/Board/AVR8/ADAFRUITU4/LEDs.h ****   Permission to use, copy, modify, distribute, and sell this
+  13:../LUFA-120219/LUFA/Drivers/Board/AVR8/ADAFRUITU4/LEDs.h ****   software and its documentation for any purpose is hereby granted
+  14:../LUFA-120219/LUFA/Drivers/Board/AVR8/ADAFRUITU4/LEDs.h ****   without fee, provided that the above copyright notice appear in
+  15:../LUFA-120219/LUFA/Drivers/Board/AVR8/ADAFRUITU4/LEDs.h ****   all copies and that both that the copyright notice and this
+  16:../LUFA-120219/LUFA/Drivers/Board/AVR8/ADAFRUITU4/LEDs.h ****   permission notice and warranty disclaimer appear in supporting
+  17:../LUFA-120219/LUFA/Drivers/Board/AVR8/ADAFRUITU4/LEDs.h ****   documentation, and that the name of the author not be used in
+  18:../LUFA-120219/LUFA/Drivers/Board/AVR8/ADAFRUITU4/LEDs.h ****   advertising or publicity pertaining to distribution of the
+  19:../LUFA-120219/LUFA/Drivers/Board/AVR8/ADAFRUITU4/LEDs.h ****   software without specific, written prior permission.
+  20:../LUFA-120219/LUFA/Drivers/Board/AVR8/ADAFRUITU4/LEDs.h **** 
+  21:../LUFA-120219/LUFA/Drivers/Board/AVR8/ADAFRUITU4/LEDs.h ****   The author disclaim all warranties with regard to this
+  22:../LUFA-120219/LUFA/Drivers/Board/AVR8/ADAFRUITU4/LEDs.h ****   software, including all implied warranties of merchantability
+  23:../LUFA-120219/LUFA/Drivers/Board/AVR8/ADAFRUITU4/LEDs.h ****   and fitness.  In no event shall the author be liable for any
+  24:../LUFA-120219/LUFA/Drivers/Board/AVR8/ADAFRUITU4/LEDs.h ****   special, indirect or consequential damages or any damages
+  25:../LUFA-120219/LUFA/Drivers/Board/AVR8/ADAFRUITU4/LEDs.h ****   whatsoever resulting from loss of use, data or profits, whether
+  26:../LUFA-120219/LUFA/Drivers/Board/AVR8/ADAFRUITU4/LEDs.h ****   in an action of contract, negligence or other tortious action,
+  27:../LUFA-120219/LUFA/Drivers/Board/AVR8/ADAFRUITU4/LEDs.h ****   arising out of or in connection with the use or performance of
+  28:../LUFA-120219/LUFA/Drivers/Board/AVR8/ADAFRUITU4/LEDs.h ****   this software.
+  29:../LUFA-120219/LUFA/Drivers/Board/AVR8/ADAFRUITU4/LEDs.h **** */
+  30:../LUFA-120219/LUFA/Drivers/Board/AVR8/ADAFRUITU4/LEDs.h **** 
+  31:../LUFA-120219/LUFA/Drivers/Board/AVR8/ADAFRUITU4/LEDs.h **** /** \file
+  32:../LUFA-120219/LUFA/Drivers/Board/AVR8/ADAFRUITU4/LEDs.h ****  *  \brief Board specific LED driver header for the Adafruit U4 Breakout board.
+  33:../LUFA-120219/LUFA/Drivers/Board/AVR8/ADAFRUITU4/LEDs.h ****  *  \copydetails Group_LEDs_ADAFRUITU4
+  34:../LUFA-120219/LUFA/Drivers/Board/AVR8/ADAFRUITU4/LEDs.h ****  *
+  35:../LUFA-120219/LUFA/Drivers/Board/AVR8/ADAFRUITU4/LEDs.h ****  *  \note This file should not be included directly. It is automatically included as needed by the 
+  36:../LUFA-120219/LUFA/Drivers/Board/AVR8/ADAFRUITU4/LEDs.h ****  *        dispatch header located in LUFA/Drivers/Board/LEDs.h.
+  37:../LUFA-120219/LUFA/Drivers/Board/AVR8/ADAFRUITU4/LEDs.h ****  */
+  38:../LUFA-120219/LUFA/Drivers/Board/AVR8/ADAFRUITU4/LEDs.h **** 
+  39:../LUFA-120219/LUFA/Drivers/Board/AVR8/ADAFRUITU4/LEDs.h **** /** \ingroup Group_LEDs
+  40:../LUFA-120219/LUFA/Drivers/Board/AVR8/ADAFRUITU4/LEDs.h ****  *  \defgroup Group_LEDs_ADAFRUITU4 ADAFRUITU4
+  41:../LUFA-120219/LUFA/Drivers/Board/AVR8/ADAFRUITU4/LEDs.h ****  *  \brief Board specific LED driver header for the Adafruit U4 Breakout board.
+  42:../LUFA-120219/LUFA/Drivers/Board/AVR8/ADAFRUITU4/LEDs.h ****  *
+  43:../LUFA-120219/LUFA/Drivers/Board/AVR8/ADAFRUITU4/LEDs.h ****  *  Board specific LED driver header for the Adafruit U4 Breakout board (http://ladyada.net/product
+  44:../LUFA-120219/LUFA/Drivers/Board/AVR8/ADAFRUITU4/LEDs.h ****  *
+  45:../LUFA-120219/LUFA/Drivers/Board/AVR8/ADAFRUITU4/LEDs.h ****  *  @{
+  46:../LUFA-120219/LUFA/Drivers/Board/AVR8/ADAFRUITU4/LEDs.h ****  */
+  47:../LUFA-120219/LUFA/Drivers/Board/AVR8/ADAFRUITU4/LEDs.h **** 
+  48:../LUFA-120219/LUFA/Drivers/Board/AVR8/ADAFRUITU4/LEDs.h **** #ifndef __LEDS_ADAFRUITU4_H__
+  49:../LUFA-120219/LUFA/Drivers/Board/AVR8/ADAFRUITU4/LEDs.h **** #define __LEDS_ADAFRUITU4_H__
+  50:../LUFA-120219/LUFA/Drivers/Board/AVR8/ADAFRUITU4/LEDs.h **** 
+  51:../LUFA-120219/LUFA/Drivers/Board/AVR8/ADAFRUITU4/LEDs.h **** 	/* Includes: */
+  52:../LUFA-120219/LUFA/Drivers/Board/AVR8/ADAFRUITU4/LEDs.h **** 		#include "../../../../Common/Common.h"
+  53:../LUFA-120219/LUFA/Drivers/Board/AVR8/ADAFRUITU4/LEDs.h **** 
+  54:../LUFA-120219/LUFA/Drivers/Board/AVR8/ADAFRUITU4/LEDs.h **** 	/* Enable C linkage for C++ Compilers: */
+  55:../LUFA-120219/LUFA/Drivers/Board/AVR8/ADAFRUITU4/LEDs.h **** 		#if defined(__cplusplus)
+  56:../LUFA-120219/LUFA/Drivers/Board/AVR8/ADAFRUITU4/LEDs.h **** 			extern "C" {
+  57:../LUFA-120219/LUFA/Drivers/Board/AVR8/ADAFRUITU4/LEDs.h **** 		#endif
+  58:../LUFA-120219/LUFA/Drivers/Board/AVR8/ADAFRUITU4/LEDs.h **** 
+  59:../LUFA-120219/LUFA/Drivers/Board/AVR8/ADAFRUITU4/LEDs.h **** 	/* Preprocessor Checks: */
+  60:../LUFA-120219/LUFA/Drivers/Board/AVR8/ADAFRUITU4/LEDs.h **** 		#if !defined(__INCLUDE_FROM_LEDS_H)
+  61:../LUFA-120219/LUFA/Drivers/Board/AVR8/ADAFRUITU4/LEDs.h **** 			#error Do not include this file directly. Include LUFA/Drivers/Board/LEDS.h instead.
+  62:../LUFA-120219/LUFA/Drivers/Board/AVR8/ADAFRUITU4/LEDs.h **** 		#endif
+  63:../LUFA-120219/LUFA/Drivers/Board/AVR8/ADAFRUITU4/LEDs.h **** 
+  64:../LUFA-120219/LUFA/Drivers/Board/AVR8/ADAFRUITU4/LEDs.h **** 	/* Public Interface - May be used in end-application: */
+  65:../LUFA-120219/LUFA/Drivers/Board/AVR8/ADAFRUITU4/LEDs.h **** 		/* Macros: */
+  66:../LUFA-120219/LUFA/Drivers/Board/AVR8/ADAFRUITU4/LEDs.h **** 			/** LED mask for the first LED on the board. */
+  67:../LUFA-120219/LUFA/Drivers/Board/AVR8/ADAFRUITU4/LEDs.h **** 			#define LEDS_LED1        (1 << 6)
+  68:../LUFA-120219/LUFA/Drivers/Board/AVR8/ADAFRUITU4/LEDs.h **** 
+  69:../LUFA-120219/LUFA/Drivers/Board/AVR8/ADAFRUITU4/LEDs.h **** 			/** LED mask for all the LEDs on the board. */
+  70:../LUFA-120219/LUFA/Drivers/Board/AVR8/ADAFRUITU4/LEDs.h **** 			#define LEDS_ALL_LEDS    LEDS_LED1
+  71:../LUFA-120219/LUFA/Drivers/Board/AVR8/ADAFRUITU4/LEDs.h **** 
+  72:../LUFA-120219/LUFA/Drivers/Board/AVR8/ADAFRUITU4/LEDs.h **** 			/** LED mask for the none of the board LEDs. */
+  73:../LUFA-120219/LUFA/Drivers/Board/AVR8/ADAFRUITU4/LEDs.h **** 			#define LEDS_NO_LEDS     0
+  74:../LUFA-120219/LUFA/Drivers/Board/AVR8/ADAFRUITU4/LEDs.h **** 
+  75:../LUFA-120219/LUFA/Drivers/Board/AVR8/ADAFRUITU4/LEDs.h **** 		/* Inline Functions: */
+  76:../LUFA-120219/LUFA/Drivers/Board/AVR8/ADAFRUITU4/LEDs.h **** 		#if !defined(__DOXYGEN__)
+  77:../LUFA-120219/LUFA/Drivers/Board/AVR8/ADAFRUITU4/LEDs.h **** 			static inline void LEDs_Init(void)
+  78:../LUFA-120219/LUFA/Drivers/Board/AVR8/ADAFRUITU4/LEDs.h **** 			{
+  79:../LUFA-120219/LUFA/Drivers/Board/AVR8/ADAFRUITU4/LEDs.h **** 				DDRE  |=  LEDS_ALL_LEDS;
+  59               		.loc 3 79 0
+  60 0028 6E9A      		sbi 0xd,6
+  80:../LUFA-120219/LUFA/Drivers/Board/AVR8/ADAFRUITU4/LEDs.h **** 				PORTE &= ~LEDS_ALL_LEDS;
+  61               		.loc 3 80 0
+  62 002a 7698      		cbi 0xe,6
+  63               	.LBE11:
+  64               	.LBE10:
+  71:VirtualSerial.c **** 
+  72:VirtualSerial.c **** 	/* Disable clock division */
+  73:VirtualSerial.c **** 	clock_prescale_set(clock_div_1);
+  74:VirtualSerial.c **** 
+  75:VirtualSerial.c **** 	/* Hardware Initialization */
+  76:VirtualSerial.c **** 	LEDs_Init();
+  77:VirtualSerial.c **** 	USB_Init();
+  65               		.loc 1 77 0
+  66 002c 0C94 0000 		jmp USB_Init
+  67               	.LVL1:
+  68               		.cfi_endproc
+  69               	.LFE108:
+  71               		.section	.text.usb_ops,"ax",@progbits
+  72               	.global	usb_ops
+  74               	usb_ops:
+  75               	.LFB109:
+  78:VirtualSerial.c **** }
+  79:VirtualSerial.c **** 
+  80:VirtualSerial.c **** void usb_ops(void)
+  81:VirtualSerial.c **** {
+  76               		.loc 1 81 0
+  77               		.cfi_startproc
+  78               	/* prologue: function */
+  79               	/* frame size = 0 */
+  80               	/* stack size = 0 */
+  81               	.L__stack_usage = 0
+  82:VirtualSerial.c **** 	if (CDC_Device_BytesReceived(&VirtualSerial_CDC_Interface) > 0)
+  82               		.loc 1 82 0
+  83 0000 80E0      		ldi r24,lo8(VirtualSerial_CDC_Interface)
+  84 0002 90E0      		ldi r25,hi8(VirtualSerial_CDC_Interface)
+  85 0004 0E94 0000 		call CDC_Device_BytesReceived
+  86               	.LVL2:
+  87 0008 892B      		or r24,r25
+  88 000a 01F0      		breq .L3
+  83:VirtualSerial.c **** 		/* Must throw away unused bytes from the host, or it will lock up while waiting for the device */
+  84:VirtualSerial.c **** 		rxByte = CDC_Device_ReceiveByte(&VirtualSerial_CDC_Interface);
+  89               		.loc 1 84 0
+  90 000c 80E0      		ldi r24,lo8(VirtualSerial_CDC_Interface)
+  91 000e 90E0      		ldi r25,hi8(VirtualSerial_CDC_Interface)
+  92 0010 0E94 0000 		call CDC_Device_ReceiveByte
+  93               	.LVL3:
+  94 0014 9093 0000 		sts rxByte+1,r25
+  95 0018 8093 0000 		sts rxByte,r24
+  96               	.L3:
+  85:VirtualSerial.c **** 
+  86:VirtualSerial.c **** 	CDC_Device_USBTask(&VirtualSerial_CDC_Interface);
+  97               		.loc 1 86 0
+  98 001c 80E0      		ldi r24,lo8(VirtualSerial_CDC_Interface)
+  99 001e 90E0      		ldi r25,hi8(VirtualSerial_CDC_Interface)
+ 100 0020 0E94 0000 		call CDC_Device_USBTask
+ 101               	.LVL4:
+  87:VirtualSerial.c **** 	USB_USBTask();
+ 102               		.loc 1 87 0
+ 103 0024 0C94 0000 		jmp USB_USBTask
+ 104               	.LVL5:
+ 105               		.cfi_endproc
+ 106               	.LFE109:
+ 108               		.section	.text.EVENT_USB_Device_Connect,"ax",@progbits
+ 109               	.global	EVENT_USB_Device_Connect
+ 111               	EVENT_USB_Device_Connect:
+ 112               	.LFB110:
+  88:VirtualSerial.c **** }
+  89:VirtualSerial.c **** 
+  90:VirtualSerial.c **** /** Checks for changes in the position of the board joystick, sending strings to the host upon each
+  91:VirtualSerial.c **** 
+  92:VirtualSerial.c **** 		/* Write the string to the virtual COM port via the created character stream */
+  93:VirtualSerial.c **** 		//fputs(ReportString, &USBSerialStream);
+  94:VirtualSerial.c **** 
+  95:VirtualSerial.c **** 		/* Alternatively, without the stream: */
+  96:VirtualSerial.c **** 		// CDC_Device_SendString(&VirtualSerial_CDC_Interface, ReportString);
+  97:VirtualSerial.c **** 
+  98:VirtualSerial.c **** /** Event handler for the library USB Connection event. */
+  99:VirtualSerial.c **** void EVENT_USB_Device_Connect(void)
+ 100:VirtualSerial.c **** {
+ 113               		.loc 1 100 0
+ 114               		.cfi_startproc
+ 115               	/* prologue: function */
+ 116               	/* frame size = 0 */
+ 117               	/* stack size = 0 */
+ 118               	.L__stack_usage = 0
+ 119               	.LVL6:
+ 120               	.LBB14:
+ 121               	.LBB15:
+  81:../LUFA-120219/LUFA/Drivers/Board/AVR8/ADAFRUITU4/LEDs.h ****          	}
+  82:../LUFA-120219/LUFA/Drivers/Board/AVR8/ADAFRUITU4/LEDs.h **** 
+  83:../LUFA-120219/LUFA/Drivers/Board/AVR8/ADAFRUITU4/LEDs.h **** 			static inline void LEDs_Disable(void)
+  84:../LUFA-120219/LUFA/Drivers/Board/AVR8/ADAFRUITU4/LEDs.h **** 			{
+  85:../LUFA-120219/LUFA/Drivers/Board/AVR8/ADAFRUITU4/LEDs.h **** 				DDRE  &= ~LEDS_ALL_LEDS;
+  86:../LUFA-120219/LUFA/Drivers/Board/AVR8/ADAFRUITU4/LEDs.h **** 				PORTE &= ~LEDS_ALL_LEDS;
+  87:../LUFA-120219/LUFA/Drivers/Board/AVR8/ADAFRUITU4/LEDs.h ****          	}
+  88:../LUFA-120219/LUFA/Drivers/Board/AVR8/ADAFRUITU4/LEDs.h **** 
+  89:../LUFA-120219/LUFA/Drivers/Board/AVR8/ADAFRUITU4/LEDs.h **** 			static inline void LEDs_TurnOnLEDs(const uint8_t LEDMask)
+  90:../LUFA-120219/LUFA/Drivers/Board/AVR8/ADAFRUITU4/LEDs.h **** 			{
+  91:../LUFA-120219/LUFA/Drivers/Board/AVR8/ADAFRUITU4/LEDs.h **** 				PORTE |= LEDMask;
+  92:../LUFA-120219/LUFA/Drivers/Board/AVR8/ADAFRUITU4/LEDs.h **** 			}
+  93:../LUFA-120219/LUFA/Drivers/Board/AVR8/ADAFRUITU4/LEDs.h **** 
+  94:../LUFA-120219/LUFA/Drivers/Board/AVR8/ADAFRUITU4/LEDs.h **** 			static inline void LEDs_TurnOffLEDs(const uint8_t LEDMask)
+  95:../LUFA-120219/LUFA/Drivers/Board/AVR8/ADAFRUITU4/LEDs.h **** 			{
+  96:../LUFA-120219/LUFA/Drivers/Board/AVR8/ADAFRUITU4/LEDs.h **** 				PORTE &= ~LEDMask;
+  97:../LUFA-120219/LUFA/Drivers/Board/AVR8/ADAFRUITU4/LEDs.h **** 			}
+  98:../LUFA-120219/LUFA/Drivers/Board/AVR8/ADAFRUITU4/LEDs.h **** 
+  99:../LUFA-120219/LUFA/Drivers/Board/AVR8/ADAFRUITU4/LEDs.h **** 			static inline void LEDs_SetAllLEDs(const uint8_t LEDMask)
+ 100:../LUFA-120219/LUFA/Drivers/Board/AVR8/ADAFRUITU4/LEDs.h **** 			{
+ 101:../LUFA-120219/LUFA/Drivers/Board/AVR8/ADAFRUITU4/LEDs.h **** 				PORTE  = ((PORTE & ~LEDS_ALL_LEDS) | LEDMask);
+ 122               		.loc 3 101 0
+ 123 0000 7698      		cbi 0xe,6
+ 124 0002 0895      		ret
+ 125               	.LBE15:
+ 126               	.LBE14:
+ 127               		.cfi_endproc
+ 128               	.LFE110:
+ 130               		.section	.text.EVENT_USB_Device_Disconnect,"ax",@progbits
+ 131               	.global	EVENT_USB_Device_Disconnect
+ 133               	EVENT_USB_Device_Disconnect:
+ 134               	.LFB111:
+ 101:VirtualSerial.c **** 	LEDs_SetAllLEDs(LEDMASK_USB_ENUMERATING);
+ 102:VirtualSerial.c **** }
+ 103:VirtualSerial.c **** 
+ 104:VirtualSerial.c **** /** Event handler for the library USB Disconnection event. */
+ 105:VirtualSerial.c **** void EVENT_USB_Device_Disconnect(void)
+ 106:VirtualSerial.c **** {
+ 135               		.loc 1 106 0
+ 136               		.cfi_startproc
+ 137               	/* prologue: function */
+ 138               	/* frame size = 0 */
+ 139               	/* stack size = 0 */
+ 140               	.L__stack_usage = 0
+ 141               	.LVL7:
+ 142               	.LBB18:
+ 143               	.LBB19:
+ 144               		.loc 3 101 0
+ 145 0000 769A      		sbi 0xe,6
+ 146 0002 0895      		ret
+ 147               	.LBE19:
+ 148               	.LBE18:
+ 149               		.cfi_endproc
+ 150               	.LFE111:
+ 152               		.section	.text.EVENT_USB_Device_ConfigurationChanged,"ax",@progbits
+ 153               	.global	EVENT_USB_Device_ConfigurationChanged
+ 155               	EVENT_USB_Device_ConfigurationChanged:
+ 156               	.LFB112:
+ 107:VirtualSerial.c **** 	LEDs_SetAllLEDs(LEDMASK_USB_NOTREADY);
+ 108:VirtualSerial.c **** }
+ 109:VirtualSerial.c **** 
+ 110:VirtualSerial.c **** /** Event handler for the library USB Configuration Changed event. */
+ 111:VirtualSerial.c **** void EVENT_USB_Device_ConfigurationChanged(void)
+ 112:VirtualSerial.c **** {
+ 157               		.loc 1 112 0
+ 158               		.cfi_startproc
+ 159               	/* prologue: function */
+ 160               	/* frame size = 0 */
+ 161               	/* stack size = 0 */
+ 162               	.L__stack_usage = 0
+ 163               	.LVL8:
+ 113:VirtualSerial.c **** 	bool ConfigSuccess = true;
+ 114:VirtualSerial.c **** 
+ 115:VirtualSerial.c **** 	ConfigSuccess &= CDC_Device_ConfigureEndpoints(&VirtualSerial_CDC_Interface);
+ 164               		.loc 1 115 0
+ 165 0000 80E0      		ldi r24,lo8(VirtualSerial_CDC_Interface)
+ 166 0002 90E0      		ldi r25,hi8(VirtualSerial_CDC_Interface)
+ 167 0004 0E94 0000 		call CDC_Device_ConfigureEndpoints
+ 168               	.LVL9:
+ 116:VirtualSerial.c **** 
+ 117:VirtualSerial.c **** 	LEDs_SetAllLEDs(ConfigSuccess ? LEDMASK_USB_READY : LEDMASK_USB_ERROR);
+ 169               		.loc 1 117 0
+ 170 0008 8823      		tst r24
+ 171 000a 01F0      		breq .L11
+ 172 000c 90E0      		ldi r25,0
+ 173 000e 00C0      		rjmp .L10
+ 174               	.L11:
+ 175 0010 90E4      		ldi r25,lo8(64)
+ 176               	.L10:
+ 177               	.LVL10:
+ 178               	.LBB22:
+ 179               	.LBB23:
+ 180               		.loc 3 101 0 discriminator 3
+ 181 0012 8EB1      		in r24,0xe
+ 182               	.LVL11:
+ 183 0014 8F7B      		andi r24,lo8(-65)
+ 184 0016 892B      		or r24,r25
+ 185 0018 8EB9      		out 0xe,r24
+ 186 001a 0895      		ret
+ 187               	.LBE23:
+ 188               	.LBE22:
+ 189               		.cfi_endproc
+ 190               	.LFE112:
+ 192               		.section	.text.EVENT_USB_Device_ControlRequest,"ax",@progbits
+ 193               	.global	EVENT_USB_Device_ControlRequest
+ 195               	EVENT_USB_Device_ControlRequest:
+ 196               	.LFB113:
+ 118:VirtualSerial.c **** }
+ 119:VirtualSerial.c **** 
+ 120:VirtualSerial.c **** /** Event handler for the library USB Control Request reception event. */
+ 121:VirtualSerial.c **** void EVENT_USB_Device_ControlRequest(void)
+ 122:VirtualSerial.c **** {
+ 197               		.loc 1 122 0
+ 198               		.cfi_startproc
+ 199               	/* prologue: function */
+ 200               	/* frame size = 0 */
+ 201               	/* stack size = 0 */
+ 202               	.L__stack_usage = 0
+ 123:VirtualSerial.c **** 	CDC_Device_ProcessControlRequest(&VirtualSerial_CDC_Interface);
+ 203               		.loc 1 123 0
+ 204 0000 80E0      		ldi r24,lo8(VirtualSerial_CDC_Interface)
+ 205 0002 90E0      		ldi r25,hi8(VirtualSerial_CDC_Interface)
+ 206 0004 0C94 0000 		jmp CDC_Device_ProcessControlRequest
+ 207               	.LVL12:
+ 208               		.cfi_endproc
+ 209               	.LFE113:
+ 211               		.comm	USBSerialStream,14,1
+ 212               	.global	VirtualSerial_CDC_Interface
+ 213               		.data
+ 216               	VirtualSerial_CDC_Interface:
+ 217 0000 00        		.byte	0
+ 218 0001 03        		.byte	3
+ 219 0002 1000      		.word	16
+ 220 0004 00        		.byte	0
+ 221 0005 04        		.byte	4
+ 222 0006 1000      		.word	16
+ 223 0008 00        		.byte	0
+ 224 0009 02        		.byte	2
+ 225 000a 0800      		.word	8
+ 226 000c 00        		.byte	0
+ 227 000d 0000 0000 		.zero	11
+ 227      0000 0000 
+ 227      0000 00
+ 228               	.global	rxByte
+ 229               		.section .bss
+ 232               	rxByte:
+ 233 0000 0000      		.zero	2
+ 234               		.text
+ 235               	.Letext0:
+ 236               		.file 4 "/usr/lib/gcc/avr/4.7.2/../../../../avr/include/stdint.h"
+ 237               		.file 5 "/usr/lib/gcc/avr/4.7.2/../../../../avr/include/stdio.h"
+ 238               		.file 6 "../LUFA-120219/LUFA/Drivers/USB/Class/Device/../Common/CDCClassCommon.h"
+ 239               		.file 7 "../LUFA-120219/LUFA/Drivers/USB/Class/Device/CDCClassDevice.h"
+ 240               		.file 8 "../LUFA-120219/LUFA/Drivers/USB/Core/USBTask.h"
+ 241               		.file 9 "VirtualSerial.h"
+ 242               		.file 10 "../LUFA-120219/LUFA/Drivers/USB/Core/AVR8/USBController_AVR8.h"
+DEFINED SYMBOLS
+                            *ABS*:0000000000000000 VirtualSerial.c
+     /tmp/ccIqlDv6.s:2      *ABS*:000000000000003e __SP_H__
+     /tmp/ccIqlDv6.s:3      *ABS*:000000000000003d __SP_L__
+     /tmp/ccIqlDv6.s:4      *ABS*:000000000000003f __SREG__
+     /tmp/ccIqlDv6.s:5      *ABS*:0000000000000000 __tmp_reg__
+     /tmp/ccIqlDv6.s:6      *ABS*:0000000000000001 __zero_reg__
+     /tmp/ccIqlDv6.s:13     .text.SetupHardware:0000000000000000 SetupHardware
+     /tmp/ccIqlDv6.s:74     .text.usb_ops:0000000000000000 usb_ops
+     /tmp/ccIqlDv6.s:216    .data:0000000000000000 VirtualSerial_CDC_Interface
+     /tmp/ccIqlDv6.s:232    .bss:0000000000000000 rxByte
+     /tmp/ccIqlDv6.s:111    .text.EVENT_USB_Device_Connect:0000000000000000 EVENT_USB_Device_Connect
+     /tmp/ccIqlDv6.s:133    .text.EVENT_USB_Device_Disconnect:0000000000000000 EVENT_USB_Device_Disconnect
+     /tmp/ccIqlDv6.s:155    .text.EVENT_USB_Device_ConfigurationChanged:0000000000000000 EVENT_USB_Device_ConfigurationChanged
+     /tmp/ccIqlDv6.s:195    .text.EVENT_USB_Device_ControlRequest:0000000000000000 EVENT_USB_Device_ControlRequest
+                            *COM*:000000000000000e USBSerialStream
+
+UNDEFINED SYMBOLS
+USB_Init
+CDC_Device_BytesReceived
+CDC_Device_ReceiveByte
+CDC_Device_USBTask
+USB_USBTask
+CDC_Device_ConfigureEndpoints
+CDC_Device_ProcessControlRequest
+__do_copy_data
+__do_clear_bss

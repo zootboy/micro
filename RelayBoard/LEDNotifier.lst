@@ -1,0 +1,224 @@
+   1               		.file	"LEDNotifier.c"
+   2               	__SREG__ = 0x3f
+   3               	__SP_H__ = 0x3e
+   4               	__SP_L__ = 0x3d
+   5               	__CCP__  = 0x34
+   6               	__tmp_reg__ = 0
+   7               	__zero_reg__ = 1
+  15               	.Ltext0:
+  16               		.section	.text.EVENT_USB_Device_ControlRequest,"ax",@progbits
+  17               	.global	EVENT_USB_Device_ControlRequest
+  19               	EVENT_USB_Device_ControlRequest:
+  20               	.LFB100:
+  21               	.LSM0:
+  22               	/* prologue: function */
+  23               	/* frame size = 0 */
+  24               	.LSM1:
+  25 0000 80E0      		ldi r24,lo8(VirtualSerial_CDC_Interface)
+  26 0002 90E0      		ldi r25,hi8(VirtualSerial_CDC_Interface)
+  27 0004 0E94 0000 		call CDC_Device_ProcessControlRequest
+  28               	/* epilogue start */
+  29               	.LSM2:
+  30 0008 0895      		ret
+  31               	.LFE100:
+  33               		.section	.text.EVENT_USB_Device_ConfigurationChanged,"ax",@progbits
+  34               	.global	EVENT_USB_Device_ConfigurationChanged
+  36               	EVENT_USB_Device_ConfigurationChanged:
+  37               	.LFB99:
+  38               	.LSM3:
+  39               	/* prologue: function */
+  40               	/* frame size = 0 */
+  41               	.LSM4:
+  42 0000 80E0      		ldi r24,lo8(VirtualSerial_CDC_Interface)
+  43 0002 90E0      		ldi r25,hi8(VirtualSerial_CDC_Interface)
+  44 0004 0E94 0000 		call CDC_Device_ConfigureEndpoints
+  45               	/* epilogue start */
+  46               	.LSM5:
+  47 0008 0895      		ret
+  48               	.LFE99:
+  50               		.section	.text.SetupHardware,"ax",@progbits
+  51               	.global	SetupHardware
+  53               	SetupHardware:
+  54               	.LFB98:
+  55               	.LSM6:
+  56               	/* prologue: function */
+  57               	/* frame size = 0 */
+  58               	.LSM7:
+  59 0000 84B7      		in r24,84-32
+  60 0002 877F      		andi r24,lo8(-9)
+  61 0004 84BF      		out 84-32,r24
+  62               	.LSM8:
+  63 0006 88E1      		ldi r24,lo8(24)
+  64               	/* #APP */
+  65               	 ;  100 "LEDNotifier.c" 1
+  66 0008 0FB6      		in __tmp_reg__, __SREG__
+  67 000a F894      		cli
+  68 000c 8093 6000 		sts 96, r24
+  69 0010 1092 6000 		sts 96, __zero_reg__
+  70 0014 0FBE      		out __SREG__,__tmp_reg__
+  71               		
+  72               	 ;  0 "" 2
+  73               	/* #NOAPP */
+  74               	.LBB19:
+  75               	.LSM9:
+  76 0016 80E0      		ldi r24,lo8(0)
+  77 0018 90E0      		ldi r25,hi8(0)
+  78 001a 20E8      		ldi r18,lo8(-128)
+  79               	/* #APP */
+  80               	 ;  103 "LEDNotifier.c" 1
+  81 001c 0FB6      		in __tmp_reg__,__SREG__
+  82 001e F894      		cli
+  83 0020 2093 6100 		sts 97, r18
+  84 0024 8093 6100 		sts 97, r24
+  85 0028 0FBE      		out __SREG__, __tmp_reg__
+  86               	 ;  0 "" 2
+  87               	/* #NOAPP */
+  88               	.LBE19:
+  89               	.LSM10:
+  90 002a 0E94 0000 		call USB_Init
+  91               	.LSM11:
+  92 002e 8FEF      		ldi r24,lo8(-1)
+  93 0030 84B9      		out 36-32,r24
+  94               	.LSM12:
+  95 0032 85B9      		out 37-32,r24
+  96 0034 88E8      		ldi r24,lo8(5000)
+  97 0036 93E1      		ldi r25,hi8(5000)
+  98               	.LVL0:
+  99               	.LBB20:
+ 100               	.LBB21:
+ 101               	.LBB22:
+ 102               	.LBB23:
+ 103               	.LSM13:
+ 104 0038 20E9      		ldi r18,lo8(400)
+ 105 003a 31E0      		ldi r19,hi8(400)
+ 106               	.L6:
+ 107 003c F901      		movw r30,r18
+ 108               	.LVL1:
+ 109               	/* #APP */
+ 110               	 ;  105 "c:/winavr-20100110/lib/gcc/../../avr/include/util/delay_basic.h" 1
+ 111 003e 3197      		1: sbiw r30,1
+ 112 0040 01F4      		brne 1b
+ 113               	 ;  0 "" 2
+ 114               	/* #NOAPP */
+ 115               	.LBE23:
+ 116               	.LBE22:
+ 117               	.LSM14:
+ 118 0042 0197      		sbiw r24,1
+ 119               	.LSM15:
+ 120 0044 01F4      		brne .L6
+ 121               	.LBE21:
+ 122               	.LBE20:
+ 123               	.LSM16:
+ 124 0046 15B8      		out 37-32,__zero_reg__
+ 125 0048 88E8      		ldi r24,lo8(5000)
+ 126 004a 93E1      		ldi r25,hi8(5000)
+ 127               	.LVL2:
+ 128               	.LBB24:
+ 129               	.LBB25:
+ 130               	.LBB26:
+ 131               	.LBB27:
+ 132               	.LSM17:
+ 133 004c 20E9      		ldi r18,lo8(400)
+ 134 004e 31E0      		ldi r19,hi8(400)
+ 135               	.L7:
+ 136 0050 F901      		movw r30,r18
+ 137               	.LVL3:
+ 138               	/* #APP */
+ 139               	 ;  105 "c:/winavr-20100110/lib/gcc/../../avr/include/util/delay_basic.h" 1
+ 140 0052 3197      		1: sbiw r30,1
+ 141 0054 01F4      		brne 1b
+ 142               	 ;  0 "" 2
+ 143               	/* #NOAPP */
+ 144               	.LBE27:
+ 145               	.LBE26:
+ 146               	.LSM18:
+ 147 0056 0197      		sbiw r24,1
+ 148               	.LSM19:
+ 149 0058 01F4      		brne .L7
+ 150               	/* epilogue start */
+ 151               	.LBE25:
+ 152               	.LBE24:
+ 153               	.LSM20:
+ 154 005a 0895      		ret
+ 155               	.LFE98:
+ 157               		.section	.text.main,"ax",@progbits
+ 158               	.global	main
+ 160               	main:
+ 161               	.LFB97:
+ 162               	.LSM21:
+ 163               	/* prologue: function */
+ 164               	/* frame size = 0 */
+ 165               	.LSM22:
+ 166 0000 0E94 0000 		call SetupHardware
+ 167               	.LSM23:
+ 168 0004 80E0      		ldi r24,lo8(VirtualSerial_CDC_Interface)
+ 169 0006 90E0      		ldi r25,hi8(VirtualSerial_CDC_Interface)
+ 170 0008 60E0      		ldi r22,lo8(USBSerialStream)
+ 171 000a 70E0      		ldi r23,hi8(USBSerialStream)
+ 172 000c 0E94 0000 		call CDC_Device_CreateBlockingStream
+ 173               	.LSM24:
+ 174               	/* #APP */
+ 175               	 ;  80 "LEDNotifier.c" 1
+ 176 0010 7894      		sei
+ 177               	 ;  0 "" 2
+ 178               	/* #NOAPP */
+ 179               	.L12:
+ 180               	.LBB28:
+ 181               	.LSM25:
+ 182 0012 80E0      		ldi r24,lo8(USBSerialStream)
+ 183 0014 90E0      		ldi r25,hi8(USBSerialStream)
+ 184 0016 0E94 0000 		call fgetc
+ 185               	.LSM26:
+ 186 001a 85B9      		out 37-32,r24
+ 187               	.LSM27:
+ 188 001c 80E0      		ldi r24,lo8(VirtualSerial_CDC_Interface)
+ 189 001e 90E0      		ldi r25,hi8(VirtualSerial_CDC_Interface)
+ 190 0020 0E94 0000 		call CDC_Device_USBTask
+ 191               	.LSM28:
+ 192 0024 0E94 0000 		call USB_USBTask
+ 193 0028 00C0      		rjmp .L12
+ 194               	.LBE28:
+ 195               	.LFE97:
+ 197               	.global	VirtualSerial_CDC_Interface
+ 198               		.data
+ 201               	VirtualSerial_CDC_Interface:
+ 202 0000 00        		.byte	0
+ 203 0001 03        		.byte	3
+ 204 0002 1000      		.word	16
+ 205 0004 00        		.byte	0
+ 206 0005 04        		.byte	4
+ 207 0006 1000      		.word	16
+ 208 0008 00        		.byte	0
+ 209 0009 02        		.byte	2
+ 210 000a 0800      		.word	8
+ 211 000c 00        		.byte	0
+ 212 000d 0000 0000 		.skip 9,0
+ 212      0000 0000 
+ 212      00
+ 213               		.lcomm USBSerialStream,14
+ 262               	.Letext0:
+DEFINED SYMBOLS
+                            *ABS*:00000000 LEDNotifier.c
+C:\Users\Sean\AppData\Local\Temp/ccMP0FOd.s:2      *ABS*:0000003f __SREG__
+C:\Users\Sean\AppData\Local\Temp/ccMP0FOd.s:3      *ABS*:0000003e __SP_H__
+C:\Users\Sean\AppData\Local\Temp/ccMP0FOd.s:4      *ABS*:0000003d __SP_L__
+C:\Users\Sean\AppData\Local\Temp/ccMP0FOd.s:5      *ABS*:00000034 __CCP__
+C:\Users\Sean\AppData\Local\Temp/ccMP0FOd.s:6      *ABS*:00000000 __tmp_reg__
+C:\Users\Sean\AppData\Local\Temp/ccMP0FOd.s:7      *ABS*:00000001 __zero_reg__
+C:\Users\Sean\AppData\Local\Temp/ccMP0FOd.s:19     .text.EVENT_USB_Device_ControlRequest:00000000 EVENT_USB_Device_ControlRequest
+C:\Users\Sean\AppData\Local\Temp/ccMP0FOd.s:201    .data:00000000 VirtualSerial_CDC_Interface
+C:\Users\Sean\AppData\Local\Temp/ccMP0FOd.s:36     .text.EVENT_USB_Device_ConfigurationChanged:00000000 EVENT_USB_Device_ConfigurationChanged
+C:\Users\Sean\AppData\Local\Temp/ccMP0FOd.s:53     .text.SetupHardware:00000000 SetupHardware
+C:\Users\Sean\AppData\Local\Temp/ccMP0FOd.s:160    .text.main:00000000 main
+                             .bss:00000000 USBSerialStream
+
+UNDEFINED SYMBOLS
+CDC_Device_ProcessControlRequest
+CDC_Device_ConfigureEndpoints
+USB_Init
+CDC_Device_CreateBlockingStream
+fgetc
+CDC_Device_USBTask
+USB_USBTask
+__do_copy_data
+__do_clear_bss

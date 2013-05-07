@@ -1,0 +1,256 @@
+ARM Linker, 4.1 [Build 481] [Standard]
+
+==============================================================================
+
+Section Cross References
+
+    startup_lpc17xx.o(RESET) refers to startup_lpc17xx.o(STACK) for __initial_sp
+    startup_lpc17xx.o(RESET) refers to startup_lpc17xx.o(.text) for Reset_Handler
+    startup_lpc17xx.o(RESET) refers to exti.o(.text) for EINT3_IRQHandler
+    startup_lpc17xx.o(.text) refers to entry.o(.ARM.Collect$$$$00000000) for __main
+    system_lpc17xx.o(.text) refers to system_lpc17xx.o(.data) for SystemFrequency
+    exti.o(.text) refers to system_lpc17xx.o(.text) for SystemInit
+    exti.o(.text) refers to exti.o(.constdata) for led_mask
+    exti.o(.text) refers to exti.o(.data) for idxCur
+    entry.o(.ARM.Collect$$$$00000000) refers (Special) to entry7.o(.ARM.Collect$$$$00000007) for _main_init
+    entry.o(.ARM.Collect$$$$00000000) refers (Special) to entry5.o(.ARM.Collect$$$$00000004) for _main_scatterload
+    entry.o(.ARM.Collect$$$$00000000) refers (Special) to entry2.o(.ARM.Collect$$$$00000001) for _main_stk
+    entry2.o(.ARM.Collect$$$$00000001) refers to entry2.o(.ARM.Collect$$$$00002712) for __lit__00000000
+    entry2.o(.ARM.Collect$$$$00002712) refers to startup_lpc17xx.o(STACK) for __initial_sp
+    entry2.o(__vectab_stack_and_reset_area) refers to startup_lpc17xx.o(STACK) for __initial_sp
+    entry2.o(__vectab_stack_and_reset_area) refers to entry.o(.ARM.Collect$$$$00000000) for __main
+    entry5.o(.ARM.Collect$$$$00000004) refers to init.o(.text) for __scatterload
+    entry7.o(.ARM.Collect$$$$00000007) refers to exti.o(.text) for main
+    init.o(.text) refers to entry5.o(.ARM.Collect$$$$00000004) for __main_after_scatterload
+
+
+==============================================================================
+
+Removing Unused input sections from the image.
+
+    Removing core_cm3.o(.emb_text), (32 bytes).
+    Removing startup_lpc17xx.o(HEAP), (0 bytes).
+
+2 unused section(s) (total 32 bytes) removed from the image.
+
+==============================================================================
+
+Image Symbol Table
+
+    Local Symbols
+
+    Symbol Name                              Value     Ov Type        Size  Object(Section)
+
+    RESET                                    0x00000000   Section      204  startup_lpc17xx.o(RESET)
+    ../../microlib/init/entry.s              0x00000000   Number         0  entry.o ABSOLUTE
+    ../../microlib/init/entry.s              0x00000000   Number         0  entry2.o ABSOLUTE
+    ../../microlib/init/entry.s              0x00000000   Number         0  entry5.o ABSOLUTE
+    ../../microlib/init/entry.s              0x00000000   Number         0  entry7.o ABSOLUTE
+    Exti.c                                   0x00000000   Number         0  exti.o ABSOLUTE
+    core_cm3.c                               0x00000000   Number         0  core_cm3.o ABSOLUTE
+    core_cm3.c                               0x00000000   Number         0  core_cm3.o ABSOLUTE
+    dc.s                                     0x00000000   Number         0  dc.o ABSOLUTE
+    handlers.s                               0x00000000   Number         0  handlers.o ABSOLUTE
+    init.s                                   0x00000000   Number         0  init.o ABSOLUTE
+    startup_LPC17xx.s                        0x00000000   Number         0  startup_lpc17xx.o ABSOLUTE
+    system_LPC17xx.c                         0x00000000   Number         0  system_lpc17xx.o ABSOLUTE
+    .ARM.Collect$$$$00000000                 0x000000cc   Section        0  entry.o(.ARM.Collect$$$$00000000)
+    .ARM.Collect$$$$00000001                 0x000000cc   Section        4  entry2.o(.ARM.Collect$$$$00000001)
+    .ARM.Collect$$$$00000004                 0x000000d0   Section        4  entry5.o(.ARM.Collect$$$$00000004)
+    .ARM.Collect$$$$00000007                 0x000000d4   Section        8  entry7.o(.ARM.Collect$$$$00000007)
+    .ARM.Collect$$$$00002712                 0x000000dc   Section        4  entry2.o(.ARM.Collect$$$$00002712)
+    __lit__00000000                          0x000000dc   Data           4  entry2.o(.ARM.Collect$$$$00002712)
+    .text                                    0x000000e0   Section       28  startup_lpc17xx.o(.text)
+    .text                                    0x000000fc   Section        0  exti.o(.text)
+    .text                                    0x00000228   Section       36  init.o(.text)
+    i.__scatterload_copy                     0x0000024c   Section       14  handlers.o(i.__scatterload_copy)
+    i.__scatterload_null                     0x0000025a   Section        2  handlers.o(i.__scatterload_null)
+    i.__scatterload_zeroinit                 0x0000025c   Section       14  handlers.o(i.__scatterload_zeroinit)
+    .constdata                               0x0000026c   Section       32  exti.o(.constdata)
+    .ARM.__at_0x02FC                         0x000002fc   Section        4  startup_lpc17xx.o(.ARM.__at_0x02FC)
+    .text                                    0x00000300   Section        0  system_lpc17xx.o(.text)
+    .data                                    0x10000000   Section        4  system_lpc17xx.o(.data)
+    .data                                    0x10000004   Section       12  exti.o(.data)
+    STACK                                    0x10000010   Section      512  startup_lpc17xx.o(STACK)
+
+    Global Symbols
+
+    Symbol Name                              Value     Ov Type        Size  Object(Section)
+
+    BuildAttributes$$THM_ISAv4$P$D$K$B$S$PE$A:L22UL41UL21$X:L11$S22US41US21$IEEE1$IW$USESV6$~STKCKD$USESV7$~SHL$OSPACE$EBA8$MICROLIB$REQ8$PRES8$EABIv2 0x00000000   Number         0  anon$$obj.o ABSOLUTE
+    __ARM_use_no_argv                        0x00000000   Number         0  exti.o ABSOLUTE
+    __Vectors                                0x00000000   Data           4  startup_lpc17xx.o(RESET)
+    __decompress                              - Undefined Weak Reference
+    __main                                   0x000000cd   Thumb Code     0  entry.o(.ARM.Collect$$$$00000000)
+    _main_stk                                0x000000cd   Thumb Code     0  entry2.o(.ARM.Collect$$$$00000001)
+    _main_scatterload                        0x000000d1   Thumb Code     0  entry5.o(.ARM.Collect$$$$00000004)
+    __main_after_scatterload                 0x000000d5   Thumb Code     0  entry5.o(.ARM.Collect$$$$00000004)
+    _main_init                               0x000000d5   Thumb Code     0  entry7.o(.ARM.Collect$$$$00000007)
+    Reset_Handler                            0x000000e1   Thumb Code     4  startup_lpc17xx.o(.text)
+    NMI_Handler                              0x000000e5   Thumb Code     2  startup_lpc17xx.o(.text)
+    HardFault_Handler                        0x000000e7   Thumb Code     2  startup_lpc17xx.o(.text)
+    MemManage_Handler                        0x000000e9   Thumb Code     2  startup_lpc17xx.o(.text)
+    BusFault_Handler                         0x000000eb   Thumb Code     2  startup_lpc17xx.o(.text)
+    UsageFault_Handler                       0x000000ed   Thumb Code     2  startup_lpc17xx.o(.text)
+    SVC_Handler                              0x000000ef   Thumb Code     2  startup_lpc17xx.o(.text)
+    DebugMon_Handler                         0x000000f1   Thumb Code     2  startup_lpc17xx.o(.text)
+    PendSV_Handler                           0x000000f3   Thumb Code     2  startup_lpc17xx.o(.text)
+    SysTick_Handler                          0x000000f5   Thumb Code     2  startup_lpc17xx.o(.text)
+    ADC_IRQHandler                           0x000000f7   Thumb Code     0  startup_lpc17xx.o(.text)
+    BOD_IRQHandler                           0x000000f7   Thumb Code     0  startup_lpc17xx.o(.text)
+    CANActivity_IRQHandler                   0x000000f7   Thumb Code     0  startup_lpc17xx.o(.text)
+    CAN_IRQHandler                           0x000000f7   Thumb Code     0  startup_lpc17xx.o(.text)
+    DMA_IRQHandler                           0x000000f7   Thumb Code     0  startup_lpc17xx.o(.text)
+    EINT0_IRQHandler                         0x000000f7   Thumb Code     0  startup_lpc17xx.o(.text)
+    EINT1_IRQHandler                         0x000000f7   Thumb Code     0  startup_lpc17xx.o(.text)
+    EINT2_IRQHandler                         0x000000f7   Thumb Code     0  startup_lpc17xx.o(.text)
+    ENET_IRQHandler                          0x000000f7   Thumb Code     0  startup_lpc17xx.o(.text)
+    I2C0_IRQHandler                          0x000000f7   Thumb Code     0  startup_lpc17xx.o(.text)
+    I2C1_IRQHandler                          0x000000f7   Thumb Code     0  startup_lpc17xx.o(.text)
+    I2C2_IRQHandler                          0x000000f7   Thumb Code     0  startup_lpc17xx.o(.text)
+    I2S_IRQHandler                           0x000000f7   Thumb Code     0  startup_lpc17xx.o(.text)
+    MCPWM_IRQHandler                         0x000000f7   Thumb Code     0  startup_lpc17xx.o(.text)
+    PLL0_IRQHandler                          0x000000f7   Thumb Code     0  startup_lpc17xx.o(.text)
+    PLL1_IRQHandler                          0x000000f7   Thumb Code     0  startup_lpc17xx.o(.text)
+    PWM1_IRQHandler                          0x000000f7   Thumb Code     0  startup_lpc17xx.o(.text)
+    QEI_IRQHandler                           0x000000f7   Thumb Code     0  startup_lpc17xx.o(.text)
+    RIT_IRQHandler                           0x000000f7   Thumb Code     0  startup_lpc17xx.o(.text)
+    RTC_IRQHandler                           0x000000f7   Thumb Code     0  startup_lpc17xx.o(.text)
+    SPI_IRQHandler                           0x000000f7   Thumb Code     0  startup_lpc17xx.o(.text)
+    SSP0_IRQHandler                          0x000000f7   Thumb Code     0  startup_lpc17xx.o(.text)
+    SSP1_IRQHandler                          0x000000f7   Thumb Code     0  startup_lpc17xx.o(.text)
+    TIMER0_IRQHandler                        0x000000f7   Thumb Code     0  startup_lpc17xx.o(.text)
+    TIMER1_IRQHandler                        0x000000f7   Thumb Code     0  startup_lpc17xx.o(.text)
+    TIMER2_IRQHandler                        0x000000f7   Thumb Code     0  startup_lpc17xx.o(.text)
+    TIMER3_IRQHandler                        0x000000f7   Thumb Code     0  startup_lpc17xx.o(.text)
+    UART0_IRQHandler                         0x000000f7   Thumb Code     0  startup_lpc17xx.o(.text)
+    UART1_IRQHandler                         0x000000f7   Thumb Code     0  startup_lpc17xx.o(.text)
+    UART2_IRQHandler                         0x000000f7   Thumb Code     0  startup_lpc17xx.o(.text)
+    UART3_IRQHandler                         0x000000f7   Thumb Code     0  startup_lpc17xx.o(.text)
+    USBActivity_IRQHandler                   0x000000f7   Thumb Code     0  startup_lpc17xx.o(.text)
+    USB_IRQHandler                           0x000000f7   Thumb Code     0  startup_lpc17xx.o(.text)
+    WDT_IRQHandler                           0x000000f7   Thumb Code     0  startup_lpc17xx.o(.text)
+    BUTTON_init                              0x000000fd   Thumb Code    60  exti.o(.text)
+    LED_init                                 0x00000139   Thumb Code    24  exti.o(.text)
+    LED_On                                   0x00000151   Thumb Code    18  exti.o(.text)
+    LED_Off                                  0x00000163   Thumb Code    18  exti.o(.text)
+    EINT3_IRQHandler                         0x00000175   Thumb Code   108  exti.o(.text)
+    main                                     0x000001e1   Thumb Code    40  exti.o(.text)
+    __scatterload                            0x00000229   Thumb Code    28  init.o(.text)
+    __scatterload_rt2                        0x00000229   Thumb Code     0  init.o(.text)
+    __scatterload_copy                       0x0000024d   Thumb Code    14  handlers.o(i.__scatterload_copy)
+    __scatterload_null                       0x0000025b   Thumb Code     2  handlers.o(i.__scatterload_null)
+    __scatterload_zeroinit                   0x0000025d   Thumb Code    14  handlers.o(i.__scatterload_zeroinit)
+    led_mask                                 0x0000026c   Data          32  exti.o(.constdata)
+    Region$$Table$$Base                      0x0000028c   Number         0  anon$$obj.o(Region$$Table)
+    Region$$Table$$Limit                     0x000002ac   Number         0  anon$$obj.o(Region$$Table)
+    SystemInit                               0x00000301   Thumb Code   476  system_lpc17xx.o(.text)
+    SystemFrequency                          0x10000000   Data           4  system_lpc17xx.o(.data)
+    idxCur                                   0x10000004   Data           4  exti.o(.data)
+    idxOld                                   0x10000008   Data           4  exti.o(.data)
+    dir                                      0x1000000c   Data           4  exti.o(.data)
+    __initial_sp                             0x10000210   Data           0  startup_lpc17xx.o(STACK)
+
+
+
+==============================================================================
+
+Memory Map of the image
+
+  Image Entry point : 0x000000cd
+
+  Load Region LR_IROM1 (Base: 0x00000000, Size: 0x0000052c, Max: 0x00080000, ABSOLUTE)
+
+    Execution Region ER_IROM1 (Base: 0x00000000, Size: 0x0000051c, Max: 0x00080000, ABSOLUTE)
+
+    Base Addr    Size         Type   Attr      Idx    E Section Name        Object
+
+    0x00000000   0x000000cc   Data   RO           19    RESET               startup_lpc17xx.o
+    0x000000cc   0x00000000   Code   RO           76  * .ARM.Collect$$$$00000000  mc_w.l(entry.o)(mc_w.l)
+    0x000000cc   0x00000004   Code   RO           79    .ARM.Collect$$$$00000001  mc_w.l(entry2.o)(mc_w.l)
+    0x000000d0   0x00000004   Code   RO           82    .ARM.Collect$$$$00000004  mc_w.l(entry5.o)(mc_w.l)
+    0x000000d4   0x00000008   Code   RO           83    .ARM.Collect$$$$00000007  mc_w.l(entry7.o)(mc_w.l)
+    0x000000dc   0x00000004   Code   RO           80    .ARM.Collect$$$$00002712  mc_w.l(entry2.o)(mc_w.l)
+    0x000000e0   0x0000001c   Code   RO           21    .text               startup_lpc17xx.o
+    0x000000fc   0x0000012c   Code   RO           52    .text               exti.o
+    0x00000228   0x00000024   Code   RO           84    .text               mc_w.l(init.o)(mc_w.l)
+    0x0000024c   0x0000000e   Code   RO           88    i.__scatterload_copy  mc_w.l(handlers.o)(mc_w.l)
+    0x0000025a   0x00000002   Code   RO           89    i.__scatterload_null  mc_w.l(handlers.o)(mc_w.l)
+    0x0000025c   0x0000000e   Code   RO           90    i.__scatterload_zeroinit  mc_w.l(handlers.o)(mc_w.l)
+    0x0000026a   0x00000002   PAD
+    0x0000026c   0x00000020   Data   RO           53    .constdata          exti.o
+    0x0000028c   0x00000020   Data   RO           86    Region$$Table       anon$$obj.o
+    0x000002ac   0x00000050   PAD
+    0x000002fc   0x00000004   Code   RO           20    .ARM.__at_0x02FC    startup_lpc17xx.o
+    0x00000300   0x0000021c   Code   RO           27    .text               system_lpc17xx.o
+
+
+    Execution Region RW_IRAM1 (Base: 0x10000000, Size: 0x00000210, Max: 0x00008000, ABSOLUTE)
+
+    Base Addr    Size         Type   Attr      Idx    E Section Name        Object
+
+    0x10000000   0x00000004   Data   RW           28    .data               system_lpc17xx.o
+    0x10000004   0x0000000c   Data   RW           54    .data               exti.o
+    0x10000010   0x00000200   Zero   RW           17    STACK               startup_lpc17xx.o
+
+
+==============================================================================
+
+Image component sizes
+
+
+      Code (inc. data)   RO Data    RW Data    ZI Data      Debug   Object Name
+
+         0          0          0          0          0          0   core_cm3.o
+       300         32         32         12          0          0   exti.o
+        32          8        204          0        512          0   startup_lpc17xx.o
+       540         64          0          4          0          0   system_lpc17xx.o
+
+    ----------------------------------------------------------------------
+       872        104        348         16        512          0   Object Totals
+         0          0         32          0          0          0   (incl. Generated)
+         0          0         80          0          0          1   (incl. Padding)
+
+    ----------------------------------------------------------------------
+
+      Code (inc. data)   RO Data    RW Data    ZI Data      Debug   Library Member Name
+
+         0          0          0          0          0          0   entry.o
+         8          4          0          0          0          0   entry2.o
+         4          0          0          0          0          0   entry5.o
+         8          4          0          0          0          0   entry7.o
+        30          0          0          0          0          0   handlers.o
+        36          8          0          0          0          0   init.o
+
+    ----------------------------------------------------------------------
+        88         16          0          0          0          0   Library Totals
+         2          0          0          0          0          0   (incl. Padding)
+
+    ----------------------------------------------------------------------
+
+      Code (inc. data)   RO Data    RW Data    ZI Data      Debug   Library Name
+
+        86         16          0          0          0         68   mc_w.l
+
+    ----------------------------------------------------------------------
+        88         16          0          0          0          0   Library Totals
+
+    ----------------------------------------------------------------------
+
+==============================================================================
+
+
+      Code (inc. data)   RO Data    RW Data    ZI Data      Debug   
+
+       960        120        348         16        512      40928   Grand Totals
+       960        120        348         16        512      40928   ELF Image Totals
+       960        120        348         16          0          0   ROM Totals
+
+==============================================================================
+
+    Total RO  Size (Code + RO Data)                 1308 (   1.28kB)
+    Total RW  Size (RW Data + ZI Data)               528 (   0.52kB)
+    Total ROM Size (Code + RO Data + RW Data)       1324 (   1.29kB)
+
+==============================================================================
+

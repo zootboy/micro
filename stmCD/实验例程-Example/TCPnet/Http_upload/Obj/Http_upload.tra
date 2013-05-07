@@ -1,0 +1,32 @@
+*** Creating Trace Output File '.\Obj\Http_upload.tra' Ok.
+### Preparing for ADS-LD.
+### Creating ADS-LD Command Line
+### List of Objects: adding '".\obj\http_upload.o"'
+### List of Objects: adding '".\obj\http_cgi.o"'
+### List of Objects: adding '".\obj\web.o"'
+### List of Objects: adding '".\obj\net_config.o"'
+### List of Objects: adding '".\obj\file_config.o"'
+### List of Objects: adding '".\obj\http_uif.o"'
+### List of Objects: adding '".\obj\retarget.o"'
+### List of Objects: adding '".\obj\startup_lpc17xx.o"'
+### List of Objects: adding '".\obj\emac_lpc17xx.o"'
+### List of Objects: adding '".\obj\spi_lpc17xx.o"'
+### List of Objects: adding '".\obj\system_lpc17xx.o"'
+### List of Objects: adding '".\obj\glcd_lpc1700.o"'
+### List of Objects: adding '"..\Library\FS_CM3.lib"'
+### List of Objects: adding '"..\Library\TCP_CM3.lib"'
+### ADS-LD Command completed:
+--cpu Cortex-M3 ".\obj\http_upload.o" ".\obj\http_cgi.o" ".\obj\web.o" ".\obj\net_config.o" ".\obj\file_config.o" ".\obj\http_uif.o" ".\obj\retarget.o" ".\obj\startup_lpc17xx.o" ".\obj\emac_lpc17xx.o" ".\obj\spi_lpc17xx.o" ".\obj\system_lpc17xx.o" ".\obj\glcd_lpc1700.o" "..\Library\FS_CM3.lib" "..\Library\TCP_CM3.lib" --strict --scatter ".\Obj\Http_upload.sct" 
+--autoat --summary_stderr --info summarysizes --map --xref --callgraph --symbols 
+--info sizes --info totals --info unused --info veneers 
+ --list ".\Lst\Http_upload.map" -o ".\Obj\Http_upload.axf"### Preparing Environment (PrepEnvAds)
+### ADS-LD Output File: '.\Obj\Http_upload.axf'
+### ADS-LD Command File: '.\Obj\Http_upload.lnp'
+### Checking for dirty Components...
+### Creating CmdFile '.\Obj\Http_upload.lnp', Handle=0x00000324
+### Writing '.lnp' file
+### ADS-LD Command file '.\Obj\Http_upload.lnp' is ready.
+### ADS-LD: About to start ADS-LD Thread.
+### ADS-LD: executed with 0 errors
+### Updating obj list
+### LDADS_file() completed.

@@ -1,0 +1,46 @@
+This program is a Telnet Server example. It shows how to build a
+simple IP based command line interface. 
+
+This example will configure the LAN network parameters for 
+the evaluation board automatically if a DHCP Server is available 
+in your LAN.
+
+If you do not have a DHCP server, you need to configure
+the IP address, net mask and default gateway manually in
+the Net_Config.c configuration file. You have to disable also
+'Dynamic Host Configuration' under the 'Ethernet Network 
+Interface' section.
+
+This example is configured to run in 3 simultaneous sessions.
+This means that 3 Telnet Clients can be connected to Telnet Server
+at the same time. This can be either 3 different PC computers or a
+single PC computer running 3 instances of Telnet Client. 
+
+To test this example you need to run a Telnet client on your PC.
+If you do not have installed a special Telnet Client software on your
+PC, you can run the Windows telnet client from a Console Window.
+
+From the console window type:  telnet mcb1700
+
+Default user    : admin
+Default password: <none>
+
+You can change the password at runtime with a command 'passw'
+
+At Telnet server command prompt type 'help' to display
+available commands or 'bye' to disconnect.
+
+You can modify the tnet_process_cmd() function, which is called to
+process a command when a Enter key is pressed. It is located in 
+Telnet_uif.c - telnet user interface module.
+
+The Telnet_demo example is available for several targets:
+
+MCB1700:       Standalone application for Keil MCB1700 Board.
+               Program code is loaded into on-chip flash.
+
+MCB1700 Debug: Standalone Debug application. Debug level configured
+               in Net_Debug.c debug configuration file.
+               Connect a serial cable to RS232 COM1 port to view
+               output messages using HyperTerminal at 115200 baud,
+               8-bits, no parity, 1 stop bit, XON/XOFF.

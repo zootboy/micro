@@ -1,0 +1,4 @@
+--cpu Cortex-M3 ".\obj\core_cm3.o" ".\obj\system_lpc17xx.o" ".\obj\startup_lpc17xx.o" ".\obj\dma.o" ".\obj\i2s.o" ".\obj\i2stest.o" --strict --scatter ".\Obj\LandTiger_I2S.sct" 
+--autoat --summary_stderr --info summarysizes --map --xref --callgraph --symbols 
+--info sizes --info totals --info unused --info veneers 
+ --list ".\List\LandTiger_I2S.map" -o ".\Obj\LandTiger_I2S.axf"

@@ -1,0 +1,237 @@
+
+stm.o:     file format elf32-littlearm
+
+
+Disassembly of section .text:
+
+080001e4 <SystemInit-0x14>:
+ 80001e4:	0800045c 	.word	0x0800045c
+ 80001e8:	20000000 	.word	0x20000000
+ 80001ec:	20000000 	.word	0x20000000
+ 80001f0:	20000000 	.word	0x20000000
+ 80001f4:	20000000 	.word	0x20000000
+
+080001f8 <SystemInit>:
+ 80001f8:	b480      	push	{r7}
+ 80001fa:	af00      	add	r7, sp, #0
+ 80001fc:	f44f 5300 	mov.w	r3, #8192	; 0x2000
+ 8000200:	f2c4 0302 	movt	r3, #16386	; 0x4002
+ 8000204:	f04f 0212 	mov.w	r2, #18
+ 8000208:	601a      	str	r2, [r3, #0]
+ 800020a:	f44f 5380 	mov.w	r3, #4096	; 0x1000
+ 800020e:	f2c4 0302 	movt	r3, #16386	; 0x4002
+ 8000212:	f44f 5280 	mov.w	r2, #4096	; 0x1000
+ 8000216:	f2c4 0202 	movt	r2, #16386	; 0x4002
+ 800021a:	6812      	ldr	r2, [r2, #0]
+ 800021c:	f442 3280 	orr.w	r2, r2, #65536	; 0x10000
+ 8000220:	601a      	str	r2, [r3, #0]
+ 8000222:	bf00      	nop
+ 8000224:	f44f 5380 	mov.w	r3, #4096	; 0x1000
+ 8000228:	f2c4 0302 	movt	r3, #16386	; 0x4002
+ 800022c:	681b      	ldr	r3, [r3, #0]
+ 800022e:	f403 3300 	and.w	r3, r3, #131072	; 0x20000
+ 8000232:	2b00      	cmp	r3, #0
+ 8000234:	d0f6      	beq.n	8000224 <SystemInit+0x2c>
+ 8000236:	f44f 5380 	mov.w	r3, #4096	; 0x1000
+ 800023a:	f2c4 0302 	movt	r3, #16386	; 0x4002
+ 800023e:	f44f 6280 	mov.w	r2, #1024	; 0x400
+ 8000242:	f2c0 021d 	movt	r2, #29
+ 8000246:	605a      	str	r2, [r3, #4]
+ 8000248:	f44f 5380 	mov.w	r3, #4096	; 0x1000
+ 800024c:	f2c4 0302 	movt	r3, #16386	; 0x4002
+ 8000250:	f44f 5280 	mov.w	r2, #4096	; 0x1000
+ 8000254:	f2c4 0202 	movt	r2, #16386	; 0x4002
+ 8000258:	6812      	ldr	r2, [r2, #0]
+ 800025a:	f042 7280 	orr.w	r2, r2, #16777216	; 0x1000000
+ 800025e:	601a      	str	r2, [r3, #0]
+ 8000260:	bf00      	nop
+ 8000262:	f44f 5380 	mov.w	r3, #4096	; 0x1000
+ 8000266:	f2c4 0302 	movt	r3, #16386	; 0x4002
+ 800026a:	681b      	ldr	r3, [r3, #0]
+ 800026c:	f003 7300 	and.w	r3, r3, #33554432	; 0x2000000
+ 8000270:	2b00      	cmp	r3, #0
+ 8000272:	d0f6      	beq.n	8000262 <SystemInit+0x6a>
+ 8000274:	f44f 5380 	mov.w	r3, #4096	; 0x1000
+ 8000278:	f2c4 0302 	movt	r3, #16386	; 0x4002
+ 800027c:	f44f 5280 	mov.w	r2, #4096	; 0x1000
+ 8000280:	f2c4 0202 	movt	r2, #16386	; 0x4002
+ 8000284:	6852      	ldr	r2, [r2, #4]
+ 8000286:	f042 0202 	orr.w	r2, r2, #2
+ 800028a:	605a      	str	r2, [r3, #4]
+ 800028c:	46bd      	mov	sp, r7
+ 800028e:	bc80      	pop	{r7}
+ 8000290:	4770      	bx	lr
+ 8000292:	bf00      	nop
+
+08000294 <__enable_irq>:
+ 8000294:	b480      	push	{r7}
+ 8000296:	af00      	add	r7, sp, #0
+ 8000298:	b662      	cpsie	i
+ 800029a:	46bd      	mov	sp, r7
+ 800029c:	bc80      	pop	{r7}
+ 800029e:	4770      	bx	lr
+
+080002a0 <NVIC_EnableIRQ>:
+ 80002a0:	b480      	push	{r7}
+ 80002a2:	b083      	sub	sp, #12
+ 80002a4:	af00      	add	r7, sp, #0
+ 80002a6:	4603      	mov	r3, r0
+ 80002a8:	71fb      	strb	r3, [r7, #7]
+ 80002aa:	f44f 4361 	mov.w	r3, #57600	; 0xe100
+ 80002ae:	f2ce 0300 	movt	r3, #57344	; 0xe000
+ 80002b2:	f997 2007 	ldrsb.w	r2, [r7, #7]
+ 80002b6:	ea4f 1252 	mov.w	r2, r2, lsr #5
+ 80002ba:	79f9      	ldrb	r1, [r7, #7]
+ 80002bc:	f001 011f 	and.w	r1, r1, #31
+ 80002c0:	f04f 0001 	mov.w	r0, #1
+ 80002c4:	fa00 f101 	lsl.w	r1, r0, r1
+ 80002c8:	f843 1022 	str.w	r1, [r3, r2, lsl #2]
+ 80002cc:	f107 070c 	add.w	r7, r7, #12
+ 80002d0:	46bd      	mov	sp, r7
+ 80002d2:	bc80      	pop	{r7}
+ 80002d4:	4770      	bx	lr
+ 80002d6:	bf00      	nop
+
+080002d8 <EXTI15_10_IRQHandler>:
+ 80002d8:	b480      	push	{r7}
+ 80002da:	af00      	add	r7, sp, #0
+ 80002dc:	f44f 6380 	mov.w	r3, #1024	; 0x400
+ 80002e0:	f2c4 0301 	movt	r3, #16385	; 0x4001
+ 80002e4:	695b      	ldr	r3, [r3, #20]
+ 80002e6:	f403 5300 	and.w	r3, r3, #8192	; 0x2000
+ 80002ea:	2b00      	cmp	r3, #0
+ 80002ec:	d01e      	beq.n	800032c <EXTI15_10_IRQHandler+0x54>
+ 80002ee:	f44f 6380 	mov.w	r3, #1024	; 0x400
+ 80002f2:	f2c4 0301 	movt	r3, #16385	; 0x4001
+ 80002f6:	f44f 5200 	mov.w	r2, #8192	; 0x2000
+ 80002fa:	615a      	str	r2, [r3, #20]
+ 80002fc:	f44f 6340 	mov.w	r3, #3072	; 0xc00
+ 8000300:	f2c4 0301 	movt	r3, #16385	; 0x4001
+ 8000304:	68db      	ldr	r3, [r3, #12]
+ 8000306:	f003 0302 	and.w	r3, r3, #2
+ 800030a:	2b00      	cmp	r3, #0
+ 800030c:	d007      	beq.n	800031e <EXTI15_10_IRQHandler+0x46>
+ 800030e:	f44f 6340 	mov.w	r3, #3072	; 0xc00
+ 8000312:	f2c4 0301 	movt	r3, #16385	; 0x4001
+ 8000316:	f04f 0202 	mov.w	r2, #2
+ 800031a:	615a      	str	r2, [r3, #20]
+ 800031c:	e006      	b.n	800032c <EXTI15_10_IRQHandler+0x54>
+ 800031e:	f44f 6340 	mov.w	r3, #3072	; 0xc00
+ 8000322:	f2c4 0301 	movt	r3, #16385	; 0x4001
+ 8000326:	f04f 0202 	mov.w	r2, #2
+ 800032a:	611a      	str	r2, [r3, #16]
+ 800032c:	46bd      	mov	sp, r7
+ 800032e:	bc80      	pop	{r7}
+ 8000330:	4770      	bx	lr
+ 8000332:	bf00      	nop
+
+08000334 <main>:
+ 8000334:	b580      	push	{r7, lr}
+ 8000336:	b082      	sub	sp, #8
+ 8000338:	af00      	add	r7, sp, #0
+ 800033a:	f44f 5380 	mov.w	r3, #4096	; 0x1000
+ 800033e:	f2c4 0302 	movt	r3, #16386	; 0x4002
+ 8000342:	f44f 5280 	mov.w	r2, #4096	; 0x1000
+ 8000346:	f2c4 0202 	movt	r2, #16386	; 0x4002
+ 800034a:	6992      	ldr	r2, [r2, #24]
+ 800034c:	f042 0219 	orr.w	r2, r2, #25
+ 8000350:	619a      	str	r2, [r3, #24]
+ 8000352:	f44f 6340 	mov.w	r3, #3072	; 0xc00
+ 8000356:	f2c4 0301 	movt	r3, #16385	; 0x4001
+ 800035a:	f244 4222 	movw	r2, #17442	; 0x4422
+ 800035e:	f2c4 4244 	movt	r2, #17476	; 0x4444
+ 8000362:	601a      	str	r2, [r3, #0]
+ 8000364:	f04f 0300 	mov.w	r3, #0
+ 8000368:	f2c4 0301 	movt	r3, #16385	; 0x4001
+ 800036c:	f04f 0200 	mov.w	r2, #0
+ 8000370:	f2c4 0201 	movt	r2, #16385	; 0x4001
+ 8000374:	6951      	ldr	r1, [r2, #20]
+ 8000376:	f64f 720f 	movw	r2, #65295	; 0xff0f
+ 800037a:	400a      	ands	r2, r1
+ 800037c:	615a      	str	r2, [r3, #20]
+ 800037e:	f04f 0300 	mov.w	r3, #0
+ 8000382:	f2c4 0301 	movt	r3, #16385	; 0x4001
+ 8000386:	f04f 0220 	mov.w	r2, #32
+ 800038a:	615a      	str	r2, [r3, #20]
+ 800038c:	f44f 6380 	mov.w	r3, #1024	; 0x400
+ 8000390:	f2c4 0301 	movt	r3, #16385	; 0x4001
+ 8000394:	f44f 5200 	mov.w	r2, #8192	; 0x2000
+ 8000398:	601a      	str	r2, [r3, #0]
+ 800039a:	f44f 6380 	mov.w	r3, #1024	; 0x400
+ 800039e:	f2c4 0301 	movt	r3, #16385	; 0x4001
+ 80003a2:	f44f 5200 	mov.w	r2, #8192	; 0x2000
+ 80003a6:	60da      	str	r2, [r3, #12]
+ 80003a8:	f04f 0028 	mov.w	r0, #40	; 0x28
+ 80003ac:	f7ff ff78 	bl	80002a0 <NVIC_EnableIRQ>
+ 80003b0:	f7ff ff70 	bl	8000294 <__enable_irq>
+ 80003b4:	f44f 6340 	mov.w	r3, #3072	; 0xc00
+ 80003b8:	f2c4 0301 	movt	r3, #16385	; 0x4001
+ 80003bc:	f04f 0201 	mov.w	r2, #1
+ 80003c0:	611a      	str	r2, [r3, #16]
+ 80003c2:	f44f 3300 	mov.w	r3, #131072	; 0x20000
+ 80003c6:	607b      	str	r3, [r7, #4]
+ 80003c8:	e003      	b.n	80003d2 <main+0x9e>
+ 80003ca:	687b      	ldr	r3, [r7, #4]
+ 80003cc:	f103 33ff 	add.w	r3, r3, #4294967295
+ 80003d0:	607b      	str	r3, [r7, #4]
+ 80003d2:	687b      	ldr	r3, [r7, #4]
+ 80003d4:	2b00      	cmp	r3, #0
+ 80003d6:	d1f8      	bne.n	80003ca <main+0x96>
+ 80003d8:	f44f 6340 	mov.w	r3, #3072	; 0xc00
+ 80003dc:	f2c4 0301 	movt	r3, #16385	; 0x4001
+ 80003e0:	f04f 0201 	mov.w	r2, #1
+ 80003e4:	615a      	str	r2, [r3, #20]
+ 80003e6:	f44f 2300 	mov.w	r3, #524288	; 0x80000
+ 80003ea:	607b      	str	r3, [r7, #4]
+ 80003ec:	e003      	b.n	80003f6 <main+0xc2>
+ 80003ee:	687b      	ldr	r3, [r7, #4]
+ 80003f0:	f103 33ff 	add.w	r3, r3, #4294967295
+ 80003f4:	607b      	str	r3, [r7, #4]
+ 80003f6:	687b      	ldr	r3, [r7, #4]
+ 80003f8:	2b00      	cmp	r3, #0
+ 80003fa:	d1f8      	bne.n	80003ee <main+0xba>
+ 80003fc:	e7da      	b.n	80003b4 <main+0x80>
+ 80003fe:	bf00      	nop
+
+08000400 <Reset_Handler>:
+ 8000400:	2100      	movs	r1, #0
+ 8000402:	f000 b804 	b.w	800040e <LoopCopyDataInit>
+
+08000406 <CopyDataInit>:
+ 8000406:	4b0e      	ldr	r3, [pc, #56]	; (8000440 <LoopFillZerobss+0x1a>)
+ 8000408:	585b      	ldr	r3, [r3, r1]
+ 800040a:	5043      	str	r3, [r0, r1]
+ 800040c:	3104      	adds	r1, #4
+
+0800040e <LoopCopyDataInit>:
+ 800040e:	480d      	ldr	r0, [pc, #52]	; (8000444 <LoopFillZerobss+0x1e>)
+ 8000410:	4b0d      	ldr	r3, [pc, #52]	; (8000448 <LoopFillZerobss+0x22>)
+ 8000412:	1842      	adds	r2, r0, r1
+ 8000414:	429a      	cmp	r2, r3
+ 8000416:	f4ff aff6 	bcc.w	8000406 <CopyDataInit>
+ 800041a:	4a0c      	ldr	r2, [pc, #48]	; (800044c <LoopFillZerobss+0x26>)
+ 800041c:	f000 b803 	b.w	8000426 <LoopFillZerobss>
+
+08000420 <FillZerobss>:
+ 8000420:	2300      	movs	r3, #0
+ 8000422:	f842 3b04 	str.w	r3, [r2], #4
+
+08000426 <LoopFillZerobss>:
+ 8000426:	4b0a      	ldr	r3, [pc, #40]	; (8000450 <LoopFillZerobss+0x2a>)
+ 8000428:	429a      	cmp	r2, r3
+ 800042a:	f4ff aff9 	bcc.w	8000420 <FillZerobss>
+ 800042e:	f7ff fee3 	bl	80001f8 <SystemInit>
+ 8000432:	4808      	ldr	r0, [pc, #32]	; (8000454 <LoopFillZerobss+0x2e>)
+ 8000434:	f380 8808 	msr	MSP, r0
+ 8000438:	f7ff ff7c 	bl	8000334 <main>
+ 800043c:	4770      	bx	lr
+ 800043e:	0000      	.short	0x0000
+ 8000440:	0800045c 	.word	0x0800045c
+ 8000444:	20000000 	.word	0x20000000
+ 8000448:	20000000 	.word	0x20000000
+ 800044c:	20000000 	.word	0x20000000
+ 8000450:	20000000 	.word	0x20000000
+ 8000454:	2000c000 	.word	0x2000c000
+
+08000458 <ADC1_2_IRQHandler>:
+ 8000458:	f7ff bffe 	b.w	8000458 <ADC1_2_IRQHandler>

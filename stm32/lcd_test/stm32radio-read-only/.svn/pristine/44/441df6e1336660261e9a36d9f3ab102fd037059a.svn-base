@@ -1,0 +1,326 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<CodeBlocks_project_file>
+	<FileVersion major="1" minor="6" />
+	<Project>
+		<Option title="stm32radio" />
+		<Option pch_mode="2" />
+		<Option compiler="gcc" />
+		<Build>
+			<Target title="Debug">
+				<Option output="bin\Debug\stm32radio" prefix_auto="1" extension_auto="1" />
+				<Option object_output="obj\Debug\" />
+				<Option type="1" />
+				<Option compiler="gcc" />
+				<Compiler>
+					<Add option="-g" />
+				</Compiler>
+			</Target>
+			<Target title="Release">
+				<Option output="bin\Release\stm32radio" prefix_auto="1" extension_auto="1" />
+				<Option object_output="obj\Release\" />
+				<Option type="1" />
+				<Option compiler="gcc" />
+				<Compiler>
+					<Add option="-O2" />
+				</Compiler>
+				<Linker>
+					<Add option="-s" />
+				</Linker>
+			</Target>
+		</Build>
+		<Compiler>
+			<Add option="-Wall" />
+		</Compiler>
+		<Unit filename="..\..\STM32F10x_Libraries\CMSIS\CM3\CoreSupport\core_cm3.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="..\..\STM32F10x_Libraries\CMSIS\CM3\CoreSupport\core_cm3.h" />
+		<Unit filename="..\..\STM32F10x_Libraries\CMSIS\CM3\DeviceSupport\ST\STM32F10x\startup\arm\startup_stm32f10x_cl.s" />
+		<Unit filename="..\..\STM32F10x_Libraries\CMSIS\CM3\DeviceSupport\ST\STM32F10x\startup\arm\startup_stm32f10x_hd.s" />
+		<Unit filename="..\..\STM32F10x_Libraries\CMSIS\CM3\DeviceSupport\ST\STM32F10x\startup\arm\startup_stm32f10x_ld.s" />
+		<Unit filename="..\..\STM32F10x_Libraries\CMSIS\CM3\DeviceSupport\ST\STM32F10x\startup\arm\startup_stm32f10x_ld_vl.s" />
+		<Unit filename="..\..\STM32F10x_Libraries\CMSIS\CM3\DeviceSupport\ST\STM32F10x\startup\arm\startup_stm32f10x_md.s" />
+		<Unit filename="..\..\STM32F10x_Libraries\CMSIS\CM3\DeviceSupport\ST\STM32F10x\startup\arm\startup_stm32f10x_md_vl.s" />
+		<Unit filename="..\..\STM32F10x_Libraries\CMSIS\CM3\DeviceSupport\ST\STM32F10x\startup\gcc_ride7\startup_stm32f10x_cl.s" />
+		<Unit filename="..\..\STM32F10x_Libraries\CMSIS\CM3\DeviceSupport\ST\STM32F10x\startup\gcc_ride7\startup_stm32f10x_hd.s" />
+		<Unit filename="..\..\STM32F10x_Libraries\CMSIS\CM3\DeviceSupport\ST\STM32F10x\startup\gcc_ride7\startup_stm32f10x_ld.s" />
+		<Unit filename="..\..\STM32F10x_Libraries\CMSIS\CM3\DeviceSupport\ST\STM32F10x\startup\gcc_ride7\startup_stm32f10x_ld_vl.s" />
+		<Unit filename="..\..\STM32F10x_Libraries\CMSIS\CM3\DeviceSupport\ST\STM32F10x\startup\gcc_ride7\startup_stm32f10x_md.s" />
+		<Unit filename="..\..\STM32F10x_Libraries\CMSIS\CM3\DeviceSupport\ST\STM32F10x\startup\gcc_ride7\startup_stm32f10x_md_vl.s" />
+		<Unit filename="..\..\STM32F10x_Libraries\CMSIS\CM3\DeviceSupport\ST\STM32F10x\startup\iar\startup_stm32f10x_cl.s" />
+		<Unit filename="..\..\STM32F10x_Libraries\CMSIS\CM3\DeviceSupport\ST\STM32F10x\startup\iar\startup_stm32f10x_hd.s" />
+		<Unit filename="..\..\STM32F10x_Libraries\CMSIS\CM3\DeviceSupport\ST\STM32F10x\startup\iar\startup_stm32f10x_ld.s" />
+		<Unit filename="..\..\STM32F10x_Libraries\CMSIS\CM3\DeviceSupport\ST\STM32F10x\startup\iar\startup_stm32f10x_ld_vl.s" />
+		<Unit filename="..\..\STM32F10x_Libraries\CMSIS\CM3\DeviceSupport\ST\STM32F10x\startup\iar\startup_stm32f10x_md.s" />
+		<Unit filename="..\..\STM32F10x_Libraries\CMSIS\CM3\DeviceSupport\ST\STM32F10x\startup\iar\startup_stm32f10x_md_vl.s" />
+		<Unit filename="..\..\STM32F10x_Libraries\CMSIS\CM3\DeviceSupport\ST\STM32F10x\stm32f10x.h" />
+		<Unit filename="..\..\STM32F10x_Libraries\CMSIS\CM3\DeviceSupport\ST\STM32F10x\system_stm32f10x.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="..\..\STM32F10x_Libraries\CMSIS\CM3\DeviceSupport\ST\STM32F10x\system_stm32f10x.h" />
+		<Unit filename="..\..\STM32F10x_Libraries\Mass_Storage\inc\fsmc_nand.h" />
+		<Unit filename="..\..\STM32F10x_Libraries\Mass_Storage\inc\hw_config.h" />
+		<Unit filename="..\..\STM32F10x_Libraries\Mass_Storage\inc\mass_mal.h" />
+		<Unit filename="..\..\STM32F10x_Libraries\Mass_Storage\inc\memory.h" />
+		<Unit filename="..\..\STM32F10x_Libraries\Mass_Storage\inc\nand_if.h" />
+		<Unit filename="..\..\STM32F10x_Libraries\Mass_Storage\inc\platform_config.h" />
+		<Unit filename="..\..\STM32F10x_Libraries\Mass_Storage\inc\stm32f10x_conf.h" />
+		<Unit filename="..\..\STM32F10x_Libraries\Mass_Storage\inc\usb_bot.h" />
+		<Unit filename="..\..\STM32F10x_Libraries\Mass_Storage\inc\usb_conf.h" />
+		<Unit filename="..\..\STM32F10x_Libraries\Mass_Storage\inc\usb_desc.h" />
+		<Unit filename="..\..\STM32F10x_Libraries\Mass_Storage\inc\usb_istr.h" />
+		<Unit filename="..\..\STM32F10x_Libraries\Mass_Storage\inc\usb_prop.h" />
+		<Unit filename="..\..\STM32F10x_Libraries\Mass_Storage\inc\usb_pwr.h" />
+		<Unit filename="..\..\STM32F10x_Libraries\Mass_Storage\inc\usb_scsi.h" />
+		<Unit filename="..\..\STM32F10x_Libraries\Mass_Storage\src\fsmc_nand.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="..\..\STM32F10x_Libraries\Mass_Storage\src\hw_config.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="..\..\STM32F10x_Libraries\Mass_Storage\src\mass_mal.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="..\..\STM32F10x_Libraries\Mass_Storage\src\memory.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="..\..\STM32F10x_Libraries\Mass_Storage\src\nand_if.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="..\..\STM32F10x_Libraries\Mass_Storage\src\scsi_data.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="..\..\STM32F10x_Libraries\Mass_Storage\src\usb_bot.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="..\..\STM32F10x_Libraries\Mass_Storage\src\usb_desc.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="..\..\STM32F10x_Libraries\Mass_Storage\src\usb_endp.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="..\..\STM32F10x_Libraries\Mass_Storage\src\usb_istr.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="..\..\STM32F10x_Libraries\Mass_Storage\src\usb_main.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="..\..\STM32F10x_Libraries\Mass_Storage\src\usb_prop.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="..\..\STM32F10x_Libraries\Mass_Storage\src\usb_pwr.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="..\..\STM32F10x_Libraries\Mass_Storage\src\usb_scsi.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="..\..\STM32F10x_Libraries\STM32F10x_StdPeriph_Driver\inc\misc.h" />
+		<Unit filename="..\..\STM32F10x_Libraries\STM32F10x_StdPeriph_Driver\inc\stm32f10x_adc.h" />
+		<Unit filename="..\..\STM32F10x_Libraries\STM32F10x_StdPeriph_Driver\inc\stm32f10x_bkp.h" />
+		<Unit filename="..\..\STM32F10x_Libraries\STM32F10x_StdPeriph_Driver\inc\stm32f10x_can.h" />
+		<Unit filename="..\..\STM32F10x_Libraries\STM32F10x_StdPeriph_Driver\inc\stm32f10x_cec.h" />
+		<Unit filename="..\..\STM32F10x_Libraries\STM32F10x_StdPeriph_Driver\inc\stm32f10x_crc.h" />
+		<Unit filename="..\..\STM32F10x_Libraries\STM32F10x_StdPeriph_Driver\inc\stm32f10x_dac.h" />
+		<Unit filename="..\..\STM32F10x_Libraries\STM32F10x_StdPeriph_Driver\inc\stm32f10x_dbgmcu.h" />
+		<Unit filename="..\..\STM32F10x_Libraries\STM32F10x_StdPeriph_Driver\inc\stm32f10x_dma.h" />
+		<Unit filename="..\..\STM32F10x_Libraries\STM32F10x_StdPeriph_Driver\inc\stm32f10x_exti.h" />
+		<Unit filename="..\..\STM32F10x_Libraries\STM32F10x_StdPeriph_Driver\inc\stm32f10x_flash.h" />
+		<Unit filename="..\..\STM32F10x_Libraries\STM32F10x_StdPeriph_Driver\inc\stm32f10x_fsmc.h" />
+		<Unit filename="..\..\STM32F10x_Libraries\STM32F10x_StdPeriph_Driver\inc\stm32f10x_gpio.h" />
+		<Unit filename="..\..\STM32F10x_Libraries\STM32F10x_StdPeriph_Driver\inc\stm32f10x_i2c.h" />
+		<Unit filename="..\..\STM32F10x_Libraries\STM32F10x_StdPeriph_Driver\inc\stm32f10x_iwdg.h" />
+		<Unit filename="..\..\STM32F10x_Libraries\STM32F10x_StdPeriph_Driver\inc\stm32f10x_pwr.h" />
+		<Unit filename="..\..\STM32F10x_Libraries\STM32F10x_StdPeriph_Driver\inc\stm32f10x_rcc.h" />
+		<Unit filename="..\..\STM32F10x_Libraries\STM32F10x_StdPeriph_Driver\inc\stm32f10x_rtc.h" />
+		<Unit filename="..\..\STM32F10x_Libraries\STM32F10x_StdPeriph_Driver\inc\stm32f10x_sdio.h" />
+		<Unit filename="..\..\STM32F10x_Libraries\STM32F10x_StdPeriph_Driver\inc\stm32f10x_spi.h" />
+		<Unit filename="..\..\STM32F10x_Libraries\STM32F10x_StdPeriph_Driver\inc\stm32f10x_tim.h" />
+		<Unit filename="..\..\STM32F10x_Libraries\STM32F10x_StdPeriph_Driver\inc\stm32f10x_usart.h" />
+		<Unit filename="..\..\STM32F10x_Libraries\STM32F10x_StdPeriph_Driver\inc\stm32f10x_wwdg.h" />
+		<Unit filename="..\..\STM32F10x_Libraries\STM32F10x_StdPeriph_Driver\src\misc.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="..\..\STM32F10x_Libraries\STM32F10x_StdPeriph_Driver\src\stm32f10x_adc.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="..\..\STM32F10x_Libraries\STM32F10x_StdPeriph_Driver\src\stm32f10x_bkp.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="..\..\STM32F10x_Libraries\STM32F10x_StdPeriph_Driver\src\stm32f10x_can.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="..\..\STM32F10x_Libraries\STM32F10x_StdPeriph_Driver\src\stm32f10x_cec.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="..\..\STM32F10x_Libraries\STM32F10x_StdPeriph_Driver\src\stm32f10x_crc.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="..\..\STM32F10x_Libraries\STM32F10x_StdPeriph_Driver\src\stm32f10x_dac.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="..\..\STM32F10x_Libraries\STM32F10x_StdPeriph_Driver\src\stm32f10x_dbgmcu.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="..\..\STM32F10x_Libraries\STM32F10x_StdPeriph_Driver\src\stm32f10x_dma.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="..\..\STM32F10x_Libraries\STM32F10x_StdPeriph_Driver\src\stm32f10x_exti.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="..\..\STM32F10x_Libraries\STM32F10x_StdPeriph_Driver\src\stm32f10x_flash.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="..\..\STM32F10x_Libraries\STM32F10x_StdPeriph_Driver\src\stm32f10x_fsmc.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="..\..\STM32F10x_Libraries\STM32F10x_StdPeriph_Driver\src\stm32f10x_gpio.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="..\..\STM32F10x_Libraries\STM32F10x_StdPeriph_Driver\src\stm32f10x_i2c.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="..\..\STM32F10x_Libraries\STM32F10x_StdPeriph_Driver\src\stm32f10x_iwdg.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="..\..\STM32F10x_Libraries\STM32F10x_StdPeriph_Driver\src\stm32f10x_pwr.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="..\..\STM32F10x_Libraries\STM32F10x_StdPeriph_Driver\src\stm32f10x_rcc.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="..\..\STM32F10x_Libraries\STM32F10x_StdPeriph_Driver\src\stm32f10x_rtc.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="..\..\STM32F10x_Libraries\STM32F10x_StdPeriph_Driver\src\stm32f10x_sdio.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="..\..\STM32F10x_Libraries\STM32F10x_StdPeriph_Driver\src\stm32f10x_spi.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="..\..\STM32F10x_Libraries\STM32F10x_StdPeriph_Driver\src\stm32f10x_tim.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="..\..\STM32F10x_Libraries\STM32F10x_StdPeriph_Driver\src\stm32f10x_usart.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="..\..\STM32F10x_Libraries\STM32F10x_StdPeriph_Driver\src\stm32f10x_wwdg.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="..\..\STM32F10x_Libraries\STM32_USB-FS-Device_Driver\inc\otgd_fs_cal.h" />
+		<Unit filename="..\..\STM32F10x_Libraries\STM32_USB-FS-Device_Driver\inc\otgd_fs_dev.h" />
+		<Unit filename="..\..\STM32F10x_Libraries\STM32_USB-FS-Device_Driver\inc\otgd_fs_int.h" />
+		<Unit filename="..\..\STM32F10x_Libraries\STM32_USB-FS-Device_Driver\inc\otgd_fs_pcd.h" />
+		<Unit filename="..\..\STM32F10x_Libraries\STM32_USB-FS-Device_Driver\inc\otgd_fs_regs.h" />
+		<Unit filename="..\..\STM32F10x_Libraries\STM32_USB-FS-Device_Driver\inc\usb_core.h" />
+		<Unit filename="..\..\STM32F10x_Libraries\STM32_USB-FS-Device_Driver\inc\usb_def.h" />
+		<Unit filename="..\..\STM32F10x_Libraries\STM32_USB-FS-Device_Driver\inc\usb_init.h" />
+		<Unit filename="..\..\STM32F10x_Libraries\STM32_USB-FS-Device_Driver\inc\usb_int.h" />
+		<Unit filename="..\..\STM32F10x_Libraries\STM32_USB-FS-Device_Driver\inc\usb_lib.h" />
+		<Unit filename="..\..\STM32F10x_Libraries\STM32_USB-FS-Device_Driver\inc\usb_mem.h" />
+		<Unit filename="..\..\STM32F10x_Libraries\STM32_USB-FS-Device_Driver\inc\usb_regs.h" />
+		<Unit filename="..\..\STM32F10x_Libraries\STM32_USB-FS-Device_Driver\inc\usb_sil.h" />
+		<Unit filename="..\..\STM32F10x_Libraries\STM32_USB-FS-Device_Driver\inc\usb_type.h" />
+		<Unit filename="..\..\STM32F10x_Libraries\STM32_USB-FS-Device_Driver\src\otgd_fs_cal.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="..\..\STM32F10x_Libraries\STM32_USB-FS-Device_Driver\src\otgd_fs_dev.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="..\..\STM32F10x_Libraries\STM32_USB-FS-Device_Driver\src\otgd_fs_int.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="..\..\STM32F10x_Libraries\STM32_USB-FS-Device_Driver\src\otgd_fs_pcd.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="..\..\STM32F10x_Libraries\STM32_USB-FS-Device_Driver\src\usb_core.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="..\..\STM32F10x_Libraries\STM32_USB-FS-Device_Driver\src\usb_init.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="..\..\STM32F10x_Libraries\STM32_USB-FS-Device_Driver\src\usb_int.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="..\..\STM32F10x_Libraries\STM32_USB-FS-Device_Driver\src\usb_mem.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="..\..\STM32F10x_Libraries\STM32_USB-FS-Device_Driver\src\usb_regs.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="..\..\STM32F10x_Libraries\STM32_USB-FS-Device_Driver\src\usb_sil.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="application.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="board.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="board.h" />
+		<Unit filename="led.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="led.h" />
+		<Unit filename="rtconfig.h" />
+		<Unit filename="startup.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="stm32f10x_conf.h" />
+		<Unit filename="stm32f10x_it.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="usart.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="usart.h" />
+		<Unit filename="..\..\rt-thread\include\rtdef.h" />
+		<Unit filename="..\..\rt-thread\include\rthw.h" />
+		<Unit filename="..\..\rt-thread\include\rtthread.h" />
+		<Unit filename="..\..\rt-thread\kernel\clock.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="..\..\rt-thread\kernel\device.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="..\..\rt-thread\kernel\idle.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="..\..\rt-thread\kernel\ipc.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="..\..\rt-thread\kernel\irq.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="..\..\rt-thread\kernel\kservice.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="..\..\rt-thread\kernel\kservice.h" />
+		<Unit filename="..\..\rt-thread\kernel\mem.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="..\..\rt-thread\kernel\mempool.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="..\..\rt-thread\kernel\object.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="..\..\rt-thread\kernel\scheduler.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="..\..\rt-thread\kernel\slab.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="..\..\rt-thread\kernel\thread.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="..\..\rt-thread\kernel\timer.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Extensions>
+			<code_completion />
+			<envvars />
+			<debugger />
+			<lib_finder disable_auto="1" />
+		</Extensions>
+	</Project>
+</CodeBlocks_project_file>

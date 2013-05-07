@@ -1,0 +1,9 @@
+.\Obj\usbuser.o: usbuser.c
+.\Obj\usbuser.o: .\common\inc\type.h
+.\Obj\usbuser.o: d:\Keil\ARM\RV31\INC\stdint.h
+.\Obj\usbuser.o: usb.h
+.\Obj\usbuser.o: usbcfg.h
+.\Obj\usbuser.o: usbhw.h
+.\Obj\usbuser.o: usbcore.h
+.\Obj\usbuser.o: usbuser.h
+.\Obj\usbuser.o: usbaudio.h

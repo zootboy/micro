@@ -1,0 +1,10 @@
+C:\Users\sdi\Documents\Visual Studio 2008\Projects\C#\usbGenericHidCommunications\usbGenericHidCommunications\obj\Debug\ResolveAssemblyReference.cache
+C:\Users\sdi\Documents\Visual Studio 2008\Projects\C#\usbGenericHidCommunications\usbGenericHidCommunications\bin\Debug\usbGenericHidCommunications.dll
+C:\Users\sdi\Documents\Visual Studio 2008\Projects\C#\usbGenericHidCommunications\usbGenericHidCommunications\bin\Debug\usbGenericHidCommunications.pdb
+C:\Users\sdi\Documents\Visual Studio 2008\Projects\C#\usbGenericHidCommunications\usbGenericHidCommunications\obj\Debug\usbGenericHidCommunications.dll
+C:\Users\sdi\Documents\Visual Studio 2008\Projects\C#\usbGenericHidCommunications\usbGenericHidCommunications\obj\Debug\usbGenericHidCommunications.pdb
+C:\Users\sdi\Documents\Visual Studio 2008\Projects\C#\USB Performance Meter\usbGenericHidCommunications\bin\Debug\usbGenericHidCommunications.dll
+C:\Users\sdi\Documents\Visual Studio 2008\Projects\C#\USB Performance Meter\usbGenericHidCommunications\bin\Debug\usbGenericHidCommunications.pdb
+C:\Users\sdi\Documents\Visual Studio 2008\Projects\C#\USB Performance Meter\usbGenericHidCommunications\obj\Debug\ResolveAssemblyReference.cache
+C:\Users\sdi\Documents\Visual Studio 2008\Projects\C#\USB Performance Meter\usbGenericHidCommunications\obj\Debug\usbGenericHidCommunications.dll
+C:\Users\sdi\Documents\Visual Studio 2008\Projects\C#\USB Performance Meter\usbGenericHidCommunications\obj\Debug\usbGenericHidCommunications.pdb

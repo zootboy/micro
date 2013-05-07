@@ -1,0 +1,28 @@
+The Blinky project is a simple demo program for the NXP 'LPC1768' 
+microcontroller using Keil 'MCB1700' Evaluation Board, compliant 
+to Cortex Microcontroller Software Interface Standard (CMSIS v1.20).
+
+Example functionality:                                                   
+ - Clock Settings:
+   - XTAL  =  12 MHz
+   - PLL0  = 400 MHz
+   - CCLK  = 100 MHz
+
+ - SysTick Timer is used in interrupt mode
+ - 8 LEDs blink with speed depending on potentiometer position
+ - AD conversion is done in interrupt mode
+ - AD settings: 12 bit resolution
+ - AD value is output onto serial port USART1 
+ - USART0 settings: 115200 baud, 8 data bits, no parity, 1 stop bit
+
+The Blinky program is available in different targets:
+  Simulator:     configured for software Simulator
+  LPC1768 RAM:   runs from Internal RAM located on chip
+                 (used for target debugging)
+  LPC1768 Flash: runs from Internal Flash located on chip
+                 (used for production or target debugging)
+
+这个例程演示：程序每隔1秒读取ADC值通过串口0输出。
+VR1调节AD采样值
+LD4...LD11 随VR1的增大而闪烁减慢。
+使用时把JP7跳线冒拔掉。

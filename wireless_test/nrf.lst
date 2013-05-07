@@ -1,0 +1,1150 @@
+   1               		.file	"nrf.c"
+   2               	__SP_H__ = 0x3e
+   3               	__SP_L__ = 0x3d
+   4               	__SREG__ = 0x3f
+   5               	__tmp_reg__ = 0
+   6               	__zero_reg__ = 1
+   9               		.text
+  10               	.Ltext0:
+  83               		.section	.rodata.str1.1,"aMS",@progbits,1
+  84               	.LC0:
+  85 0000 5365 7475 		.string	"Setup running..."
+  85      7020 7275 
+  85      6E6E 696E 
+  85      672E 2E2E 
+  85      00
+  86               	.LC1:
+  87 0011 6E6F 206E 		.string	"no nRF detected"
+  87      5246 2064 
+  87      6574 6563 
+  87      7465 6400 
+  88               	.LC2:
+  89 0021 5365 7475 		.string	"Setup complete. "
+  89      7020 636F 
+  89      6D70 6C65 
+  89      7465 2E20 
+  89      00
+  90               		.text
+  92               	.global	nrf_init
+  94               	nrf_init:
+  95               		.stabd	46,0,0
+   1:nrf.c         **** /* nrf.c - nRF24L01 radio functions */
+   2:nrf.c         **** 
+   3:nrf.c         **** #include "nrf.h"
+   4:nrf.c         **** #include "util.h"
+   5:nrf.c         **** #include "lcd.h"
+   6:nrf.c         **** 
+   7:nrf.c         **** // Vars.
+   8:nrf.c         **** /* States:
+   9:nrf.c         ****  * 0 = Doing nothing
+  10:nrf.c         ****  * 1 = sending command
+  11:nrf.c         ****  * 2 = sending nulls to do an RX (maybe)
+  12:nrf.c         ****  * 3 = sending real data
+  13:nrf.c         ****  */
+  14:nrf.c         **** uint8_t spi_state = 0;
+  15:nrf.c         **** uint8_t spi_command = 0x00; // The command being sent/last sent.
+  16:nrf.c         **** uint8_t spi_bytes_sent = 0; // Counter for multibyte data transfers.
+  17:nrf.c         **** uint8_t nrf_last_status = 0; // Last status register received.
+  18:nrf.c         **** 
+  19:nrf.c         **** // Functions.
+  20:nrf.c         **** void nrf_init(void)
+  21:nrf.c         **** {
+  97               	.LM0:
+  98               	.LFBB1:
+  99               	/* prologue: function */
+ 100               	/* frame size = 0 */
+ 101               	/* stack size = 0 */
+ 102               	.L__stack_usage = 0
+  22:nrf.c         **** 	lcd_clrscr(); lcd_puts("Setup running...");
+ 104               	.LM1:
+ 105 0000 0E94 0000 		call lcd_clrscr
+ 106 0004 80E0      		ldi r24,lo8(.LC0)
+ 107 0006 90E0      		ldi r25,hi8(.LC0)
+ 108 0008 0E94 0000 		call lcd_puts
+  23:nrf.c         **** 	
+  24:nrf.c         **** 	NRF_SS_DDR |= (1<<NRF_SS_PIN); NRF_SS_PORT |= (1<<NRF_SS_PIN); // SS starts high.
+ 110               	.LM2:
+ 111 000c 229A      		sbi 0x4,2
+ 112 000e 2A9A      		sbi 0x5,2
+  25:nrf.c         **** 	NRF_CE_DDR |= (1<<NRF_CE_PIN); NRF_CE_PORT &= ~(1<<NRF_CE_PIN); // CE (radio enable) starts low.
+ 114               	.LM3:
+ 115 0010 209A      		sbi 0x4,0
+ 116 0012 2898      		cbi 0x5,0
+  26:nrf.c         **** 	SPI_DDR |= (1<<SPI_MOSI)|(1<<SPI_SCK); SPI_DDR &= ~(1<<SPI_MISO); // Set the correct directions fo
+ 118               	.LM4:
+ 119 0014 84B1      		in r24,0x4
+ 120 0016 8862      		ori r24,lo8(40)
+ 121 0018 84B9      		out 0x4,r24
+ 122 001a 2498      		cbi 0x4,4
+  27:nrf.c         **** 	
+  28:nrf.c         **** 	SPCR = NRF_SPCR; // Set registers. This officially turns on the SPI hardware.
+ 124               	.LM5:
+ 125 001c 82E5      		ldi r24,lo8(82)
+ 126 001e 8CBD      		out 0x2c,r24
+  29:nrf.c         **** 
+  30:nrf.c         **** 	delay_us(200);
+ 128               	.LM6:
+ 129 0020 88EC      		ldi r24,lo8(-56)
+ 130 0022 90E0      		ldi r25,0
+ 131 0024 0E94 0000 		call delay_us
+  31:nrf.c         **** 	
+  32:nrf.c         **** 	// Do a test call to the nRF
+  33:nrf.c         **** 	SS_DOWN; // Bring the nRF SS line low to begin transaction.
+ 133               	.LM7:
+ 134 0028 2A98      		cbi 0x5,2
+  34:nrf.c         **** 	SPI_WRITE(NOP); // Start up the SPI transfer.
+ 136               	.LM8:
+ 137 002a 8FEF      		ldi r24,lo8(-1)
+ 138 002c 8EBD      		out 0x2e,r24
+ 139 002e 00C0      		rjmp .L2
+ 140               	.L3:
+ 142               	.LM9:
+ 143 0030 85E0      		ldi r24,lo8(5)
+ 144 0032 90E0      		ldi r25,0
+ 145 0034 0E94 0000 		call delay_us
+ 146               	.L2:
+ 148               	.LM10:
+ 149 0038 0DB4      		in __tmp_reg__,0x2d
+ 150 003a 07FE      		sbrs __tmp_reg__,7
+ 151 003c 00C0      		rjmp .L3
+ 153               	.LM11:
+ 154 003e 8AE0      		ldi r24,lo8(10)
+ 155 0040 90E0      		ldi r25,0
+ 156 0042 0E94 0000 		call delay_us
+  35:nrf.c         **** 	nrf_last_status = SPDR;
+ 158               	.LM12:
+ 159 0046 8EB5      		in r24,0x2e
+ 160 0048 8093 0000 		sts nrf_last_status,r24
+  36:nrf.c         **** 	SS_UP;
+ 162               	.LM13:
+ 163 004c 2A9A      		sbi 0x5,2
+  37:nrf.c         **** 	
+  38:nrf.c         **** 	if(!nrf_last_status || (nrf_last_status & (1<<7))) // On reset, the RX FIFO should be empty (setti
+ 165               	.LM14:
+ 166 004e 1816      		cp __zero_reg__,r24
+ 167 0050 04F0      		brlt .L4
+  39:nrf.c         **** 	{
+  40:nrf.c         **** 		lcd_clrscr();
+ 169               	.LM15:
+ 170 0052 0E94 0000 		call lcd_clrscr
+  41:nrf.c         **** 		lcd_puts("no nRF detected");
+ 172               	.LM16:
+ 173 0056 80E0      		ldi r24,lo8(.LC1)
+ 174 0058 90E0      		ldi r25,hi8(.LC1)
+ 175 005a 0E94 0000 		call lcd_puts
+  42:nrf.c         **** 		delay_ms(2000);
+ 177               	.LM17:
+ 178 005e 80ED      		ldi r24,lo8(-48)
+ 179 0060 97E0      		ldi r25,lo8(7)
+ 180 0062 0C94 0000 		jmp delay_ms
+ 181               	.L4:
+  43:nrf.c         **** 	}
+  44:nrf.c         **** 	else
+  45:nrf.c         **** 	{
+  46:nrf.c         **** 		// Set all addresses.
+  47:nrf.c         **** 		delay_us(1);
+ 183               	.LM18:
+ 184 0066 81E0      		ldi r24,lo8(1)
+ 185 0068 90E0      		ldi r25,0
+ 186 006a 0E94 0000 		call delay_us
+  48:nrf.c         **** 		SS_DOWN;
+ 188               	.LM19:
+ 189 006e 2A98      		cbi 0x5,2
+  49:nrf.c         **** 		SPI_WRITE(W_REGISTER | NRG_SETUP_AW);
+ 191               	.LM20:
+ 192 0070 83E2      		ldi r24,lo8(35)
+ 193 0072 8EBD      		out 0x2e,r24
+ 194 0074 00C0      		rjmp .L5
+ 195               	.L6:
+ 197               	.LM21:
+ 198 0076 85E0      		ldi r24,lo8(5)
+ 199 0078 90E0      		ldi r25,0
+ 200 007a 0E94 0000 		call delay_us
+ 201               	.L5:
+ 203               	.LM22:
+ 204 007e 0DB4      		in __tmp_reg__,0x2d
+ 205 0080 07FE      		sbrs __tmp_reg__,7
+ 206 0082 00C0      		rjmp .L6
+ 208               	.LM23:
+ 209 0084 8AE0      		ldi r24,lo8(10)
+ 210 0086 90E0      		ldi r25,0
+ 211 0088 0E94 0000 		call delay_us
+  50:nrf.c         **** 		SPI_WRITE(0x03); // 5-byte addresses.
+ 213               	.LM24:
+ 214 008c 83E0      		ldi r24,lo8(3)
+ 215 008e 8EBD      		out 0x2e,r24
+ 216 0090 00C0      		rjmp .L7
+ 217               	.L8:
+ 219               	.LM25:
+ 220 0092 85E0      		ldi r24,lo8(5)
+ 221 0094 90E0      		ldi r25,0
+ 222 0096 0E94 0000 		call delay_us
+ 223               	.L7:
+ 225               	.LM26:
+ 226 009a 0DB4      		in __tmp_reg__,0x2d
+ 227 009c 07FE      		sbrs __tmp_reg__,7
+ 228 009e 00C0      		rjmp .L8
+ 230               	.LM27:
+ 231 00a0 8AE0      		ldi r24,lo8(10)
+ 232 00a2 90E0      		ldi r25,0
+ 233 00a4 0E94 0000 		call delay_us
+  51:nrf.c         **** 		SS_UP;
+ 235               	.LM28:
+ 236 00a8 2A9A      		sbi 0x5,2
+  52:nrf.c         **** 		delay_us(1);
+ 238               	.LM29:
+ 239 00aa 81E0      		ldi r24,lo8(1)
+ 240 00ac 90E0      		ldi r25,0
+ 241 00ae 0E94 0000 		call delay_us
+  53:nrf.c         **** 		SS_DOWN;
+ 243               	.LM30:
+ 244 00b2 2A98      		cbi 0x5,2
+  54:nrf.c         **** 		SPI_WRITE(W_REGISTER | NRG_TX_ADDR); // Transmitting address.
+ 246               	.LM31:
+ 247 00b4 80E3      		ldi r24,lo8(48)
+ 248 00b6 8EBD      		out 0x2e,r24
+ 249 00b8 00C0      		rjmp .L9
+ 250               	.L10:
+ 252               	.LM32:
+ 253 00ba 85E0      		ldi r24,lo8(5)
+ 254 00bc 90E0      		ldi r25,0
+ 255 00be 0E94 0000 		call delay_us
+ 256               	.L9:
+ 258               	.LM33:
+ 259 00c2 0DB4      		in __tmp_reg__,0x2d
+ 260 00c4 07FE      		sbrs __tmp_reg__,7
+ 261 00c6 00C0      		rjmp .L10
+ 263               	.LM34:
+ 264 00c8 8AE0      		ldi r24,lo8(10)
+ 265 00ca 90E0      		ldi r25,0
+ 266 00cc 0E94 0000 		call delay_us
+  55:nrf.c         **** 		SPI_WRITE(0xFF & (NRF_ADDRESS >> 0));
+ 268               	.LM35:
+ 269 00d0 8AEA      		ldi r24,lo8(-86)
+ 270 00d2 8EBD      		out 0x2e,r24
+ 271 00d4 00C0      		rjmp .L11
+ 272               	.L12:
+ 274               	.LM36:
+ 275 00d6 85E0      		ldi r24,lo8(5)
+ 276 00d8 90E0      		ldi r25,0
+ 277 00da 0E94 0000 		call delay_us
+ 278               	.L11:
+ 280               	.LM37:
+ 281 00de 0DB4      		in __tmp_reg__,0x2d
+ 282 00e0 07FE      		sbrs __tmp_reg__,7
+ 283 00e2 00C0      		rjmp .L12
+ 285               	.LM38:
+ 286 00e4 8AE0      		ldi r24,lo8(10)
+ 287 00e6 90E0      		ldi r25,0
+ 288 00e8 0E94 0000 		call delay_us
+  56:nrf.c         **** 		SPI_WRITE(0xFF & (NRF_ADDRESS >> 8));
+ 290               	.LM39:
+ 291 00ec 82E2      		ldi r24,lo8(34)
+ 292 00ee 8EBD      		out 0x2e,r24
+ 293 00f0 00C0      		rjmp .L13
+ 294               	.L14:
+ 296               	.LM40:
+ 297 00f2 85E0      		ldi r24,lo8(5)
+ 298 00f4 90E0      		ldi r25,0
+ 299 00f6 0E94 0000 		call delay_us
+ 300               	.L13:
+ 302               	.LM41:
+ 303 00fa 0DB4      		in __tmp_reg__,0x2d
+ 304 00fc 07FE      		sbrs __tmp_reg__,7
+ 305 00fe 00C0      		rjmp .L14
+ 307               	.LM42:
+ 308 0100 8AE0      		ldi r24,lo8(10)
+ 309 0102 90E0      		ldi r25,0
+ 310 0104 0E94 0000 		call delay_us
+  57:nrf.c         **** 		SPI_WRITE(0xFF & (NRF_ADDRESS >> 16));
+ 312               	.LM43:
+ 313 0108 84E4      		ldi r24,lo8(68)
+ 314 010a 8EBD      		out 0x2e,r24
+ 315 010c 00C0      		rjmp .L15
+ 316               	.L16:
+ 318               	.LM44:
+ 319 010e 85E0      		ldi r24,lo8(5)
+ 320 0110 90E0      		ldi r25,0
+ 321 0112 0E94 0000 		call delay_us
+ 322               	.L15:
+ 324               	.LM45:
+ 325 0116 0DB4      		in __tmp_reg__,0x2d
+ 326 0118 07FE      		sbrs __tmp_reg__,7
+ 327 011a 00C0      		rjmp .L16
+ 329               	.LM46:
+ 330 011c 8AE0      		ldi r24,lo8(10)
+ 331 011e 90E0      		ldi r25,0
+ 332 0120 0E94 0000 		call delay_us
+  58:nrf.c         **** 		SPI_WRITE(0xFF & (NRF_ADDRESS >> 24));
+ 334               	.LM47:
+ 335 0124 1EBC      		out 0x2e,__zero_reg__
+ 336 0126 00C0      		rjmp .L17
+ 337               	.L18:
+ 339               	.LM48:
+ 340 0128 85E0      		ldi r24,lo8(5)
+ 341 012a 90E0      		ldi r25,0
+ 342 012c 0E94 0000 		call delay_us
+ 343               	.L17:
+ 345               	.LM49:
+ 346 0130 0DB4      		in __tmp_reg__,0x2d
+ 347 0132 07FE      		sbrs __tmp_reg__,7
+ 348 0134 00C0      		rjmp .L18
+ 350               	.LM50:
+ 351 0136 8AE0      		ldi r24,lo8(10)
+ 352 0138 90E0      		ldi r25,0
+ 353 013a 0E94 0000 		call delay_us
+  59:nrf.c         **** 		SPI_WRITE(0xFF & (NRF_ADDRESS >> 32));
+ 355               	.LM51:
+ 356 013e 81E1      		ldi r24,lo8(17)
+ 357 0140 8EBD      		out 0x2e,r24
+ 358 0142 00C0      		rjmp .L19
+ 359               	.L20:
+ 361               	.LM52:
+ 362 0144 85E0      		ldi r24,lo8(5)
+ 363 0146 90E0      		ldi r25,0
+ 364 0148 0E94 0000 		call delay_us
+ 365               	.L19:
+ 367               	.LM53:
+ 368 014c 0DB4      		in __tmp_reg__,0x2d
+ 369 014e 07FE      		sbrs __tmp_reg__,7
+ 370 0150 00C0      		rjmp .L20
+ 372               	.LM54:
+ 373 0152 8AE0      		ldi r24,lo8(10)
+ 374 0154 90E0      		ldi r25,0
+ 375 0156 0E94 0000 		call delay_us
+  60:nrf.c         **** 		SS_UP;
+ 377               	.LM55:
+ 378 015a 2A9A      		sbi 0x5,2
+  61:nrf.c         **** 		delay_us(1);
+ 380               	.LM56:
+ 381 015c 81E0      		ldi r24,lo8(1)
+ 382 015e 90E0      		ldi r25,0
+ 383 0160 0E94 0000 		call delay_us
+  62:nrf.c         **** 		SS_DOWN;
+ 385               	.LM57:
+ 386 0164 2A98      		cbi 0x5,2
+  63:nrf.c         **** 		SPI_WRITE(W_REGISTER | NRG_RX_ADDR_P0); // Ack/Receiving address.
+ 388               	.LM58:
+ 389 0166 8AE2      		ldi r24,lo8(42)
+ 390 0168 8EBD      		out 0x2e,r24
+ 391 016a 00C0      		rjmp .L21
+ 392               	.L22:
+ 394               	.LM59:
+ 395 016c 85E0      		ldi r24,lo8(5)
+ 396 016e 90E0      		ldi r25,0
+ 397 0170 0E94 0000 		call delay_us
+ 398               	.L21:
+ 400               	.LM60:
+ 401 0174 0DB4      		in __tmp_reg__,0x2d
+ 402 0176 07FE      		sbrs __tmp_reg__,7
+ 403 0178 00C0      		rjmp .L22
+ 405               	.LM61:
+ 406 017a 8AE0      		ldi r24,lo8(10)
+ 407 017c 90E0      		ldi r25,0
+ 408 017e 0E94 0000 		call delay_us
+  64:nrf.c         **** 		SPI_WRITE(0xFF & (NRF_ADDRESS >> 0));
+ 410               	.LM62:
+ 411 0182 8AEA      		ldi r24,lo8(-86)
+ 412 0184 8EBD      		out 0x2e,r24
+ 413 0186 00C0      		rjmp .L23
+ 414               	.L24:
+ 416               	.LM63:
+ 417 0188 85E0      		ldi r24,lo8(5)
+ 418 018a 90E0      		ldi r25,0
+ 419 018c 0E94 0000 		call delay_us
+ 420               	.L23:
+ 422               	.LM64:
+ 423 0190 0DB4      		in __tmp_reg__,0x2d
+ 424 0192 07FE      		sbrs __tmp_reg__,7
+ 425 0194 00C0      		rjmp .L24
+ 427               	.LM65:
+ 428 0196 8AE0      		ldi r24,lo8(10)
+ 429 0198 90E0      		ldi r25,0
+ 430 019a 0E94 0000 		call delay_us
+  65:nrf.c         **** 		SPI_WRITE(0xFF & (NRF_ADDRESS >> 8));
+ 432               	.LM66:
+ 433 019e 82E2      		ldi r24,lo8(34)
+ 434 01a0 8EBD      		out 0x2e,r24
+ 435 01a2 00C0      		rjmp .L25
+ 436               	.L26:
+ 438               	.LM67:
+ 439 01a4 85E0      		ldi r24,lo8(5)
+ 440 01a6 90E0      		ldi r25,0
+ 441 01a8 0E94 0000 		call delay_us
+ 442               	.L25:
+ 444               	.LM68:
+ 445 01ac 0DB4      		in __tmp_reg__,0x2d
+ 446 01ae 07FE      		sbrs __tmp_reg__,7
+ 447 01b0 00C0      		rjmp .L26
+ 449               	.LM69:
+ 450 01b2 8AE0      		ldi r24,lo8(10)
+ 451 01b4 90E0      		ldi r25,0
+ 452 01b6 0E94 0000 		call delay_us
+  66:nrf.c         **** 		SPI_WRITE(0xFF & (NRF_ADDRESS >> 16));
+ 454               	.LM70:
+ 455 01ba 84E4      		ldi r24,lo8(68)
+ 456 01bc 8EBD      		out 0x2e,r24
+ 457 01be 00C0      		rjmp .L27
+ 458               	.L28:
+ 460               	.LM71:
+ 461 01c0 85E0      		ldi r24,lo8(5)
+ 462 01c2 90E0      		ldi r25,0
+ 463 01c4 0E94 0000 		call delay_us
+ 464               	.L27:
+ 466               	.LM72:
+ 467 01c8 0DB4      		in __tmp_reg__,0x2d
+ 468 01ca 07FE      		sbrs __tmp_reg__,7
+ 469 01cc 00C0      		rjmp .L28
+ 471               	.LM73:
+ 472 01ce 8AE0      		ldi r24,lo8(10)
+ 473 01d0 90E0      		ldi r25,0
+ 474 01d2 0E94 0000 		call delay_us
+  67:nrf.c         **** 		SPI_WRITE(0xFF & (NRF_ADDRESS >> 24));
+ 476               	.LM74:
+ 477 01d6 1EBC      		out 0x2e,__zero_reg__
+ 478 01d8 00C0      		rjmp .L29
+ 479               	.L30:
+ 481               	.LM75:
+ 482 01da 85E0      		ldi r24,lo8(5)
+ 483 01dc 90E0      		ldi r25,0
+ 484 01de 0E94 0000 		call delay_us
+ 485               	.L29:
+ 487               	.LM76:
+ 488 01e2 0DB4      		in __tmp_reg__,0x2d
+ 489 01e4 07FE      		sbrs __tmp_reg__,7
+ 490 01e6 00C0      		rjmp .L30
+ 492               	.LM77:
+ 493 01e8 8AE0      		ldi r24,lo8(10)
+ 494 01ea 90E0      		ldi r25,0
+ 495 01ec 0E94 0000 		call delay_us
+  68:nrf.c         **** 		SPI_WRITE(0xFF & (NRF_ADDRESS >> 32));
+ 497               	.LM78:
+ 498 01f0 81E1      		ldi r24,lo8(17)
+ 499 01f2 8EBD      		out 0x2e,r24
+ 500 01f4 00C0      		rjmp .L31
+ 501               	.L32:
+ 503               	.LM79:
+ 504 01f6 85E0      		ldi r24,lo8(5)
+ 505 01f8 90E0      		ldi r25,0
+ 506 01fa 0E94 0000 		call delay_us
+ 507               	.L31:
+ 509               	.LM80:
+ 510 01fe 0DB4      		in __tmp_reg__,0x2d
+ 511 0200 07FE      		sbrs __tmp_reg__,7
+ 512 0202 00C0      		rjmp .L32
+ 514               	.LM81:
+ 515 0204 8AE0      		ldi r24,lo8(10)
+ 516 0206 90E0      		ldi r25,0
+ 517 0208 0E94 0000 		call delay_us
+  69:nrf.c         **** 		SS_UP;
+ 519               	.LM82:
+ 520 020c 2A9A      		sbi 0x5,2
+  70:nrf.c         **** 		delay_us(1);
+ 522               	.LM83:
+ 523 020e 81E0      		ldi r24,lo8(1)
+ 524 0210 90E0      		ldi r25,0
+ 525 0212 0E94 0000 		call delay_us
+  71:nrf.c         **** 		SS_DOWN;
+ 527               	.LM84:
+ 528 0216 2A98      		cbi 0x5,2
+  72:nrf.c         **** 		SPI_WRITE(W_REGISTER | NRG_RX_PW_P0);
+ 530               	.LM85:
+ 531 0218 81E3      		ldi r24,lo8(49)
+ 532 021a 8EBD      		out 0x2e,r24
+ 533 021c 00C0      		rjmp .L33
+ 534               	.L34:
+ 536               	.LM86:
+ 537 021e 85E0      		ldi r24,lo8(5)
+ 538 0220 90E0      		ldi r25,0
+ 539 0222 0E94 0000 		call delay_us
+ 540               	.L33:
+ 542               	.LM87:
+ 543 0226 0DB4      		in __tmp_reg__,0x2d
+ 544 0228 07FE      		sbrs __tmp_reg__,7
+ 545 022a 00C0      		rjmp .L34
+ 547               	.LM88:
+ 548 022c 8AE0      		ldi r24,lo8(10)
+ 549 022e 90E0      		ldi r25,0
+ 550 0230 0E94 0000 		call delay_us
+  73:nrf.c         **** 		SPI_WRITE(0x3F & NRF_PAYLOADBYTES);
+ 552               	.LM89:
+ 553 0234 82E0      		ldi r24,lo8(2)
+ 554 0236 8EBD      		out 0x2e,r24
+ 555 0238 00C0      		rjmp .L35
+ 556               	.L36:
+ 558               	.LM90:
+ 559 023a 85E0      		ldi r24,lo8(5)
+ 560 023c 90E0      		ldi r25,0
+ 561 023e 0E94 0000 		call delay_us
+ 562               	.L35:
+ 564               	.LM91:
+ 565 0242 0DB4      		in __tmp_reg__,0x2d
+ 566 0244 07FE      		sbrs __tmp_reg__,7
+ 567 0246 00C0      		rjmp .L36
+ 569               	.LM92:
+ 570 0248 8AE0      		ldi r24,lo8(10)
+ 571 024a 90E0      		ldi r25,0
+ 572 024c 0E94 0000 		call delay_us
+  74:nrf.c         **** 		SS_UP;
+ 574               	.LM93:
+ 575 0250 2A9A      		sbi 0x5,2
+  75:nrf.c         **** 		delay_us(10);
+ 577               	.LM94:
+ 578 0252 8AE0      		ldi r24,lo8(10)
+ 579 0254 90E0      		ldi r25,0
+ 580 0256 0E94 0000 		call delay_us
+  76:nrf.c         **** 		SS_DOWN;
+ 582               	.LM95:
+ 583 025a 2A98      		cbi 0x5,2
+  77:nrf.c         **** 		SPI_WRITE(W_REGISTER | NRG_EN_RXADDR);
+ 585               	.LM96:
+ 586 025c 82E2      		ldi r24,lo8(34)
+ 587 025e 8EBD      		out 0x2e,r24
+ 588 0260 00C0      		rjmp .L37
+ 589               	.L38:
+ 591               	.LM97:
+ 592 0262 85E0      		ldi r24,lo8(5)
+ 593 0264 90E0      		ldi r25,0
+ 594 0266 0E94 0000 		call delay_us
+ 595               	.L37:
+ 597               	.LM98:
+ 598 026a 0DB4      		in __tmp_reg__,0x2d
+ 599 026c 07FE      		sbrs __tmp_reg__,7
+ 600 026e 00C0      		rjmp .L38
+ 602               	.LM99:
+ 603 0270 8AE0      		ldi r24,lo8(10)
+ 604 0272 90E0      		ldi r25,0
+ 605 0274 0E94 0000 		call delay_us
+  78:nrf.c         **** 		SPI_WRITE(0x01); // Only enable pipe 0.
+ 607               	.LM100:
+ 608 0278 81E0      		ldi r24,lo8(1)
+ 609 027a 8EBD      		out 0x2e,r24
+ 610 027c 00C0      		rjmp .L39
+ 611               	.L40:
+ 613               	.LM101:
+ 614 027e 85E0      		ldi r24,lo8(5)
+ 615 0280 90E0      		ldi r25,0
+ 616 0282 0E94 0000 		call delay_us
+ 617               	.L39:
+ 619               	.LM102:
+ 620 0286 0DB4      		in __tmp_reg__,0x2d
+ 621 0288 07FE      		sbrs __tmp_reg__,7
+ 622 028a 00C0      		rjmp .L40
+ 624               	.LM103:
+ 625 028c 8AE0      		ldi r24,lo8(10)
+ 626 028e 90E0      		ldi r25,0
+ 627 0290 0E94 0000 		call delay_us
+  79:nrf.c         **** 		SS_UP;
+ 629               	.LM104:
+ 630 0294 2A9A      		sbi 0x5,2
+  80:nrf.c         **** 		delay_us(1);
+ 632               	.LM105:
+ 633 0296 81E0      		ldi r24,lo8(1)
+ 634 0298 90E0      		ldi r25,0
+ 635 029a 0E94 0000 		call delay_us
+  81:nrf.c         **** 		SS_DOWN;
+ 637               	.LM106:
+ 638 029e 2A98      		cbi 0x5,2
+  82:nrf.c         **** 		SPI_WRITE(W_REGISTER | NRG_RF_CH);
+ 640               	.LM107:
+ 641 02a0 85E2      		ldi r24,lo8(37)
+ 642 02a2 8EBD      		out 0x2e,r24
+ 643 02a4 00C0      		rjmp .L41
+ 644               	.L42:
+ 646               	.LM108:
+ 647 02a6 85E0      		ldi r24,lo8(5)
+ 648 02a8 90E0      		ldi r25,0
+ 649 02aa 0E94 0000 		call delay_us
+ 650               	.L41:
+ 652               	.LM109:
+ 653 02ae 0DB4      		in __tmp_reg__,0x2d
+ 654 02b0 07FE      		sbrs __tmp_reg__,7
+ 655 02b2 00C0      		rjmp .L42
+ 657               	.LM110:
+ 658 02b4 8AE0      		ldi r24,lo8(10)
+ 659 02b6 90E0      		ldi r25,0
+ 660 02b8 0E94 0000 		call delay_us
+  83:nrf.c         **** 		SPI_WRITE(0x7F & NRF_CHANNEL);
+ 662               	.LM111:
+ 663 02bc 88E1      		ldi r24,lo8(24)
+ 664 02be 8EBD      		out 0x2e,r24
+ 665 02c0 00C0      		rjmp .L43
+ 666               	.L44:
+ 668               	.LM112:
+ 669 02c2 85E0      		ldi r24,lo8(5)
+ 670 02c4 90E0      		ldi r25,0
+ 671 02c6 0E94 0000 		call delay_us
+ 672               	.L43:
+ 674               	.LM113:
+ 675 02ca 0DB4      		in __tmp_reg__,0x2d
+ 676 02cc 07FE      		sbrs __tmp_reg__,7
+ 677 02ce 00C0      		rjmp .L44
+ 679               	.LM114:
+ 680 02d0 8AE0      		ldi r24,lo8(10)
+ 681 02d2 90E0      		ldi r25,0
+ 682 02d4 0E94 0000 		call delay_us
+  84:nrf.c         **** 		SS_UP;
+ 684               	.LM115:
+ 685 02d8 2A9A      		sbi 0x5,2
+  85:nrf.c         **** 		delay_us(1);
+ 687               	.LM116:
+ 688 02da 81E0      		ldi r24,lo8(1)
+ 689 02dc 90E0      		ldi r25,0
+ 690 02de 0E94 0000 		call delay_us
+  86:nrf.c         **** 		SS_DOWN;
+ 692               	.LM117:
+ 693 02e2 2A98      		cbi 0x5,2
+  87:nrf.c         **** 		SPI_WRITE(W_REGISTER | NRG_RF_SETUP);
+ 695               	.LM118:
+ 696 02e4 86E2      		ldi r24,lo8(38)
+ 697 02e6 8EBD      		out 0x2e,r24
+ 698 02e8 00C0      		rjmp .L45
+ 699               	.L46:
+ 701               	.LM119:
+ 702 02ea 85E0      		ldi r24,lo8(5)
+ 703 02ec 90E0      		ldi r25,0
+ 704 02ee 0E94 0000 		call delay_us
+ 705               	.L45:
+ 707               	.LM120:
+ 708 02f2 0DB4      		in __tmp_reg__,0x2d
+ 709 02f4 07FE      		sbrs __tmp_reg__,7
+ 710 02f6 00C0      		rjmp .L46
+ 712               	.LM121:
+ 713 02f8 8AE0      		ldi r24,lo8(10)
+ 714 02fa 90E0      		ldi r25,0
+ 715 02fc 0E94 0000 		call delay_us
+  88:nrf.c         **** 		SPI_WRITE(0x0F & ((NRF_RATE<<RF_DR)|(NRF_POWER<<RF_PWR)|(NRF_RXGAIN<<LNA_HCURR)));
+ 717               	.LM122:
+ 718 0300 87E0      		ldi r24,lo8(7)
+ 719 0302 8EBD      		out 0x2e,r24
+ 720 0304 00C0      		rjmp .L47
+ 721               	.L48:
+ 723               	.LM123:
+ 724 0306 85E0      		ldi r24,lo8(5)
+ 725 0308 90E0      		ldi r25,0
+ 726 030a 0E94 0000 		call delay_us
+ 727               	.L47:
+ 729               	.LM124:
+ 730 030e 0DB4      		in __tmp_reg__,0x2d
+ 731 0310 07FE      		sbrs __tmp_reg__,7
+ 732 0312 00C0      		rjmp .L48
+ 734               	.LM125:
+ 735 0314 8AE0      		ldi r24,lo8(10)
+ 736 0316 90E0      		ldi r25,0
+ 737 0318 0E94 0000 		call delay_us
+  89:nrf.c         **** 		SS_UP;
+ 739               	.LM126:
+ 740 031c 2A9A      		sbi 0x5,2
+  90:nrf.c         **** 		delay_us(1);
+ 742               	.LM127:
+ 743 031e 81E0      		ldi r24,lo8(1)
+ 744 0320 90E0      		ldi r25,0
+ 745 0322 0E94 0000 		call delay_us
+  91:nrf.c         **** 		SS_DOWN;
+ 747               	.LM128:
+ 748 0326 2A98      		cbi 0x5,2
+  92:nrf.c         **** 		SPI_WRITE(W_REGISTER | NRG_EN_AA);
+ 750               	.LM129:
+ 751 0328 81E2      		ldi r24,lo8(33)
+ 752 032a 8EBD      		out 0x2e,r24
+ 753 032c 00C0      		rjmp .L49
+ 754               	.L50:
+ 756               	.LM130:
+ 757 032e 85E0      		ldi r24,lo8(5)
+ 758 0330 90E0      		ldi r25,0
+ 759 0332 0E94 0000 		call delay_us
+ 760               	.L49:
+ 762               	.LM131:
+ 763 0336 0DB4      		in __tmp_reg__,0x2d
+ 764 0338 07FE      		sbrs __tmp_reg__,7
+ 765 033a 00C0      		rjmp .L50
+ 767               	.LM132:
+ 768 033c 8AE0      		ldi r24,lo8(10)
+ 769 033e 90E0      		ldi r25,0
+ 770 0340 0E94 0000 		call delay_us
+  93:nrf.c         **** 		SPI_WRITE(0x01 & NRF_AUTOACK);
+ 772               	.LM133:
+ 773 0344 81E0      		ldi r24,lo8(1)
+ 774 0346 8EBD      		out 0x2e,r24
+ 775 0348 00C0      		rjmp .L51
+ 776               	.L52:
+ 778               	.LM134:
+ 779 034a 85E0      		ldi r24,lo8(5)
+ 780 034c 90E0      		ldi r25,0
+ 781 034e 0E94 0000 		call delay_us
+ 782               	.L51:
+ 784               	.LM135:
+ 785 0352 0DB4      		in __tmp_reg__,0x2d
+ 786 0354 07FE      		sbrs __tmp_reg__,7
+ 787 0356 00C0      		rjmp .L52
+ 789               	.LM136:
+ 790 0358 8AE0      		ldi r24,lo8(10)
+ 791 035a 90E0      		ldi r25,0
+ 792 035c 0E94 0000 		call delay_us
+  94:nrf.c         **** 		SS_UP;
+ 794               	.LM137:
+ 795 0360 2A9A      		sbi 0x5,2
+  95:nrf.c         **** 		delay_us(1);
+ 797               	.LM138:
+ 798 0362 81E0      		ldi r24,lo8(1)
+ 799 0364 90E0      		ldi r25,0
+ 800 0366 0E94 0000 		call delay_us
+  96:nrf.c         **** 		SS_DOWN;
+ 802               	.LM139:
+ 803 036a 2A98      		cbi 0x5,2
+  97:nrf.c         **** 		SPI_WRITE(W_REGISTER | NRG_CONFIG);
+ 805               	.LM140:
+ 806 036c 80E2      		ldi r24,lo8(32)
+ 807 036e 8EBD      		out 0x2e,r24
+ 808 0370 00C0      		rjmp .L53
+ 809               	.L54:
+ 811               	.LM141:
+ 812 0372 85E0      		ldi r24,lo8(5)
+ 813 0374 90E0      		ldi r25,0
+ 814 0376 0E94 0000 		call delay_us
+ 815               	.L53:
+ 817               	.LM142:
+ 818 037a 0DB4      		in __tmp_reg__,0x2d
+ 819 037c 07FE      		sbrs __tmp_reg__,7
+ 820 037e 00C0      		rjmp .L54
+ 822               	.LM143:
+ 823 0380 8AE0      		ldi r24,lo8(10)
+ 824 0382 90E0      		ldi r25,0
+ 825 0384 0E94 0000 		call delay_us
+  98:nrf.c         **** 		SPI_WRITE(0x7F & ((NRF_INTERRUPTS<<MASK_ALL)|(NRF_CRCEN<<EN_CRC)|(NRF_CRCTWO<<CRCO)|(1<<PWR_UP)|(
+ 827               	.LM144:
+ 828 0388 8BE7      		ldi r24,lo8(123)
+ 829 038a 8EBD      		out 0x2e,r24
+ 830 038c 00C0      		rjmp .L55
+ 831               	.L56:
+ 833               	.LM145:
+ 834 038e 85E0      		ldi r24,lo8(5)
+ 835 0390 90E0      		ldi r25,0
+ 836 0392 0E94 0000 		call delay_us
+ 837               	.L55:
+ 839               	.LM146:
+ 840 0396 0DB4      		in __tmp_reg__,0x2d
+ 841 0398 07FE      		sbrs __tmp_reg__,7
+ 842 039a 00C0      		rjmp .L56
+ 844               	.LM147:
+ 845 039c 8AE0      		ldi r24,lo8(10)
+ 846 039e 90E0      		ldi r25,0
+ 847 03a0 0E94 0000 		call delay_us
+  99:nrf.c         **** 		SS_UP;
+ 849               	.LM148:
+ 850 03a4 2A9A      		sbi 0x5,2
+ 100:nrf.c         **** 		delay_us(1);
+ 852               	.LM149:
+ 853 03a6 81E0      		ldi r24,lo8(1)
+ 854 03a8 90E0      		ldi r25,0
+ 855 03aa 0E94 0000 		call delay_us
+ 101:nrf.c         **** 		SS_DOWN;
+ 857               	.LM150:
+ 858 03ae 2A98      		cbi 0x5,2
+ 102:nrf.c         **** 		SPI_WRITE(FLUSH_TX);
+ 860               	.LM151:
+ 861 03b0 81EE      		ldi r24,lo8(-31)
+ 862 03b2 8EBD      		out 0x2e,r24
+ 863 03b4 00C0      		rjmp .L57
+ 864               	.L58:
+ 866               	.LM152:
+ 867 03b6 85E0      		ldi r24,lo8(5)
+ 868 03b8 90E0      		ldi r25,0
+ 869 03ba 0E94 0000 		call delay_us
+ 870               	.L57:
+ 872               	.LM153:
+ 873 03be 0DB4      		in __tmp_reg__,0x2d
+ 874 03c0 07FE      		sbrs __tmp_reg__,7
+ 875 03c2 00C0      		rjmp .L58
+ 877               	.LM154:
+ 878 03c4 8AE0      		ldi r24,lo8(10)
+ 879 03c6 90E0      		ldi r25,0
+ 880 03c8 0E94 0000 		call delay_us
+ 103:nrf.c         **** 		SS_UP;
+ 882               	.LM155:
+ 883 03cc 2A9A      		sbi 0x5,2
+ 104:nrf.c         **** 		delay_us(1);
+ 885               	.LM156:
+ 886 03ce 81E0      		ldi r24,lo8(1)
+ 887 03d0 90E0      		ldi r25,0
+ 888 03d2 0E94 0000 		call delay_us
+ 105:nrf.c         **** 		SS_DOWN;
+ 890               	.LM157:
+ 891 03d6 2A98      		cbi 0x5,2
+ 106:nrf.c         **** 		SPI_WRITE(FLUSH_RX);
+ 893               	.LM158:
+ 894 03d8 82EE      		ldi r24,lo8(-30)
+ 895 03da 8EBD      		out 0x2e,r24
+ 896 03dc 00C0      		rjmp .L59
+ 897               	.L60:
+ 899               	.LM159:
+ 900 03de 85E0      		ldi r24,lo8(5)
+ 901 03e0 90E0      		ldi r25,0
+ 902 03e2 0E94 0000 		call delay_us
+ 903               	.L59:
+ 905               	.LM160:
+ 906 03e6 0DB4      		in __tmp_reg__,0x2d
+ 907 03e8 07FE      		sbrs __tmp_reg__,7
+ 908 03ea 00C0      		rjmp .L60
+ 910               	.LM161:
+ 911 03ec 8AE0      		ldi r24,lo8(10)
+ 912 03ee 90E0      		ldi r25,0
+ 913 03f0 0E94 0000 		call delay_us
+ 107:nrf.c         **** 		SS_UP;
+ 915               	.LM162:
+ 916 03f4 2A9A      		sbi 0x5,2
+ 108:nrf.c         **** 		delay_us(10);
+ 918               	.LM163:
+ 919 03f6 8AE0      		ldi r24,lo8(10)
+ 920 03f8 90E0      		ldi r25,0
+ 921 03fa 0E94 0000 		call delay_us
+ 109:nrf.c         **** 		lcd_clrscr(); lcd_puts("Setup complete. ");
+ 923               	.LM164:
+ 924 03fe 0E94 0000 		call lcd_clrscr
+ 925 0402 80E0      		ldi r24,lo8(.LC2)
+ 926 0404 90E0      		ldi r25,hi8(.LC2)
+ 927 0406 0C94 0000 		jmp lcd_puts
+ 929               	.Lscope1:
+ 931               		.stabd	78,0,0
+ 934               	.global	nrf_tx
+ 936               	nrf_tx:
+ 937               		.stabd	46,0,0
+ 110:nrf.c         **** 	}
+ 111:nrf.c         **** 	
+ 112:nrf.c         **** }
+ 113:nrf.c         **** 
+ 114:nrf.c         **** void nrf_tx(uint16_t payload)
+ 115:nrf.c         **** {
+ 939               	.LM165:
+ 940               	.LFBB2:
+ 941               	/* prologue: function */
+ 942               	/* frame size = 0 */
+ 943               	/* stack size = 0 */
+ 944               	.L__stack_usage = 0
+ 945 040a 0895      		ret
+ 947               	.Lscope2:
+ 949               		.stabd	78,0,0
+ 951               	.global	nrf_rx
+ 953               	nrf_rx:
+ 954               		.stabd	46,0,0
+ 116:nrf.c         **** 	
+ 117:nrf.c         **** }
+ 118:nrf.c         **** 
+ 119:nrf.c         **** uint16_t nrf_rx(void)
+ 120:nrf.c         **** {
+ 956               	.LM166:
+ 957               	.LFBB3:
+ 959               	.LM167:
+ 960 040c CF93      		push r28
+ 961 040e DF93      		push r29
+ 962               	/* prologue: function */
+ 963               	/* frame size = 0 */
+ 964               	/* stack size = 2 */
+ 965               	.L__stack_usage = 2
+ 121:nrf.c         **** 	
+ 122:nrf.c         **** 	uint16_t payload;
+ 123:nrf.c         **** 	//if(!NRF_RX) return 0;
+ 124:nrf.c         **** 	SS_DOWN; // Bring the nRF SS line low to begin transaction.
+ 967               	.LM168:
+ 968 0410 2A98      		cbi 0x5,2
+ 125:nrf.c         **** 	SPI_WRITE(NOP); // Start up the SPI transfer.
+ 970               	.LM169:
+ 971 0412 8FEF      		ldi r24,lo8(-1)
+ 972 0414 8EBD      		out 0x2e,r24
+ 973 0416 00C0      		rjmp .L63
+ 974               	.L64:
+ 976               	.LM170:
+ 977 0418 85E0      		ldi r24,lo8(5)
+ 978 041a 90E0      		ldi r25,0
+ 979 041c 0E94 0000 		call delay_us
+ 980               	.L63:
+ 982               	.LM171:
+ 983 0420 0DB4      		in __tmp_reg__,0x2d
+ 984 0422 07FE      		sbrs __tmp_reg__,7
+ 985 0424 00C0      		rjmp .L64
+ 987               	.LM172:
+ 988 0426 8AE0      		ldi r24,lo8(10)
+ 989 0428 90E0      		ldi r25,0
+ 990 042a 0E94 0000 		call delay_us
+ 126:nrf.c         **** 	nrf_last_status = SPDR;
+ 992               	.LM173:
+ 993 042e 8EB5      		in r24,0x2e
+ 994 0430 8093 0000 		sts nrf_last_status,r24
+ 127:nrf.c         **** 	SS_UP;
+ 996               	.LM174:
+ 997 0434 2A9A      		sbi 0x5,2
+ 128:nrf.c         **** 	if(nrf_last_status & (1<<RX_DR))
+ 999               	.LM175:
+ 1000 0436 86FF      		sbrs r24,6
+ 1001 0438 00C0      		rjmp .L80
+ 129:nrf.c         **** 	{
+ 130:nrf.c         **** 		delay_us(1);
+ 1003               	.LM176:
+ 1004 043a 81E0      		ldi r24,lo8(1)
+ 1005 043c 90E0      		ldi r25,0
+ 1006 043e 0E94 0000 		call delay_us
+ 131:nrf.c         **** 		SS_DOWN;
+ 1008               	.LM177:
+ 1009 0442 2A98      		cbi 0x5,2
+ 132:nrf.c         **** 		SPI_WRITE(R_RX_PAYLOAD);
+ 1011               	.LM178:
+ 1012 0444 81E6      		ldi r24,lo8(97)
+ 1013 0446 8EBD      		out 0x2e,r24
+ 1014 0448 00C0      		rjmp .L66
+ 1015               	.L67:
+ 1017               	.LM179:
+ 1018 044a 85E0      		ldi r24,lo8(5)
+ 1019 044c 90E0      		ldi r25,0
+ 1020 044e 0E94 0000 		call delay_us
+ 1021               	.L66:
+ 1023               	.LM180:
+ 1024 0452 0DB4      		in __tmp_reg__,0x2d
+ 1025 0454 07FE      		sbrs __tmp_reg__,7
+ 1026 0456 00C0      		rjmp .L67
+ 1028               	.LM181:
+ 1029 0458 8AE0      		ldi r24,lo8(10)
+ 1030 045a 90E0      		ldi r25,0
+ 1031 045c 0E94 0000 		call delay_us
+ 133:nrf.c         **** 		SPI_WRITE(0x00); payload = (uint16_t)SPDR;
+ 1033               	.LM182:
+ 1034 0460 1EBC      		out 0x2e,__zero_reg__
+ 1035 0462 00C0      		rjmp .L68
+ 1036               	.L69:
+ 1038               	.LM183:
+ 1039 0464 85E0      		ldi r24,lo8(5)
+ 1040 0466 90E0      		ldi r25,0
+ 1041 0468 0E94 0000 		call delay_us
+ 1042               	.L68:
+ 1044               	.LM184:
+ 1045 046c 0DB4      		in __tmp_reg__,0x2d
+ 1046 046e 07FE      		sbrs __tmp_reg__,7
+ 1047 0470 00C0      		rjmp .L69
+ 1049               	.LM185:
+ 1050 0472 8AE0      		ldi r24,lo8(10)
+ 1051 0474 90E0      		ldi r25,0
+ 1052 0476 0E94 0000 		call delay_us
+ 1053 047a CEB5      		in r28,0x2e
+ 1054 047c D0E0      		ldi r29,0
+ 134:nrf.c         **** 		SPI_WRITE(0x00); payload |= ((uint16_t)SPDR << 8);
+ 1056               	.LM186:
+ 1057 047e 1EBC      		out 0x2e,__zero_reg__
+ 1058 0480 00C0      		rjmp .L70
+ 1059               	.L71:
+ 1061               	.LM187:
+ 1062 0482 85E0      		ldi r24,lo8(5)
+ 1063 0484 90E0      		ldi r25,0
+ 1064 0486 0E94 0000 		call delay_us
+ 1065               	.L70:
+ 1067               	.LM188:
+ 1068 048a 0DB4      		in __tmp_reg__,0x2d
+ 1069 048c 07FE      		sbrs __tmp_reg__,7
+ 1070 048e 00C0      		rjmp .L71
+ 1072               	.LM189:
+ 1073 0490 8AE0      		ldi r24,lo8(10)
+ 1074 0492 90E0      		ldi r25,0
+ 1075 0494 0E94 0000 		call delay_us
+ 1076 0498 2EB5      		in r18,0x2e
+ 1077 049a 922F      		mov r25,r18
+ 1078 049c 80E0      		ldi r24,0
+ 1079 049e C82B      		or r28,r24
+ 1080 04a0 D92B      		or r29,r25
+ 135:nrf.c         **** 		SS_UP;
+ 1082               	.LM190:
+ 1083 04a2 2A9A      		sbi 0x5,2
+ 136:nrf.c         **** 		delay_us(1);
+ 1085               	.LM191:
+ 1086 04a4 81E0      		ldi r24,lo8(1)
+ 1087 04a6 90E0      		ldi r25,0
+ 1088 04a8 0E94 0000 		call delay_us
+ 137:nrf.c         **** 		SS_DOWN;
+ 1090               	.LM192:
+ 1091 04ac 2A98      		cbi 0x5,2
+ 138:nrf.c         **** 		SPI_WRITE(R_REGISTER | NRG_FIFO_STATUS);
+ 1093               	.LM193:
+ 1094 04ae 87E1      		ldi r24,lo8(23)
+ 1095 04b0 8EBD      		out 0x2e,r24
+ 1096 04b2 00C0      		rjmp .L72
+ 1097               	.L73:
+ 1099               	.LM194:
+ 1100 04b4 85E0      		ldi r24,lo8(5)
+ 1101 04b6 90E0      		ldi r25,0
+ 1102 04b8 0E94 0000 		call delay_us
+ 1103               	.L72:
+ 1105               	.LM195:
+ 1106 04bc 0DB4      		in __tmp_reg__,0x2d
+ 1107 04be 07FE      		sbrs __tmp_reg__,7
+ 1108 04c0 00C0      		rjmp .L73
+ 1110               	.LM196:
+ 1111 04c2 8AE0      		ldi r24,lo8(10)
+ 1112 04c4 90E0      		ldi r25,0
+ 1113 04c6 0E94 0000 		call delay_us
+ 139:nrf.c         **** 		nrf_last_status = SPDR;
+ 1115               	.LM197:
+ 1116 04ca 8EB5      		in r24,0x2e
+ 1117 04cc 8093 0000 		sts nrf_last_status,r24
+ 140:nrf.c         **** 		SPI_WRITE(0x00); 
+ 1119               	.LM198:
+ 1120 04d0 1EBC      		out 0x2e,__zero_reg__
+ 1121 04d2 00C0      		rjmp .L74
+ 1122               	.L75:
+ 1124               	.LM199:
+ 1125 04d4 85E0      		ldi r24,lo8(5)
+ 1126 04d6 90E0      		ldi r25,0
+ 1127 04d8 0E94 0000 		call delay_us
+ 1128               	.L74:
+ 1130               	.LM200:
+ 1131 04dc 0DB4      		in __tmp_reg__,0x2d
+ 1132 04de 07FE      		sbrs __tmp_reg__,7
+ 1133 04e0 00C0      		rjmp .L75
+ 1135               	.LM201:
+ 1136 04e2 8AE0      		ldi r24,lo8(10)
+ 1137 04e4 90E0      		ldi r25,0
+ 1138 04e6 0E94 0000 		call delay_us
+ 141:nrf.c         **** 		SS_UP;
+ 1140               	.LM202:
+ 1141 04ea 2A9A      		sbi 0x5,2
+ 142:nrf.c         **** 		if(SPDR & (1<<RX_EMPTY))
+ 1143               	.LM203:
+ 1144 04ec 0EB4      		in __tmp_reg__,0x2e
+ 1145 04ee 00FE      		sbrs __tmp_reg__,0
+ 1146 04f0 00C0      		rjmp .L65
+ 143:nrf.c         **** 		{
+ 144:nrf.c         **** 			delay_us(1);
+ 1148               	.LM204:
+ 1149 04f2 81E0      		ldi r24,lo8(1)
+ 1150 04f4 90E0      		ldi r25,0
+ 1151 04f6 0E94 0000 		call delay_us
+ 145:nrf.c         **** 			SS_DOWN;
+ 1153               	.LM205:
+ 1154 04fa 2A98      		cbi 0x5,2
+ 146:nrf.c         **** 			SPI_WRITE(W_REGISTER | NRG_STATUS);
+ 1156               	.LM206:
+ 1157 04fc 87E2      		ldi r24,lo8(39)
+ 1158 04fe 8EBD      		out 0x2e,r24
+ 1159 0500 00C0      		rjmp .L76
+ 1160               	.L77:
+ 1162               	.LM207:
+ 1163 0502 85E0      		ldi r24,lo8(5)
+ 1164 0504 90E0      		ldi r25,0
+ 1165 0506 0E94 0000 		call delay_us
+ 1166               	.L76:
+ 1168               	.LM208:
+ 1169 050a 0DB4      		in __tmp_reg__,0x2d
+ 1170 050c 07FE      		sbrs __tmp_reg__,7
+ 1171 050e 00C0      		rjmp .L77
+ 1173               	.LM209:
+ 1174 0510 8AE0      		ldi r24,lo8(10)
+ 1175 0512 90E0      		ldi r25,0
+ 1176 0514 0E94 0000 		call delay_us
+ 147:nrf.c         **** 			SPI_WRITE(0x7f & (1<<RX_DR));
+ 1178               	.LM210:
+ 1179 0518 80E4      		ldi r24,lo8(64)
+ 1180 051a 8EBD      		out 0x2e,r24
+ 1181 051c 00C0      		rjmp .L78
+ 1182               	.L79:
+ 1184               	.LM211:
+ 1185 051e 85E0      		ldi r24,lo8(5)
+ 1186 0520 90E0      		ldi r25,0
+ 1187 0522 0E94 0000 		call delay_us
+ 1188               	.L78:
+ 1190               	.LM212:
+ 1191 0526 0DB4      		in __tmp_reg__,0x2d
+ 1192 0528 07FE      		sbrs __tmp_reg__,7
+ 1193 052a 00C0      		rjmp .L79
+ 1195               	.LM213:
+ 1196 052c 8AE0      		ldi r24,lo8(10)
+ 1197 052e 90E0      		ldi r25,0
+ 1198 0530 0E94 0000 		call delay_us
+ 148:nrf.c         **** 			SS_UP;
+ 1200               	.LM214:
+ 1201 0534 2A9A      		sbi 0x5,2
+ 1202 0536 00C0      		rjmp .L65
+ 1203               	.L80:
+ 149:nrf.c         **** 		}
+ 150:nrf.c         **** 		return payload;
+ 151:nrf.c         **** 	}
+ 152:nrf.c         **** 	else return 0;
+ 1205               	.LM215:
+ 1206 0538 C0E0      		ldi r28,0
+ 1207 053a D0E0      		ldi r29,0
+ 1208               	.L65:
+ 153:nrf.c         **** 	
+ 154:nrf.c         **** }
+ 1210               	.LM216:
+ 1211 053c CE01      		movw r24,r28
+ 1212               	/* epilogue start */
+ 1213 053e DF91      		pop r29
+ 1214 0540 CF91      		pop r28
+ 1215 0542 0895      		ret
+ 1217               	.Lscope3:
+ 1219               		.stabd	78,0,0
+ 1221               	.global	__vector_17
+ 1223               	__vector_17:
+ 1224               		.stabd	46,0,0
+ 155:nrf.c         **** 
+ 156:nrf.c         **** // Interrupt service routine.
+ 157:nrf.c         **** ISR(SPI_STC_vect)
+ 158:nrf.c         **** {
+ 1226               	.LM217:
+ 1227               	.LFBB4:
+ 1228 0544 1F92      		push r1
+ 1229 0546 0F92      		push r0
+ 1230 0548 0FB6      		in r0,__SREG__
+ 1231 054a 0F92      		push r0
+ 1232 054c 1124      		clr __zero_reg__
+ 1233               	/* prologue: Signal */
+ 1234               	/* frame size = 0 */
+ 1235               	/* stack size = 3 */
+ 1236               	.L__stack_usage = 3
+ 1237               	/* epilogue start */
+ 159:nrf.c         **** 	// TODO: Deal with the data.
+ 160:nrf.c         **** }...
+ 1239               	.LM218:
+ 1240 054e 0F90      		pop r0
+ 1241 0550 0FBE      		out __SREG__,r0
+ 1242 0552 0F90      		pop r0
+ 1243 0554 1F90      		pop r1
+ 1244 0556 1895      		reti
+ 1246               	.Lscope4:
+ 1248               		.stabd	78,0,0
+ 1249               	.global	nrf_last_status
+ 1250               		.section .bss
+ 1253               	nrf_last_status:
+ 1254 0000 00        		.zero	1
+ 1255               	.global	spi_bytes_sent
+ 1258               	spi_bytes_sent:
+ 1259 0001 00        		.zero	1
+ 1260               	.global	spi_command
+ 1263               	spi_command:
+ 1264 0002 00        		.zero	1
+ 1265               	.global	spi_state
+ 1268               	spi_state:
+ 1269 0003 00        		.zero	1
+ 1274               		.text
+ 1276               	.Letext0:
+ 1277               		.ident	"GCC: (GNU) 4.7.2"
+ 1278               	.global __do_copy_data
+ 1279               	.global __do_clear_bss
+DEFINED SYMBOLS
+                            *ABS*:0000000000000000 nrf.c
+     /tmp/ccO5u9iy.s:2      *ABS*:000000000000003e __SP_H__
+     /tmp/ccO5u9iy.s:3      *ABS*:000000000000003d __SP_L__
+     /tmp/ccO5u9iy.s:4      *ABS*:000000000000003f __SREG__
+     /tmp/ccO5u9iy.s:5      *ABS*:0000000000000000 __tmp_reg__
+     /tmp/ccO5u9iy.s:6      *ABS*:0000000000000001 __zero_reg__
+     /tmp/ccO5u9iy.s:94     .text:0000000000000000 nrf_init
+     /tmp/ccO5u9iy.s:1253   .bss:0000000000000000 nrf_last_status
+     /tmp/ccO5u9iy.s:936    .text:000000000000040a nrf_tx
+     /tmp/ccO5u9iy.s:953    .text:000000000000040c nrf_rx
+     /tmp/ccO5u9iy.s:1223   .text:0000000000000544 __vector_17
+     /tmp/ccO5u9iy.s:1258   .bss:0000000000000001 spi_bytes_sent
+     /tmp/ccO5u9iy.s:1263   .bss:0000000000000002 spi_command
+     /tmp/ccO5u9iy.s:1268   .bss:0000000000000003 spi_state
+
+UNDEFINED SYMBOLS
+lcd_clrscr
+lcd_puts
+delay_us
+delay_ms
+__do_copy_data
+__do_clear_bss

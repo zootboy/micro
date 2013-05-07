@@ -1,0 +1,5 @@
+C:\Users\Sean\AppData\Local\Temp\rgbBargraphDisplay\usbGenericHidCommunications\bin\Release\usbGenericHidCommunications.dll
+C:\Users\Sean\AppData\Local\Temp\rgbBargraphDisplay\usbGenericHidCommunications\bin\Release\usbGenericHidCommunications.pdb
+C:\Users\Sean\AppData\Local\Temp\rgbBargraphDisplay\usbGenericHidCommunications\obj\Release\ResolveAssemblyReference.cache
+C:\Users\Sean\AppData\Local\Temp\rgbBargraphDisplay\usbGenericHidCommunications\obj\Release\usbGenericHidCommunications.dll
+C:\Users\Sean\AppData\Local\Temp\rgbBargraphDisplay\usbGenericHidCommunications\obj\Release\usbGenericHidCommunications.pdb

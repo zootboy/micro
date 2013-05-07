@@ -1,0 +1,996 @@
+Archive member included because of file (symbol)
+
+/home/sean/builds/stellaris_ware/driverlib/gcc-cm4f/libdriver-cm4f.a(sysctl.o)
+                              .obj/src/cpu_interface.o (SysCtlPeripheralEnable)
+/home/sean/builds/stellaris_ware/driverlib/gcc-cm4f/libdriver-cm4f.a(systick.o)
+                              .obj/src/cpu_interface.o (SysTickValueGet)
+/home/sean/builds/stellaris_ware/driverlib/gcc-cm4f/libdriver-cm4f.a(timer.o)
+                              .obj/src/cpu_interface.o (TimerEnable)
+/home/sean/builds/stellaris_ware/driverlib/gcc-cm4f/libdriver-cm4f.a(uart.o)
+                              .obj/src/cpu_interface.o (UARTCharsAvail)
+/home/sean/builds/stellaris_ware/driverlib/gcc-cm4f/libdriver-cm4f.a(watchdog.o)
+                              .obj/src/main.o (WatchdogIntClear)
+/home/sean/builds/stellaris_ware/driverlib/gcc-cm4f/libdriver-cm4f.a(cpu.o)
+                              /home/sean/builds/stellaris_ware/driverlib/gcc-cm4f/libdriver-cm4f.a(sysctl.o) (CPUwfi)
+/home/sean/builds/stellaris_ware/driverlib/gcc-cm4f/libdriver-cm4f.a(interrupt.o)
+                              /home/sean/builds/stellaris_ware/driverlib/gcc-cm4f/libdriver-cm4f.a(sysctl.o) (IntRegister)
+
+Allocating common symbols
+Common symbol       size              file
+
+periodic_message_id
+                    0x1               .obj/src/cpu_interface.o
+jaguar_mode         0x1               .obj/src/cpu_interface.o
+message_buffer      0x12              .obj/src/cpu_interface.o
+
+Discarded input sections
+
+ .text          0x0000000000000000        0x0 .obj/src/cpu_interface.o
+ .data          0x0000000000000000        0x0 .obj/src/cpu_interface.o
+ .bss           0x0000000000000000        0x0 .obj/src/cpu_interface.o
+ .text.cpu_message_monitor_get_voltage
+                0x0000000000000000        0x4 .obj/src/cpu_interface.o
+ .text.cpu_message_monitor_get_current
+                0x0000000000000000        0x4 .obj/src/cpu_interface.o
+ .text.cpu_message_monitor_get_temp
+                0x0000000000000000        0x4 .obj/src/cpu_interface.o
+ .text.cpu_message_monitor_get_position
+                0x0000000000000000        0x4 .obj/src/cpu_interface.o
+ .text.invalid_message
+                0x0000000000000000        0x6 .obj/src/cpu_interface.o
+ .text.cpu_message_periodic
+                0x0000000000000000       0x5c .obj/src/cpu_interface.o
+ .text.cpu_message_control_heartbeat
+                0x0000000000000000        0xa .obj/src/cpu_interface.o
+ .text.cpu_message_control_reset
+                0x0000000000000000       0x12 .obj/src/cpu_interface.o
+ .text.cpu_message_control_stop
+                0x0000000000000000       0x12 .obj/src/cpu_interface.o
+ .text.cpu_message_control_start
+                0x0000000000000000       0x12 .obj/src/cpu_interface.o
+ .text.cpu_message_control_open_loop
+                0x0000000000000000       0x24 .obj/src/cpu_interface.o
+ .text.cpu_message_control_closed_loop
+                0x0000000000000000       0x2c .obj/src/cpu_interface.o
+ .text.cpu_message_closed_loop_set_speed
+                0x0000000000000000       0x44 .obj/src/cpu_interface.o
+ .text.cpu_message_open_loop_set_voltage
+                0x0000000000000000       0x30 .obj/src/cpu_interface.o
+ .text.cpu_message_init
+                0x0000000000000000       0x78 .obj/src/cpu_interface.o
+ .text.cpu_message_create
+                0x0000000000000000       0x3a .obj/src/cpu_interface.o
+ .text.cpu_message_send
+                0x0000000000000000       0x70 .obj/src/cpu_interface.o
+ .text.handle_message
+                0x0000000000000000       0x24 .obj/src/cpu_interface.o
+ .text.cpu_message_process
+                0x0000000000000000      0x108 .obj/src/cpu_interface.o
+ .text.setPID   0x0000000000000000       0x2c .obj/src/cpu_interface.o
+ .text.cpu_message_closed_loop_set_P
+                0x0000000000000000       0x30 .obj/src/cpu_interface.o
+ .text.cpu_message_closed_loop_set_I
+                0x0000000000000000       0x30 .obj/src/cpu_interface.o
+ .text.cpu_message_closed_loop_set_D
+                0x0000000000000000       0x30 .obj/src/cpu_interface.o
+ .bss.jaguar_I  0x0000000000000000        0x2 .obj/src/cpu_interface.o
+ .bss.last_cpu_command.5212
+                0x0000000000000000        0x4 .obj/src/cpu_interface.o
+ .data.message_handlers
+                0x0000000000000000       0x80 .obj/src/cpu_interface.o
+ .bss.jaguar_P  0x0000000000000000        0x2 .obj/src/cpu_interface.o
+ .bss.message_escape_received
+                0x0000000000000000        0x1 .obj/src/cpu_interface.o
+ .bss.idx.5179  0x0000000000000000        0x1 .obj/src/cpu_interface.o
+ .bss.jaguar_D  0x0000000000000000        0x2 .obj/src/cpu_interface.o
+ .data.message_buffer_index
+                0x0000000000000000        0x1 .obj/src/cpu_interface.o
+ .comment       0x0000000000000000       0x12 .obj/src/cpu_interface.o
+ .ARM.attributes
+                0x0000000000000000       0x37 .obj/src/cpu_interface.o
+ COMMON         0x0000000000000000       0x14 .obj/src/cpu_interface.o
+ .text          0x0000000000000000        0x0 .obj/src/syscalls.o
+ .data          0x0000000000000000        0x0 .obj/src/syscalls.o
+ .bss           0x0000000000000000        0x0 .obj/src/syscalls.o
+ .text._sbrk    0x0000000000000000       0x34 .obj/src/syscalls.o
+ .text._close   0x0000000000000000        0x6 .obj/src/syscalls.o
+ .text._fstat   0x0000000000000000        0x6 .obj/src/syscalls.o
+ .text._isatty  0x0000000000000000        0x6 .obj/src/syscalls.o
+ .text._lseek   0x0000000000000000        0x6 .obj/src/syscalls.o
+ .text._open    0x0000000000000000        0x6 .obj/src/syscalls.o
+ .text._read    0x0000000000000000       0x28 .obj/src/syscalls.o
+ .text._write   0x0000000000000000       0x44 .obj/src/syscalls.o
+ .bss.prev_heap_end.4006
+                0x0000000000000000        0x4 .obj/src/syscalls.o
+ .bss.heap_end  0x0000000000000000        0x4 .obj/src/syscalls.o
+ .comment       0x0000000000000000       0x12 .obj/src/syscalls.o
+ .ARM.attributes
+                0x0000000000000000       0x37 .obj/src/syscalls.o
+ .text          0x0000000000000000        0x0 .obj/src/pwm.o
+ .data          0x0000000000000000        0x0 .obj/src/pwm.o
+ .bss           0x0000000000000000        0x0 .obj/src/pwm.o
+ .text.pwm_init
+                0x0000000000000000       0x7c .obj/src/pwm.o
+ .comment       0x0000000000000000       0x12 .obj/src/pwm.o
+ .ARM.attributes
+                0x0000000000000000       0x37 .obj/src/pwm.o
+ .text          0x0000000000000000        0x0 .obj/src/stellariscommon.o
+ .data          0x0000000000000000        0x0 .obj/src/stellariscommon.o
+ .bss           0x0000000000000000        0x0 .obj/src/stellariscommon.o
+ .text.SetupSysTick
+                0x0000000000000000       0x28 .obj/src/stellariscommon.o
+ .text          0x0000000000000000        0x0 .obj/src/main.o
+ .data          0x0000000000000000        0x0 .obj/src/main.o
+ .bss           0x0000000000000000        0x0 .obj/src/main.o
+ .text.watchdog_int
+                0x0000000000000000       0x2c .obj/src/main.o
+ .bss.clear_watchdog
+                0x0000000000000000        0x1 .obj/src/main.o
+ .text          0x0000000000000000        0x0 .obj/src/startup.o
+ .data          0x0000000000000000        0x0 .obj/src/startup.o
+ .bss           0x0000000000000000        0x0 .obj/src/startup.o
+ .text          0x0000000000000000        0x0 /home/sean/builds/stellaris_ware/driverlib/gcc-cm4f/libdriver-cm4f.a(sysctl.o)
+ .data          0x0000000000000000        0x0 /home/sean/builds/stellaris_ware/driverlib/gcc-cm4f/libdriver-cm4f.a(sysctl.o)
+ .bss           0x0000000000000000        0x0 /home/sean/builds/stellaris_ware/driverlib/gcc-cm4f/libdriver-cm4f.a(sysctl.o)
+ .text.SysCtlPeripheralMapToNew
+                0x0000000000000000       0x24 /home/sean/builds/stellaris_ware/driverlib/gcc-cm4f/libdriver-cm4f.a(sysctl.o)
+ .text.SysCtlSRAMSizeGet
+                0x0000000000000000       0x14 /home/sean/builds/stellaris_ware/driverlib/gcc-cm4f/libdriver-cm4f.a(sysctl.o)
+ .text.SysCtlFlashSizeGet
+                0x0000000000000000       0x14 /home/sean/builds/stellaris_ware/driverlib/gcc-cm4f/libdriver-cm4f.a(sysctl.o)
+ .text.SysCtlPinPresent
+                0x0000000000000000       0x14 /home/sean/builds/stellaris_ware/driverlib/gcc-cm4f/libdriver-cm4f.a(sysctl.o)
+ .text.SysCtlPeripheralPresent
+                0x0000000000000000       0x7c /home/sean/builds/stellaris_ware/driverlib/gcc-cm4f/libdriver-cm4f.a(sysctl.o)
+ .text.SysCtlPeripheralReady
+                0x0000000000000000       0x38 /home/sean/builds/stellaris_ware/driverlib/gcc-cm4f/libdriver-cm4f.a(sysctl.o)
+ .text.SysCtlPeripheralPowerOn
+                0x0000000000000000       0x38 /home/sean/builds/stellaris_ware/driverlib/gcc-cm4f/libdriver-cm4f.a(sysctl.o)
+ .text.SysCtlPeripheralPowerOff
+                0x0000000000000000       0x38 /home/sean/builds/stellaris_ware/driverlib/gcc-cm4f/libdriver-cm4f.a(sysctl.o)
+ .text.SysCtlPeripheralReset
+                0x0000000000000000       0x8c /home/sean/builds/stellaris_ware/driverlib/gcc-cm4f/libdriver-cm4f.a(sysctl.o)
+ .text.SysCtlPeripheralDisable
+                0x0000000000000000       0x5c /home/sean/builds/stellaris_ware/driverlib/gcc-cm4f/libdriver-cm4f.a(sysctl.o)
+ .text.SysCtlPeripheralSleepEnable
+                0x0000000000000000       0x5c /home/sean/builds/stellaris_ware/driverlib/gcc-cm4f/libdriver-cm4f.a(sysctl.o)
+ .text.SysCtlPeripheralSleepDisable
+                0x0000000000000000       0x5c /home/sean/builds/stellaris_ware/driverlib/gcc-cm4f/libdriver-cm4f.a(sysctl.o)
+ .text.SysCtlPeripheralDeepSleepEnable
+                0x0000000000000000       0x5c /home/sean/builds/stellaris_ware/driverlib/gcc-cm4f/libdriver-cm4f.a(sysctl.o)
+ .text.SysCtlPeripheralDeepSleepDisable
+                0x0000000000000000       0x5c /home/sean/builds/stellaris_ware/driverlib/gcc-cm4f/libdriver-cm4f.a(sysctl.o)
+ .text.SysCtlPeripheralClockGating
+                0x0000000000000000       0x1c /home/sean/builds/stellaris_ware/driverlib/gcc-cm4f/libdriver-cm4f.a(sysctl.o)
+ .text.SysCtlIntRegister
+                0x0000000000000000       0x14 /home/sean/builds/stellaris_ware/driverlib/gcc-cm4f/libdriver-cm4f.a(sysctl.o)
+ .text.SysCtlIntUnregister
+                0x0000000000000000       0x12 /home/sean/builds/stellaris_ware/driverlib/gcc-cm4f/libdriver-cm4f.a(sysctl.o)
+ .text.SysCtlIntEnable
+                0x0000000000000000       0x10 /home/sean/builds/stellaris_ware/driverlib/gcc-cm4f/libdriver-cm4f.a(sysctl.o)
+ .text.SysCtlIntDisable
+                0x0000000000000000       0x10 /home/sean/builds/stellaris_ware/driverlib/gcc-cm4f/libdriver-cm4f.a(sysctl.o)
+ .text.SysCtlIntClear
+                0x0000000000000000        0xc /home/sean/builds/stellaris_ware/driverlib/gcc-cm4f/libdriver-cm4f.a(sysctl.o)
+ .text.SysCtlIntStatus
+                0x0000000000000000       0x18 /home/sean/builds/stellaris_ware/driverlib/gcc-cm4f/libdriver-cm4f.a(sysctl.o)
+ .text.SysCtlLDOSet
+                0x0000000000000000        0xc /home/sean/builds/stellaris_ware/driverlib/gcc-cm4f/libdriver-cm4f.a(sysctl.o)
+ .text.SysCtlLDOGet
+                0x0000000000000000        0xc /home/sean/builds/stellaris_ware/driverlib/gcc-cm4f/libdriver-cm4f.a(sysctl.o)
+ .text.SysCtlLDOConfigSet
+                0x0000000000000000        0xc /home/sean/builds/stellaris_ware/driverlib/gcc-cm4f/libdriver-cm4f.a(sysctl.o)
+ .text.SysCtlReset
+                0x0000000000000000       0x10 /home/sean/builds/stellaris_ware/driverlib/gcc-cm4f/libdriver-cm4f.a(sysctl.o)
+ .text.SysCtlSleep
+                0x0000000000000000        0x4 /home/sean/builds/stellaris_ware/driverlib/gcc-cm4f/libdriver-cm4f.a(sysctl.o)
+ .text.SysCtlDeepSleep
+                0x0000000000000000       0x20 /home/sean/builds/stellaris_ware/driverlib/gcc-cm4f/libdriver-cm4f.a(sysctl.o)
+ .text.SysCtlResetCauseGet
+                0x0000000000000000        0xc /home/sean/builds/stellaris_ware/driverlib/gcc-cm4f/libdriver-cm4f.a(sysctl.o)
+ .text.SysCtlResetCauseClear
+                0x0000000000000000       0x10 /home/sean/builds/stellaris_ware/driverlib/gcc-cm4f/libdriver-cm4f.a(sysctl.o)
+ .text.SysCtlBrownOutConfigSet
+                0x0000000000000000       0x10 /home/sean/builds/stellaris_ware/driverlib/gcc-cm4f/libdriver-cm4f.a(sysctl.o)
+ .text.SysCtlMOSCConfigSet
+                0x0000000000000000        0xc /home/sean/builds/stellaris_ware/driverlib/gcc-cm4f/libdriver-cm4f.a(sysctl.o)
+ .text.SysCtlPIOSCCalibrate
+                0x0000000000000000       0x54 /home/sean/builds/stellaris_ware/driverlib/gcc-cm4f/libdriver-cm4f.a(sysctl.o)
+ .text.SysCtlClockSet
+                0x0000000000000000      0x174 /home/sean/builds/stellaris_ware/driverlib/gcc-cm4f/libdriver-cm4f.a(sysctl.o)
+ .text.SysCtlDeepSleepClockSet
+                0x0000000000000000        0xc /home/sean/builds/stellaris_ware/driverlib/gcc-cm4f/libdriver-cm4f.a(sysctl.o)
+ .text.SysCtlPWMClockSet
+                0x0000000000000000       0x14 /home/sean/builds/stellaris_ware/driverlib/gcc-cm4f/libdriver-cm4f.a(sysctl.o)
+ .text.SysCtlPWMClockGet
+                0x0000000000000000       0x18 /home/sean/builds/stellaris_ware/driverlib/gcc-cm4f/libdriver-cm4f.a(sysctl.o)
+ .text.SysCtlADCSpeedSet
+                0x0000000000000000       0x20 /home/sean/builds/stellaris_ware/driverlib/gcc-cm4f/libdriver-cm4f.a(sysctl.o)
+ .text.SysCtlADCSpeedGet
+                0x0000000000000000       0x10 /home/sean/builds/stellaris_ware/driverlib/gcc-cm4f/libdriver-cm4f.a(sysctl.o)
+ .text.SysCtlIOSCVerificationSet
+                0x0000000000000000       0x1c /home/sean/builds/stellaris_ware/driverlib/gcc-cm4f/libdriver-cm4f.a(sysctl.o)
+ .text.SysCtlMOSCVerificationSet
+                0x0000000000000000       0x1c /home/sean/builds/stellaris_ware/driverlib/gcc-cm4f/libdriver-cm4f.a(sysctl.o)
+ .text.SysCtlPLLVerificationSet
+                0x0000000000000000       0x1c /home/sean/builds/stellaris_ware/driverlib/gcc-cm4f/libdriver-cm4f.a(sysctl.o)
+ .text.SysCtlClkVerificationClear
+                0x0000000000000000       0x10 /home/sean/builds/stellaris_ware/driverlib/gcc-cm4f/libdriver-cm4f.a(sysctl.o)
+ .text.SysCtlGPIOAHBEnable
+                0x0000000000000000       0x14 /home/sean/builds/stellaris_ware/driverlib/gcc-cm4f/libdriver-cm4f.a(sysctl.o)
+ .text.SysCtlGPIOAHBDisable
+                0x0000000000000000       0x14 /home/sean/builds/stellaris_ware/driverlib/gcc-cm4f/libdriver-cm4f.a(sysctl.o)
+ .text.SysCtlUSBPLLEnable
+                0x0000000000000000       0x10 /home/sean/builds/stellaris_ware/driverlib/gcc-cm4f/libdriver-cm4f.a(sysctl.o)
+ .text.SysCtlUSBPLLDisable
+                0x0000000000000000       0x10 /home/sean/builds/stellaris_ware/driverlib/gcc-cm4f/libdriver-cm4f.a(sysctl.o)
+ .text.SysCtlI2SMClkSet
+                0x0000000000000000       0xe0 /home/sean/builds/stellaris_ware/driverlib/gcc-cm4f/libdriver-cm4f.a(sysctl.o)
+ .bss.ulOscSelect
+                0x0000000000000000        0x4 /home/sean/builds/stellaris_ware/driverlib/gcc-cm4f/libdriver-cm4f.a(sysctl.o)
+ .bss.ulSysDiv  0x0000000000000000        0x4 /home/sean/builds/stellaris_ware/driverlib/gcc-cm4f/libdriver-cm4f.a(sysctl.o)
+ .bss.ulOsc     0x0000000000000000        0x4 /home/sean/builds/stellaris_ware/driverlib/gcc-cm4f/libdriver-cm4f.a(sysctl.o)
+ .rodata.g_pulDCRegs
+                0x0000000000000000       0x10 /home/sean/builds/stellaris_ware/driverlib/gcc-cm4f/libdriver-cm4f.a(sysctl.o)
+ .rodata.g_pulDCGCRegs
+                0x0000000000000000        0xc /home/sean/builds/stellaris_ware/driverlib/gcc-cm4f/libdriver-cm4f.a(sysctl.o)
+ .rodata.g_ppulPeripheralMap
+                0x0000000000000000      0x120 /home/sean/builds/stellaris_ware/driverlib/gcc-cm4f/libdriver-cm4f.a(sysctl.o)
+ .rodata.g_pulSCGCRegs
+                0x0000000000000000        0xc /home/sean/builds/stellaris_ware/driverlib/gcc-cm4f/libdriver-cm4f.a(sysctl.o)
+ .rodata.g_pulSRCRRegs
+                0x0000000000000000        0xc /home/sean/builds/stellaris_ware/driverlib/gcc-cm4f/libdriver-cm4f.a(sysctl.o)
+ .bss.bNewPLL   0x0000000000000000        0x1 /home/sean/builds/stellaris_ware/driverlib/gcc-cm4f/libdriver-cm4f.a(sysctl.o)
+ .text          0x0000000000000000        0x0 /home/sean/builds/stellaris_ware/driverlib/gcc-cm4f/libdriver-cm4f.a(systick.o)
+ .data          0x0000000000000000        0x0 /home/sean/builds/stellaris_ware/driverlib/gcc-cm4f/libdriver-cm4f.a(systick.o)
+ .bss           0x0000000000000000        0x0 /home/sean/builds/stellaris_ware/driverlib/gcc-cm4f/libdriver-cm4f.a(systick.o)
+ .text.SysTickEnable
+                0x0000000000000000       0x10 /home/sean/builds/stellaris_ware/driverlib/gcc-cm4f/libdriver-cm4f.a(systick.o)
+ .text.SysTickDisable
+                0x0000000000000000       0x10 /home/sean/builds/stellaris_ware/driverlib/gcc-cm4f/libdriver-cm4f.a(systick.o)
+ .text.SysTickIntRegister
+                0x0000000000000000       0x1c /home/sean/builds/stellaris_ware/driverlib/gcc-cm4f/libdriver-cm4f.a(systick.o)
+ .text.SysTickIntUnregister
+                0x0000000000000000       0x14 /home/sean/builds/stellaris_ware/driverlib/gcc-cm4f/libdriver-cm4f.a(systick.o)
+ .text.SysTickIntEnable
+                0x0000000000000000       0x10 /home/sean/builds/stellaris_ware/driverlib/gcc-cm4f/libdriver-cm4f.a(systick.o)
+ .text.SysTickIntDisable
+                0x0000000000000000       0x10 /home/sean/builds/stellaris_ware/driverlib/gcc-cm4f/libdriver-cm4f.a(systick.o)
+ .text.SysTickPeriodSet
+                0x0000000000000000        0xc /home/sean/builds/stellaris_ware/driverlib/gcc-cm4f/libdriver-cm4f.a(systick.o)
+ .text.SysTickPeriodGet
+                0x0000000000000000        0xc /home/sean/builds/stellaris_ware/driverlib/gcc-cm4f/libdriver-cm4f.a(systick.o)
+ .text.SysTickValueGet
+                0x0000000000000000        0xc /home/sean/builds/stellaris_ware/driverlib/gcc-cm4f/libdriver-cm4f.a(systick.o)
+ .comment       0x0000000000000000       0x2c /home/sean/builds/stellaris_ware/driverlib/gcc-cm4f/libdriver-cm4f.a(systick.o)
+ .ARM.attributes
+                0x0000000000000000       0x37 /home/sean/builds/stellaris_ware/driverlib/gcc-cm4f/libdriver-cm4f.a(systick.o)
+ .text          0x0000000000000000        0x0 /home/sean/builds/stellaris_ware/driverlib/gcc-cm4f/libdriver-cm4f.a(timer.o)
+ .data          0x0000000000000000        0x0 /home/sean/builds/stellaris_ware/driverlib/gcc-cm4f/libdriver-cm4f.a(timer.o)
+ .bss           0x0000000000000000        0x0 /home/sean/builds/stellaris_ware/driverlib/gcc-cm4f/libdriver-cm4f.a(timer.o)
+ .text.TimerIntNumberGet
+                0x0000000000000000       0x28 /home/sean/builds/stellaris_ware/driverlib/gcc-cm4f/libdriver-cm4f.a(timer.o)
+ .text.TimerEnable
+                0x0000000000000000       0x12 /home/sean/builds/stellaris_ware/driverlib/gcc-cm4f/libdriver-cm4f.a(timer.o)
+ .text.TimerDisable
+                0x0000000000000000       0x12 /home/sean/builds/stellaris_ware/driverlib/gcc-cm4f/libdriver-cm4f.a(timer.o)
+ .text.TimerConfigure
+                0x0000000000000000       0x28 /home/sean/builds/stellaris_ware/driverlib/gcc-cm4f/libdriver-cm4f.a(timer.o)
+ .text.TimerControlLevel
+                0x0000000000000000       0x20 /home/sean/builds/stellaris_ware/driverlib/gcc-cm4f/libdriver-cm4f.a(timer.o)
+ .text.TimerControlTrigger
+                0x0000000000000000       0x20 /home/sean/builds/stellaris_ware/driverlib/gcc-cm4f/libdriver-cm4f.a(timer.o)
+ .text.TimerControlEvent
+                0x0000000000000000       0x18 /home/sean/builds/stellaris_ware/driverlib/gcc-cm4f/libdriver-cm4f.a(timer.o)
+ .text.TimerControlStall
+                0x0000000000000000       0x20 /home/sean/builds/stellaris_ware/driverlib/gcc-cm4f/libdriver-cm4f.a(timer.o)
+ .text.TimerControlWaitOnTrigger
+                0x0000000000000000       0x34 /home/sean/builds/stellaris_ware/driverlib/gcc-cm4f/libdriver-cm4f.a(timer.o)
+ .text.TimerRTCEnable
+                0x0000000000000000        0xa /home/sean/builds/stellaris_ware/driverlib/gcc-cm4f/libdriver-cm4f.a(timer.o)
+ .text.TimerRTCDisable
+                0x0000000000000000        0xa /home/sean/builds/stellaris_ware/driverlib/gcc-cm4f/libdriver-cm4f.a(timer.o)
+ .text.TimerPrescaleSet
+                0x0000000000000000       0x12 /home/sean/builds/stellaris_ware/driverlib/gcc-cm4f/libdriver-cm4f.a(timer.o)
+ .text.TimerPrescaleGet
+                0x0000000000000000        0xa /home/sean/builds/stellaris_ware/driverlib/gcc-cm4f/libdriver-cm4f.a(timer.o)
+ .text.TimerPrescaleMatchSet
+                0x0000000000000000       0x12 /home/sean/builds/stellaris_ware/driverlib/gcc-cm4f/libdriver-cm4f.a(timer.o)
+ .text.TimerPrescaleMatchGet
+                0x0000000000000000        0xa /home/sean/builds/stellaris_ware/driverlib/gcc-cm4f/libdriver-cm4f.a(timer.o)
+ .text.TimerLoadSet
+                0x0000000000000000       0x12 /home/sean/builds/stellaris_ware/driverlib/gcc-cm4f/libdriver-cm4f.a(timer.o)
+ .text.TimerLoadGet
+                0x0000000000000000        0xa /home/sean/builds/stellaris_ware/driverlib/gcc-cm4f/libdriver-cm4f.a(timer.o)
+ .text.TimerLoadSet64
+                0x0000000000000000        0x6 /home/sean/builds/stellaris_ware/driverlib/gcc-cm4f/libdriver-cm4f.a(timer.o)
+ .text.TimerLoadGet64
+                0x0000000000000000       0x14 /home/sean/builds/stellaris_ware/driverlib/gcc-cm4f/libdriver-cm4f.a(timer.o)
+ .text.TimerValueGet
+                0x0000000000000000        0xa /home/sean/builds/stellaris_ware/driverlib/gcc-cm4f/libdriver-cm4f.a(timer.o)
+ .text.TimerValueGet64
+                0x0000000000000000       0x14 /home/sean/builds/stellaris_ware/driverlib/gcc-cm4f/libdriver-cm4f.a(timer.o)
+ .text.TimerMatchSet
+                0x0000000000000000       0x12 /home/sean/builds/stellaris_ware/driverlib/gcc-cm4f/libdriver-cm4f.a(timer.o)
+ .text.TimerMatchGet
+                0x0000000000000000        0xa /home/sean/builds/stellaris_ware/driverlib/gcc-cm4f/libdriver-cm4f.a(timer.o)
+ .text.TimerMatchSet64
+                0x0000000000000000        0x6 /home/sean/builds/stellaris_ware/driverlib/gcc-cm4f/libdriver-cm4f.a(timer.o)
+ .text.TimerMatchGet64
+                0x0000000000000000       0x14 /home/sean/builds/stellaris_ware/driverlib/gcc-cm4f/libdriver-cm4f.a(timer.o)
+ .text.TimerIntRegister
+                0x0000000000000000       0x3a /home/sean/builds/stellaris_ware/driverlib/gcc-cm4f/libdriver-cm4f.a(timer.o)
+ .text.TimerIntUnregister
+                0x0000000000000000       0x34 /home/sean/builds/stellaris_ware/driverlib/gcc-cm4f/libdriver-cm4f.a(timer.o)
+ .text.TimerIntEnable
+                0x0000000000000000        0x8 /home/sean/builds/stellaris_ware/driverlib/gcc-cm4f/libdriver-cm4f.a(timer.o)
+ .text.TimerIntDisable
+                0x0000000000000000        0xa /home/sean/builds/stellaris_ware/driverlib/gcc-cm4f/libdriver-cm4f.a(timer.o)
+ .text.TimerIntStatus
+                0x0000000000000000        0xa /home/sean/builds/stellaris_ware/driverlib/gcc-cm4f/libdriver-cm4f.a(timer.o)
+ .text.TimerIntClear
+                0x0000000000000000        0x4 /home/sean/builds/stellaris_ware/driverlib/gcc-cm4f/libdriver-cm4f.a(timer.o)
+ .text.TimerSynchronize
+                0x0000000000000000        0x4 /home/sean/builds/stellaris_ware/driverlib/gcc-cm4f/libdriver-cm4f.a(timer.o)
+ .text.TimerQuiesce
+                0x0000000000000000       0x3c /home/sean/builds/stellaris_ware/driverlib/gcc-cm4f/libdriver-cm4f.a(timer.o)
+ .rodata.g_ppulTimerIntMap
+                0x0000000000000000       0x60 /home/sean/builds/stellaris_ware/driverlib/gcc-cm4f/libdriver-cm4f.a(timer.o)
+ .comment       0x0000000000000000       0x2c /home/sean/builds/stellaris_ware/driverlib/gcc-cm4f/libdriver-cm4f.a(timer.o)
+ .ARM.attributes
+                0x0000000000000000       0x37 /home/sean/builds/stellaris_ware/driverlib/gcc-cm4f/libdriver-cm4f.a(timer.o)
+ .text          0x0000000000000000        0x0 /home/sean/builds/stellaris_ware/driverlib/gcc-cm4f/libdriver-cm4f.a(uart.o)
+ .data          0x0000000000000000        0x0 /home/sean/builds/stellaris_ware/driverlib/gcc-cm4f/libdriver-cm4f.a(uart.o)
+ .bss           0x0000000000000000        0x0 /home/sean/builds/stellaris_ware/driverlib/gcc-cm4f/libdriver-cm4f.a(uart.o)
+ .text.UARTIntNumberGet
+                0x0000000000000000       0x28 /home/sean/builds/stellaris_ware/driverlib/gcc-cm4f/libdriver-cm4f.a(uart.o)
+ .text.UARTParityModeSet
+                0x0000000000000000        0xc /home/sean/builds/stellaris_ware/driverlib/gcc-cm4f/libdriver-cm4f.a(uart.o)
+ .text.UARTParityModeGet
+                0x0000000000000000        0x8 /home/sean/builds/stellaris_ware/driverlib/gcc-cm4f/libdriver-cm4f.a(uart.o)
+ .text.UARTFIFOLevelSet
+                0x0000000000000000        0x6 /home/sean/builds/stellaris_ware/driverlib/gcc-cm4f/libdriver-cm4f.a(uart.o)
+ .text.UARTFIFOLevelGet
+                0x0000000000000000       0x10 /home/sean/builds/stellaris_ware/driverlib/gcc-cm4f/libdriver-cm4f.a(uart.o)
+ .text.UARTConfigGetExpClk
+                0x0000000000000000       0x28 /home/sean/builds/stellaris_ware/driverlib/gcc-cm4f/libdriver-cm4f.a(uart.o)
+ .text.UARTEnable
+                0x0000000000000000       0x16 /home/sean/builds/stellaris_ware/driverlib/gcc-cm4f/libdriver-cm4f.a(uart.o)
+ .text.UARTDisable
+                0x0000000000000000       0x1e /home/sean/builds/stellaris_ware/driverlib/gcc-cm4f/libdriver-cm4f.a(uart.o)
+ .text.UARTConfigSetExpClk
+                0x0000000000000000       0x4e /home/sean/builds/stellaris_ware/driverlib/gcc-cm4f/libdriver-cm4f.a(uart.o)
+ .text.UARTFIFOEnable
+                0x0000000000000000        0xa /home/sean/builds/stellaris_ware/driverlib/gcc-cm4f/libdriver-cm4f.a(uart.o)
+ .text.UARTFIFODisable
+                0x0000000000000000        0xa /home/sean/builds/stellaris_ware/driverlib/gcc-cm4f/libdriver-cm4f.a(uart.o)
+ .text.UARTEnableSIR
+                0x0000000000000000       0x14 /home/sean/builds/stellaris_ware/driverlib/gcc-cm4f/libdriver-cm4f.a(uart.o)
+ .text.UARTDisableSIR
+                0x0000000000000000        0xa /home/sean/builds/stellaris_ware/driverlib/gcc-cm4f/libdriver-cm4f.a(uart.o)
+ .text.UARTSmartCardEnable
+                0x0000000000000000       0x16 /home/sean/builds/stellaris_ware/driverlib/gcc-cm4f/libdriver-cm4f.a(uart.o)
+ .text.UARTSmartCardDisable
+                0x0000000000000000        0xa /home/sean/builds/stellaris_ware/driverlib/gcc-cm4f/libdriver-cm4f.a(uart.o)
+ .text.UARTModemControlSet
+                0x0000000000000000        0xc /home/sean/builds/stellaris_ware/driverlib/gcc-cm4f/libdriver-cm4f.a(uart.o)
+ .text.UARTModemControlClear
+                0x0000000000000000        0xe /home/sean/builds/stellaris_ware/driverlib/gcc-cm4f/libdriver-cm4f.a(uart.o)
+ .text.UARTModemControlGet
+                0x0000000000000000        0x8 /home/sean/builds/stellaris_ware/driverlib/gcc-cm4f/libdriver-cm4f.a(uart.o)
+ .text.UARTModemStatusGet
+                0x0000000000000000        0xc /home/sean/builds/stellaris_ware/driverlib/gcc-cm4f/libdriver-cm4f.a(uart.o)
+ .text.UARTFlowControlSet
+                0x0000000000000000        0xc /home/sean/builds/stellaris_ware/driverlib/gcc-cm4f/libdriver-cm4f.a(uart.o)
+ .text.UARTFlowControlGet
+                0x0000000000000000        0x8 /home/sean/builds/stellaris_ware/driverlib/gcc-cm4f/libdriver-cm4f.a(uart.o)
+ .text.UARTTxIntModeSet
+                0x0000000000000000        0xc /home/sean/builds/stellaris_ware/driverlib/gcc-cm4f/libdriver-cm4f.a(uart.o)
+ .text.UARTTxIntModeGet
+                0x0000000000000000        0x8 /home/sean/builds/stellaris_ware/driverlib/gcc-cm4f/libdriver-cm4f.a(uart.o)
+ .text.UARTCharsAvail
+                0x0000000000000000       0x10 /home/sean/builds/stellaris_ware/driverlib/gcc-cm4f/libdriver-cm4f.a(uart.o)
+ .text.UARTSpaceAvail
+                0x0000000000000000       0x10 /home/sean/builds/stellaris_ware/driverlib/gcc-cm4f/libdriver-cm4f.a(uart.o)
+ .text.UARTCharGetNonBlocking
+                0x0000000000000000       0x10 /home/sean/builds/stellaris_ware/driverlib/gcc-cm4f/libdriver-cm4f.a(uart.o)
+ .text.UARTCharGet
+                0x0000000000000000        0xc /home/sean/builds/stellaris_ware/driverlib/gcc-cm4f/libdriver-cm4f.a(uart.o)
+ .text.UARTCharPutNonBlocking
+                0x0000000000000000       0x12 /home/sean/builds/stellaris_ware/driverlib/gcc-cm4f/libdriver-cm4f.a(uart.o)
+ .text.UARTCharPut
+                0x0000000000000000        0xc /home/sean/builds/stellaris_ware/driverlib/gcc-cm4f/libdriver-cm4f.a(uart.o)
+ .text.UARTBreakCtl
+                0x0000000000000000       0x18 /home/sean/builds/stellaris_ware/driverlib/gcc-cm4f/libdriver-cm4f.a(uart.o)
+ .text.UARTBusy
+                0x0000000000000000        0x8 /home/sean/builds/stellaris_ware/driverlib/gcc-cm4f/libdriver-cm4f.a(uart.o)
+ .text.UARTIntRegister
+                0x0000000000000000       0x1a /home/sean/builds/stellaris_ware/driverlib/gcc-cm4f/libdriver-cm4f.a(uart.o)
+ .text.UARTIntUnregister
+                0x0000000000000000       0x16 /home/sean/builds/stellaris_ware/driverlib/gcc-cm4f/libdriver-cm4f.a(uart.o)
+ .text.UARTIntEnable
+                0x0000000000000000        0x8 /home/sean/builds/stellaris_ware/driverlib/gcc-cm4f/libdriver-cm4f.a(uart.o)
+ .text.UARTIntDisable
+                0x0000000000000000        0xa /home/sean/builds/stellaris_ware/driverlib/gcc-cm4f/libdriver-cm4f.a(uart.o)
+ .text.UARTIntStatus
+                0x0000000000000000        0xa /home/sean/builds/stellaris_ware/driverlib/gcc-cm4f/libdriver-cm4f.a(uart.o)
+ .text.UARTIntClear
+                0x0000000000000000        0x4 /home/sean/builds/stellaris_ware/driverlib/gcc-cm4f/libdriver-cm4f.a(uart.o)
+ .text.UARTDMAEnable
+                0x0000000000000000        0x8 /home/sean/builds/stellaris_ware/driverlib/gcc-cm4f/libdriver-cm4f.a(uart.o)
+ .text.UARTDMADisable
+                0x0000000000000000        0xa /home/sean/builds/stellaris_ware/driverlib/gcc-cm4f/libdriver-cm4f.a(uart.o)
+ .text.UARTRxErrorGet
+                0x0000000000000000        0x8 /home/sean/builds/stellaris_ware/driverlib/gcc-cm4f/libdriver-cm4f.a(uart.o)
+ .text.UARTRxErrorClear
+                0x0000000000000000        0x6 /home/sean/builds/stellaris_ware/driverlib/gcc-cm4f/libdriver-cm4f.a(uart.o)
+ .text.UARTClockSourceSet
+                0x0000000000000000        0x6 /home/sean/builds/stellaris_ware/driverlib/gcc-cm4f/libdriver-cm4f.a(uart.o)
+ .text.UARTClockSourceGet
+                0x0000000000000000        0x6 /home/sean/builds/stellaris_ware/driverlib/gcc-cm4f/libdriver-cm4f.a(uart.o)
+ .text.UART9BitEnable
+                0x0000000000000000        0xe /home/sean/builds/stellaris_ware/driverlib/gcc-cm4f/libdriver-cm4f.a(uart.o)
+ .text.UART9BitDisable
+                0x0000000000000000        0xe /home/sean/builds/stellaris_ware/driverlib/gcc-cm4f/libdriver-cm4f.a(uart.o)
+ .text.UART9BitAddrSet
+                0x0000000000000000        0xa /home/sean/builds/stellaris_ware/driverlib/gcc-cm4f/libdriver-cm4f.a(uart.o)
+ .text.UART9BitAddrSend
+                0x0000000000000000       0x28 /home/sean/builds/stellaris_ware/driverlib/gcc-cm4f/libdriver-cm4f.a(uart.o)
+ .rodata.g_ppulUARTIntMap
+                0x0000000000000000       0x40 /home/sean/builds/stellaris_ware/driverlib/gcc-cm4f/libdriver-cm4f.a(uart.o)
+ .comment       0x0000000000000000       0x2c /home/sean/builds/stellaris_ware/driverlib/gcc-cm4f/libdriver-cm4f.a(uart.o)
+ .ARM.attributes
+                0x0000000000000000       0x37 /home/sean/builds/stellaris_ware/driverlib/gcc-cm4f/libdriver-cm4f.a(uart.o)
+ .text          0x0000000000000000        0x0 /home/sean/builds/stellaris_ware/driverlib/gcc-cm4f/libdriver-cm4f.a(watchdog.o)
+ .data          0x0000000000000000        0x0 /home/sean/builds/stellaris_ware/driverlib/gcc-cm4f/libdriver-cm4f.a(watchdog.o)
+ .bss           0x0000000000000000        0x0 /home/sean/builds/stellaris_ware/driverlib/gcc-cm4f/libdriver-cm4f.a(watchdog.o)
+ .text.WatchdogRunning
+                0x0000000000000000        0x8 /home/sean/builds/stellaris_ware/driverlib/gcc-cm4f/libdriver-cm4f.a(watchdog.o)
+ .text.WatchdogEnable
+                0x0000000000000000        0xa /home/sean/builds/stellaris_ware/driverlib/gcc-cm4f/libdriver-cm4f.a(watchdog.o)
+ .text.WatchdogResetEnable
+                0x0000000000000000        0xa /home/sean/builds/stellaris_ware/driverlib/gcc-cm4f/libdriver-cm4f.a(watchdog.o)
+ .text.WatchdogResetDisable
+                0x0000000000000000        0xa /home/sean/builds/stellaris_ware/driverlib/gcc-cm4f/libdriver-cm4f.a(watchdog.o)
+ .text.WatchdogLock
+                0x0000000000000000        0x8 /home/sean/builds/stellaris_ware/driverlib/gcc-cm4f/libdriver-cm4f.a(watchdog.o)
+ .text.WatchdogUnlock
+                0x0000000000000000        0xc /home/sean/builds/stellaris_ware/driverlib/gcc-cm4f/libdriver-cm4f.a(watchdog.o)
+ .text.WatchdogLockState
+                0x0000000000000000       0x10 /home/sean/builds/stellaris_ware/driverlib/gcc-cm4f/libdriver-cm4f.a(watchdog.o)
+ .text.WatchdogReloadSet
+                0x0000000000000000        0x4 /home/sean/builds/stellaris_ware/driverlib/gcc-cm4f/libdriver-cm4f.a(watchdog.o)
+ .text.WatchdogReloadGet
+                0x0000000000000000        0x4 /home/sean/builds/stellaris_ware/driverlib/gcc-cm4f/libdriver-cm4f.a(watchdog.o)
+ .text.WatchdogValueGet
+                0x0000000000000000        0x4 /home/sean/builds/stellaris_ware/driverlib/gcc-cm4f/libdriver-cm4f.a(watchdog.o)
+ .text.WatchdogIntRegister
+                0x0000000000000000       0x12 /home/sean/builds/stellaris_ware/driverlib/gcc-cm4f/libdriver-cm4f.a(watchdog.o)
+ .text.WatchdogIntUnregister
+                0x0000000000000000       0x12 /home/sean/builds/stellaris_ware/driverlib/gcc-cm4f/libdriver-cm4f.a(watchdog.o)
+ .text.WatchdogIntEnable
+                0x0000000000000000        0xa /home/sean/builds/stellaris_ware/driverlib/gcc-cm4f/libdriver-cm4f.a(watchdog.o)
+ .text.WatchdogIntStatus
+                0x0000000000000000        0xa /home/sean/builds/stellaris_ware/driverlib/gcc-cm4f/libdriver-cm4f.a(watchdog.o)
+ .text.WatchdogIntClear
+                0x0000000000000000        0x6 /home/sean/builds/stellaris_ware/driverlib/gcc-cm4f/libdriver-cm4f.a(watchdog.o)
+ .text.WatchdogIntTypeSet
+                0x0000000000000000        0xc /home/sean/builds/stellaris_ware/driverlib/gcc-cm4f/libdriver-cm4f.a(watchdog.o)
+ .text.WatchdogStallEnable
+                0x0000000000000000        0xe /home/sean/builds/stellaris_ware/driverlib/gcc-cm4f/libdriver-cm4f.a(watchdog.o)
+ .text.WatchdogStallDisable
+                0x0000000000000000        0xe /home/sean/builds/stellaris_ware/driverlib/gcc-cm4f/libdriver-cm4f.a(watchdog.o)
+ .comment       0x0000000000000000       0x2c /home/sean/builds/stellaris_ware/driverlib/gcc-cm4f/libdriver-cm4f.a(watchdog.o)
+ .ARM.attributes
+                0x0000000000000000       0x37 /home/sean/builds/stellaris_ware/driverlib/gcc-cm4f/libdriver-cm4f.a(watchdog.o)
+ .text          0x0000000000000000        0x0 /home/sean/builds/stellaris_ware/driverlib/gcc-cm4f/libdriver-cm4f.a(cpu.o)
+ .data          0x0000000000000000        0x0 /home/sean/builds/stellaris_ware/driverlib/gcc-cm4f/libdriver-cm4f.a(cpu.o)
+ .bss           0x0000000000000000        0x0 /home/sean/builds/stellaris_ware/driverlib/gcc-cm4f/libdriver-cm4f.a(cpu.o)
+ .text.CPUcpsid
+                0x0000000000000000        0x8 /home/sean/builds/stellaris_ware/driverlib/gcc-cm4f/libdriver-cm4f.a(cpu.o)
+ .text.CPUprimask
+                0x0000000000000000        0x6 /home/sean/builds/stellaris_ware/driverlib/gcc-cm4f/libdriver-cm4f.a(cpu.o)
+ .text.CPUcpsie
+                0x0000000000000000        0x8 /home/sean/builds/stellaris_ware/driverlib/gcc-cm4f/libdriver-cm4f.a(cpu.o)
+ .text.CPUwfi   0x0000000000000000        0x4 /home/sean/builds/stellaris_ware/driverlib/gcc-cm4f/libdriver-cm4f.a(cpu.o)
+ .text.CPUbasepriSet
+                0x0000000000000000        0x6 /home/sean/builds/stellaris_ware/driverlib/gcc-cm4f/libdriver-cm4f.a(cpu.o)
+ .text.CPUbasepriGet
+                0x0000000000000000        0x6 /home/sean/builds/stellaris_ware/driverlib/gcc-cm4f/libdriver-cm4f.a(cpu.o)
+ .comment       0x0000000000000000       0x2c /home/sean/builds/stellaris_ware/driverlib/gcc-cm4f/libdriver-cm4f.a(cpu.o)
+ .ARM.attributes
+                0x0000000000000000       0x37 /home/sean/builds/stellaris_ware/driverlib/gcc-cm4f/libdriver-cm4f.a(cpu.o)
+ .text          0x0000000000000000        0x0 /home/sean/builds/stellaris_ware/driverlib/gcc-cm4f/libdriver-cm4f.a(interrupt.o)
+ .data          0x0000000000000000        0x0 /home/sean/builds/stellaris_ware/driverlib/gcc-cm4f/libdriver-cm4f.a(interrupt.o)
+ .bss           0x0000000000000000        0x0 /home/sean/builds/stellaris_ware/driverlib/gcc-cm4f/libdriver-cm4f.a(interrupt.o)
+ .text.IntDefaultHandler
+                0x0000000000000000        0x2 /home/sean/builds/stellaris_ware/driverlib/gcc-cm4f/libdriver-cm4f.a(interrupt.o)
+ .text.IntMasterEnable
+                0x0000000000000000        0xa /home/sean/builds/stellaris_ware/driverlib/gcc-cm4f/libdriver-cm4f.a(interrupt.o)
+ .text.IntMasterDisable
+                0x0000000000000000        0xa /home/sean/builds/stellaris_ware/driverlib/gcc-cm4f/libdriver-cm4f.a(interrupt.o)
+ .text.IntRegister
+                0x0000000000000000       0x30 /home/sean/builds/stellaris_ware/driverlib/gcc-cm4f/libdriver-cm4f.a(interrupt.o)
+ .text.IntUnregister
+                0x0000000000000000       0x14 /home/sean/builds/stellaris_ware/driverlib/gcc-cm4f/libdriver-cm4f.a(interrupt.o)
+ .text.IntPriorityGroupingSet
+                0x0000000000000000       0x1c /home/sean/builds/stellaris_ware/driverlib/gcc-cm4f/libdriver-cm4f.a(interrupt.o)
+ .text.IntPriorityGroupingGet
+                0x0000000000000000       0x24 /home/sean/builds/stellaris_ware/driverlib/gcc-cm4f/libdriver-cm4f.a(interrupt.o)
+ .text.IntPrioritySet
+                0x0000000000000000       0x28 /home/sean/builds/stellaris_ware/driverlib/gcc-cm4f/libdriver-cm4f.a(interrupt.o)
+ .text.IntPriorityGet
+                0x0000000000000000       0x1c /home/sean/builds/stellaris_ware/driverlib/gcc-cm4f/libdriver-cm4f.a(interrupt.o)
+ .text.IntEnable
+                0x0000000000000000       0x60 /home/sean/builds/stellaris_ware/driverlib/gcc-cm4f/libdriver-cm4f.a(interrupt.o)
+ .text.IntDisable
+                0x0000000000000000       0x60 /home/sean/builds/stellaris_ware/driverlib/gcc-cm4f/libdriver-cm4f.a(interrupt.o)
+ .text.IntIsEnabled
+                0x0000000000000000       0x64 /home/sean/builds/stellaris_ware/driverlib/gcc-cm4f/libdriver-cm4f.a(interrupt.o)
+ .text.IntPendSet
+                0x0000000000000000       0x50 /home/sean/builds/stellaris_ware/driverlib/gcc-cm4f/libdriver-cm4f.a(interrupt.o)
+ .text.IntPendClear
+                0x0000000000000000       0x40 /home/sean/builds/stellaris_ware/driverlib/gcc-cm4f/libdriver-cm4f.a(interrupt.o)
+ .text.IntPriorityMaskSet
+                0x0000000000000000        0x4 /home/sean/builds/stellaris_ware/driverlib/gcc-cm4f/libdriver-cm4f.a(interrupt.o)
+ .text.IntPriorityMaskGet
+                0x0000000000000000        0x4 /home/sean/builds/stellaris_ware/driverlib/gcc-cm4f/libdriver-cm4f.a(interrupt.o)
+ .rodata.g_pulEnRegs
+                0x0000000000000000       0x14 /home/sean/builds/stellaris_ware/driverlib/gcc-cm4f/libdriver-cm4f.a(interrupt.o)
+ .rodata.g_pulDisRegs
+                0x0000000000000000       0x14 /home/sean/builds/stellaris_ware/driverlib/gcc-cm4f/libdriver-cm4f.a(interrupt.o)
+ .rodata.g_pulPendRegs
+                0x0000000000000000       0x14 /home/sean/builds/stellaris_ware/driverlib/gcc-cm4f/libdriver-cm4f.a(interrupt.o)
+ .rodata.g_pulUnpendRegs
+                0x0000000000000000       0x14 /home/sean/builds/stellaris_ware/driverlib/gcc-cm4f/libdriver-cm4f.a(interrupt.o)
+ vtable         0x0000000000000000      0x400 /home/sean/builds/stellaris_ware/driverlib/gcc-cm4f/libdriver-cm4f.a(interrupt.o)
+ .rodata.g_pulPriority
+                0x0000000000000000       0x20 /home/sean/builds/stellaris_ware/driverlib/gcc-cm4f/libdriver-cm4f.a(interrupt.o)
+ .rodata.g_pulRegs
+                0x0000000000000000       0x9c /home/sean/builds/stellaris_ware/driverlib/gcc-cm4f/libdriver-cm4f.a(interrupt.o)
+ .comment       0x0000000000000000       0x2c /home/sean/builds/stellaris_ware/driverlib/gcc-cm4f/libdriver-cm4f.a(interrupt.o)
+ .ARM.attributes
+                0x0000000000000000       0x37 /home/sean/builds/stellaris_ware/driverlib/gcc-cm4f/libdriver-cm4f.a(interrupt.o)
+
+Memory Configuration
+
+Name             Origin             Length             Attributes
+FLASH            0x0000000000000000 0x0000000000040000 xr
+SRAM             0x0000000020000000 0x0000000000008000 xrw
+*default*        0x0000000000000000 0xffffffffffffffff
+
+Linker script and memory map
+
+                0x0000000000001000                _stack_size = 0x1000
+
+.text           0x0000000000000000      0xaa4
+                0x0000000000000000                _text = .
+ *(.isr_vector)
+ .isr_vector    0x0000000000000000      0x26c .obj/src/startup.o
+                0x0000000000000000                g_pfnVectors
+ *(.text*)
+ .text.SetupFPU
+                0x000000000000026c       0x18 .obj/src/stellariscommon.o
+                0x000000000000026c                SetupFPU
+ .text.SetupClock
+                0x0000000000000284       0x34 .obj/src/stellariscommon.o
+                0x0000000000000284                SetupClock
+ .text.SetupStdio
+                0x00000000000002b8       0x60 .obj/src/stellariscommon.o
+                0x00000000000002b8                SetupStdio
+ .text.setSlice
+                0x0000000000000318       0x94 .obj/src/main.o
+                0x0000000000000318                setSlice
+ .text.drawSlice
+                0x00000000000003ac       0x40 .obj/src/main.o
+                0x00000000000003ac                drawSlice
+ .text.drawFrame
+                0x00000000000003ec       0x38 .obj/src/main.o
+                0x00000000000003ec                drawFrame
+ .text.startup.main
+                0x0000000000000424      0x110 .obj/src/main.o
+                0x0000000000000424                main
+ .text.NmiSR    0x0000000000000534        0x2 .obj/src/startup.o
+ .text.FaultISR
+                0x0000000000000536        0x2 .obj/src/startup.o
+ .text.IntDefaultHandler
+                0x0000000000000538        0x2 .obj/src/startup.o
+ .text.HardwareInit
+                0x000000000000053a       0x18 .obj/src/startup.o
+                0x000000000000053a                HardwareInit
+ *fill*         0x0000000000000552        0x2 
+ .text.ResetISR
+                0x0000000000000554       0x48 .obj/src/startup.o
+                0x0000000000000554                ResetISR
+ .text.SysCtlPeripheralEnable
+                0x000000000000059c       0x5c /home/sean/builds/stellaris_ware/driverlib/gcc-cm4f/libdriver-cm4f.a(sysctl.o)
+                0x000000000000059c                SysCtlPeripheralEnable
+ .text.SysCtlDelay
+                0x00000000000005f8        0x6 /home/sean/builds/stellaris_ware/driverlib/gcc-cm4f/libdriver-cm4f.a(sysctl.o)
+                0x00000000000005f8                SysCtlDelay
+ *fill*         0x00000000000005fe        0x2 
+ .text.SysCtlClockGet
+                0x0000000000000600      0x22c /home/sean/builds/stellaris_ware/driverlib/gcc-cm4f/libdriver-cm4f.a(sysctl.o)
+                0x0000000000000600                SysCtlClockGet
+ *(.rodata*)
+ .rodata.frames
+                0x000000000000082c      0x200 .obj/src/main.o
+                0x000000000000082c                frames
+ .rodata.g_pulXtals
+                0x0000000000000a2c       0x6c /home/sean/builds/stellaris_ware/driverlib/gcc-cm4f/libdriver-cm4f.a(sysctl.o)
+ .rodata.g_pulRCGCRegs
+                0x0000000000000a98        0xc /home/sean/builds/stellaris_ware/driverlib/gcc-cm4f/libdriver-cm4f.a(sysctl.o)
+                0x0000000000000aa4                _etext = .
+
+.glue_7         0x0000000000000aa4        0x0
+ .glue_7        0x0000000000000000        0x0 linker stubs
+
+.glue_7t        0x0000000000000aa4        0x0
+ .glue_7t       0x0000000000000000        0x0 linker stubs
+
+.vfp11_veneer   0x0000000000000aa4        0x0
+ .vfp11_veneer  0x0000000000000000        0x0 linker stubs
+
+.v4_bx          0x0000000000000aa4        0x0
+ .v4_bx         0x0000000000000000        0x0 linker stubs
+
+.iplt           0x0000000000000aa4        0x0
+ .iplt          0x0000000000000000        0x0 .obj/src/cpu_interface.o
+
+.rel.dyn        0x0000000000000aa4        0x0
+ .rel.iplt      0x0000000000000000        0x0 .obj/src/cpu_interface.o
+
+.data           0x0000000020000000        0x0 load address 0x0000000000000aa4
+                0x0000000020000000                _data = .
+ *(vtable)
+ *(.data*)
+                0x0000000020000000                _edata = .
+
+.igot.plt       0x0000000020000000        0x0
+ .igot.plt      0x0000000000000000        0x0 .obj/src/cpu_interface.o
+
+.bss            0x0000000020000000        0x0
+                0x0000000020000000                _bss = .
+ *(.bss*)
+ *(COMMON)
+                0x0000000020000000                _ebss = .
+                0x0000000020000000                _heap_bottom = .
+                0x0000000020007000                _heap_top = ((ORIGIN (SRAM) + 0x8000) - _stack_size)
+                0x0000000020007000                _stack_bottom = _heap_top
+                0x0000000020008000                _stack_top = (ORIGIN (SRAM) + 0x8000)
+LOAD .obj/src/cpu_interface.o
+LOAD .obj/src/syscalls.o
+LOAD .obj/src/pwm.o
+LOAD .obj/src/stellariscommon.o
+LOAD .obj/src/main.o
+LOAD .obj/src/startup.o
+LOAD /usr//arm-none-eabi/lib/thumb/cortex-m4/libm.a
+LOAD /usr//arm-none-eabi/lib/thumb/cortex-m4/libc.a
+LOAD /usr//lib/gcc/arm-none-eabi/4.8.0/thumb/cortex-m4/libgcc.a
+LOAD /home/sean/builds/stellaris_ware/driverlib/gcc-cm4f/libdriver-cm4f.a
+OUTPUT(.obj/proj0.out elf32-littlearm)
+
+.comment        0x0000000000000000       0x3c
+ .comment       0x0000000000000000       0x11 .obj/src/stellariscommon.o
+                                         0x12 (size before relaxing)
+ .comment       0x0000000000000000       0x12 .obj/src/main.o
+ .comment       0x0000000000000000       0x12 .obj/src/startup.o
+ .comment       0x0000000000000011       0x2b /home/sean/builds/stellaris_ware/driverlib/gcc-cm4f/libdriver-cm4f.a(sysctl.o)
+                                         0x2c (size before relaxing)
+
+.ARM.attributes
+                0x0000000000000000       0x39
+ .ARM.attributes
+                0x0000000000000000       0x37 .obj/src/stellariscommon.o
+ .ARM.attributes
+                0x0000000000000037       0x37 .obj/src/main.o
+ .ARM.attributes
+                0x000000000000006e       0x37 .obj/src/startup.o
+ .ARM.attributes
+                0x00000000000000a5       0x37 /home/sean/builds/stellaris_ware/driverlib/gcc-cm4f/libdriver-cm4f.a(sysctl.o)
+
+Cross Reference Table
+
+Symbol                                            File
+CPUbasepriGet                                     /home/sean/builds/stellaris_ware/driverlib/gcc-cm4f/libdriver-cm4f.a(cpu.o)
+                                                  /home/sean/builds/stellaris_ware/driverlib/gcc-cm4f/libdriver-cm4f.a(interrupt.o)
+CPUbasepriSet                                     /home/sean/builds/stellaris_ware/driverlib/gcc-cm4f/libdriver-cm4f.a(cpu.o)
+                                                  /home/sean/builds/stellaris_ware/driverlib/gcc-cm4f/libdriver-cm4f.a(interrupt.o)
+CPUcpsid                                          /home/sean/builds/stellaris_ware/driverlib/gcc-cm4f/libdriver-cm4f.a(cpu.o)
+                                                  /home/sean/builds/stellaris_ware/driverlib/gcc-cm4f/libdriver-cm4f.a(interrupt.o)
+CPUcpsie                                          /home/sean/builds/stellaris_ware/driverlib/gcc-cm4f/libdriver-cm4f.a(cpu.o)
+                                                  /home/sean/builds/stellaris_ware/driverlib/gcc-cm4f/libdriver-cm4f.a(interrupt.o)
+CPUprimask                                        /home/sean/builds/stellaris_ware/driverlib/gcc-cm4f/libdriver-cm4f.a(cpu.o)
+CPUwfi                                            /home/sean/builds/stellaris_ware/driverlib/gcc-cm4f/libdriver-cm4f.a(cpu.o)
+                                                  /home/sean/builds/stellaris_ware/driverlib/gcc-cm4f/libdriver-cm4f.a(sysctl.o)
+HardwareInit                                      .obj/src/startup.o
+IntDisable                                        /home/sean/builds/stellaris_ware/driverlib/gcc-cm4f/libdriver-cm4f.a(interrupt.o)
+                                                  /home/sean/builds/stellaris_ware/driverlib/gcc-cm4f/libdriver-cm4f.a(watchdog.o)
+                                                  /home/sean/builds/stellaris_ware/driverlib/gcc-cm4f/libdriver-cm4f.a(uart.o)
+                                                  /home/sean/builds/stellaris_ware/driverlib/gcc-cm4f/libdriver-cm4f.a(timer.o)
+                                                  /home/sean/builds/stellaris_ware/driverlib/gcc-cm4f/libdriver-cm4f.a(sysctl.o)
+IntEnable                                         /home/sean/builds/stellaris_ware/driverlib/gcc-cm4f/libdriver-cm4f.a(interrupt.o)
+                                                  /home/sean/builds/stellaris_ware/driverlib/gcc-cm4f/libdriver-cm4f.a(watchdog.o)
+                                                  /home/sean/builds/stellaris_ware/driverlib/gcc-cm4f/libdriver-cm4f.a(uart.o)
+                                                  /home/sean/builds/stellaris_ware/driverlib/gcc-cm4f/libdriver-cm4f.a(timer.o)
+                                                  /home/sean/builds/stellaris_ware/driverlib/gcc-cm4f/libdriver-cm4f.a(sysctl.o)
+IntIsEnabled                                      /home/sean/builds/stellaris_ware/driverlib/gcc-cm4f/libdriver-cm4f.a(interrupt.o)
+IntMasterDisable                                  /home/sean/builds/stellaris_ware/driverlib/gcc-cm4f/libdriver-cm4f.a(interrupt.o)
+IntMasterEnable                                   /home/sean/builds/stellaris_ware/driverlib/gcc-cm4f/libdriver-cm4f.a(interrupt.o)
+IntPendClear                                      /home/sean/builds/stellaris_ware/driverlib/gcc-cm4f/libdriver-cm4f.a(interrupt.o)
+IntPendSet                                        /home/sean/builds/stellaris_ware/driverlib/gcc-cm4f/libdriver-cm4f.a(interrupt.o)
+IntPriorityGet                                    /home/sean/builds/stellaris_ware/driverlib/gcc-cm4f/libdriver-cm4f.a(interrupt.o)
+IntPriorityGroupingGet                            /home/sean/builds/stellaris_ware/driverlib/gcc-cm4f/libdriver-cm4f.a(interrupt.o)
+IntPriorityGroupingSet                            /home/sean/builds/stellaris_ware/driverlib/gcc-cm4f/libdriver-cm4f.a(interrupt.o)
+IntPriorityMaskGet                                /home/sean/builds/stellaris_ware/driverlib/gcc-cm4f/libdriver-cm4f.a(interrupt.o)
+IntPriorityMaskSet                                /home/sean/builds/stellaris_ware/driverlib/gcc-cm4f/libdriver-cm4f.a(interrupt.o)
+IntPrioritySet                                    /home/sean/builds/stellaris_ware/driverlib/gcc-cm4f/libdriver-cm4f.a(interrupt.o)
+IntRegister                                       /home/sean/builds/stellaris_ware/driverlib/gcc-cm4f/libdriver-cm4f.a(interrupt.o)
+                                                  /home/sean/builds/stellaris_ware/driverlib/gcc-cm4f/libdriver-cm4f.a(watchdog.o)
+                                                  /home/sean/builds/stellaris_ware/driverlib/gcc-cm4f/libdriver-cm4f.a(uart.o)
+                                                  /home/sean/builds/stellaris_ware/driverlib/gcc-cm4f/libdriver-cm4f.a(timer.o)
+                                                  /home/sean/builds/stellaris_ware/driverlib/gcc-cm4f/libdriver-cm4f.a(systick.o)
+                                                  /home/sean/builds/stellaris_ware/driverlib/gcc-cm4f/libdriver-cm4f.a(sysctl.o)
+IntUnregister                                     /home/sean/builds/stellaris_ware/driverlib/gcc-cm4f/libdriver-cm4f.a(interrupt.o)
+                                                  /home/sean/builds/stellaris_ware/driverlib/gcc-cm4f/libdriver-cm4f.a(watchdog.o)
+                                                  /home/sean/builds/stellaris_ware/driverlib/gcc-cm4f/libdriver-cm4f.a(uart.o)
+                                                  /home/sean/builds/stellaris_ware/driverlib/gcc-cm4f/libdriver-cm4f.a(timer.o)
+                                                  /home/sean/builds/stellaris_ware/driverlib/gcc-cm4f/libdriver-cm4f.a(systick.o)
+                                                  /home/sean/builds/stellaris_ware/driverlib/gcc-cm4f/libdriver-cm4f.a(sysctl.o)
+ResetISR                                          .obj/src/startup.o
+SetupClock                                        .obj/src/stellariscommon.o
+                                                  .obj/src/startup.o
+SetupFPU                                          .obj/src/stellariscommon.o
+                                                  .obj/src/startup.o
+SetupStdio                                        .obj/src/stellariscommon.o
+                                                  .obj/src/startup.o
+SetupSysTick                                      .obj/src/stellariscommon.o
+SysCtlADCSpeedGet                                 /home/sean/builds/stellaris_ware/driverlib/gcc-cm4f/libdriver-cm4f.a(sysctl.o)
+SysCtlADCSpeedSet                                 /home/sean/builds/stellaris_ware/driverlib/gcc-cm4f/libdriver-cm4f.a(sysctl.o)
+SysCtlBrownOutConfigSet                           /home/sean/builds/stellaris_ware/driverlib/gcc-cm4f/libdriver-cm4f.a(sysctl.o)
+SysCtlClkVerificationClear                        /home/sean/builds/stellaris_ware/driverlib/gcc-cm4f/libdriver-cm4f.a(sysctl.o)
+SysCtlClockGet                                    /home/sean/builds/stellaris_ware/driverlib/gcc-cm4f/libdriver-cm4f.a(sysctl.o)
+                                                  .obj/src/main.o
+                                                  .obj/src/cpu_interface.o
+SysCtlClockSet                                    /home/sean/builds/stellaris_ware/driverlib/gcc-cm4f/libdriver-cm4f.a(sysctl.o)
+SysCtlDeepSleep                                   /home/sean/builds/stellaris_ware/driverlib/gcc-cm4f/libdriver-cm4f.a(sysctl.o)
+SysCtlDeepSleepClockSet                           /home/sean/builds/stellaris_ware/driverlib/gcc-cm4f/libdriver-cm4f.a(sysctl.o)
+SysCtlDelay                                       /home/sean/builds/stellaris_ware/driverlib/gcc-cm4f/libdriver-cm4f.a(sysctl.o)
+                                                  .obj/src/main.o
+SysCtlFlashSizeGet                                /home/sean/builds/stellaris_ware/driverlib/gcc-cm4f/libdriver-cm4f.a(sysctl.o)
+SysCtlGPIOAHBDisable                              /home/sean/builds/stellaris_ware/driverlib/gcc-cm4f/libdriver-cm4f.a(sysctl.o)
+SysCtlGPIOAHBEnable                               /home/sean/builds/stellaris_ware/driverlib/gcc-cm4f/libdriver-cm4f.a(sysctl.o)
+SysCtlI2SMClkSet                                  /home/sean/builds/stellaris_ware/driverlib/gcc-cm4f/libdriver-cm4f.a(sysctl.o)
+SysCtlIOSCVerificationSet                         /home/sean/builds/stellaris_ware/driverlib/gcc-cm4f/libdriver-cm4f.a(sysctl.o)
+SysCtlIntClear                                    /home/sean/builds/stellaris_ware/driverlib/gcc-cm4f/libdriver-cm4f.a(sysctl.o)
+SysCtlIntDisable                                  /home/sean/builds/stellaris_ware/driverlib/gcc-cm4f/libdriver-cm4f.a(sysctl.o)
+SysCtlIntEnable                                   /home/sean/builds/stellaris_ware/driverlib/gcc-cm4f/libdriver-cm4f.a(sysctl.o)
+SysCtlIntRegister                                 /home/sean/builds/stellaris_ware/driverlib/gcc-cm4f/libdriver-cm4f.a(sysctl.o)
+SysCtlIntStatus                                   /home/sean/builds/stellaris_ware/driverlib/gcc-cm4f/libdriver-cm4f.a(sysctl.o)
+SysCtlIntUnregister                               /home/sean/builds/stellaris_ware/driverlib/gcc-cm4f/libdriver-cm4f.a(sysctl.o)
+SysCtlLDOConfigSet                                /home/sean/builds/stellaris_ware/driverlib/gcc-cm4f/libdriver-cm4f.a(sysctl.o)
+SysCtlLDOGet                                      /home/sean/builds/stellaris_ware/driverlib/gcc-cm4f/libdriver-cm4f.a(sysctl.o)
+SysCtlLDOSet                                      /home/sean/builds/stellaris_ware/driverlib/gcc-cm4f/libdriver-cm4f.a(sysctl.o)
+SysCtlMOSCConfigSet                               /home/sean/builds/stellaris_ware/driverlib/gcc-cm4f/libdriver-cm4f.a(sysctl.o)
+SysCtlMOSCVerificationSet                         /home/sean/builds/stellaris_ware/driverlib/gcc-cm4f/libdriver-cm4f.a(sysctl.o)
+SysCtlPIOSCCalibrate                              /home/sean/builds/stellaris_ware/driverlib/gcc-cm4f/libdriver-cm4f.a(sysctl.o)
+SysCtlPLLVerificationSet                          /home/sean/builds/stellaris_ware/driverlib/gcc-cm4f/libdriver-cm4f.a(sysctl.o)
+SysCtlPWMClockGet                                 /home/sean/builds/stellaris_ware/driverlib/gcc-cm4f/libdriver-cm4f.a(sysctl.o)
+SysCtlPWMClockSet                                 /home/sean/builds/stellaris_ware/driverlib/gcc-cm4f/libdriver-cm4f.a(sysctl.o)
+SysCtlPeripheralClockGating                       /home/sean/builds/stellaris_ware/driverlib/gcc-cm4f/libdriver-cm4f.a(sysctl.o)
+SysCtlPeripheralDeepSleepDisable                  /home/sean/builds/stellaris_ware/driverlib/gcc-cm4f/libdriver-cm4f.a(sysctl.o)
+SysCtlPeripheralDeepSleepEnable                   /home/sean/builds/stellaris_ware/driverlib/gcc-cm4f/libdriver-cm4f.a(sysctl.o)
+SysCtlPeripheralDisable                           /home/sean/builds/stellaris_ware/driverlib/gcc-cm4f/libdriver-cm4f.a(sysctl.o)
+SysCtlPeripheralEnable                            /home/sean/builds/stellaris_ware/driverlib/gcc-cm4f/libdriver-cm4f.a(sysctl.o)
+                                                  .obj/src/main.o
+                                                  .obj/src/cpu_interface.o
+SysCtlPeripheralPowerOff                          /home/sean/builds/stellaris_ware/driverlib/gcc-cm4f/libdriver-cm4f.a(sysctl.o)
+SysCtlPeripheralPowerOn                           /home/sean/builds/stellaris_ware/driverlib/gcc-cm4f/libdriver-cm4f.a(sysctl.o)
+SysCtlPeripheralPresent                           /home/sean/builds/stellaris_ware/driverlib/gcc-cm4f/libdriver-cm4f.a(sysctl.o)
+SysCtlPeripheralReady                             /home/sean/builds/stellaris_ware/driverlib/gcc-cm4f/libdriver-cm4f.a(sysctl.o)
+SysCtlPeripheralReset                             /home/sean/builds/stellaris_ware/driverlib/gcc-cm4f/libdriver-cm4f.a(sysctl.o)
+SysCtlPeripheralSleepDisable                      /home/sean/builds/stellaris_ware/driverlib/gcc-cm4f/libdriver-cm4f.a(sysctl.o)
+SysCtlPeripheralSleepEnable                       /home/sean/builds/stellaris_ware/driverlib/gcc-cm4f/libdriver-cm4f.a(sysctl.o)
+SysCtlPinPresent                                  /home/sean/builds/stellaris_ware/driverlib/gcc-cm4f/libdriver-cm4f.a(sysctl.o)
+SysCtlReset                                       /home/sean/builds/stellaris_ware/driverlib/gcc-cm4f/libdriver-cm4f.a(sysctl.o)
+SysCtlResetCauseClear                             /home/sean/builds/stellaris_ware/driverlib/gcc-cm4f/libdriver-cm4f.a(sysctl.o)
+SysCtlResetCauseGet                               /home/sean/builds/stellaris_ware/driverlib/gcc-cm4f/libdriver-cm4f.a(sysctl.o)
+SysCtlSRAMSizeGet                                 /home/sean/builds/stellaris_ware/driverlib/gcc-cm4f/libdriver-cm4f.a(sysctl.o)
+SysCtlSleep                                       /home/sean/builds/stellaris_ware/driverlib/gcc-cm4f/libdriver-cm4f.a(sysctl.o)
+SysCtlUSBPLLDisable                               /home/sean/builds/stellaris_ware/driverlib/gcc-cm4f/libdriver-cm4f.a(sysctl.o)
+SysCtlUSBPLLEnable                                /home/sean/builds/stellaris_ware/driverlib/gcc-cm4f/libdriver-cm4f.a(sysctl.o)
+SysTickDisable                                    /home/sean/builds/stellaris_ware/driverlib/gcc-cm4f/libdriver-cm4f.a(systick.o)
+SysTickEnable                                     /home/sean/builds/stellaris_ware/driverlib/gcc-cm4f/libdriver-cm4f.a(systick.o)
+SysTickIntDisable                                 /home/sean/builds/stellaris_ware/driverlib/gcc-cm4f/libdriver-cm4f.a(systick.o)
+SysTickIntEnable                                  /home/sean/builds/stellaris_ware/driverlib/gcc-cm4f/libdriver-cm4f.a(systick.o)
+SysTickIntRegister                                /home/sean/builds/stellaris_ware/driverlib/gcc-cm4f/libdriver-cm4f.a(systick.o)
+SysTickIntUnregister                              /home/sean/builds/stellaris_ware/driverlib/gcc-cm4f/libdriver-cm4f.a(systick.o)
+SysTickPeriodGet                                  /home/sean/builds/stellaris_ware/driverlib/gcc-cm4f/libdriver-cm4f.a(systick.o)
+SysTickPeriodSet                                  /home/sean/builds/stellaris_ware/driverlib/gcc-cm4f/libdriver-cm4f.a(systick.o)
+SysTickValueGet                                   /home/sean/builds/stellaris_ware/driverlib/gcc-cm4f/libdriver-cm4f.a(systick.o)
+                                                  .obj/src/cpu_interface.o
+TimerConfigure                                    /home/sean/builds/stellaris_ware/driverlib/gcc-cm4f/libdriver-cm4f.a(timer.o)
+                                                  .obj/src/cpu_interface.o
+TimerControlEvent                                 /home/sean/builds/stellaris_ware/driverlib/gcc-cm4f/libdriver-cm4f.a(timer.o)
+TimerControlLevel                                 /home/sean/builds/stellaris_ware/driverlib/gcc-cm4f/libdriver-cm4f.a(timer.o)
+TimerControlStall                                 /home/sean/builds/stellaris_ware/driverlib/gcc-cm4f/libdriver-cm4f.a(timer.o)
+TimerControlTrigger                               /home/sean/builds/stellaris_ware/driverlib/gcc-cm4f/libdriver-cm4f.a(timer.o)
+TimerControlWaitOnTrigger                         /home/sean/builds/stellaris_ware/driverlib/gcc-cm4f/libdriver-cm4f.a(timer.o)
+TimerDisable                                      /home/sean/builds/stellaris_ware/driverlib/gcc-cm4f/libdriver-cm4f.a(timer.o)
+                                                  .obj/src/cpu_interface.o
+TimerEnable                                       /home/sean/builds/stellaris_ware/driverlib/gcc-cm4f/libdriver-cm4f.a(timer.o)
+                                                  .obj/src/cpu_interface.o
+TimerIntClear                                     /home/sean/builds/stellaris_ware/driverlib/gcc-cm4f/libdriver-cm4f.a(timer.o)
+                                                  .obj/src/cpu_interface.o
+TimerIntDisable                                   /home/sean/builds/stellaris_ware/driverlib/gcc-cm4f/libdriver-cm4f.a(timer.o)
+TimerIntEnable                                    /home/sean/builds/stellaris_ware/driverlib/gcc-cm4f/libdriver-cm4f.a(timer.o)
+                                                  .obj/src/cpu_interface.o
+TimerIntRegister                                  /home/sean/builds/stellaris_ware/driverlib/gcc-cm4f/libdriver-cm4f.a(timer.o)
+                                                  .obj/src/cpu_interface.o
+TimerIntStatus                                    /home/sean/builds/stellaris_ware/driverlib/gcc-cm4f/libdriver-cm4f.a(timer.o)
+                                                  .obj/src/cpu_interface.o
+TimerIntUnregister                                /home/sean/builds/stellaris_ware/driverlib/gcc-cm4f/libdriver-cm4f.a(timer.o)
+TimerLoadGet                                      /home/sean/builds/stellaris_ware/driverlib/gcc-cm4f/libdriver-cm4f.a(timer.o)
+TimerLoadGet64                                    /home/sean/builds/stellaris_ware/driverlib/gcc-cm4f/libdriver-cm4f.a(timer.o)
+TimerLoadSet                                      /home/sean/builds/stellaris_ware/driverlib/gcc-cm4f/libdriver-cm4f.a(timer.o)
+                                                  .obj/src/cpu_interface.o
+TimerLoadSet64                                    /home/sean/builds/stellaris_ware/driverlib/gcc-cm4f/libdriver-cm4f.a(timer.o)
+TimerMatchGet                                     /home/sean/builds/stellaris_ware/driverlib/gcc-cm4f/libdriver-cm4f.a(timer.o)
+TimerMatchGet64                                   /home/sean/builds/stellaris_ware/driverlib/gcc-cm4f/libdriver-cm4f.a(timer.o)
+TimerMatchSet                                     /home/sean/builds/stellaris_ware/driverlib/gcc-cm4f/libdriver-cm4f.a(timer.o)
+TimerMatchSet64                                   /home/sean/builds/stellaris_ware/driverlib/gcc-cm4f/libdriver-cm4f.a(timer.o)
+TimerPrescaleGet                                  /home/sean/builds/stellaris_ware/driverlib/gcc-cm4f/libdriver-cm4f.a(timer.o)
+TimerPrescaleMatchGet                             /home/sean/builds/stellaris_ware/driverlib/gcc-cm4f/libdriver-cm4f.a(timer.o)
+TimerPrescaleMatchSet                             /home/sean/builds/stellaris_ware/driverlib/gcc-cm4f/libdriver-cm4f.a(timer.o)
+TimerPrescaleSet                                  /home/sean/builds/stellaris_ware/driverlib/gcc-cm4f/libdriver-cm4f.a(timer.o)
+TimerQuiesce                                      /home/sean/builds/stellaris_ware/driverlib/gcc-cm4f/libdriver-cm4f.a(timer.o)
+TimerRTCDisable                                   /home/sean/builds/stellaris_ware/driverlib/gcc-cm4f/libdriver-cm4f.a(timer.o)
+TimerRTCEnable                                    /home/sean/builds/stellaris_ware/driverlib/gcc-cm4f/libdriver-cm4f.a(timer.o)
+TimerSynchronize                                  /home/sean/builds/stellaris_ware/driverlib/gcc-cm4f/libdriver-cm4f.a(timer.o)
+TimerValueGet                                     /home/sean/builds/stellaris_ware/driverlib/gcc-cm4f/libdriver-cm4f.a(timer.o)
+TimerValueGet64                                   /home/sean/builds/stellaris_ware/driverlib/gcc-cm4f/libdriver-cm4f.a(timer.o)
+UART9BitAddrSend                                  /home/sean/builds/stellaris_ware/driverlib/gcc-cm4f/libdriver-cm4f.a(uart.o)
+UART9BitAddrSet                                   /home/sean/builds/stellaris_ware/driverlib/gcc-cm4f/libdriver-cm4f.a(uart.o)
+UART9BitDisable                                   /home/sean/builds/stellaris_ware/driverlib/gcc-cm4f/libdriver-cm4f.a(uart.o)
+UART9BitEnable                                    /home/sean/builds/stellaris_ware/driverlib/gcc-cm4f/libdriver-cm4f.a(uart.o)
+UARTBreakCtl                                      /home/sean/builds/stellaris_ware/driverlib/gcc-cm4f/libdriver-cm4f.a(uart.o)
+UARTBusy                                          /home/sean/builds/stellaris_ware/driverlib/gcc-cm4f/libdriver-cm4f.a(uart.o)
+UARTCharGet                                       /home/sean/builds/stellaris_ware/driverlib/gcc-cm4f/libdriver-cm4f.a(uart.o)
+                                                  .obj/src/cpu_interface.o
+UARTCharGetNonBlocking                            /home/sean/builds/stellaris_ware/driverlib/gcc-cm4f/libdriver-cm4f.a(uart.o)
+UARTCharPut                                       /home/sean/builds/stellaris_ware/driverlib/gcc-cm4f/libdriver-cm4f.a(uart.o)
+                                                  .obj/src/cpu_interface.o
+UARTCharPutNonBlocking                            /home/sean/builds/stellaris_ware/driverlib/gcc-cm4f/libdriver-cm4f.a(uart.o)
+UARTCharsAvail                                    /home/sean/builds/stellaris_ware/driverlib/gcc-cm4f/libdriver-cm4f.a(uart.o)
+                                                  .obj/src/cpu_interface.o
+UARTClockSourceGet                                /home/sean/builds/stellaris_ware/driverlib/gcc-cm4f/libdriver-cm4f.a(uart.o)
+UARTClockSourceSet                                /home/sean/builds/stellaris_ware/driverlib/gcc-cm4f/libdriver-cm4f.a(uart.o)
+UARTConfigGetExpClk                               /home/sean/builds/stellaris_ware/driverlib/gcc-cm4f/libdriver-cm4f.a(uart.o)
+UARTConfigSetExpClk                               /home/sean/builds/stellaris_ware/driverlib/gcc-cm4f/libdriver-cm4f.a(uart.o)
+UARTDMADisable                                    /home/sean/builds/stellaris_ware/driverlib/gcc-cm4f/libdriver-cm4f.a(uart.o)
+UARTDMAEnable                                     /home/sean/builds/stellaris_ware/driverlib/gcc-cm4f/libdriver-cm4f.a(uart.o)
+UARTDisable                                       /home/sean/builds/stellaris_ware/driverlib/gcc-cm4f/libdriver-cm4f.a(uart.o)
+UARTDisableSIR                                    /home/sean/builds/stellaris_ware/driverlib/gcc-cm4f/libdriver-cm4f.a(uart.o)
+UARTEnable                                        /home/sean/builds/stellaris_ware/driverlib/gcc-cm4f/libdriver-cm4f.a(uart.o)
+UARTEnableSIR                                     /home/sean/builds/stellaris_ware/driverlib/gcc-cm4f/libdriver-cm4f.a(uart.o)
+UARTFIFODisable                                   /home/sean/builds/stellaris_ware/driverlib/gcc-cm4f/libdriver-cm4f.a(uart.o)
+UARTFIFOEnable                                    /home/sean/builds/stellaris_ware/driverlib/gcc-cm4f/libdriver-cm4f.a(uart.o)
+UARTFIFOLevelGet                                  /home/sean/builds/stellaris_ware/driverlib/gcc-cm4f/libdriver-cm4f.a(uart.o)
+UARTFIFOLevelSet                                  /home/sean/builds/stellaris_ware/driverlib/gcc-cm4f/libdriver-cm4f.a(uart.o)
+UARTFlowControlGet                                /home/sean/builds/stellaris_ware/driverlib/gcc-cm4f/libdriver-cm4f.a(uart.o)
+UARTFlowControlSet                                /home/sean/builds/stellaris_ware/driverlib/gcc-cm4f/libdriver-cm4f.a(uart.o)
+UARTIntClear                                      /home/sean/builds/stellaris_ware/driverlib/gcc-cm4f/libdriver-cm4f.a(uart.o)
+UARTIntDisable                                    /home/sean/builds/stellaris_ware/driverlib/gcc-cm4f/libdriver-cm4f.a(uart.o)
+UARTIntEnable                                     /home/sean/builds/stellaris_ware/driverlib/gcc-cm4f/libdriver-cm4f.a(uart.o)
+UARTIntRegister                                   /home/sean/builds/stellaris_ware/driverlib/gcc-cm4f/libdriver-cm4f.a(uart.o)
+UARTIntStatus                                     /home/sean/builds/stellaris_ware/driverlib/gcc-cm4f/libdriver-cm4f.a(uart.o)
+UARTIntUnregister                                 /home/sean/builds/stellaris_ware/driverlib/gcc-cm4f/libdriver-cm4f.a(uart.o)
+UARTModemControlClear                             /home/sean/builds/stellaris_ware/driverlib/gcc-cm4f/libdriver-cm4f.a(uart.o)
+UARTModemControlGet                               /home/sean/builds/stellaris_ware/driverlib/gcc-cm4f/libdriver-cm4f.a(uart.o)
+UARTModemControlSet                               /home/sean/builds/stellaris_ware/driverlib/gcc-cm4f/libdriver-cm4f.a(uart.o)
+UARTModemStatusGet                                /home/sean/builds/stellaris_ware/driverlib/gcc-cm4f/libdriver-cm4f.a(uart.o)
+UARTParityModeGet                                 /home/sean/builds/stellaris_ware/driverlib/gcc-cm4f/libdriver-cm4f.a(uart.o)
+UARTParityModeSet                                 /home/sean/builds/stellaris_ware/driverlib/gcc-cm4f/libdriver-cm4f.a(uart.o)
+UARTRxErrorClear                                  /home/sean/builds/stellaris_ware/driverlib/gcc-cm4f/libdriver-cm4f.a(uart.o)
+UARTRxErrorGet                                    /home/sean/builds/stellaris_ware/driverlib/gcc-cm4f/libdriver-cm4f.a(uart.o)
+UARTSmartCardDisable                              /home/sean/builds/stellaris_ware/driverlib/gcc-cm4f/libdriver-cm4f.a(uart.o)
+UARTSmartCardEnable                               /home/sean/builds/stellaris_ware/driverlib/gcc-cm4f/libdriver-cm4f.a(uart.o)
+UARTSpaceAvail                                    /home/sean/builds/stellaris_ware/driverlib/gcc-cm4f/libdriver-cm4f.a(uart.o)
+UARTTxIntModeGet                                  /home/sean/builds/stellaris_ware/driverlib/gcc-cm4f/libdriver-cm4f.a(uart.o)
+UARTTxIntModeSet                                  /home/sean/builds/stellaris_ware/driverlib/gcc-cm4f/libdriver-cm4f.a(uart.o)
+WatchdogEnable                                    /home/sean/builds/stellaris_ware/driverlib/gcc-cm4f/libdriver-cm4f.a(watchdog.o)
+WatchdogIntClear                                  /home/sean/builds/stellaris_ware/driverlib/gcc-cm4f/libdriver-cm4f.a(watchdog.o)
+                                                  .obj/src/main.o
+WatchdogIntEnable                                 /home/sean/builds/stellaris_ware/driverlib/gcc-cm4f/libdriver-cm4f.a(watchdog.o)
+WatchdogIntRegister                               /home/sean/builds/stellaris_ware/driverlib/gcc-cm4f/libdriver-cm4f.a(watchdog.o)
+WatchdogIntStatus                                 /home/sean/builds/stellaris_ware/driverlib/gcc-cm4f/libdriver-cm4f.a(watchdog.o)
+WatchdogIntTypeSet                                /home/sean/builds/stellaris_ware/driverlib/gcc-cm4f/libdriver-cm4f.a(watchdog.o)
+WatchdogIntUnregister                             /home/sean/builds/stellaris_ware/driverlib/gcc-cm4f/libdriver-cm4f.a(watchdog.o)
+WatchdogLock                                      /home/sean/builds/stellaris_ware/driverlib/gcc-cm4f/libdriver-cm4f.a(watchdog.o)
+WatchdogLockState                                 /home/sean/builds/stellaris_ware/driverlib/gcc-cm4f/libdriver-cm4f.a(watchdog.o)
+WatchdogReloadGet                                 /home/sean/builds/stellaris_ware/driverlib/gcc-cm4f/libdriver-cm4f.a(watchdog.o)
+WatchdogReloadSet                                 /home/sean/builds/stellaris_ware/driverlib/gcc-cm4f/libdriver-cm4f.a(watchdog.o)
+WatchdogResetDisable                              /home/sean/builds/stellaris_ware/driverlib/gcc-cm4f/libdriver-cm4f.a(watchdog.o)
+WatchdogResetEnable                               /home/sean/builds/stellaris_ware/driverlib/gcc-cm4f/libdriver-cm4f.a(watchdog.o)
+WatchdogRunning                                   /home/sean/builds/stellaris_ware/driverlib/gcc-cm4f/libdriver-cm4f.a(watchdog.o)
+WatchdogStallDisable                              /home/sean/builds/stellaris_ware/driverlib/gcc-cm4f/libdriver-cm4f.a(watchdog.o)
+WatchdogStallEnable                               /home/sean/builds/stellaris_ware/driverlib/gcc-cm4f/libdriver-cm4f.a(watchdog.o)
+WatchdogUnlock                                    /home/sean/builds/stellaris_ware/driverlib/gcc-cm4f/libdriver-cm4f.a(watchdog.o)
+WatchdogValueGet                                  /home/sean/builds/stellaris_ware/driverlib/gcc-cm4f/libdriver-cm4f.a(watchdog.o)
+_bss                                              .obj/src/startup.o
+_close                                            .obj/src/syscalls.o
+_data                                             .obj/src/startup.o
+_ebss                                             .obj/src/startup.o
+_edata                                            .obj/src/startup.o
+_etext                                            .obj/src/startup.o
+_fstat                                            .obj/src/syscalls.o
+_heap_bottom                                      .obj/src/syscalls.o
+_heap_top                                         .obj/src/syscalls.o
+_isatty                                           .obj/src/syscalls.o
+_lseek                                            .obj/src/syscalls.o
+_open                                             .obj/src/syscalls.o
+_read                                             .obj/src/syscalls.o
+_sbrk                                             .obj/src/syscalls.o
+_stack_top                                        .obj/src/startup.o
+_write                                            .obj/src/syscalls.o
+bNewPLL                                           /home/sean/builds/stellaris_ware/driverlib/gcc-cm4f/libdriver-cm4f.a(sysctl.o)
+clear_watchdog                                    .obj/src/main.o
+                                                  .obj/src/cpu_interface.o
+cpu_message_closed_loop_set_D                     .obj/src/cpu_interface.o
+cpu_message_closed_loop_set_I                     .obj/src/cpu_interface.o
+cpu_message_closed_loop_set_P                     .obj/src/cpu_interface.o
+cpu_message_closed_loop_set_speed                 .obj/src/cpu_interface.o
+cpu_message_control_closed_loop                   .obj/src/cpu_interface.o
+cpu_message_control_heartbeat                     .obj/src/cpu_interface.o
+cpu_message_control_open_loop                     .obj/src/cpu_interface.o
+cpu_message_control_reset                         .obj/src/cpu_interface.o
+cpu_message_control_start                         .obj/src/cpu_interface.o
+cpu_message_control_stop                          .obj/src/cpu_interface.o
+cpu_message_create                                .obj/src/cpu_interface.o
+cpu_message_init                                  .obj/src/cpu_interface.o
+cpu_message_monitor_get_current                   .obj/src/cpu_interface.o
+cpu_message_monitor_get_position                  .obj/src/cpu_interface.o
+cpu_message_monitor_get_temp                      .obj/src/cpu_interface.o
+cpu_message_monitor_get_voltage                   .obj/src/cpu_interface.o
+cpu_message_open_loop_set_voltage                 .obj/src/cpu_interface.o
+cpu_message_periodic                              .obj/src/cpu_interface.o
+cpu_message_process                               .obj/src/cpu_interface.o
+cpu_message_send                                  .obj/src/cpu_interface.o
+drawFrame                                         .obj/src/main.o
+drawSlice                                         .obj/src/main.o
+frames                                            .obj/src/main.o
+g_pfnVectors                                      .obj/src/startup.o
+handle_message                                    .obj/src/cpu_interface.o
+heap_end                                          .obj/src/syscalls.o
+invalid_message                                   .obj/src/cpu_interface.o
+jaguar_D                                          .obj/src/cpu_interface.o
+jaguar_I                                          .obj/src/cpu_interface.o
+jaguar_P                                          .obj/src/cpu_interface.o
+jaguar_control_mode_enable                        .obj/src/cpu_interface.o
+jaguar_control_mode_reference                     .obj/src/cpu_interface.o
+jaguar_control_mode_set                           .obj/src/cpu_interface.o
+jaguar_control_mode_setPID                        .obj/src/cpu_interface.o
+jaguar_heartbeat                                  .obj/src/cpu_interface.o
+jaguar_mode                                       .obj/src/cpu_interface.o
+jaguar_status                                     .obj/src/cpu_interface.o
+jaguar_sys_reset                                  .obj/src/cpu_interface.o
+jaguar_sys_start                                  .obj/src/cpu_interface.o
+jaguar_sys_stop                                   .obj/src/cpu_interface.o
+jaguar_voltage_control_enable                     .obj/src/cpu_interface.o
+jaguar_voltage_control_set                        .obj/src/cpu_interface.o
+main                                              .obj/src/main.o
+                                                  .obj/src/startup.o
+message_buffer                                    .obj/src/cpu_interface.o
+message_buffer_index                              .obj/src/cpu_interface.o
+message_escape_received                           .obj/src/cpu_interface.o
+message_handlers                                  .obj/src/cpu_interface.o
+periodic_message_id                               .obj/src/main.o
+                                                  .obj/src/pwm.o
+                                                  .obj/src/cpu_interface.o
+pwm_init                                          .obj/src/pwm.o
+setPID                                            .obj/src/cpu_interface.o
+setSlice                                          .obj/src/main.o
+ulOsc                                             /home/sean/builds/stellaris_ware/driverlib/gcc-cm4f/libdriver-cm4f.a(sysctl.o)
+ulOscSelect                                       /home/sean/builds/stellaris_ware/driverlib/gcc-cm4f/libdriver-cm4f.a(sysctl.o)
+ulSysDiv                                          /home/sean/builds/stellaris_ware/driverlib/gcc-cm4f/libdriver-cm4f.a(sysctl.o)
+watchdog_int                                      .obj/src/main.o

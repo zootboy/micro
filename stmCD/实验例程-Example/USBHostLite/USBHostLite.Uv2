@@ -1,0 +1,214 @@
+### uVision2 Project, (C) Keil Software
+### Do not modify !
+
+Target (LPC17xx_IRAM), 0x0004 // Tools: 'ARM-ADS'
+Target (LPC17xx_IFLASH), 0x0004 // Tools: 'ARM-ADS'
+
+Group (Source)
+Group (Uart)
+Group (Fat)
+Group (MassStorage)
+Group (Include)
+Group (Host)
+Group (Main)
+Group (Startup)
+
+File 1,1,<..\common\src\core_cm3.c><core_cm3.c>
+File 1,1,<..\common\src\system_LPC17xx.c><system_LPC17xx.c>
+File 2,1,<.\UsbHost\Uart\usbhost_uart.c><usbhost_uart.c>
+File 2,5,<.\UsbHost\Uart\usbhost_uart.h><usbhost_uart.h>
+File 3,1,<.\UsbHost\Fat\usbhost_fat.c><usbhost_fat.c>
+File 3,5,<.\UsbHost\Fat\usbhost_fat.h><usbhost_fat.h>
+File 4,1,<.\UsbHost\MassStorage\usbhost_ms.c><usbhost_ms.c>
+File 4,5,<.\UsbHost\MassStorage\usbhost_ms.h><usbhost_ms.h>
+File 5,5,<.\UsbHost\Include\usbhost_err.h><usbhost_err.h>
+File 5,5,<.\UsbHost\Include\usbhost_inc.h><usbhost_inc.h>
+File 5,5,<..\common\inc\core_cm3.h><core_cm3.h>
+File 5,5,<..\common\inc\LPC17xx.h><LPC17xx.h>
+File 5,5,<..\common\inc\system_LPC17xx.h><system_LPC17xx.h>
+File 6,1,<.\UsbHost\Host\usbhost_lpc17xx.c><usbhost_lpc17xx.c>
+File 6,5,<.\UsbHost\Host\usbhost_lpc17xx.h><usbhost_lpc17xx.h>
+File 7,1,<.\UsbHost\Main\usbhost_main.c><usbhost_main.c>
+File 8,2,<..\common\src\startup_LPC17xx.s><startup_LPC17xx.s>
+
+
+Options 1,0,0  // Target 'LPC17xx_IRAM'
+ Device (LPC1766)
+ Vendor (NXP (founded by Philips))
+ Cpu (IRAM(0x10000000-0x10007FFF) IRAM2(0x20000000-0x20007FFF) IROM(0-0x3FFFF) CLOCK(12000000) CPUTYPE("Cortex-M3"))
+ FlashUt ()
+ StupF ("STARTUP\NXP\LPC17xx.s" ("NXP LPC17xx Startup Code"))
+ FlashDR (UL2CM3(-O463 -S0 -C0 -FO7 -FD10000000 -FC800 -FN1 -FF0LPC_IAP_256 -FS00 -FL040000))
+ DevID (4629)
+ Rgf (LPC17xx.H)
+ Mem ()
+ C ()
+ A ()
+ RL ()
+ OH ()
+ DBC_IFX ()
+ DBC_CMS ()
+ DBC_AMS ()
+ DBC_LMS ()
+ UseEnv=0
+ EnvBin ()
+ EnvInc ()
+ EnvLib ()
+ EnvReg (ÿNXP\)
+ OrgReg (ÿNXP\)
+ TgStat=16
+ OutDir (.\Obj\)
+ OutName (USBHostLite)
+ GenApp=1
+ GenLib=0
+ GenHex=1
+ Debug=1
+ Browse=1
+ LstDir (.\Lst\)
+ HexSel=1
+ MG32K=0
+ TGMORE=0
+ RunUsr 0 0 <>
+ RunUsr 1 0 <>
+ BrunUsr 0 0 <>
+ BrunUsr 1 0 <>
+ CrunUsr 0 0 <>
+ CrunUsr 1 0 <>
+ SVCSID <>
+ GLFLAGS=1790
+ ADSFLGA { 243,31,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0 }
+ ACPUTYP ("Cortex-M3")
+ RVDEV ()
+ ADSTFLGA { 0,12,16,2,163,0,48,194,0,0,0,0,0,0,0,0,0,0,0,0 }
+ OCMADSOCM { 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0 }
+ OCMADSIRAM { 0,0,0,0,16,0,128,0,0 }
+ OCMADSIROM { 1,0,0,0,0,0,0,4,0 }
+ OCMADSXRAM { 0,0,0,0,0,0,0,0,0 }
+ OCR_RVCT { 1,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,1,0,0,0,16,0,64,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,64,0,16,0,64,0,0,0,0,192,7,32,0,64,0,0 }
+ RV_STAVEC ()
+ ADSCCFLG { 5,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0 }
+ ADSCMISC ()
+ ADSCDEFN (__IRAM)
+ ADSCUDEF ()
+ ADSCINCD (.\UsbHost\Include;.;..\common\inc)
+ ADSASFLG { 1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0 }
+ ADSAMISC ()
+ ADSADEFN (NO_CRP)
+ ADSAUDEF ()
+ ADSAINCD ()
+ PropFld { 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0 }
+ IncBld=1
+ AlwaysBuild=0
+ GenAsm=0
+ AsmAsm=0
+ PublicsOnly=0
+ StopCode=3
+ CustArgs ()
+ LibMods ()
+ ADSLDFG { 17,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0 }
+ ADSLDTA (0x10000000)
+ ADSLDDA (0x2007C000)
+ ADSLDSC ()
+ ADSLDIB ()
+ ADSLDIC ()
+ ADSLDMC ()
+ ADSLDIF ()
+ ADSLDDW ()
+  OPTDL (SARMCM3.DLL)(-MPU)(DARMSTM.DLL)(-pCortexM3)(SARMCM3.DLL)(-MPU)(TARMSTM.DLL)(-pCortexM3)
+  OPTDBG 49150,1,()()()()()()()()()(.\RAM.ini) (BIN\UL2CM3.DLL)()()()
+ FLASH1 { 1,0,0,0,1,0,0,0,1,16,0,0,0,0,0,0,0,0,0,0 }
+ FLASH2 (BIN\UL2CM3.DLL)
+ FLASH3 ("" ())
+ FLASH4 ()
+EndOpt
+
+Options 2,0,0  // Target 'LPC17xx_IFLASH'
+ Device (LPC1766)
+ Vendor (NXP (founded by Philips))
+ Cpu (IRAM(0x10000000-0x10007FFF) IRAM2(0x20000000-0x20007FFF) IROM(0-0x3FFFF) CLOCK(12000000) CPUTYPE("Cortex-M3"))
+ FlashUt ()
+ StupF ("STARTUP\NXP\LPC17xx.s" ("NXP LPC17xx Startup Code"))
+ FlashDR (UL2CM3(-O463 -S0 -C0 -FO7 -FD10000000 -FC800 -FN1 -FF0LPC_IAP_256 -FS00 -FL040000))
+ DevID (4629)
+ Rgf (LPC17xx.H)
+ Mem ()
+ C ()
+ A ()
+ RL ()
+ OH ()
+ DBC_IFX ()
+ DBC_CMS ()
+ DBC_AMS ()
+ DBC_LMS ()
+ UseEnv=0
+ EnvBin ()
+ EnvInc ()
+ EnvLib ()
+ EnvReg (ÿNXP\)
+ OrgReg (ÿNXP\)
+ TgStat=16
+ OutDir (.\Obj\)
+ OutName (USBHostLite)
+ GenApp=1
+ GenLib=0
+ GenHex=1
+ Debug=1
+ Browse=1
+ LstDir (.\Lst\)
+ HexSel=1
+ MG32K=0
+ TGMORE=0
+ RunUsr 0 0 <>
+ RunUsr 1 0 <>
+ BrunUsr 0 0 <>
+ BrunUsr 1 0 <>
+ CrunUsr 0 0 <>
+ CrunUsr 1 0 <>
+ SVCSID <>
+ GLFLAGS=1790
+ ADSFLGA { 243,31,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0 }
+ ACPUTYP ("Cortex-M3")
+ RVDEV ()
+ ADSTFLGA { 0,12,16,2,163,0,48,66,0,0,0,0,0,0,0,0,0,0,0,0 }
+ OCMADSOCM { 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0 }
+ OCMADSIRAM { 0,0,0,0,16,0,128,0,0 }
+ OCMADSIROM { 1,0,0,0,0,0,0,4,0 }
+ OCMADSXRAM { 0,0,0,0,0,0,0,0,0 }
+ OCR_RVCT { 1,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,8,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,16,0,128,0,0,0,0,192,7,32,0,64,0,0 }
+ RV_STAVEC ()
+ ADSCCFLG { 5,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0 }
+ ADSCMISC ()
+ ADSCDEFN ()
+ ADSCUDEF ()
+ ADSCINCD (.\UsbHost\Include;.;..\common\inc)
+ ADSASFLG { 1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0 }
+ ADSAMISC ()
+ ADSADEFN ()
+ ADSAUDEF ()
+ ADSAINCD ()
+ PropFld { 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0 }
+ IncBld=1
+ AlwaysBuild=0
+ GenAsm=0
+ AsmAsm=0
+ PublicsOnly=0
+ StopCode=3
+ CustArgs ()
+ LibMods ()
+ ADSLDFG { 17,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0 }
+ ADSLDTA (0x00000000)
+ ADSLDDA (0x10000000)
+ ADSLDSC ()
+ ADSLDIB ()
+ ADSLDIC ()
+ ADSLDMC ()
+ ADSLDIF ()
+ ADSLDDW ()
+  OPTDL (SARMCM3.DLL)(-MPU)(DARMSTM.DLL)(-pCortexM3)(SARMCM3.DLL)(-MPU)(TARMSTM.DLL)(-pCortexM3)
+  OPTDBG 49150,1,()()()()()()()()()() (BIN\UL2CM3.DLL)()()()
+ FLASH1 { 1,0,0,0,1,0,0,0,1,16,0,0,0,0,0,0,0,0,0,0 }
+ FLASH2 (BIN\UL2CM3.DLL)
+ FLASH3 ("" ())
+ FLASH4 ()
+EndOpt
+

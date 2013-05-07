@@ -1,0 +1,242 @@
+   1               		.file	"analog.c"
+   2               	__SREG__ = 0x3f
+   3               	__SP_H__ = 0x3e
+   4               	__SP_L__ = 0x3d
+   5               	__tmp_reg__ = 0
+   6               	__zero_reg__ = 1
+   7               		.global __do_copy_data
+   8               		.global __do_clear_bss
+  11               		.text
+  12               	.Ltext0:
+  84               	.global	adcInit
+  86               	adcInit:
+  87               		.stabd	46,0,0
+   0:analog.c      **** /* Navigator - analog.c */
+   1:analog.c      **** 
+   2:analog.c      **** #include <avr/io.h>
+   3:analog.c      **** //#include <avr/iom328p.h>
+   4:analog.c      **** #include <avr/interrupt.h>
+   5:analog.c      **** #include "analog.h"
+   6:analog.c      **** #include "util.h"
+   7:analog.c      **** 
+   8:analog.c      **** uint8_t arrayIndex = 0; // Which index in the arrays we're on.
+   9:analog.c      **** 
+  10:analog.c      **** void adcInit(void)
+  11:analog.c      **** {
+  89               	.LM0:
+  90               	.LFBB1:
+  91               	/* prologue: function */
+  92               	/* frame size = 0 */
+  93               	/* stack size = 0 */
+  94               	.L__stack_usage = 0
+  12:analog.c      **** 	ADMUX = ADC_MUX;
+  96               	.LM1:
+  97 0000 80E4      		ldi r24,lo8(64)
+  98 0002 8093 7C00 		sts 124,r24
+  13:analog.c      **** 	ADCSRA = ADC_SRA; 
+ 100               	.LM2:
+ 101 0006 86E8      		ldi r24,lo8(-122)
+ 102 0008 8093 7A00 		sts 122,r24
+  14:analog.c      **** 	DIDR0 = 0b00001111;
+ 104               	.LM3:
+ 105 000c 8FE0      		ldi r24,lo8(15)
+ 106 000e 8093 7E00 		sts 126,r24
+  15:analog.c      **** 	DDRC = 0x00;
+ 108               	.LM4:
+ 109 0012 17B8      		out 39-0x20,__zero_reg__
+  16:analog.c      **** 	sei(); // Enable interrupts globally.
+ 111               	.LM5:
+ 112               	/* #APP */
+ 113               	 ;  17 "analog.c" 1
+ 114 0014 7894      		sei
+ 115               	 ;  0 "" 2
+ 116               	/* epilogue start */
+  17:analog.c      **** }
+ 118               	.LM6:
+ 119               	/* #NOAPP */
+ 120 0016 0895      		ret
+ 122               	.Lscope1:
+ 124               		.stabd	78,0,0
+ 126               	.global	analogGather
+ 128               	analogGather:
+ 129               		.stabd	46,0,0
+  18:analog.c      **** 
+  19:analog.c      **** void analogGather(void)
+  20:analog.c      **** {
+ 131               	.LM7:
+ 132               	.LFBB2:
+ 133 0018 1F93      		push r17
+ 134               	/* prologue: function */
+ 135               	/* frame size = 0 */
+ 136               	/* stack size = 1 */
+ 137               	.L__stack_usage = 1
+  21:analog.c      **** 	for(uint8_t i=0;i<6;i++)
+ 139               	.LM8:
+ 140 001a 10E0      		ldi r17,lo8(0)
+ 141               	.L9:
+ 142               	.LBB2:
+  22:analog.c      **** 	{
+  23:analog.c      **** 		ADCSRA |= (1<<ADSC); // Start next conversion.
+ 144               	.LM9:
+ 145 001c 8091 7A00 		lds r24,122
+ 146 0020 8064      		ori r24,lo8(64)
+ 147 0022 8093 7A00 		sts 122,r24
+  24:analog.c      **** 		while(!(ADCSRA & (1<<ADIF))) delay_us(1);
+ 149               	.LM10:
+ 150 0026 00C0      		rjmp .L3
+ 151               	.L4:
+ 153               	.LM11:
+ 154 0028 81E0      		ldi r24,lo8(1)
+ 155 002a 90E0      		ldi r25,hi8(1)
+ 156 002c 0E94 0000 		call delay_us
+ 157               	.L3:
+ 159               	.LM12:
+ 160 0030 8091 7A00 		lds r24,122
+ 161 0034 84FF      		sbrs r24,4
+ 162 0036 00C0      		rjmp .L4
+  25:analog.c      **** 		switch(i)
+ 164               	.LM13:
+ 165 0038 1330      		cpi r17,lo8(3)
+ 166 003a 01F0      		breq .L7
+ 167 003c 1530      		cpi r17,lo8(5)
+ 168 003e 01F0      		breq .L8
+ 169 0040 1130      		cpi r17,lo8(1)
+ 170 0042 01F4      		brne .L5
+  26:analog.c      **** 		{
+  27:analog.c      **** 			case 0: // irLeft toss.
+  28:analog.c      **** 			case 2: // irRight toss.
+  29:analog.c      **** 			case 4: // sonar toss.
+  30:analog.c      **** 				break;
+  31:analog.c      **** 			case 1: // irLeft keep.
+  32:analog.c      **** 				irLeft[arrayIndex] = ADC;
+ 172               	.LM14:
+ 173 0044 8091 7800 		lds r24,120
+ 174 0048 9091 7900 		lds r25,120+1
+ 175 004c E091 0000 		lds r30,arrayIndex
+ 176 0050 F0E0      		ldi r31,lo8(0)
+ 177 0052 EE0F      		lsl r30
+ 178 0054 FF1F      		rol r31
+ 179 0056 E050      		subi r30,lo8(-(irLeft))
+ 180 0058 F040      		sbci r31,hi8(-(irLeft))
+ 181 005a 9183      		std Z+1,r25
+ 182 005c 8083      		st Z,r24
+  33:analog.c      **** 				ADMUX = ((ADMUX & 0xE0) | IRRIGHT); // Switch to irRight.
+ 184               	.LM15:
+ 185 005e 8091 7C00 		lds r24,124
+ 186 0062 807E      		andi r24,lo8(-32)
+ 187 0064 8160      		ori r24,lo8(1)
+ 188 0066 00C0      		rjmp .L12
+ 189               	.L7:
+  34:analog.c      **** 				break;
+  35:analog.c      **** 			case 3: // irRight keep.
+  36:analog.c      **** 				irRight[arrayIndex] = ADC;
+ 191               	.LM16:
+ 192 0068 8091 7800 		lds r24,120
+ 193 006c 9091 7900 		lds r25,120+1
+ 194 0070 E091 0000 		lds r30,arrayIndex
+ 195 0074 F0E0      		ldi r31,lo8(0)
+ 196 0076 EE0F      		lsl r30
+ 197 0078 FF1F      		rol r31
+ 198 007a E050      		subi r30,lo8(-(irRight))
+ 199 007c F040      		sbci r31,hi8(-(irRight))
+ 200 007e 9183      		std Z+1,r25
+ 201 0080 8083      		st Z,r24
+  37:analog.c      **** 				ADMUX = ((ADMUX & 0xE0) | SONAR); // Switch to sonar.
+ 203               	.LM17:
+ 204 0082 8091 7C00 		lds r24,124
+ 205 0086 807E      		andi r24,lo8(-32)
+ 206 0088 8260      		ori r24,lo8(2)
+ 207 008a 00C0      		rjmp .L12
+ 208               	.L8:
+  38:analog.c      **** 				break;
+  39:analog.c      **** 			case 5: // ArcIR6 keep.
+  40:analog.c      **** 				sonar[arrayIndex] = ADC;
+ 210               	.LM18:
+ 211 008c 8091 7800 		lds r24,120
+ 212 0090 9091 7900 		lds r25,120+1
+ 213 0094 E091 0000 		lds r30,arrayIndex
+ 214 0098 F0E0      		ldi r31,lo8(0)
+ 215 009a EE0F      		lsl r30
+ 216 009c FF1F      		rol r31
+ 217 009e E050      		subi r30,lo8(-(sonar))
+ 218 00a0 F040      		sbci r31,hi8(-(sonar))
+ 219 00a2 9183      		std Z+1,r25
+ 220 00a4 8083      		st Z,r24
+  41:analog.c      **** 				ADMUX = ((ADMUX & 0xE0) | IRLEFT); // Switch to irLeft.
+ 222               	.LM19:
+ 223 00a6 8091 7C00 		lds r24,124
+ 224 00aa 807E      		andi r24,lo8(-32)
+ 225               	.L12:
+ 226 00ac 8093 7C00 		sts 124,r24
+ 227               	.L5:
+  22:analog.c      **** 	for(uint8_t i=0;i<6;i++)
+ 229               	.LM20:
+ 230 00b0 1F5F      		subi r17,lo8(-(1))
+ 231 00b2 1630      		cpi r17,lo8(6)
+ 232 00b4 01F0      		breq .+2
+ 233 00b6 00C0      		rjmp .L9
+ 234               	.LBE2:
+  42:analog.c      **** 				break;
+  43:analog.c      **** 		}
+  44:analog.c      **** 		
+  45:analog.c      **** 	}
+  46:analog.c      **** 	arrayIndex++;
+ 236               	.LM21:
+ 237 00b8 8091 0000 		lds r24,arrayIndex
+ 238 00bc 8F5F      		subi r24,lo8(-(1))
+ 239 00be 8093 0000 		sts arrayIndex,r24
+  47:analog.c      **** 		if(arrayIndex >= AVG_COUNT) arrayIndex = 0;
+ 241               	.LM22:
+ 242 00c2 8430      		cpi r24,lo8(4)
+ 243 00c4 00F0      		brlo .L2
+ 245               	.LM23:
+ 246 00c6 1092 0000 		sts arrayIndex,__zero_reg__
+ 247               	.L2:
+ 248               	/* epilogue start */
+  48:analog.c      **** 	
+  49:analog.c      **** }...
+ 250               	.LM24:
+ 251 00ca 1F91      		pop r17
+ 252 00cc 0895      		ret
+ 257               	.Lscope2:
+ 259               		.stabd	78,0,0
+ 260               		.comm holder,4,1
+ 261               		.comm bytesCount,1,1
+ 262               		.comm i2cTxMode,1,1
+ 263               		.comm gState,1,1
+ 264               		.comm i2cMode,1,1
+ 265               		.comm globalError,1,1
+ 266               		.comm sonar,8,1
+ 267               		.comm irRight,8,1
+ 268               		.comm irLeft,8,1
+ 269               	.global	arrayIndex
+ 270               	.global	arrayIndex
+ 271               		.section .bss
+ 274               	arrayIndex:
+ 275 0000 00        		.skip 1,0
+ 286               		.text
+ 288               	.Letext0:
+DEFINED SYMBOLS
+                            *ABS*:00000000 analog.c
+     /tmp/ccZCa7Do.s:2      *ABS*:0000003f __SREG__
+     /tmp/ccZCa7Do.s:3      *ABS*:0000003e __SP_H__
+     /tmp/ccZCa7Do.s:4      *ABS*:0000003d __SP_L__
+     /tmp/ccZCa7Do.s:5      *ABS*:00000000 __tmp_reg__
+     /tmp/ccZCa7Do.s:6      *ABS*:00000001 __zero_reg__
+     /tmp/ccZCa7Do.s:86     .text:00000000 adcInit
+     /tmp/ccZCa7Do.s:128    .text:00000018 analogGather
+     /tmp/ccZCa7Do.s:274    .bss:00000000 arrayIndex
+                            *COM*:00000008 irLeft
+                            *COM*:00000008 irRight
+                            *COM*:00000008 sonar
+                            *COM*:00000004 holder
+                            *COM*:00000001 bytesCount
+                            *COM*:00000001 i2cTxMode
+                            *COM*:00000001 gState
+                            *COM*:00000001 i2cMode
+                            *COM*:00000001 globalError
+
+UNDEFINED SYMBOLS
+__do_copy_data
+__do_clear_bss
+delay_us

@@ -1,0 +1,556 @@
+   1               		.file	"main.c"
+   2               	__SREG__ = 0x3f
+   3               	__SP_H__ = 0x3e
+   4               	__SP_L__ = 0x3d
+   5               	__tmp_reg__ = 0
+   6               	__zero_reg__ = 1
+   7               		.global __do_copy_data
+   8               		.global __do_clear_bss
+  11               		.text
+  12               	.Ltext0:
+  96               		.data
+  97               	.LC0:
+  98 0000 5359 5354 		.string	"SYSTEM BOOTING\nWISP OS Ver 0.1"
+  98      454D 2042 
+  98      4F4F 5449 
+  98      4E47 0A57 
+  98      4953 5020 
+  99               	.LC1:
+ 100 001f 5072 6573 		.string	"Press start..."
+ 100      7320 7374 
+ 100      6172 742E 
+ 100      2E2E 00
+ 101               	.LC2:
+ 102 002e 4552 524F 		.string	"ERROR: "
+ 102      523A 2000 
+ 103               	.LC3:
+ 104 0036 566F 6C74 		.string	"Voltage: "
+ 104      6167 653A 
+ 104      2000 
+ 105               	.LC4:
+ 106 0040 0A44 6174 		.string	"\nData: "
+ 106      613A 2000 
+ 107               		.section	.text.startup,"ax",@progbits
+ 109               	.global	main
+ 111               	main:
+ 112               		.stabd	46,0,0
+   0:main.c        **** /* Trinity Bot - Captain */
+   1:main.c        **** 
+   2:main.c        **** #include <avr/io.h>
+   3:main.c        **** #include <avr/interrupt.h>    
+   4:main.c        **** #include <stdlib.h>
+   5:main.c        **** #include "lcd.h"
+   6:main.c        **** #include "util.h"
+   7:main.c        **** #include "i2c.h"
+   8:main.c        **** 
+   9:main.c        **** /* --- Pins ---
+  10:main.c        ****  * PORT B:        | PORT C:       | PORT D: 
+  11:main.c        ****  * PBO - StartBtn | PC0 - LCD D4  | PD0 - 
+  12:main.c        ****  * PB1 - LCD RS   | PC1 - LCD D5  | PD1 - 
+  13:main.c        ****  * PB2 - LCD RW   | PC2 - LCD D6  | PD2 - 
+  14:main.c        ****  * PB3 - LCD En   | PC3 - LCD D7  | PD3 - 
+  15:main.c        ****  * PB4 -          | PC4 - i2c     | PD4 - 
+  16:main.c        ****  * PB5 -          | PC5 - i2c     | PD5 - 
+  17:main.c        ****  * PB6 -          |               | PD6 - 
+  18:main.c        ****  * PB7 -          |               | PD7 - 
+  19:main.c        ****  * 
+  20:main.c        ****  */
+  21:main.c        **** 
+  22:main.c        **** /// Globals ///
+  23:main.c        **** char buffer[7]; // Buffer for string conversion.
+  24:main.c        **** uint8_t errorCode = 0; // 0=no error, 1=i2c fault, 2/3/4=nav/pilot/copilot offline, 5=servo i2c err
+  25:main.c        **** uint8_t gState = 0; // States: 0=boot, 1=ready, 2=mapping, 3=searching, 4=candle_alignment, 5=extin
+  26:main.c        **** uint8_t servoPos1 = 95;
+  27:main.c        **** uint8_t servoPos2 = 110;
+  28:main.c        **** uint8_t stepperCountTempL = 0x00; // Sign magnitude, MSB = 1 = negative.
+  29:main.c        **** uint8_t stepperCountTempR = 0x00;
+  30:main.c        **** uint8_t linearMotion = 0; // Centimeters, MSB is direction (1 = reverse).
+  31:main.c        **** 
+  32:main.c        **** uint16_t batteryADC = 0x0000;
+  33:main.c        **** uint16_t arcIR1 = 0x0000;
+  34:main.c        **** uint16_t arcIR2 = 0x0000;
+  35:main.c        **** uint16_t arcIR3 = 0x0000;
+  36:main.c        **** uint16_t arcIR4 = 0x0000;
+  37:main.c        **** uint16_t arcIR5 = 0x0000;
+  38:main.c        **** uint16_t arcIR6 = 0x0000;
+  39:main.c        **** uint16_t arcIR7 = 0x0000;
+  40:main.c        **** uint16_t tempData = 0x0000;
+  41:main.c        **** 	
+  42:main.c        **** int main(void)
+  43:main.c        **** {
+ 114               	.LM0:
+ 115               	.LFBB1:
+ 116 0000 CF93      		push r28
+ 117 0002 DF93      		push r29
+ 118 0004 00D0      		rcall .
+ 119 0006 CDB7      		in r28,__SP_L__
+ 120 0008 DEB7      		in r29,__SP_H__
+ 121               	/* prologue: function */
+ 122               	/* frame size = 2 */
+ 123               	/* stack size = 4 */
+ 124               	.L__stack_usage = 4
+  44:main.c        **** 	DDRB = 0b00001110; // LCD lines.
+ 126               	.LM1:
+ 127 000a 8EE0      		ldi r24,lo8(14)
+ 128 000c 84B9      		out 36-0x20,r24
+  45:main.c        **** 	DDRC = 0b00001111; // LCD lines.
+ 130               	.LM2:
+ 131 000e 8FE0      		ldi r24,lo8(15)
+ 132 0010 87B9      		out 39-0x20,r24
+  46:main.c        **** 	PORTB |= (1<<PB0); // Enable pull-up on switch.
+ 134               	.LM3:
+ 135 0012 289A      		sbi 37-0x20,0
+  47:main.c        **** 	
+  48:main.c        **** 	//PORTC = (1<<PC4)|(1<<PC5); // Enable pull-ups on i2c pins.
+  49:main.c        **** 
+  50:main.c        **** 	lcd_init(LCD_DISP_ON); // LCD on, cursor off.
+ 137               	.LM4:
+ 138 0014 8CE0      		ldi r24,lo8(12)
+ 139 0016 0E94 0000 		call lcd_init
+  51:main.c        **** 	lcd_clrscr();
+ 141               	.LM5:
+ 142 001a 0E94 0000 		call lcd_clrscr
+  52:main.c        **** 	lcd_puts("SYSTEM BOOTING\nWISP OS Ver 0.1"); // Some debug data for the LCD.
+ 144               	.LM6:
+ 145 001e 80E0      		ldi r24,lo8(.LC0)
+ 146 0020 90E0      		ldi r25,hi8(.LC0)
+ 147 0022 0E94 0000 		call lcd_puts
+  53:main.c        **** 	
+  54:main.c        **** 	i2cInit();
+ 149               	.LM7:
+ 150 0026 0E94 0000 		call i2cInit
+  55:main.c        **** 	
+  56:main.c        **** 	delay_ms(1000);
+ 152               	.LM8:
+ 153 002a 88EE      		ldi r24,lo8(1000)
+ 154 002c 93E0      		ldi r25,hi8(1000)
+ 155 002e 0E94 0000 		call delay_ms
+  57:main.c        **** 	
+  58:main.c        **** 	servoPos1 = 150;
+ 157               	.LM9:
+ 158 0032 86E9      		ldi r24,lo8(-106)
+ 159 0034 8093 0000 		sts servoPos1,r24
+  59:main.c        **** 	//servoPos2 = 200;
+  60:main.c        **** 	
+  61:main.c        **** 	/*
+  62:main.c        **** 	servoPos2 = 215;
+  63:main.c        **** 	i2cStart(22);
+  64:main.c        **** 	delay_ms(1000);
+  65:main.c        **** 	servoPos2 = 110;
+  66:main.c        **** 	i2cStart(22);
+  67:main.c        **** 	//i2cStart(22);
+  68:main.c        **** 	 */
+  69:main.c        **** 	
+  70:main.c        **** 	lcd_clrscr();
+ 161               	.LM10:
+ 162 0038 0E94 0000 		call lcd_clrscr
+  71:main.c        **** 	lcd_puts("Press start..."); // Some debug data for the LCD.
+ 164               	.LM11:
+ 165 003c 80E0      		ldi r24,lo8(.LC1)
+ 166 003e 90E0      		ldi r25,hi8(.LC1)
+ 167 0040 0E94 0000 		call lcd_puts
+  72:main.c        **** 	
+  73:main.c        **** 	
+  74:main.c        **** 	while(bit_is_set(PINB,PB0)) delay_ms(1);
+ 169               	.LM12:
+ 170 0044 00C0      		rjmp .L2
+ 171               	.L3:
+ 173               	.LM13:
+ 174 0046 81E0      		ldi r24,lo8(1)
+ 175 0048 90E0      		ldi r25,hi8(1)
+ 176 004a 0E94 0000 		call delay_ms
+ 177               	.L2:
+ 179               	.LM14:
+ 180 004e 1899      		sbic 35-0x20,0
+ 181 0050 00C0      		rjmp .L3
+  75:main.c        **** 	/*stepperCountTempL = 127;
+  76:main.c        **** 	stepperCountTempR = (0x80 | 127);
+  77:main.c        **** 	i2cStart(24);
+  78:main.c        **** 	while(i2cMode) delay_us(40);
+  79:main.c        **** 	i2cStart(23);
+  80:main.c        **** 	 */
+  81:main.c        **** 	//stepperSendTicks(2001,-2001);
+  82:main.c        **** 	linearMotion = 0x0A;
+ 183               	.LM15:
+ 184 0052 8AE0      		ldi r24,lo8(10)
+ 185 0054 8093 0000 		sts linearMotion,r24
+  83:main.c        **** 	i2cStart(25);
+ 187               	.LM16:
+ 188 0058 89E1      		ldi r24,lo8(25)
+ 189 005a 0E94 0000 		call i2cStart
+  84:main.c        **** 	//PORTD = 1;
+  85:main.c        **** 	//PORTB = 255;	 
+  86:main.c        **** 	//uint8_t num = 10;
+  87:main.c        **** 	while(1)
+  88:main.c        **** 	{
+  89:main.c        **** 		lcd_clrscr();
+  90:main.c        **** 		if(errorCode)
+  91:main.c        **** 		{
+  92:main.c        **** 			lcd_puts("ERROR: ");
+  93:main.c        **** 			itoa(errorCode, buffer, 10);
+  94:main.c        **** 			lcd_puts(buffer);
+  95:main.c        **** 			//delay_ms(2000);
+  96:main.c        **** 			//errorCode = 0;
+  97:main.c        **** 		}
+  98:main.c        **** 		else
+  99:main.c        **** 		{
+ 100:main.c        **** 			double volts = (double)batteryADC / 1023.0 * 5.0 * 2.0; 
+ 101:main.c        **** 			lcd_puts("Voltage: ");
+ 102:main.c        **** 			dtostrf(volts, 4, 2, buffer);
+ 103:main.c        **** 			lcd_puts(buffer);
+ 104:main.c        **** 			
+ 105:main.c        **** 			lcd_puts("\nData: ");
+ 106:main.c        **** 			itoa(tempData, buffer, 10);
+ 107:main.c        **** 			lcd_puts(buffer);
+ 108:main.c        **** 			/*lcd_puts(" ");
+ 109:main.c        **** 			itoa(arcIR2, buffer, 10);
+ 110:main.c        **** 			lcd_puts(buffer);
+ 111:main.c        **** 			lcd_puts(" ");
+ 112:main.c        **** 			itoa(arcIR3, buffer, 10);
+ 113:main.c        **** 			lcd_puts(buffer);*/
+ 114:main.c        **** 		}
+ 115:main.c        **** 		
+ 116:main.c        **** 		/*if(!stepperCountTempL)
+ 117:main.c        **** 		{
+ 118:main.c        **** 			stepperCountTempL = 0x7f;
+ 119:main.c        **** 			stepperCountTempR = 0x7f;
+ 120:main.c        **** 			i2cStart(24);
+ 121:main.c        **** 			while(i2cMode) delay_ms(1);
+ 122:main.c        **** 			i2cStart(23);
+ 123:main.c        **** 		}*/
+ 124:main.c        **** 		
+ 125:main.c        **** 
+ 126:main.c        **** 		while(rxMode || i2cMode) delay_ms(10);
+ 127:main.c        **** 		rxMode = 90; // Battery voltage.
+ 191               	.LM17:
+ 192 005e 8AE5      		ldi r24,lo8(90)
+ 193 0060 F82E      		mov r15,r24
+ 128:main.c        **** 		i2cStart(9); // And go.
+ 129:main.c        **** 		while(rxMode) delay_us(1);
+ 130:main.c        **** 		delay_us(40);
+ 131:main.c        **** 		//rxMode = 42;
+ 132:main.c        **** 		//i2cStart(9);
+ 133:main.c        **** 		//while(i2cMode) delay_us(1);
+ 134:main.c        **** 		//delay_us(40);
+ 135:main.c        **** 		rxMode = 95;
+ 195               	.LM18:
+ 196 0062 9FE5      		ldi r25,lo8(95)
+ 197 0064 E92E      		mov r14,r25
+ 198               	.L12:
+  90:main.c        **** 		lcd_clrscr();
+ 200               	.LM19:
+ 201 0066 0E94 0000 		call lcd_clrscr
+  91:main.c        **** 		if(errorCode)
+ 203               	.LM20:
+ 204 006a 8091 0000 		lds r24,errorCode
+ 205 006e 8823      		tst r24
+ 206 0070 01F0      		breq .L4
+  93:main.c        **** 			lcd_puts("ERROR: ");
+ 208               	.LM21:
+ 209 0072 80E0      		ldi r24,lo8(.LC2)
+ 210 0074 90E0      		ldi r25,hi8(.LC2)
+ 211 0076 0E94 0000 		call lcd_puts
+  94:main.c        **** 			itoa(errorCode, buffer, 10);
+ 213               	.LM22:
+ 214 007a 8091 0000 		lds r24,errorCode
+ 215 007e 90E0      		ldi r25,lo8(0)
+ 216 0080 60E0      		ldi r22,lo8(buffer)
+ 217 0082 70E0      		ldi r23,hi8(buffer)
+ 218 0084 4AE0      		ldi r20,lo8(10)
+ 219 0086 50E0      		ldi r21,hi8(10)
+ 220 0088 0E94 0000 		call itoa
+  95:main.c        **** 			lcd_puts(buffer);
+ 222               	.LM23:
+ 223 008c 80E0      		ldi r24,lo8(buffer)
+ 224 008e 90E0      		ldi r25,hi8(buffer)
+ 225 0090 00C0      		rjmp .L14
+ 226               	.L4:
+ 227               	.LBB2:
+ 101:main.c        **** 			double volts = (double)batteryADC / 1023.0 * 5.0 * 2.0; 
+ 229               	.LM24:
+ 230 0092 6091 0000 		lds r22,batteryADC
+ 231 0096 7091 0000 		lds r23,batteryADC+1
+ 232 009a 80E0      		ldi r24,lo8(0)
+ 233 009c 90E0      		ldi r25,hi8(0)
+ 234 009e 0E94 0000 		call __floatunsisf
+ 235 00a2 20E0      		ldi r18,lo8(0x447fc000)
+ 236 00a4 30EC      		ldi r19,hi8(0x447fc000)
+ 237 00a6 4FE7      		ldi r20,hlo8(0x447fc000)
+ 238 00a8 54E4      		ldi r21,hhi8(0x447fc000)
+ 239 00aa 0E94 0000 		call __divsf3
+ 240 00ae 20E0      		ldi r18,lo8(0x40a00000)
+ 241 00b0 30E0      		ldi r19,hi8(0x40a00000)
+ 242 00b2 40EA      		ldi r20,hlo8(0x40a00000)
+ 243 00b4 50E4      		ldi r21,hhi8(0x40a00000)
+ 244 00b6 0E94 0000 		call __mulsf3
+ 245 00ba 9B01      		movw r18,r22
+ 246 00bc AC01      		movw r20,r24
+ 247 00be 0E94 0000 		call __addsf3
+ 248 00c2 8C01      		movw r16,r24
+ 102:main.c        **** 			lcd_puts("Voltage: ");
+ 250               	.LM25:
+ 251 00c4 80E0      		ldi r24,lo8(.LC3)
+ 252 00c6 90E0      		ldi r25,hi8(.LC3)
+ 253 00c8 6983      		std Y+1,r22
+ 254 00ca 7A83      		std Y+2,r23
+ 255 00cc 0E94 0000 		call lcd_puts
+ 103:main.c        **** 			dtostrf(volts, 4, 2, buffer);
+ 257               	.LM26:
+ 258 00d0 6981      		ldd r22,Y+1
+ 259 00d2 7A81      		ldd r23,Y+2
+ 260 00d4 862F      		mov r24,r22
+ 261 00d6 972F      		mov r25,r23
+ 262 00d8 A02F      		mov r26,r16
+ 263 00da B12F      		mov r27,r17
+ 264 00dc BC01      		movw r22,r24
+ 265 00de CD01      		movw r24,r26
+ 266 00e0 44E0      		ldi r20,lo8(4)
+ 267 00e2 22E0      		ldi r18,lo8(2)
+ 268 00e4 00E0      		ldi r16,lo8(buffer)
+ 269 00e6 10E0      		ldi r17,hi8(buffer)
+ 270 00e8 0E94 0000 		call dtostrf
+ 104:main.c        **** 			lcd_puts(buffer);
+ 272               	.LM27:
+ 273 00ec C801      		movw r24,r16
+ 274 00ee 0E94 0000 		call lcd_puts
+ 106:main.c        **** 			lcd_puts("\nData: ");
+ 276               	.LM28:
+ 277 00f2 80E0      		ldi r24,lo8(.LC4)
+ 278 00f4 90E0      		ldi r25,hi8(.LC4)
+ 279 00f6 0E94 0000 		call lcd_puts
+ 107:main.c        **** 			itoa(tempData, buffer, 10);
+ 281               	.LM29:
+ 282 00fa 8091 0000 		lds r24,tempData
+ 283 00fe 9091 0000 		lds r25,tempData+1
+ 284 0102 B801      		movw r22,r16
+ 285 0104 4AE0      		ldi r20,lo8(10)
+ 286 0106 50E0      		ldi r21,hi8(10)
+ 287 0108 0E94 0000 		call itoa
+ 108:main.c        **** 			lcd_puts(buffer);
+ 289               	.LM30:
+ 290 010c C801      		movw r24,r16
+ 291               	.L14:
+ 292 010e 0E94 0000 		call lcd_puts
+ 293 0112 00C0      		rjmp .L13
+ 294               	.L7:
+ 295               	.LBE2:
+ 127:main.c        **** 		while(rxMode || i2cMode) delay_ms(10);
+ 297               	.LM31:
+ 298 0114 8AE0      		ldi r24,lo8(10)
+ 299 0116 90E0      		ldi r25,hi8(10)
+ 300 0118 0E94 0000 		call delay_ms
+ 301               	.L13:
+ 127:main.c        **** 		while(rxMode || i2cMode) delay_ms(10);
+ 303               	.LM32:
+ 304 011c 8091 0000 		lds r24,rxMode
+ 305 0120 8823      		tst r24
+ 306 0122 01F4      		brne .L7
+ 127:main.c        **** 		while(rxMode || i2cMode) delay_ms(10);
+ 308               	.LM33:
+ 309 0124 8091 0000 		lds r24,i2cMode
+ 310 0128 8823      		tst r24
+ 311 012a 01F4      		brne .L7
+ 128:main.c        **** 		rxMode = 90; // Battery voltage.
+ 313               	.LM34:
+ 314 012c F092 0000 		sts rxMode,r15
+ 129:main.c        **** 		i2cStart(9); // And go.
+ 316               	.LM35:
+ 317 0130 89E0      		ldi r24,lo8(9)
+ 318 0132 0E94 0000 		call i2cStart
+ 130:main.c        **** 		while(rxMode) delay_us(1);
+ 320               	.LM36:
+ 321 0136 00C0      		rjmp .L8
+ 322               	.L9:
+ 130:main.c        **** 		while(rxMode) delay_us(1);
+ 324               	.LM37:
+ 325 0138 81E0      		ldi r24,lo8(1)
+ 326 013a 90E0      		ldi r25,hi8(1)
+ 327 013c 0E94 0000 		call delay_us
+ 328               	.L8:
+ 130:main.c        **** 		while(rxMode) delay_us(1);
+ 330               	.LM38:
+ 331 0140 8091 0000 		lds r24,rxMode
+ 332 0144 8823      		tst r24
+ 333 0146 01F4      		brne .L9
+ 131:main.c        **** 		delay_us(40);
+ 335               	.LM39:
+ 336 0148 88E2      		ldi r24,lo8(40)
+ 337 014a 90E0      		ldi r25,hi8(40)
+ 338 014c 0E94 0000 		call delay_us
+ 340               	.LM40:
+ 341 0150 E092 0000 		sts rxMode,r14
+ 136:main.c        **** 		i2cStart(9);
+ 343               	.LM41:
+ 344 0154 89E0      		ldi r24,lo8(9)
+ 345 0156 0E94 0000 		call i2cStart
+ 137:main.c        **** 		while(i2cMode) delay_us(1);
+ 347               	.LM42:
+ 348 015a 00C0      		rjmp .L10
+ 349               	.L11:
+ 351               	.LM43:
+ 352 015c 81E0      		ldi r24,lo8(1)
+ 353 015e 90E0      		ldi r25,hi8(1)
+ 354 0160 0E94 0000 		call delay_us
+ 355               	.L10:
+ 357               	.LM44:
+ 358 0164 8091 0000 		lds r24,i2cMode
+ 359 0168 8823      		tst r24
+ 360 016a 01F4      		brne .L11
+ 138:main.c        **** 		/*while(i2cMode) delay_ms(1);
+ 139:main.c        **** 		rxMode = 43;
+ 140:main.c        **** 		i2cStart(9);*/
+ 141:main.c        **** 		
+ 142:main.c        **** 		/*
+ 143:main.c        **** 		while(bit_is_set(PINB,PB0)) delay_ms(1);
+ 144:main.c        **** 		servoPos1 = 0xC0; // Rear straight.
+ 145:main.c        **** 		i2cStart(21);
+ 146:main.c        **** 		while(i2cMode) delay_ms(1);
+ 147:main.c        **** 		delay_ms(500);
+ 148:main.c        **** 		
+ 149:main.c        **** 		while(bit_is_set(PINB,PB0)) delay_ms(1);
+ 150:main.c        **** 		servoPos1 = 0x15; // Front straight.
+ 151:main.c        **** 		i2cStart(21);
+ 152:main.c        **** 		while(i2cMode) delay_ms(1);
+ 153:main.c        **** 		*/
+ 154:main.c        **** 		//if(bit_is_clear(PINB,PB0)) 
+ 155:main.c        **** 		//	i2cStart(29); // CO2!
+ 156:main.c        **** 		
+ 157:main.c        **** 		delay_ms(500);
+ 362               	.LM45:
+ 363 016c 84EF      		ldi r24,lo8(500)
+ 364 016e 91E0      		ldi r25,hi8(500)
+ 365 0170 0E94 0000 		call delay_ms
+ 158:main.c        **** 		
+ 159:main.c        **** 		/*lcd_puts("Hello, fucking \n");
+ 160:main.c        **** 		           
+ 161:main.c        **** 		itoa(num, buffer, 10);
+ 162:main.c        **** 		
+ 163:main.c        **** 		lcd_puts("world!  Num: ");
+ 164:main.c        **** 		lcd_puts(buffer);
+ 165:main.c        **** 		
+ 166:main.c        **** 		delay_ms(200);
+ 167:main.c        **** 		
+ 168:main.c        **** 		num++;*/
+ 169:main.c        **** 	}
+ 367               	.LM46:
+ 368 0174 00C0      		rjmp .L12
+ 370               	.Lscope1:
+ 372               		.stabd	78,0,0
+ 373               	.global	tempData
+ 374               	.global	tempData
+ 375               		.section .bss
+ 378               	tempData:
+ 379 0000 0000      		.skip 2,0
+ 380               	.global	arcIR7
+ 381               	.global	arcIR7
+ 384               	arcIR7:
+ 385 0002 0000      		.skip 2,0
+ 386               	.global	arcIR6
+ 387               	.global	arcIR6
+ 390               	arcIR6:
+ 391 0004 0000      		.skip 2,0
+ 392               	.global	arcIR5
+ 393               	.global	arcIR5
+ 396               	arcIR5:
+ 397 0006 0000      		.skip 2,0
+ 398               	.global	arcIR4
+ 399               	.global	arcIR4
+ 402               	arcIR4:
+ 403 0008 0000      		.skip 2,0
+ 404               	.global	arcIR3
+ 405               	.global	arcIR3
+ 408               	arcIR3:
+ 409 000a 0000      		.skip 2,0
+ 410               	.global	arcIR2
+ 411               	.global	arcIR2
+ 414               	arcIR2:
+ 415 000c 0000      		.skip 2,0
+ 416               	.global	arcIR1
+ 417               	.global	arcIR1
+ 420               	arcIR1:
+ 421 000e 0000      		.skip 2,0
+ 422               	.global	batteryADC
+ 423               	.global	batteryADC
+ 426               	batteryADC:
+ 427 0010 0000      		.skip 2,0
+ 428               	.global	linearMotion
+ 429               	.global	linearMotion
+ 432               	linearMotion:
+ 433 0012 00        		.skip 1,0
+ 434               	.global	stepperCountTempR
+ 435               	.global	stepperCountTempR
+ 438               	stepperCountTempR:
+ 439 0013 00        		.skip 1,0
+ 440               	.global	stepperCountTempL
+ 441               	.global	stepperCountTempL
+ 444               	stepperCountTempL:
+ 445 0014 00        		.skip 1,0
+ 446               	.global	servoPos2
+ 447               		.data
+ 450               	servoPos2:
+ 451 0048 6E        		.byte	110
+ 452               	.global	servoPos1
+ 455               	servoPos1:
+ 456 0049 5F        		.byte	95
+ 457               	.global	gState
+ 458               	.global	gState
+ 459               		.section .bss
+ 462               	gState:
+ 463 0015 00        		.skip 1,0
+ 464               	.global	errorCode
+ 465               	.global	errorCode
+ 468               	errorCode:
+ 469 0016 00        		.skip 1,0
+ 470               		.comm buffer,7,1
+ 471               		.comm rxMode,1,1
+ 472               		.comm dataSent,1,1
+ 473               		.comm i2cByteIndex,1,1
+ 474               		.comm i2cMode,1,1
+ 496               		.text
+ 498               	.Letext0:
+DEFINED SYMBOLS
+                            *ABS*:00000000 main.c
+     /tmp/cc40BMZ3.s:2      *ABS*:0000003f __SREG__
+     /tmp/cc40BMZ3.s:3      *ABS*:0000003e __SP_H__
+     /tmp/cc40BMZ3.s:4      *ABS*:0000003d __SP_L__
+     /tmp/cc40BMZ3.s:5      *ABS*:00000000 __tmp_reg__
+     /tmp/cc40BMZ3.s:6      *ABS*:00000001 __zero_reg__
+     /tmp/cc40BMZ3.s:111    .text.startup:00000000 main
+     /tmp/cc40BMZ3.s:455    .data:00000049 servoPos1
+     /tmp/cc40BMZ3.s:432    .bss:00000012 linearMotion
+     /tmp/cc40BMZ3.s:468    .bss:00000016 errorCode
+                            *COM*:00000007 buffer
+     /tmp/cc40BMZ3.s:426    .bss:00000010 batteryADC
+     /tmp/cc40BMZ3.s:378    .bss:00000000 tempData
+                            *COM*:00000001 rxMode
+                            *COM*:00000001 i2cMode
+     /tmp/cc40BMZ3.s:384    .bss:00000002 arcIR7
+     /tmp/cc40BMZ3.s:390    .bss:00000004 arcIR6
+     /tmp/cc40BMZ3.s:396    .bss:00000006 arcIR5
+     /tmp/cc40BMZ3.s:402    .bss:00000008 arcIR4
+     /tmp/cc40BMZ3.s:408    .bss:0000000a arcIR3
+     /tmp/cc40BMZ3.s:414    .bss:0000000c arcIR2
+     /tmp/cc40BMZ3.s:420    .bss:0000000e arcIR1
+     /tmp/cc40BMZ3.s:438    .bss:00000013 stepperCountTempR
+     /tmp/cc40BMZ3.s:444    .bss:00000014 stepperCountTempL
+     /tmp/cc40BMZ3.s:450    .data:00000048 servoPos2
+     /tmp/cc40BMZ3.s:462    .bss:00000015 gState
+                            *COM*:00000001 dataSent
+                            *COM*:00000001 i2cByteIndex
+
+UNDEFINED SYMBOLS
+__do_copy_data
+__do_clear_bss
+lcd_init
+lcd_clrscr
+lcd_puts
+i2cInit
+delay_ms
+i2cStart
+itoa
+__floatunsisf
+__divsf3
+__mulsf3
+__addsf3
+dtostrf
+delay_us

@@ -1,0 +1,26 @@
+*** Creating Trace Output File '.\Obj\USBHostLite.tra' Ok.
+### Preparing for ADS-LD.
+### Creating ADS-LD Command Line
+### List of Objects: adding '".\obj\core_cm3.o"'
+### List of Objects: adding '".\obj\system_lpc17xx.o"'
+### List of Objects: adding '".\obj\usbhost_uart.o"'
+### List of Objects: adding '".\obj\usbhost_fat.o"'
+### List of Objects: adding '".\obj\usbhost_ms.o"'
+### List of Objects: adding '".\obj\usbhost_lpc17xx.o"'
+### List of Objects: adding '".\obj\usbhost_main.o"'
+### List of Objects: adding '".\obj\startup_lpc17xx.o"'
+### ADS-LD Command completed:
+--cpu Cortex-M3 ".\obj\core_cm3.o" ".\obj\system_lpc17xx.o" ".\obj\usbhost_uart.o" ".\obj\usbhost_fat.o" ".\obj\usbhost_ms.o" ".\obj\usbhost_lpc17xx.o" ".\obj\usbhost_main.o" ".\obj\startup_lpc17xx.o" --strict --scatter ".\Obj\USBHostLite.sct" 
+--autoat --summary_stderr --info summarysizes --map --xref --callgraph --symbols 
+--info sizes --info totals --info unused --info veneers 
+ --list ".\Lst\USBHostLite.map" -o ".\Obj\USBHostLite.axf"### Preparing Environment (PrepEnvAds)
+### ADS-LD Output File: '.\Obj\USBHostLite.axf'
+### ADS-LD Command File: '.\Obj\USBHostLite.lnp'
+### Checking for dirty Components...
+### Creating CmdFile '.\Obj\USBHostLite.lnp', Handle=0x000002AC
+### Writing '.lnp' file
+### ADS-LD Command file '.\Obj\USBHostLite.lnp' is ready.
+### ADS-LD: About to start ADS-LD Thread.
+### ADS-LD: executed with 0 errors
+### Updating obj list
+### LDADS_file() completed.

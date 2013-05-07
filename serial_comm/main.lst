@@ -1,0 +1,184 @@
+   1               		.file	"main.c"
+   2               	__SREG__ = 0x3f
+   3               	__SP_H__ = 0x3e
+   4               	__SP_L__ = 0x3d
+   5               	__CCP__  = 0x34
+   6               	__tmp_reg__ = 0
+   7               	__zero_reg__ = 1
+  15               	.Ltext0:
+  16               	.global	uart_init
+  18               	uart_init:
+  19               	.LFB6:
+  20               	.LM1:
+  21               	/* prologue: function */
+  22               	/* frame size = 0 */
+  23               	.LM2:
+  24 0000 10BC      		out 64-32,__zero_reg__
+  25               	.LM3:
+  26 0002 83E3      		ldi r24,lo8(51)
+  27 0004 89B9      		out 41-32,r24
+  28               	.LM4:
+  29 0006 88E1      		ldi r24,lo8(24)
+  30 0008 8AB9      		out 42-32,r24
+  31               	.LM5:
+  32 000a 86E8      		ldi r24,lo8(-122)
+  33 000c 80BD      		out 64-32,r24
+  34               	/* epilogue start */
+  35               	.LM6:
+  36 000e 0895      		ret
+  37               	.LFE6:
+  39               	.global	uart_tx
+  41               	uart_tx:
+  42               	.LFB7:
+  43               	.LM7:
+  44               	/* prologue: function */
+  45               	/* frame size = 0 */
+  46               	.LVL0:
+  47               	.L4:
+  48               	.LM8:
+  49 0010 5D9B      		sbis 43-32,5
+  50 0012 00C0      		rjmp .L4
+  51               	.LM9:
+  52 0014 8CB9      		out 44-32,r24
+  53               	/* epilogue start */
+  54               	.LM10:
+  55 0016 0895      		ret
+  56               	.LFE7:
+  58               	.global	uart_rx
+  60               	uart_rx:
+  61               	.LFB8:
+  62               	.LM11:
+  63               	/* prologue: function */
+  64               	/* frame size = 0 */
+  65               	.L8:
+  66               	.LM12:
+  67 0018 5F9B      		sbis 43-32,7
+  68 001a 00C0      		rjmp .L8
+  69               	.LM13:
+  70 001c 8CB1      		in r24,44-32
+  71               	/* epilogue start */
+  72               	.LM14:
+  73 001e 0895      		ret
+  74               	.LFE8:
+  76               	.global	string_tx
+  78               	string_tx:
+  79               	.LFB9:
+  80               	.LM15:
+  81               	.LVL1:
+  82               	/* prologue: function */
+  83               	/* frame size = 0 */
+  84               	.LM16:
+  85 0020 DC01      		movw r26,r24
+  86               	.LVL2:
+  87 0022 0D90      		ld __tmp_reg__,X+
+  88 0024 0020      		tst __tmp_reg__
+  89 0026 01F4      		brne .-6
+  90 0028 1197      		sbiw r26,1
+  91 002a A81B      		sub r26,r24
+  92 002c B90B      		sbc r27,r25
+  93 002e 20E0      		ldi r18,lo8(0)
+  94 0030 30E0      		ldi r19,hi8(0)
+  95               	.LVL3:
+  96 0032 00C0      		rjmp .L12
+  97               	.L14:
+  98               	.LBB11:
+  99               	.LM17:
+ 100 0034 FC01      		movw r30,r24
+ 101 0036 E20F      		add r30,r18
+ 102 0038 F31F      		adc r31,r19
+ 103 003a E081      		ld r30,Z
+ 104               	.L13:
+ 105               	.LBB12:
+ 106               	.LBB13:
+ 107               	.LM18:
+ 108 003c 5D9B      		sbis 43-32,5
+ 109 003e 00C0      		rjmp .L13
+ 110               	.LM19:
+ 111 0040 ECB9      		out 44-32,r30
+ 112               	.LBE13:
+ 113               	.LBE12:
+ 114               	.LM20:
+ 115 0042 2F5F      		subi r18,lo8(-(1))
+ 116 0044 3F4F      		sbci r19,hi8(-(1))
+ 117               	.L12:
+ 118 0046 2A17      		cp r18,r26
+ 119 0048 3B07      		cpc r19,r27
+ 120 004a 00F0      		brlo .L14
+ 121               	/* epilogue start */
+ 122               	.LBE11:
+ 123               	.LM21:
+ 124 004c 0895      		ret
+ 125               	.LFE9:
+ 127               		.data
+ 128               	.LC0:
+ 129 0000 4154 4D65 		.string	"ATMega 8 AVR microcontroller initialized. Starting echo...\r\n"
+ 129      6761 2038 
+ 129      2041 5652 
+ 129      206D 6963 
+ 129      726F 636F 
+ 130               		.text
+ 131               	.global	main
+ 133               	main:
+ 134               	.LFB10:
+ 135               	.LM22:
+ 136               	/* prologue: function */
+ 137               	/* frame size = 0 */
+ 138               	.LBB14:
+ 139               	.LBB15:
+ 140               	.LM23:
+ 141 004e 10BC      		out 64-32,__zero_reg__
+ 142               	.LM24:
+ 143 0050 83E3      		ldi r24,lo8(51)
+ 144 0052 89B9      		out 41-32,r24
+ 145               	.LM25:
+ 146 0054 88E1      		ldi r24,lo8(24)
+ 147 0056 8AB9      		out 42-32,r24
+ 148               	.LM26:
+ 149 0058 86E8      		ldi r24,lo8(-122)
+ 150 005a 80BD      		out 64-32,r24
+ 151               	.LBE15:
+ 152               	.LBE14:
+ 153               	.LM27:
+ 154 005c 80E0      		ldi r24,lo8(.LC0)
+ 155 005e 90E0      		ldi r25,hi8(.LC0)
+ 156 0060 00D0      		rcall string_tx
+ 157               	.LVL4:
+ 158               	.L24:
+ 159               	.LBB16:
+ 160               	.LBB17:
+ 161               	.LM28:
+ 162 0062 5F9B      		sbis 43-32,7
+ 163 0064 00C0      		rjmp .L24
+ 164               	.LM29:
+ 165 0066 8CB1      		in r24,44-32
+ 166               	.L19:
+ 167               	.LBE17:
+ 168               	.LBE16:
+ 169               	.LBB18:
+ 170               	.LBB19:
+ 171               	.LM30:
+ 172 0068 5D9B      		sbis 43-32,5
+ 173 006a 00C0      		rjmp .L19
+ 174               	.LM31:
+ 175 006c 8CB9      		out 44-32,r24
+ 176 006e 00C0      		rjmp .L24
+ 177               	.LBE19:
+ 178               	.LBE18:
+ 179               	.LFE10:
+ 237               	.Letext0:
+DEFINED SYMBOLS
+                            *ABS*:00000000 main.c
+C:\Users\Sean\AppData\Local\Temp/ccvqBKCd.s:2      *ABS*:0000003f __SREG__
+C:\Users\Sean\AppData\Local\Temp/ccvqBKCd.s:3      *ABS*:0000003e __SP_H__
+C:\Users\Sean\AppData\Local\Temp/ccvqBKCd.s:4      *ABS*:0000003d __SP_L__
+C:\Users\Sean\AppData\Local\Temp/ccvqBKCd.s:5      *ABS*:00000034 __CCP__
+C:\Users\Sean\AppData\Local\Temp/ccvqBKCd.s:6      *ABS*:00000000 __tmp_reg__
+C:\Users\Sean\AppData\Local\Temp/ccvqBKCd.s:7      *ABS*:00000001 __zero_reg__
+C:\Users\Sean\AppData\Local\Temp/ccvqBKCd.s:18     .text:00000000 uart_init
+C:\Users\Sean\AppData\Local\Temp/ccvqBKCd.s:41     .text:00000010 uart_tx
+C:\Users\Sean\AppData\Local\Temp/ccvqBKCd.s:60     .text:00000018 uart_rx
+C:\Users\Sean\AppData\Local\Temp/ccvqBKCd.s:78     .text:00000020 string_tx
+C:\Users\Sean\AppData\Local\Temp/ccvqBKCd.s:133    .text:0000004e main
+
+UNDEFINED SYMBOLS
+__do_copy_data

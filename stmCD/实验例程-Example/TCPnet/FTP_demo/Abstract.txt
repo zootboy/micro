@@ -1,0 +1,29 @@
+This is a FTP Server example. It allows you to manage files
+on SD Card from PC using FTP client.
+
+Use this example to connect MCB1700 Board to a LAN with DHCP
+server (most LANs have this). This example will configure the 
+LAN network parameters automatically using a DHCP protocol.
+
+If a DHCP server is not available, you may connect MCB1700 Board
+to PC directly over a crosslink network cable. In this case configure
+a PC to use a static IP address 192.168.0.1 and disable the
+'Dynamic Host Configuration' in Net_Config.c configuration file.
+The default static IP address of MCB1700 is then 192.168.0.100
+
+To test this example, open your ftp client and enter the 
+address ftp://mcb1700/ or ftp://<boards IP address>
+
+Default user    : admin
+Default password: <none>
+
+The FTP_demo example is available for several targets:
+
+MCB1700:      Standalone application for Keil MCB1700 Board.
+              Program code is loaded into on-chip flash.
+
+MCB1700 Debug:Standalone Debug application. Debug level configured
+              in Net_Debug.c debug configuration file.
+              Connect a serial cable to RS232 COM1 port to view
+              output messages using HyperTerminal at 115200 baud,
+              8-bits, no parity, 1 stop bit, XON/XOFF.

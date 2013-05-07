@@ -1,0 +1,4 @@
+--cpu Cortex-M3 ".\obj\core_cm3.o" ".\obj\system_lpc17xx.o" ".\obj\usbhost_uart.o" ".\obj\usbhost_fat.o" ".\obj\usbhost_ms.o" ".\obj\usbhost_lpc17xx.o" ".\obj\usbhost_main.o" ".\obj\startup_lpc17xx.o" --strict --scatter ".\Obj\USBHostLite.sct" 
+--autoat --summary_stderr --info summarysizes --map --xref --callgraph --symbols 
+--info sizes --info totals --info unused --info veneers 
+ --list ".\Lst\USBHostLite.map" -o ".\Obj\USBHostLite.axf"

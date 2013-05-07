@@ -1,0 +1,27 @@
+The Memory project is a demo program for the LPC1768
+using Keil MCB1700 board.
+
+Example functionality:                                                   
+ - Clock Settings:
+   - XTAL                   =  12 MHz
+   - PLL                    = 400 MHz
+   - processor clock = CCLK = 100 MHz
+   - USB clock              =  48 MHz
+   - CCLK / 4 clock         =  25 MHz
+
+It demonstrates an USB Memory based on USB Mass Storage Class.
+
+LEDs are used to display the following:
+  - LED0: LED_RD   is on when USB Device is performing Read access
+  - LED1: LED_WR   is on when USB Device is performing Write access
+  - LED2: LED_CFG  is on when USB Device is configured
+  - LED3: LED_SUSP is on when USB Device is suspended
+
+The USB Memory is automatically recognized by the host PC
+running Windows which will load a generic Mass Storage driver.
+
+The Memory program is available for the following targets:
+  MCB1700: configured for on-chip Flash ROM
+           (used for production or target debugging)
+
+Note: set jumper D-, D+ to DEVICE

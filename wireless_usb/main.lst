@@ -1,0 +1,476 @@
+   1               		.file	"main.c"
+   2               	__SP_H__ = 0x3e
+   3               	__SP_L__ = 0x3d
+   4               	__SREG__ = 0x3f
+   5               	__tmp_reg__ = 0
+   6               	__zero_reg__ = 1
+   7               		.text
+   8               	.Ltext0:
+   9               		.cfi_sections	.debug_frame
+  10               		.section	.rodata.str1.1,"aMS",@progbits,1
+  11               	.LC0:
+  12 0000 4C61 7374 		.string	"Last transmission: "
+  12      2074 7261 
+  12      6E73 6D69 
+  12      7373 696F 
+  12      6E3A 2000 
+  13               	.LC1:
+  14 0014 0D4C 6173 		.string	"\rLast transmission: "
+  14      7420 7472 
+  14      616E 736D 
+  14      6973 7369 
+  14      6F6E 3A20 
+  15               	.LC2:
+  16 0029 0D0A 5061 		.string	"\r\nPacket transmission failed. Clearing MAX_RT...\r\n"
+  16      636B 6574 
+  16      2074 7261 
+  16      6E73 6D69 
+  16      7373 696F 
+  17               		.section	.text.startup.main,"ax",@progbits
+  18               	.global	main
+  20               	main:
+  21               	.LFB108:
+  22               		.file 1 "main.c"
+   1:main.c        **** #include <avr/io.h>
+   2:main.c        **** #include <stdlib.h>
+   3:main.c        **** 
+   4:main.c        **** #include "VirtualSerial.h"
+   5:main.c        **** #include "Descriptors.h"
+   6:main.c        **** #include "util.h"
+   7:main.c        **** #include "nrf.h"
+   8:main.c        **** 
+   9:main.c        **** char buffer[7];
+  10:main.c        **** 
+  11:main.c        **** int main(void)
+  12:main.c        **** {
+  23               		.loc 1 12 0
+  24               		.cfi_startproc
+  25               	/* prologue: function */
+  26               	/* frame size = 0 */
+  27               	/* stack size = 0 */
+  28               	.L__stack_usage = 0
+  13:main.c        **** 	// USB BEGIN //
+  14:main.c        **** 	SetupHardware();
+  29               		.loc 1 14 0
+  30 0000 0E94 0000 		call SetupHardware
+  31               	.LVL0:
+  15:main.c        **** 	/* Create a regular character stream for the interface so that it can be used with the stdio.h fun
+  16:main.c        **** 	CDC_Device_CreateStream(&VirtualSerial_CDC_Interface, &USBSerialStream);
+  32               		.loc 1 16 0
+  33 0004 60E0      		ldi r22,lo8(USBSerialStream)
+  34 0006 70E0      		ldi r23,hi8(USBSerialStream)
+  35 0008 80E0      		ldi r24,lo8(VirtualSerial_CDC_Interface)
+  36 000a 90E0      		ldi r25,hi8(VirtualSerial_CDC_Interface)
+  37 000c 0E94 0000 		call CDC_Device_CreateStream
+  38               	.LVL1:
+  17:main.c        **** 	
+  18:main.c        **** 	TCCR0B = (1<<CS02)|(1<<CS00); // Set up timer to handle USB stuff.
+  39               		.loc 1 18 0
+  40 0010 85E0      		ldi r24,lo8(5)
+  41 0012 85BD      		out 0x25,r24
+  19:main.c        **** 	TIMSK0 = (1<<TOIE0);
+  42               		.loc 1 19 0
+  43 0014 81E0      		ldi r24,lo8(1)
+  44 0016 8093 6E00 		sts 110,r24
+  20:main.c        **** 	
+  21:main.c        **** 	sei();
+  45               		.loc 1 21 0
+  46               	/* #APP */
+  47               	 ;  21 "main.c" 1
+  48 001a 7894      		sei
+  49               	 ;  0 "" 2
+  22:main.c        **** 	// USB END //
+  23:main.c        **** 	
+  24:main.c        **** 	
+  25:main.c        **** 	while(rxByte != 0x20)
+  50               		.loc 1 25 0
+  51               	/* #NOAPP */
+  52 001c 00C0      		rjmp .L2
+  53               	.L3:
+  26:main.c        **** 	{
+  27:main.c        **** 		fputs(".", &USBSerialStream);
+  54               		.loc 1 27 0
+  55 001e 60E0      		ldi r22,lo8(USBSerialStream)
+  56 0020 70E0      		ldi r23,hi8(USBSerialStream)
+  57 0022 8EE2      		ldi r24,lo8(46)
+  58 0024 90E0      		ldi r25,0
+  59 0026 0E94 0000 		call fputc
+  60               	.LVL2:
+  28:main.c        **** 		delay_ms(100);
+  61               		.loc 1 28 0
+  62 002a 84E6      		ldi r24,lo8(100)
+  63 002c 90E0      		ldi r25,0
+  64 002e 0E94 0000 		call delay_ms
+  65               	.LVL3:
+  66               	.L2:
+  25:main.c        **** 	while(rxByte != 0x20)
+  67               		.loc 1 25 0 discriminator 1
+  68 0032 8091 0000 		lds r24,rxByte
+  69 0036 9091 0000 		lds r25,rxByte+1
+  70 003a 8097      		sbiw r24,32
+  71 003c 01F4      		brne .L3
+  29:main.c        **** 	}
+  30:main.c        **** 	rxByte = 0;
+  72               		.loc 1 30 0
+  73 003e 1092 0000 		sts rxByte+1,__zero_reg__
+  74 0042 1092 0000 		sts rxByte,__zero_reg__
+  31:main.c        **** 	nrf_init();
+  75               		.loc 1 31 0
+  76 0046 0E94 0000 		call nrf_init
+  77               	.LVL4:
+  32:main.c        **** 
+  33:main.c        **** 	delay_ms(500);
+  78               		.loc 1 33 0
+  79 004a 84EF      		ldi r24,lo8(-12)
+  80 004c 91E0      		ldi r25,lo8(1)
+  81 004e 0E94 0000 		call delay_ms
+  82               	.LVL5:
+  34:main.c        **** 	
+  35:main.c        **** 	nrf_spillRegisters();
+  83               		.loc 1 35 0
+  84 0052 0E94 0000 		call nrf_spillRegisters
+  85               	.LVL6:
+  36:main.c        **** 	
+  37:main.c        **** 	uint16_t number = 0;
+  38:main.c        **** 	
+  39:main.c        **** 	fputs("Last transmission: ",&USBSerialStream);
+  86               		.loc 1 39 0
+  87 0056 60E0      		ldi r22,lo8(USBSerialStream)
+  88 0058 70E0      		ldi r23,hi8(USBSerialStream)
+  89 005a 80E0      		ldi r24,lo8(.LC0)
+  90 005c 90E0      		ldi r25,hi8(.LC0)
+  91 005e 0E94 0000 		call fputs
+  92               	.LVL7:
+  40:main.c        **** 	itoa(number, buffer, 10);
+  93               		.loc 1 40 0
+  94 0062 4AE0      		ldi r20,lo8(10)
+  95 0064 50E0      		ldi r21,0
+  96 0066 60E0      		ldi r22,lo8(buffer)
+  97 0068 70E0      		ldi r23,hi8(buffer)
+  98 006a 80E0      		ldi r24,0
+  99 006c 90E0      		ldi r25,0
+ 100 006e 0E94 0000 		call itoa
+ 101               	.LVL8:
+  41:main.c        **** 	fputs(buffer,&USBSerialStream);
+ 102               		.loc 1 41 0
+ 103 0072 60E0      		ldi r22,lo8(USBSerialStream)
+ 104 0074 70E0      		ldi r23,hi8(USBSerialStream)
+ 105 0076 80E0      		ldi r24,lo8(buffer)
+ 106 0078 90E0      		ldi r25,hi8(buffer)
+ 107 007a 0E94 0000 		call fputs
+ 108               	.LVL9:
+  37:main.c        **** 	uint16_t number = 0;
+ 109               		.loc 1 37 0
+ 110 007e C0E0      		ldi r28,0
+ 111 0080 D0E0      		ldi r29,0
+  42:main.c        **** 			
+  43:main.c        **** 	
+  44:main.c        **** 	for (;;)
+  45:main.c        **** 	{	
+  46:main.c        **** 		/*while(!rxByte)
+  47:main.c        **** 		{
+  48:main.c        **** 			fputs(".", &USBSerialStream);
+  49:main.c        **** 			delay_ms(100);
+  50:main.c        **** 		}*/
+  51:main.c        **** 		number++;
+  52:main.c        **** 		nrf_tx((uint16_t)number);
+  53:main.c        **** 		
+  54:main.c        **** 		fputs("\rLast transmission: ",&USBSerialStream);
+  55:main.c        **** 		itoa(number, buffer, 10);
+  56:main.c        **** 		fputs(buffer,&USBSerialStream);
+  57:main.c        **** 		
+  58:main.c        **** 		//rxByte = 0;
+  59:main.c        **** 		
+  60:main.c        **** 		GET_STATUS;
+ 112               		.loc 1 60 0
+ 113 0082 1FEF      		ldi r17,lo8(-1)
+  61:main.c        **** 		if(nrf_last_status & (1<<MAX_RT))
+  62:main.c        **** 		{
+  63:main.c        **** 			fputs("\r\nPacket transmission failed. Clearing MAX_RT...\r\n",&USBSerialStream);
+  64:main.c        **** 			delay_us(1);
+  65:main.c        **** 			SS_DOWN;
+  66:main.c        **** 			SPI_WRITE(W_REGISTER | NRG_STATUS);
+ 114               		.loc 1 66 0
+ 115 0084 07E2      		ldi r16,lo8(39)
+  67:main.c        **** 			SPI_WRITE(1<<MAX_RT);
+ 116               		.loc 1 67 0
+ 117 0086 80E1      		ldi r24,lo8(16)
+ 118 0088 F82E      		mov r15,r24
+ 119               	.LVL10:
+ 120               	.L11:
+  51:main.c        **** 		number++;
+ 121               		.loc 1 51 0
+ 122 008a 2196      		adiw r28,1
+ 123               	.LVL11:
+  52:main.c        **** 		nrf_tx((uint16_t)number);
+ 124               		.loc 1 52 0
+ 125 008c CE01      		movw r24,r28
+ 126 008e 0E94 0000 		call nrf_tx
+ 127               	.LVL12:
+  54:main.c        **** 		fputs("\rLast transmission: ",&USBSerialStream);
+ 128               		.loc 1 54 0
+ 129 0092 60E0      		ldi r22,lo8(USBSerialStream)
+ 130 0094 70E0      		ldi r23,hi8(USBSerialStream)
+ 131 0096 80E0      		ldi r24,lo8(.LC1)
+ 132 0098 90E0      		ldi r25,hi8(.LC1)
+ 133 009a 0E94 0000 		call fputs
+ 134               	.LVL13:
+  55:main.c        **** 		itoa(number, buffer, 10);
+ 135               		.loc 1 55 0
+ 136 009e 4AE0      		ldi r20,lo8(10)
+ 137 00a0 50E0      		ldi r21,0
+ 138 00a2 60E0      		ldi r22,lo8(buffer)
+ 139 00a4 70E0      		ldi r23,hi8(buffer)
+ 140 00a6 CE01      		movw r24,r28
+ 141 00a8 0E94 0000 		call itoa
+ 142               	.LVL14:
+  56:main.c        **** 		fputs(buffer,&USBSerialStream);
+ 143               		.loc 1 56 0
+ 144 00ac 60E0      		ldi r22,lo8(USBSerialStream)
+ 145 00ae 70E0      		ldi r23,hi8(USBSerialStream)
+ 146 00b0 80E0      		ldi r24,lo8(buffer)
+ 147 00b2 90E0      		ldi r25,hi8(buffer)
+ 148 00b4 0E94 0000 		call fputs
+ 149               	.LVL15:
+  60:main.c        **** 		GET_STATUS;
+ 150               		.loc 1 60 0
+ 151 00b8 81E0      		ldi r24,lo8(1)
+ 152 00ba 90E0      		ldi r25,0
+ 153 00bc 0E94 0000 		call delay_us
+ 154               	.LVL16:
+ 155 00c0 2898      		cbi 0x5,0
+ 156 00c2 1EBD      		out 0x2e,r17
+ 157               	.L5:
+  60:main.c        **** 		GET_STATUS;
+ 158               		.loc 1 60 0 is_stmt 0 discriminator 2
+ 159 00c4 85E0      		ldi r24,lo8(5)
+ 160 00c6 90E0      		ldi r25,0
+ 161 00c8 0E94 0000 		call delay_us
+ 162               	.LVL17:
+ 163 00cc 0DB4      		in __tmp_reg__,0x2d
+ 164 00ce 07FE      		sbrs __tmp_reg__,7
+ 165 00d0 00C0      		rjmp .L5
+  60:main.c        **** 		GET_STATUS;
+ 166               		.loc 1 60 0 discriminator 3
+ 167 00d2 8EB5      		in r24,0x2e
+ 168 00d4 8093 0000 		sts nrf_last_status,r24
+ 169 00d8 289A      		sbi 0x5,0
+  61:main.c        **** 		if(nrf_last_status & (1<<MAX_RT))
+ 170               		.loc 1 61 0 is_stmt 1 discriminator 3
+ 171 00da 84FF      		sbrs r24,4
+ 172 00dc 00C0      		rjmp .L6
+  63:main.c        **** 			fputs("\r\nPacket transmission failed. Clearing MAX_RT...\r\n",&USBSerialStream);
+ 173               		.loc 1 63 0
+ 174 00de 60E0      		ldi r22,lo8(USBSerialStream)
+ 175 00e0 70E0      		ldi r23,hi8(USBSerialStream)
+ 176 00e2 80E0      		ldi r24,lo8(.LC2)
+ 177 00e4 90E0      		ldi r25,hi8(.LC2)
+ 178 00e6 0E94 0000 		call fputs
+ 179               	.LVL18:
+  64:main.c        **** 			delay_us(1);
+ 180               		.loc 1 64 0
+ 181 00ea 81E0      		ldi r24,lo8(1)
+ 182 00ec 90E0      		ldi r25,0
+ 183 00ee 0E94 0000 		call delay_us
+ 184               	.LVL19:
+  65:main.c        **** 			SS_DOWN;
+ 185               		.loc 1 65 0
+ 186 00f2 2898      		cbi 0x5,0
+  66:main.c        **** 			SPI_WRITE(W_REGISTER | NRG_STATUS);
+ 187               		.loc 1 66 0
+ 188 00f4 0EBD      		out 0x2e,r16
+ 189               	.L8:
+  66:main.c        **** 			SPI_WRITE(W_REGISTER | NRG_STATUS);
+ 190               		.loc 1 66 0 is_stmt 0 discriminator 2
+ 191 00f6 85E0      		ldi r24,lo8(5)
+ 192 00f8 90E0      		ldi r25,0
+ 193 00fa 0E94 0000 		call delay_us
+ 194               	.LVL20:
+ 195 00fe 0DB4      		in __tmp_reg__,0x2d
+ 196 0100 07FE      		sbrs __tmp_reg__,7
+ 197 0102 00C0      		rjmp .L8
+ 198               		.loc 1 67 0 is_stmt 1
+ 199 0104 FEBC      		out 0x2e,r15
+ 200               	.L10:
+ 201               		.loc 1 67 0 is_stmt 0 discriminator 2
+ 202 0106 85E0      		ldi r24,lo8(5)
+ 203 0108 90E0      		ldi r25,0
+ 204 010a 0E94 0000 		call delay_us
+ 205               	.LVL21:
+ 206 010e 0DB4      		in __tmp_reg__,0x2d
+ 207 0110 07FE      		sbrs __tmp_reg__,7
+ 208 0112 00C0      		rjmp .L10
+  68:main.c        **** 			SS_UP;
+ 209               		.loc 1 68 0 is_stmt 1
+ 210 0114 289A      		sbi 0x5,0
+ 211               	.L6:
+  69:main.c        **** 		}
+  70:main.c        **** 		else
+  71:main.c        **** 		{
+  72:main.c        **** 			
+  73:main.c        **** 		}
+  74:main.c        **** 		
+  75:main.c        **** 		delay_ms(500);
+ 212               		.loc 1 75 0
+ 213 0116 84EF      		ldi r24,lo8(-12)
+ 214 0118 91E0      		ldi r25,lo8(1)
+ 215 011a 0E94 0000 		call delay_ms
+ 216               	.LVL22:
+  76:main.c        **** 		
+  77:main.c        **** 		//nrf_spillRegisters();
+  78:main.c        **** 	}
+ 217               		.loc 1 78 0
+ 218 011e 00C0      		rjmp .L11
+ 219               		.cfi_endproc
+ 220               	.LFE108:
+ 222               		.section	.text.__vector_23,"ax",@progbits
+ 223               	.global	__vector_23
+ 225               	__vector_23:
+ 226               	.LFB109:
+  79:main.c        **** }
+  80:main.c        **** 
+  81:main.c        **** ISR(TIMER0_OVF_vect)
+  82:main.c        **** {
+ 227               		.loc 1 82 0
+ 228               		.cfi_startproc
+ 229 0000 1F92      		push r1
+ 230               	.LCFI0:
+ 231               		.cfi_def_cfa_offset 3
+ 232               		.cfi_offset 1, -2
+ 233 0002 0F92      		push r0
+ 234               	.LCFI1:
+ 235               		.cfi_def_cfa_offset 4
+ 236               		.cfi_offset 0, -3
+ 237 0004 0FB6      		in r0,__SREG__
+ 238 0006 0F92      		push r0
+ 239 0008 1124      		clr __zero_reg__
+ 240 000a 2F93      		push r18
+ 241               	.LCFI2:
+ 242               		.cfi_def_cfa_offset 5
+ 243               		.cfi_offset 18, -4
+ 244 000c 3F93      		push r19
+ 245               	.LCFI3:
+ 246               		.cfi_def_cfa_offset 6
+ 247               		.cfi_offset 19, -5
+ 248 000e 4F93      		push r20
+ 249               	.LCFI4:
+ 250               		.cfi_def_cfa_offset 7
+ 251               		.cfi_offset 20, -6
+ 252 0010 5F93      		push r21
+ 253               	.LCFI5:
+ 254               		.cfi_def_cfa_offset 8
+ 255               		.cfi_offset 21, -7
+ 256 0012 6F93      		push r22
+ 257               	.LCFI6:
+ 258               		.cfi_def_cfa_offset 9
+ 259               		.cfi_offset 22, -8
+ 260 0014 7F93      		push r23
+ 261               	.LCFI7:
+ 262               		.cfi_def_cfa_offset 10
+ 263               		.cfi_offset 23, -9
+ 264 0016 8F93      		push r24
+ 265               	.LCFI8:
+ 266               		.cfi_def_cfa_offset 11
+ 267               		.cfi_offset 24, -10
+ 268 0018 9F93      		push r25
+ 269               	.LCFI9:
+ 270               		.cfi_def_cfa_offset 12
+ 271               		.cfi_offset 25, -11
+ 272 001a AF93      		push r26
+ 273               	.LCFI10:
+ 274               		.cfi_def_cfa_offset 13
+ 275               		.cfi_offset 26, -12
+ 276 001c BF93      		push r27
+ 277               	.LCFI11:
+ 278               		.cfi_def_cfa_offset 14
+ 279               		.cfi_offset 27, -13
+ 280 001e EF93      		push r30
+ 281               	.LCFI12:
+ 282               		.cfi_def_cfa_offset 15
+ 283               		.cfi_offset 30, -14
+ 284 0020 FF93      		push r31
+ 285               	.LCFI13:
+ 286               		.cfi_def_cfa_offset 16
+ 287               		.cfi_offset 31, -15
+ 288               	/* prologue: Signal */
+ 289               	/* frame size = 0 */
+ 290               	/* stack size = 15 */
+ 291               	.L__stack_usage = 15
+  83:main.c        **** 	usb_ops();
+ 292               		.loc 1 83 0
+ 293 0022 0E94 0000 		call usb_ops
+ 294               	.LVL23:
+ 295               	/* epilogue start */
+  84:main.c        **** }...
+ 296               		.loc 1 84 0
+ 297 0026 FF91      		pop r31
+ 298 0028 EF91      		pop r30
+ 299 002a BF91      		pop r27
+ 300 002c AF91      		pop r26
+ 301 002e 9F91      		pop r25
+ 302 0030 8F91      		pop r24
+ 303 0032 7F91      		pop r23
+ 304 0034 6F91      		pop r22
+ 305 0036 5F91      		pop r21
+ 306 0038 4F91      		pop r20
+ 307 003a 3F91      		pop r19
+ 308 003c 2F91      		pop r18
+ 309 003e 0F90      		pop r0
+ 310 0040 0FBE      		out __SREG__,r0
+ 311 0042 0F90      		pop r0
+ 312 0044 1F90      		pop r1
+ 313 0046 1895      		reti
+ 314               		.cfi_endproc
+ 315               	.LFE109:
+ 317               		.comm	buffer,7,1
+ 318               		.comm	nrf_last_status,1,1
+ 319               		.comm	spi_bytes_sent,1,1
+ 320               		.comm	spi_command,1,1
+ 321               		.comm	spi_state,1,1
+ 322               		.comm	USBSerialStream,14,1
+ 323               		.comm	VirtualSerial_CDC_Interface,24,1
+ 324               		.comm	rxByte,2,1
+ 325               		.text
+ 326               	.Letext0:
+ 327               		.file 2 "/usr/lib/gcc/avr/4.7.2/../../../../avr/include/stdint.h"
+ 328               		.file 3 "/usr/lib/gcc/avr/4.7.2/../../../../avr/include/stdio.h"
+ 329               		.file 4 "../LUFA-120219/LUFA/Drivers/USB/Class/Device/../Common/CDCClassCommon.h"
+ 330               		.file 5 "../LUFA-120219/LUFA/Drivers/USB/Class/Device/CDCClassDevice.h"
+ 331               		.file 6 "../LUFA-120219/LUFA/Drivers/USB/Core/USBTask.h"
+ 332               		.file 7 "VirtualSerial.h"
+ 333               		.file 8 "nrf.h"
+ 334               		.file 9 "util.h"
+ 335               		.file 10 "/usr/lib/gcc/avr/4.7.2/../../../../avr/include/stdlib.h"
+ 336               		.file 11 "<built-in>"
+DEFINED SYMBOLS
+                            *ABS*:0000000000000000 main.c
+     /tmp/ccvJo7lp.s:2      *ABS*:000000000000003e __SP_H__
+     /tmp/ccvJo7lp.s:3      *ABS*:000000000000003d __SP_L__
+     /tmp/ccvJo7lp.s:4      *ABS*:000000000000003f __SREG__
+     /tmp/ccvJo7lp.s:5      *ABS*:0000000000000000 __tmp_reg__
+     /tmp/ccvJo7lp.s:6      *ABS*:0000000000000001 __zero_reg__
+     /tmp/ccvJo7lp.s:20     .text.startup.main:0000000000000000 main
+                            *COM*:000000000000000e USBSerialStream
+                            *COM*:0000000000000018 VirtualSerial_CDC_Interface
+                            *COM*:0000000000000002 rxByte
+                            *COM*:0000000000000007 buffer
+                            *COM*:0000000000000001 nrf_last_status
+     /tmp/ccvJo7lp.s:225    .text.__vector_23:0000000000000000 __vector_23
+                            *COM*:0000000000000001 spi_bytes_sent
+                            *COM*:0000000000000001 spi_command
+                            *COM*:0000000000000001 spi_state
+
+UNDEFINED SYMBOLS
+SetupHardware
+CDC_Device_CreateStream
+fputc
+delay_ms
+nrf_init
+nrf_spillRegisters
+fputs
+itoa
+nrf_tx
+delay_us
+usb_ops
+__do_copy_data
+__do_clear_bss

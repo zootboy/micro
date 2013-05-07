@@ -1,0 +1,35 @@
+The 'CAN' project is a simple program for NXP LPC1768 
+using www.PowerMCU.com "LandTiger" Evaluation Board 
+and demonstrates the use of the CAN peripheral.
+
+Example functionality:                                                   
+ - Clock Settings:
+   - XTAL    =            12.00 MHz
+   - SYSCLK  = CCLK      100.00 MHz
+   - PCLK    = CCLK/4  =  25.00 MHz
+
+ - CAN controller speed: 500 kbits
+ - send converted analog value in first byte in CAN message
+   from CAN controller #2 to CAN Controller #1 
+ - display received and transmitted byte values on GLCD display
+ - display received byte on LEDs
+
+This example shows how to use CAN peripheral and how to 
+simulate analog input in uVision.
+
+You may change the value of analog input with potentiometer
+
+The CAN example is available in different targets:
+  Simulator:   - configured for software Simulator
+  MCB1700:     - runs from Internal Flash located on chip
+                 (used for production or target debugging)
+
+
+Note: Loopback between CAN1 and CAN2 is necessary for this demo
+
+这个例程演示怎么用CAN外设和模数转换器
+
+将ADC采样到的值通过CAN1 发送到CAN2 同时显示在LCD上，调节VR1将在
+LCD上看到发送值和接收到的值同步。
+
+硬件上将 CAN1L CAN1H 用导线分别连到CAN2L CAN2H上。

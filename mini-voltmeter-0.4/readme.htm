@@ -1,0 +1,72 @@
+<pre>
+Software for "3 digit LED display, mini DVM module".
+
+Copyright: GPL V2
+Author: Guido Socher
+
+Hardware description: see subdirectory hw and
+http://www.tuxgraphics.org/electronics/200706/mini-digital-voltmeter.shtml
+or 
+http://www.tuxgraphics.org/electronics/200903/three-digit-display.shtml
+
+The software is written for AVR GCC and atmega8.
+
+Configuration
+-------------
+Edit the file analog.c and change the VDIV at the beginning
+of the file. This is the voltage divider factor (resistors
+Rx and Ry). There is a Javascript calculator at the end
+of http://www.tuxgraphics.org/electronics/200706/mini-digital-voltmeter.shtml
+to calculate VDIV.
+
+If you add an amplifer circuit then you can also measure smaller
+signals than 2.56V.
+
+Edit the file main.c and change DP_DIG according to your decimal
+point settings. This just defines if leading zeros are stripped or
+not. The real decimal point setting is done via jumpers on the board.
+
+For the counter edit file counter.c 
+
+Compile:
+--------
+A Makefile is included.
+
+To compile use the command:
+make 
+
+Change the fuse bytes to 8MHz internal clock:
+make fuse 
+
+ or run the command:
+   avrdude -p m8 -c avrusb500 -u -v -U lfuse:w:0xe4:m
+
+The fuses are then set as follows:
+ lfuse reads as E4
+ hfuse reads as D9
+
+Finally load the file main.hex into the microcontroller:
+make load
+
+The above command loads the DVM (voltmeter) software.
+
+The command
+make load_counter
+
+Would load the counter software.
+
+-------------------------------------------
+History:
+version 0.1: 2007-06-18, first Version
+version 0.2: 2008-09-10, small correction by RWCooper divide voltage
+                         by 10 if one digit behind decimal point is used.
+                         Sorry for the long time it took to update this :-(.
+version 0.3: 2009-01-13, Average results over two periods
+                         Clean-up Makefile
+version 0.4: 2009-03-02, Update display faster in case of big changes in value
+                         Added counter software.
+-------------------------------------------
+Written by guido socher <guido at tuxgraphics.org>
+-------------------------------------------
+
+</pre>

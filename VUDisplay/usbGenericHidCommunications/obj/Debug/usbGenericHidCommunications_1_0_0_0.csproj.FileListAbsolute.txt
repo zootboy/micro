@@ -1,0 +1,15 @@
+C:\Users\sdi\Documents\Visual Studio 2008\Projects\C#\USB Generic HID reference application\usbGenericHidCommunications\bin\Debug\usbGenericHidCommunications.dll
+C:\Users\sdi\Documents\Visual Studio 2008\Projects\C#\USB Generic HID reference application\usbGenericHidCommunications\bin\Debug\usbGenericHidCommunications.pdb
+C:\Users\sdi\Documents\Visual Studio 2008\Projects\C#\USB Generic HID reference application\usbGenericHidCommunications\obj\Debug\ResolveAssemblyReference.cache
+C:\Users\sdi\Documents\Visual Studio 2008\Projects\C#\USB Generic HID reference application\usbGenericHidCommunications\obj\Debug\usbGenericHidCommunications.dll
+C:\Users\sdi\Documents\Visual Studio 2008\Projects\C#\USB Generic HID reference application\usbGenericHidCommunications\obj\Debug\usbGenericHidCommunications.pdb
+C:\Users\sdi\Documents\Visual Studio 2010\Projects\Development\rgbBargraphDisplay\usbGenericHidCommunications\bin\Debug\usbGenericHidCommunications.dll
+C:\Users\sdi\Documents\Visual Studio 2010\Projects\Development\rgbBargraphDisplay\usbGenericHidCommunications\bin\Debug\usbGenericHidCommunications.pdb
+C:\Users\sdi\Documents\Visual Studio 2010\Projects\Development\rgbBargraphDisplay\usbGenericHidCommunications\obj\Debug\ResolveAssemblyReference.cache
+C:\Users\sdi\Documents\Visual Studio 2010\Projects\Development\rgbBargraphDisplay\usbGenericHidCommunications\obj\Debug\usbGenericHidCommunications.dll
+C:\Users\sdi\Documents\Visual Studio 2010\Projects\Development\rgbBargraphDisplay\usbGenericHidCommunications\obj\Debug\usbGenericHidCommunications.pdb
+C:\Users\Sean\AppData\Local\Temp\rgbBargraphDisplay\usbGenericHidCommunications\bin\Debug\usbGenericHidCommunications.dll
+C:\Users\Sean\AppData\Local\Temp\rgbBargraphDisplay\usbGenericHidCommunications\bin\Debug\usbGenericHidCommunications.pdb
+C:\Users\Sean\AppData\Local\Temp\rgbBargraphDisplay\usbGenericHidCommunications\obj\Debug\ResolveAssemblyReference.cache
+C:\Users\Sean\AppData\Local\Temp\rgbBargraphDisplay\usbGenericHidCommunications\obj\Debug\usbGenericHidCommunications.dll
+C:\Users\Sean\AppData\Local\Temp\rgbBargraphDisplay\usbGenericHidCommunications\obj\Debug\usbGenericHidCommunications.pdb

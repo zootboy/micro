@@ -1,0 +1,53 @@
+*** Creating Trace Output File '.\Obj\SD_File.tra' Ok.
+### Preparing for ADS-LD.
+### Creating ADS-LD Command Line
+### List of Objects: adding '".\obj\startup_lpc17xx.o"'
+### List of Objects: adding '".\obj\system_lpc17xx.o"'
+### List of Objects: adding '".\obj\file_config.o"'
+### List of Objects: adding '".\obj\retarget.o"'
+### List of Objects: adding '".\obj\getline.o"'
+### List of Objects: adding '".\obj\serial.o"'
+### List of Objects: adding '".\obj\sd_file.o"'
+### List of Objects: adding '".\obj\spi_lpc17xx.o"'
+### List of Objects: adding '".\obj\glcd_lpc1700.o"'
+### List of Objects: adding '".\obj\_fs_fclose.o"'
+### List of Objects: adding '".\obj\_fs_fcreate.o"'
+### List of Objects: adding '".\obj\_fs_fdelete.o"'
+### List of Objects: adding '".\obj\_fs_ffind.o"'
+### List of Objects: adding '".\obj\_fs_flashio.o"'
+### List of Objects: adding '".\obj\_fs_flushbuf.o"'
+### List of Objects: adding '".\obj\_fs_fopen.o"'
+### List of Objects: adding '".\obj\_fs_frename.o"'
+### List of Objects: adding '".\obj\_fs_getfsize.o"'
+### List of Objects: adding '".\obj\_fs_read.o"'
+### List of Objects: adding '".\obj\_fs_setfpos.o"'
+### List of Objects: adding '".\obj\_fs_write.o"'
+### List of Objects: adding '".\obj\fs_fanalyse.o"'
+### List of Objects: adding '".\obj\fs_fat.o"'
+### List of Objects: adding '".\obj\fs_fcheck.o"'
+### List of Objects: adding '".\obj\fs_fdefrag.o"'
+### List of Objects: adding '".\obj\fs_fdelete.o"'
+### List of Objects: adding '".\obj\fs_ffind.o"'
+### List of Objects: adding '".\obj\fs_fformat.o"'
+### List of Objects: adding '".\obj\fs_ffree.o"'
+### List of Objects: adding '".\obj\fs_finit.o"'
+### List of Objects: adding '".\obj\fs_flashprg.o"'
+### List of Objects: adding '".\obj\fs_frename.o"'
+### List of Objects: adding '".\obj\fs_lib.o"'
+### List of Objects: adding '".\obj\fs_mmc.o"'
+### List of Objects: adding '".\obj\fs_time.o"'
+### ADS-LD Command completed:
+--cpu Cortex-M3 ".\obj\startup_lpc17xx.o" ".\obj\system_lpc17xx.o" ".\obj\file_config.o" ".\obj\retarget.o" ".\obj\getline.o" ".\obj\serial.o" ".\obj\sd_file.o" ".\obj\spi_lpc17xx.o" ".\obj\glcd_lpc1700.o" ".\obj\_fs_fclose.o" ".\obj\_fs_fcreate.o" ".\obj\_fs_fdelete.o" ".\obj\_fs_ffind.o" ".\obj\_fs_flashio.o" ".\obj\_fs_flushbuf.o" ".\obj\_fs_fopen.o" ".\obj\_fs_frename.o" ".\obj\_fs_getfsize.o" ".\obj\_fs_read.o" ".\obj\_fs_setfpos.o" ".\obj\_fs_write.o" ".\obj\fs_fanalyse.o" ".\obj\fs_fat.o" ".\obj\fs_fcheck.o" ".\obj\fs_fdefrag.o" ".\obj\fs_fdelete.o" ".\obj\fs_ffind.o" ".\obj\fs_fformat.o" ".\obj\fs_ffree.o" ".\obj\fs_finit.o" ".\obj\fs_flashprg.o" ".\obj\fs_frename.o" ".\obj\fs_lib.o" ".\obj\fs_mmc.o" ".\obj\fs_time.o" --strict --scatter ".\Obj\SD_File.sct" 
+--autoat --summary_stderr --info summarysizes --map --xref --callgraph --symbols 
+--info sizes --info totals --info unused --info veneers 
+ --list ".\Lst\SD_File.map" -o ".\Obj\SD_File.axf"### Preparing Environment (PrepEnvAds)
+### ADS-LD Output File: '.\Obj\SD_File.axf'
+### ADS-LD Command File: '.\Obj\SD_File.lnp'
+### Checking for dirty Components...
+### Creating CmdFile '.\Obj\SD_File.lnp', Handle=0x000001E8
+### Writing '.lnp' file
+### ADS-LD Command file '.\Obj\SD_File.lnp' is ready.
+### ADS-LD: About to start ADS-LD Thread.
+### ADS-LD: executed with 0 errors
+### Updating obj list
+### LDADS_file() completed.

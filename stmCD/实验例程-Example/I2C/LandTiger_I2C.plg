@@ -1,0 +1,473 @@
+<html>
+<body>
+<pre>
+<h1>µVision Build Log</h1>
+<h2>Project:</h2>
+C:\Documents and Settings\PowerARM\◊¿√Ê\LPC1768≤‚ ‘≥Ã–Ú\I2C\LandTiger_I2C.uvproj
+Project File Date:  05/13/2010
+
+<h2>Output:</h2>
+Build target 'LandTiger_I2C'
+compiling core_cm3.c...
+compiling system_LPC17xx.c...
+assembling startup_LPC17xx.s...
+compiling i2c.c...
+Source\App\i2c.c(12): error:  #5: cannot open source input file "type.h": No such file or directory
+Source\App\i2c.c:   #include "type.h"
+Source\App\i2c.c:                    ^
+Source\App\i2c.c: Source\App\i2c.c: 0 warnings, 1 error
+compiling i2cmst.c...
+Source\App\i2cmst.c(12): error:  #5: cannot open source input file "type.h": No such file or directory
+Source\App\i2cmst.c:   #include "type.h"
+Source\App\i2cmst.c:                    ^
+Source\App\i2cmst.c: Source\App\i2cmst.c: 0 warnings, 1 error
+Target not created
+Build target 'LandTiger_I2C'
+compiling i2c.c...
+Source\App\i2c.c(12): error:  #5: cannot open source input file "type.h": No such file or directory
+Source\App\i2c.c:   #include "type.h"
+Source\App\i2c.c:                    ^
+Source\App\i2c.c: Source\App\i2c.c: 0 warnings, 1 error
+compiling i2cmst.c...
+Source\App\i2cmst.c(28): error:  #20: identifier "FALSE" is undefined
+Source\App\i2cmst.c:     if ( I2CInit( (uint32_t)I2CMASTER ) == FALSE ) /* initialize I2c */
+Source\App\i2cmst.c:                                            ^
+Source\App\i2cmst.c: Source\App\i2cmst.c: 0 warnings, 1 error
+Target not created
+Build target 'LandTiger_I2C'
+compiling i2c.c...
+Source\App\i2c.c(170): error:  #20: identifier "FALSE" is undefined
+Source\App\i2c.c:     uint32_t retVal = FALSE;
+Source\App\i2c.c:                       ^
+Source\App\i2c.c(180): error:  #20: identifier "TRUE" is undefined
+Source\App\i2c.c:         retVal = TRUE;
+Source\App\i2c.c:                  ^
+Source\App\i2c.c(210): error:  #20: identifier "TRUE" is undefined
+Source\App\i2c.c:     return TRUE;
+Source\App\i2c.c:            ^
+Source\App\i2c.c(247): error:  #20: identifier "TRUE" is undefined
+Source\App\i2c.c:     return( TRUE );
+Source\App\i2c.c:             ^
+Source\App\i2c.c(272): error:  #20: identifier "TRUE" is undefined
+Source\App\i2c.c:     if ( I2CStart() != TRUE )
+Source\App\i2c.c:                        ^
+Source\App\i2c.c(275): error:  #20: identifier "FALSE" is undefined
+Source\App\i2c.c:       return ( FALSE );
+Source\App\i2c.c:                ^
+Source\App\i2c.c: Source\App\i2c.c: 0 warnings, 6 errors
+compiling i2cmst.c...
+Source\App\i2cmst.c(28): error:  #20: identifier "FALSE" is undefined
+Source\App\i2cmst.c:     if ( I2CInit( (uint32_t)I2CMASTER ) == FALSE ) /* initialize I2c */
+Source\App\i2cmst.c:                                            ^
+Source\App\i2cmst.c: Source\App\i2cmst.c: 0 warnings, 1 error
+Target not created
+Build target 'LandTiger_I2C'
+compiling i2c.c...
+Source\App\i2c.c(247): error:  #20: identifier "TRUE" is undefined
+Source\App\i2c.c:     return( TRUE );
+Source\App\i2c.c:             ^
+Source\App\i2c.c: Source\App\i2c.c: 0 warnings, 1 error
+compiling i2cmst.c...
+Source\App\i2cmst.c(28): error:  #20: identifier "FALSE" is undefined
+Source\App\i2cmst.c:     if ( I2CInit( (uint32_t)I2CMASTER ) == FALSE ) /* initialize I2c */
+Source\App\i2cmst.c:                                            ^
+Source\App\i2cmst.c: Source\App\i2cmst.c: 0 warnings, 1 error
+Target not created
+Build target 'LandTiger_I2C'
+compiling i2c.c...
+Source\App\i2c.c(247): error:  #20: identifier "TRUE" is undefined
+Source\App\i2c.c:     return( TRUE );
+Source\App\i2c.c:             ^
+Source\App\i2c.c: Source\App\i2c.c: 0 warnings, 1 error
+compiling i2cmst.c...
+Target not created
+Build target 'LandTiger_I2C'
+compiling i2c.c...
+linking...
+Program Size: Code=1816 RO-data=252 RW-data=40 ZI-data=672  
+".\Obj\LandTiger_I2C.axf" - 0 Error(s), 0 Warning(s).
+Build target 'LandTiger_I2C'
+compiling i2c.c...
+compiling i2cmst.c...
+linking...
+Program Size: Code=1816 RO-data=252 RW-data=40 ZI-data=672  
+".\Obj\LandTiger_I2C.axf" - 0 Error(s), 0 Warning(s).
+Build target 'LandTiger_I2C'
+linking...
+Program Size: Code=1816 RO-data=252 RW-data=40 ZI-data=672  
+".\Obj\LandTiger_I2C.axf" - 0 Error(s), 0 Warning(s).
+Load "C:\\Documents and Settings\\PowerARM\\◊¿√Ê\\LPC1768≤‚ ‘≥Ã–Ú\\I2C\\Obj\\LandTiger_I2C.AXF" 
+
+JLink info:
+-----------
+DLL: V4.14a, compiled Apr 21 2010 20:54:28
+Firmware: J-Link ARM-OB STM32 compiled Mar 01 2010 17:00:09
+Hardware: V7.00
+S/N : 20090928 
+Feature(s) : RDI,FlashDL,FlashBP,JFlash,GDBFull 
+---
+* JLink Info: Found SWD-DP with ID 0x2BA01477
+* JLink Info: TPIU fitted.
+* JLink Info: ETM fitted.
+* JLink Info:   FPUnit: 6 code (BP) slots and 2 literal slots
+* JLink Info: Found SWD-DP with ID 0x2BA01477
+* JLink Info: TPIU fitted.
+* JLink Info: ETM fitted.
+* JLink Info:   FPUnit: 6 code (BP) slots and 2 literal slots
+
+Target info:
+------------
+Device: LPC1768
+VTarget = 3.300V
+State of Pins: 
+TCK: 0, TDI: 0, TDO: 0, TMS: 0, TRES: 1, TRST: 1
+* JLink Info: Found SWD-DP with ID 0x2BA01477
+* JLink Info: TPIU fitted.
+* JLink Info: ETM fitted.
+* JLink Info:   FPUnit: 6 code (BP) slots and 2 literal slots
+Hardware-Breakpoints: 6
+Software-Breakpoints: 2048
+Watchpoints:          4
+JTAG speed: 2000 kHz
+---
+* JLink Info: Found SWD-DP with ID 0x2BA01477
+* JLink Info: TPIU fitted.
+* JLink Info: ETM fitted.
+* JLink Info:   FPUnit: 6 code (BP) slots and 2 literal slots
+Erase Done.
+Programming Done.
+Verify OK.
+* JLink Info: Found SWD-DP with ID 0x2BA01477
+* JLink Info: TPIU fitted.
+* JLink Info: ETM fitted.
+* JLink Info:   FPUnit: 6 code (BP) slots and 2 literal slots
+Application running ...
+Build target 'LandTiger_I2C'
+compiling i2cmst.c...
+linking...
+Program Size: Code=1812 RO-data=256 RW-data=40 ZI-data=672  
+".\Obj\LandTiger_I2C.axf" - 0 Error(s), 0 Warning(s).
+Load "C:\\Documents and Settings\\PowerARM\\◊¿√Ê\\LPC1768≤‚ ‘≥Ã–Ú\\I2C\\Obj\\LandTiger_I2C.AXF" 
+
+JLink info:
+-----------
+DLL: V4.14a, compiled Apr 21 2010 20:54:28
+Firmware: J-Link ARM-OB STM32 compiled Mar 01 2010 17:00:09
+Hardware: V7.00
+S/N : 20090928 
+Feature(s) : RDI,FlashDL,FlashBP,JFlash,GDBFull 
+---
+* JLink Info: Found SWD-DP with ID 0x2BA01477
+* JLink Info: TPIU fitted.
+* JLink Info: ETM fitted.
+* JLink Info:   FPUnit: 6 code (BP) slots and 2 literal slots
+* JLink Info: Found SWD-DP with ID 0x2BA01477
+* JLink Info: TPIU fitted.
+* JLink Info: ETM fitted.
+* JLink Info:   FPUnit: 6 code (BP) slots and 2 literal slots
+
+Target info:
+------------
+Device: LPC1768
+VTarget = 3.300V
+State of Pins: 
+TCK: 0, TDI: 0, TDO: 0, TMS: 0, TRES: 1, TRST: 1
+* JLink Info: Found SWD-DP with ID 0x2BA01477
+* JLink Info: TPIU fitted.
+* JLink Info: ETM fitted.
+* JLink Info:   FPUnit: 6 code (BP) slots and 2 literal slots
+Hardware-Breakpoints: 6
+Software-Breakpoints: 2048
+Watchpoints:          4
+JTAG speed: 2000 kHz
+---
+* JLink Info: Found SWD-DP with ID 0x2BA01477
+* JLink Info: TPIU fitted.
+* JLink Info: ETM fitted.
+* JLink Info:   FPUnit: 6 code (BP) slots and 2 literal slots
+Erase Done.
+Programming Done.
+Verify OK.
+* JLink Info: Found SWD-DP with ID 0x2BA01477
+* JLink Info: TPIU fitted.
+* JLink Info: ETM fitted.
+* JLink Info:   FPUnit: 6 code (BP) slots and 2 literal slots
+Application running ...
+Build target 'LandTiger_I2C'
+compiling i2c.c...
+Source\App\i2c.c(240): error:  #20: identifier "LM75_ADDR" is undefined
+Source\App\i2c.c:       LPC_I2C0->I2ADR0 = LM75_ADDR;
+Source\App\i2c.c:                          ^
+Source\App\i2c.c: Source\App\i2c.c: 0 warnings, 1 error
+compiling i2cmst.c...
+Target not created
+Build target 'LandTiger_I2C'
+compiling i2c.c...
+linking...
+Program Size: Code=1812 RO-data=256 RW-data=40 ZI-data=672  
+".\Obj\LandTiger_I2C.axf" - 0 Error(s), 0 Warning(s).
+Load "C:\\Documents and Settings\\PowerARM\\◊¿√Ê\\LPC1768≤‚ ‘≥Ã–Ú\\I2C\\Obj\\LandTiger_I2C.AXF" 
+
+JLink info:
+-----------
+DLL: V4.14a, compiled Apr 21 2010 20:54:28
+Firmware: J-Link ARM-OB STM32 compiled Mar 01 2010 17:00:09
+Hardware: V7.00
+S/N : 20090928 
+Feature(s) : RDI,FlashDL,FlashBP,JFlash,GDBFull 
+---
+* JLink Info: Found SWD-DP with ID 0x2BA01477
+* JLink Info: TPIU fitted.
+* JLink Info: ETM fitted.
+* JLink Info:   FPUnit: 6 code (BP) slots and 2 literal slots
+* JLink Info: Found SWD-DP with ID 0x2BA01477
+* JLink Info: TPIU fitted.
+* JLink Info: ETM fitted.
+* JLink Info:   FPUnit: 6 code (BP) slots and 2 literal slots
+
+Target info:
+------------
+Device: LPC1768
+VTarget = 3.300V
+State of Pins: 
+TCK: 0, TDI: 0, TDO: 0, TMS: 0, TRES: 1, TRST: 1
+* JLink Info: Found SWD-DP with ID 0x2BA01477
+* JLink Info: TPIU fitted.
+* JLink Info: ETM fitted.
+* JLink Info:   FPUnit: 6 code (BP) slots and 2 literal slots
+Hardware-Breakpoints: 6
+Software-Breakpoints: 2048
+Watchpoints:          4
+JTAG speed: 2000 kHz
+---
+* JLink Info: Found SWD-DP with ID 0x2BA01477
+* JLink Info: TPIU fitted.
+* JLink Info: ETM fitted.
+* JLink Info:   FPUnit: 6 code (BP) slots and 2 literal slots
+Erase Done.
+Programming Done.
+Verify OK.
+* JLink Info: Found SWD-DP with ID 0x2BA01477
+* JLink Info: TPIU fitted.
+* JLink Info: ETM fitted.
+* JLink Info:   FPUnit: 6 code (BP) slots and 2 literal slots
+Application running ...
+Build target 'LandTiger_I2C'
+compiling i2c.c...
+Source\App\i2c.c(12): error:  #5: cannot open source input file "type.h": No such file or directory
+Source\App\i2c.c:   #include "type.h"
+Source\App\i2c.c:                    ^
+Source\App\i2c.c: Source\App\i2c.c: 0 warnings, 1 error
+compiling i2cmst.c...
+Source\App\i2cmst.c(12): error:  #5: cannot open source input file "type.h": No such file or directory
+Source\App\i2cmst.c:   #include "type.h"
+Source\App\i2cmst.c:                    ^
+Source\App\i2cmst.c: Source\App\i2cmst.c: 0 warnings, 1 error
+Target not created
+Build target 'LandTiger_I2C'
+compiling i2c.c...
+Source\App\i2c.c(12): error:  #5: cannot open source input file "type.h": No such file or directory
+Source\App\i2c.c:   #include "type.h"
+Source\App\i2c.c:                    ^
+Source\App\i2c.c: Source\App\i2c.c: 0 warnings, 1 error
+compiling i2cmst.c...
+Source\App\i2cmst.c(12): error:  #5: cannot open source input file "type.h": No such file or directory
+Source\App\i2cmst.c:   #include "type.h"
+Source\App\i2cmst.c:                    ^
+Source\App\i2cmst.c: Source\App\i2cmst.c: 0 warnings, 1 error
+Target not created
+Build target 'LandTiger_I2C'
+compiling i2c.c...
+Source\App\i2c.c(170): error:  #20: identifier "FALSE" is undefined
+Source\App\i2c.c:     uint32_t retVal = FALSE;
+Source\App\i2c.c:                       ^
+Source\App\i2c.c(180): error:  #20: identifier "TRUE" is undefined
+Source\App\i2c.c:         retVal = TRUE;
+Source\App\i2c.c:                  ^
+Source\App\i2c.c(210): error:  #20: identifier "TRUE" is undefined
+Source\App\i2c.c:     return TRUE;
+Source\App\i2c.c:            ^
+Source\App\i2c.c(247): error:  #20: identifier "TRUE" is undefined
+Source\App\i2c.c:     return( TRUE );
+Source\App\i2c.c:             ^
+Source\App\i2c.c(272): error:  #20: identifier "TRUE" is undefined
+Source\App\i2c.c:     if ( I2CStart() != TRUE )
+Source\App\i2c.c:                        ^
+Source\App\i2c.c(275): error:  #20: identifier "FALSE" is undefined
+Source\App\i2c.c:       return ( FALSE );
+Source\App\i2c.c:                ^
+Source\App\i2c.c: Source\App\i2c.c: 0 warnings, 6 errors
+compiling i2cmst.c...
+Source\App\i2cmst.c(28): error:  #20: identifier "FALSE" is undefined
+Source\App\i2cmst.c:     if ( I2CInit( (uint32_t)I2CMASTER ) == FALSE ) /* initialize I2c */
+Source\App\i2cmst.c:                                            ^
+Source\App\i2cmst.c: Source\App\i2cmst.c: 0 warnings, 1 error
+Target not created
+Build target 'LandTiger_I2C'
+compiling i2c.c...
+Source\App\i2c.c(210): error:  #20: identifier "TRUE" is undefined
+Source\App\i2c.c:     return TRUE;
+Source\App\i2c.c:            ^
+Source\App\i2c.c(247): error:  #20: identifier "TRUE" is undefined
+Source\App\i2c.c:     return( TRUE );
+Source\App\i2c.c:             ^
+Source\App\i2c.c(272): error:  #20: identifier "TRUE" is undefined
+Source\App\i2c.c:     if ( I2CStart() != TRUE )
+Source\App\i2c.c:                        ^
+Source\App\i2c.c(275): error:  #20: identifier "FALSE" is undefined
+Source\App\i2c.c:       return ( FALSE );
+Source\App\i2c.c:                ^
+Source\App\i2c.c: Source\App\i2c.c: 0 warnings, 4 errors
+compiling i2cmst.c...
+Source\App\i2cmst.c(28): error:  #20: identifier "FALSE" is undefined
+Source\App\i2cmst.c:     if ( I2CInit( (uint32_t)I2CMASTER ) == FALSE ) /* initialize I2c */
+Source\App\i2cmst.c:                                            ^
+Source\App\i2cmst.c: Source\App\i2cmst.c: 0 warnings, 1 error
+Target not created
+Build target 'LandTiger_I2C'
+compiling i2c.c...
+Source\App\i2c.c(275): error:  #20: identifier "FALSE" is undefined
+Source\App\i2c.c:       return ( FALSE );
+Source\App\i2c.c:                ^
+Source\App\i2c.c(286): error:  #20: identifier "TRUE" is undefined
+Source\App\i2c.c:     return ( TRUE );      
+Source\App\i2c.c:              ^
+Source\App\i2c.c: Source\App\i2c.c: 0 warnings, 2 errors
+compiling i2cmst.c...
+Source\App\i2cmst.c(28): error:  #20: identifier "FALSE" is undefined
+Source\App\i2cmst.c:     if ( I2CInit( (uint32_t)I2CMASTER ) == FALSE ) /* initialize I2c */
+Source\App\i2cmst.c:                                            ^
+Source\App\i2cmst.c: Source\App\i2cmst.c: 0 warnings, 1 error
+Target not created
+Build target 'LandTiger_I2C'
+compiling i2c.c...
+compiling i2cmst.c...
+Source\App\i2cmst.c(28): error:  #20: identifier "FALSE" is undefined
+Source\App\i2cmst.c:     if ( I2CInit( (uint32_t)I2CMASTER ) == FALSE ) /* initialize I2c */
+Source\App\i2cmst.c:                                            ^
+Source\App\i2cmst.c: Source\App\i2cmst.c: 0 warnings, 1 error
+Target not created
+Build target 'LandTiger_I2C'
+compiling i2cmst.c...
+linking...
+Program Size: Code=1816 RO-data=252 RW-data=40 ZI-data=672  
+".\Obj\LandTiger_I2C.axf" - 0 Error(s), 0 Warning(s).
+Build target 'LandTiger_I2C'
+compiling i2cmst.c...
+linking...
+Program Size: Code=1816 RO-data=252 RW-data=40 ZI-data=672  
+".\Obj\LandTiger_I2C.axf" - 0 Error(s), 0 Warning(s).
+Build target 'LandTiger_I2C'
+linking...
+Program Size: Code=1816 RO-data=252 RW-data=40 ZI-data=672  
+".\Obj\LandTiger_I2C.axf" - 0 Error(s), 0 Warning(s).
+Build target 'LandTiger_I2C'
+linking...
+Program Size: Code=1816 RO-data=252 RW-data=40 ZI-data=672  
+".\Obj\LandTiger_I2C.axf" - 0 Error(s), 0 Warning(s).
+Load "C:\\Documents and Settings\\PowerARM\\◊¿√Ê\\LPC1768≤‚ ‘≥Ã–Ú\\I2C\\Obj\\LandTiger_I2C.AXF" 
+
+JLink info:
+-----------
+DLL: V4.14a, compiled Apr 21 2010 20:54:28
+Firmware: J-Link ARM-OB STM32 compiled Mar 01 2010 17:00:09
+Hardware: V7.00
+S/N : 20090928 
+Feature(s) : RDI,FlashDL,FlashBP,JFlash,GDBFull 
+---
+* JLink Info: Found SWD-DP with ID 0x2BA01477
+* JLink Info: TPIU fitted.
+* JLink Info: ETM fitted.
+* JLink Info:   FPUnit: 6 code (BP) slots and 2 literal slots
+* JLink Info: Found SWD-DP with ID 0x2BA01477
+* JLink Info: TPIU fitted.
+* JLink Info: ETM fitted.
+* JLink Info:   FPUnit: 6 code (BP) slots and 2 literal slots
+
+Target info:
+------------
+Device: LPC1768
+VTarget = 3.300V
+State of Pins: 
+TCK: 0, TDI: 0, TDO: 0, TMS: 0, TRES: 1, TRST: 1
+* JLink Info: Found SWD-DP with ID 0x2BA01477
+* JLink Info: TPIU fitted.
+* JLink Info: ETM fitted.
+* JLink Info:   FPUnit: 6 code (BP) slots and 2 literal slots
+Hardware-Breakpoints: 6
+Software-Breakpoints: 2048
+Watchpoints:          4
+JTAG speed: 2000 kHz
+---
+* JLink Info: Found SWD-DP with ID 0x2BA01477
+* JLink Info: TPIU fitted.
+* JLink Info: ETM fitted.
+* JLink Info:   FPUnit: 6 code (BP) slots and 2 literal slots
+Erase Done.
+Programming Done.
+Verify OK.
+* JLink Info: Found SWD-DP with ID 0x2BA01477
+* JLink Info: TPIU fitted.
+* JLink Info: ETM fitted.
+* JLink Info:   FPUnit: 6 code (BP) slots and 2 literal slots
+Application running ...
+Build target 'LandTiger_I2C'
+compiling i2cmst.c...
+linking...
+Program Size: Code=1816 RO-data=252 RW-data=40 ZI-data=672  
+".\Obj\LandTiger_I2C.axf" - 0 Error(s), 0 Warning(s).
+Build target 'LandTiger_I2C'
+linking...
+Program Size: Code=1816 RO-data=252 RW-data=40 ZI-data=672  
+".\Obj\LandTiger_I2C.axf" - 0 Error(s), 0 Warning(s).
+Load "C:\\Documents and Settings\\PowerARM\\◊¿√Ê\\LPC1768≤‚ ‘≥Ã–Ú\\I2C\\Obj\\LandTiger_I2C.AXF" 
+
+JLink info:
+-----------
+DLL: V4.14a, compiled Apr 21 2010 20:54:28
+Firmware: J-Link ARM-OB STM32 compiled Mar 01 2010 17:00:09
+Hardware: V7.00
+S/N : 20090928 
+Feature(s) : RDI,FlashDL,FlashBP,JFlash,GDBFull 
+---
+* JLink Info: Found SWD-DP with ID 0x2BA01477
+* JLink Info: TPIU fitted.
+* JLink Info: ETM fitted.
+* JLink Info:   FPUnit: 6 code (BP) slots and 2 literal slots
+* JLink Info: Found SWD-DP with ID 0x2BA01477
+* JLink Info: TPIU fitted.
+* JLink Info: ETM fitted.
+* JLink Info:   FPUnit: 6 code (BP) slots and 2 literal slots
+
+Target info:
+------------
+Device: LPC1768
+VTarget = 3.300V
+State of Pins: 
+TCK: 0, TDI: 0, TDO: 0, TMS: 0, TRES: 1, TRST: 1
+* JLink Info: Found SWD-DP with ID 0x2BA01477
+* JLink Info: TPIU fitted.
+* JLink Info: ETM fitted.
+* JLink Info:   FPUnit: 6 code (BP) slots and 2 literal slots
+Hardware-Breakpoints: 6
+Software-Breakpoints: 2048
+Watchpoints:          4
+JTAG speed: 2000 kHz
+---
+* JLink Info: Found SWD-DP with ID 0x2BA01477
+* JLink Info: TPIU fitted.
+* JLink Info: ETM fitted.
+* JLink Info:   FPUnit: 6 code (BP) slots and 2 literal slots
+Erase Done.
+Programming Done.
+Verify OK.
+* JLink Info: Found SWD-DP with ID 0x2BA01477
+* JLink Info: TPIU fitted.
+* JLink Info: ETM fitted.
+* JLink Info:   FPUnit: 6 code (BP) slots and 2 literal slots
+Application running ...
+Build target 'LandTiger_I2C'
+compiling i2cmst.c...
+linking...
+Program Size: Code=1816 RO-data=252 RW-data=40 ZI-data=672  
+".\Obj\LandTiger_I2C.axf" - 0 Error(s), 0 Warning(s).

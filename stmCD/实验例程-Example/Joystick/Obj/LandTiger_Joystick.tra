@@ -1,0 +1,22 @@
+*** Creating Trace Output File '.\Obj\LandTiger_Joystick.tra' Ok.
+### Preparing for ADS-LD.
+### Creating ADS-LD Command Line
+### List of Objects: adding '".\obj\core_cm3.o"'
+### List of Objects: adding '".\obj\system_lpc17xx.o"'
+### List of Objects: adding '".\obj\startup_lpc17xx.o"'
+### List of Objects: adding '".\obj\main.o"'
+### ADS-LD Command completed:
+--device DARMP1 ".\obj\core_cm3.o" ".\obj\system_lpc17xx.o" ".\obj\startup_lpc17xx.o" ".\obj\main.o" --strict --scatter ".\Obj\LandTiger_Joystick.sct" 
+--autoat --summary_stderr --info summarysizes --map --xref --callgraph --symbols 
+--info sizes --info totals --info unused --info veneers 
+ --list ".\Lis\LandTiger_Joystick.map" -o ".\Obj\LandTiger_Joystick.axf"### Preparing Environment (PrepEnvAds)
+### ADS-LD Output File: '.\Obj\LandTiger_Joystick.axf'
+### ADS-LD Command File: '.\Obj\LandTiger_Joystick.lnp'
+### Checking for dirty Components...
+### Creating CmdFile '.\Obj\LandTiger_Joystick.lnp', Handle=0x000003AC
+### Writing '.lnp' file
+### ADS-LD Command file '.\Obj\LandTiger_Joystick.lnp' is ready.
+### ADS-LD: About to start ADS-LD Thread.
+### ADS-LD: executed with 0 errors
+### Updating obj list
+### LDADS_file() completed.

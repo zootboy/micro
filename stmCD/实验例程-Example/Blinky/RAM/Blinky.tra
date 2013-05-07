@@ -1,0 +1,25 @@
+*** Creating Trace Output File '.\RAM\Blinky.tra' Ok.
+### Preparing for ADS-LD.
+### Creating ADS-LD Command Line
+### List of Objects: adding '".\ram\startup_lpc17xx.o"'
+### List of Objects: adding '".\ram\system_lpc17xx.o"'
+### List of Objects: adding '".\ram\core_cm3.o"'
+### List of Objects: adding '".\ram\blinky.o"'
+### List of Objects: adding '".\ram\irq.o"'
+### List of Objects: adding '".\ram\serial.o"'
+### List of Objects: adding '".\ram\retarget.o"'
+### ADS-LD Command completed:
+--device DARMP1 ".\ram\startup_lpc17xx.o" ".\ram\system_lpc17xx.o" ".\ram\core_cm3.o" ".\ram\blinky.o" ".\ram\irq.o" ".\ram\serial.o" ".\ram\retarget.o" --library_type=microlib --strict --scatter ".\RAM\Blinky.sct" 
+--autoat --summary_stderr --info summarysizes --map --xref --callgraph --symbols 
+--info sizes --info totals --info unused --info veneers 
+ --list ".\RAM\Blinky.map" -o ".\RAM\Blinky.axf"### Preparing Environment (PrepEnvAds)
+### ADS-LD Output File: '.\RAM\Blinky.axf'
+### ADS-LD Command File: '.\RAM\Blinky.lnp'
+### Checking for dirty Components...
+### Creating CmdFile '.\RAM\Blinky.lnp', Handle=0x000002E8
+### Writing '.lnp' file
+### ADS-LD Command file '.\RAM\Blinky.lnp' is ready.
+### ADS-LD: About to start ADS-LD Thread.
+### ADS-LD: executed with 0 errors
+### Updating obj list
+### LDADS_file() completed.

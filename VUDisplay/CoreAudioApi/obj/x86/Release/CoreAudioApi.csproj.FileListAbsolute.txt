@@ -1,0 +1,5 @@
+C:\Users\Sean\AppData\Local\Temp\rgbBargraphDisplay\CoreAudioApi\bin\x86\Release\CoreAudioApi.dll
+C:\Users\Sean\AppData\Local\Temp\rgbBargraphDisplay\CoreAudioApi\bin\x86\Release\CoreAudioApi.pdb
+C:\Users\Sean\AppData\Local\Temp\rgbBargraphDisplay\CoreAudioApi\obj\x86\Release\ResolveAssemblyReference.cache
+C:\Users\Sean\AppData\Local\Temp\rgbBargraphDisplay\CoreAudioApi\obj\x86\Release\CoreAudioApi.dll
+C:\Users\Sean\AppData\Local\Temp\rgbBargraphDisplay\CoreAudioApi\obj\x86\Release\CoreAudioApi.pdb

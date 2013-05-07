@@ -1,0 +1,503 @@
+   1               		.file	"util.c"
+   2               	__SREG__ = 0x3f
+   3               	__SP_H__ = 0x3e
+   4               	__SP_L__ = 0x3d
+   5               	__tmp_reg__ = 0
+   6               	__zero_reg__ = 1
+   7               		.global __do_copy_data
+   8               		.global __do_clear_bss
+  11               		.text
+  12               	.Ltext0:
+  83               	.global	delay_us
+  85               	delay_us:
+  86               		.stabd	46,0,0
+   0:util.c        **** /* Navigator */
+   1:util.c        **** #include "util.h"
+   2:util.c        **** #include <avr/io.h>
+   3:util.c        **** #include <util/twi.h>
+   4:util.c        **** 
+   5:util.c        **** /// Globals ///
+   6:util.c        **** uint8_t globalError = 0; // Error condition if non-zero. 1=invalid servo pos, 2=unknown i2c command
+   7:util.c        **** uint8_t i2cMode = 0; // State of i2c receiver/transmitter.
+   8:util.c        **** uint8_t gState = 0; // Global robot system mode.
+   9:util.c        **** 
+  10:util.c        **** uint8_t i2cTxMode = 0; // Mode to use when i2c ST mode called.
+  11:util.c        **** uint8_t bytesCount = 0;
+  12:util.c        **** 
+  13:util.c        **** void delay_us(uint16_t delah)
+  14:util.c        **** {
+  88               	.LM0:
+  89               	.LFBB1:
+  90               	/* prologue: function */
+  91               	/* frame size = 0 */
+  92               	/* stack size = 0 */
+  93               	.L__stack_usage = 0
+  94               	.LBB30:
+  95               	.LBB31:
+  96               	.LBB32:
+  97               	.LBB33:
+  99               	.Ltext1:
+   0:/usr/lib/gcc/avr/4.6.1/../../../../avr/include/util/delay_basic.h **** /* Copyright (c) 2002, Marek Michalkiewicz
+   1:/usr/lib/gcc/avr/4.6.1/../../../../avr/include/util/delay_basic.h ****    Copyright (c) 2007 Joerg Wunsch
+   2:/usr/lib/gcc/avr/4.6.1/../../../../avr/include/util/delay_basic.h ****    All rights reserved.
+   3:/usr/lib/gcc/avr/4.6.1/../../../../avr/include/util/delay_basic.h **** 
+   4:/usr/lib/gcc/avr/4.6.1/../../../../avr/include/util/delay_basic.h ****    Redistribution and use in source and binary forms, with or without
+   5:/usr/lib/gcc/avr/4.6.1/../../../../avr/include/util/delay_basic.h ****    modification, are permitted provided that the following conditions are met:
+   6:/usr/lib/gcc/avr/4.6.1/../../../../avr/include/util/delay_basic.h **** 
+   7:/usr/lib/gcc/avr/4.6.1/../../../../avr/include/util/delay_basic.h ****    * Redistributions of source code must retain the above copyright
+   8:/usr/lib/gcc/avr/4.6.1/../../../../avr/include/util/delay_basic.h ****      notice, this list of conditions and the following disclaimer.
+   9:/usr/lib/gcc/avr/4.6.1/../../../../avr/include/util/delay_basic.h **** 
+  10:/usr/lib/gcc/avr/4.6.1/../../../../avr/include/util/delay_basic.h ****    * Redistributions in binary form must reproduce the above copyright
+  11:/usr/lib/gcc/avr/4.6.1/../../../../avr/include/util/delay_basic.h ****      notice, this list of conditions and the following disclaimer in
+  12:/usr/lib/gcc/avr/4.6.1/../../../../avr/include/util/delay_basic.h ****      the documentation and/or other materials provided with the
+  13:/usr/lib/gcc/avr/4.6.1/../../../../avr/include/util/delay_basic.h ****      distribution.
+  14:/usr/lib/gcc/avr/4.6.1/../../../../avr/include/util/delay_basic.h **** 
+  15:/usr/lib/gcc/avr/4.6.1/../../../../avr/include/util/delay_basic.h ****    * Neither the name of the copyright holders nor the names of
+  16:/usr/lib/gcc/avr/4.6.1/../../../../avr/include/util/delay_basic.h ****      contributors may be used to endorse or promote products derived
+  17:/usr/lib/gcc/avr/4.6.1/../../../../avr/include/util/delay_basic.h ****      from this software without specific prior written permission.
+  18:/usr/lib/gcc/avr/4.6.1/../../../../avr/include/util/delay_basic.h **** 
+  19:/usr/lib/gcc/avr/4.6.1/../../../../avr/include/util/delay_basic.h ****   THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+  20:/usr/lib/gcc/avr/4.6.1/../../../../avr/include/util/delay_basic.h ****   AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+  21:/usr/lib/gcc/avr/4.6.1/../../../../avr/include/util/delay_basic.h ****   IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+  22:/usr/lib/gcc/avr/4.6.1/../../../../avr/include/util/delay_basic.h ****   ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE
+  23:/usr/lib/gcc/avr/4.6.1/../../../../avr/include/util/delay_basic.h ****   LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+  24:/usr/lib/gcc/avr/4.6.1/../../../../avr/include/util/delay_basic.h ****   CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+  25:/usr/lib/gcc/avr/4.6.1/../../../../avr/include/util/delay_basic.h ****   SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+  26:/usr/lib/gcc/avr/4.6.1/../../../../avr/include/util/delay_basic.h ****   INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+  27:/usr/lib/gcc/avr/4.6.1/../../../../avr/include/util/delay_basic.h ****   CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+  28:/usr/lib/gcc/avr/4.6.1/../../../../avr/include/util/delay_basic.h ****   ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+  29:/usr/lib/gcc/avr/4.6.1/../../../../avr/include/util/delay_basic.h ****   POSSIBILITY OF SUCH DAMAGE. */
+  30:/usr/lib/gcc/avr/4.6.1/../../../../avr/include/util/delay_basic.h **** 
+  31:/usr/lib/gcc/avr/4.6.1/../../../../avr/include/util/delay_basic.h **** /* $Id: delay_basic.h 2143 2010-06-08 21:19:51Z joerg_wunsch $ */
+  32:/usr/lib/gcc/avr/4.6.1/../../../../avr/include/util/delay_basic.h **** 
+  33:/usr/lib/gcc/avr/4.6.1/../../../../avr/include/util/delay_basic.h **** #ifndef _UTIL_DELAY_BASIC_H_
+  34:/usr/lib/gcc/avr/4.6.1/../../../../avr/include/util/delay_basic.h **** #define _UTIL_DELAY_BASIC_H_ 1
+  35:/usr/lib/gcc/avr/4.6.1/../../../../avr/include/util/delay_basic.h **** 
+  36:/usr/lib/gcc/avr/4.6.1/../../../../avr/include/util/delay_basic.h **** #include <inttypes.h>
+  37:/usr/lib/gcc/avr/4.6.1/../../../../avr/include/util/delay_basic.h **** 
+  38:/usr/lib/gcc/avr/4.6.1/../../../../avr/include/util/delay_basic.h **** #if !defined(__DOXYGEN__)
+  39:/usr/lib/gcc/avr/4.6.1/../../../../avr/include/util/delay_basic.h **** static inline void _delay_loop_1(uint8_t __count) __attribute__((always_inline));
+  40:/usr/lib/gcc/avr/4.6.1/../../../../avr/include/util/delay_basic.h **** static inline void _delay_loop_2(uint16_t __count) __attribute__((always_inline));
+  41:/usr/lib/gcc/avr/4.6.1/../../../../avr/include/util/delay_basic.h **** #endif
+  42:/usr/lib/gcc/avr/4.6.1/../../../../avr/include/util/delay_basic.h **** 
+  43:/usr/lib/gcc/avr/4.6.1/../../../../avr/include/util/delay_basic.h **** /** \file */
+  44:/usr/lib/gcc/avr/4.6.1/../../../../avr/include/util/delay_basic.h **** /** \defgroup util_delay_basic <util/delay_basic.h>: Basic busy-wait delay loops
+  45:/usr/lib/gcc/avr/4.6.1/../../../../avr/include/util/delay_basic.h ****     \code
+  46:/usr/lib/gcc/avr/4.6.1/../../../../avr/include/util/delay_basic.h ****     #include <util/delay_basic.h>
+  47:/usr/lib/gcc/avr/4.6.1/../../../../avr/include/util/delay_basic.h ****     \endcode
+  48:/usr/lib/gcc/avr/4.6.1/../../../../avr/include/util/delay_basic.h **** 
+  49:/usr/lib/gcc/avr/4.6.1/../../../../avr/include/util/delay_basic.h ****     The functions in this header file implement simple delay loops
+  50:/usr/lib/gcc/avr/4.6.1/../../../../avr/include/util/delay_basic.h ****     that perform a busy-waiting.  They are typically used to
+  51:/usr/lib/gcc/avr/4.6.1/../../../../avr/include/util/delay_basic.h ****     facilitate short delays in the program execution.  They are
+  52:/usr/lib/gcc/avr/4.6.1/../../../../avr/include/util/delay_basic.h ****     implemented as count-down loops with a well-known CPU cycle
+  53:/usr/lib/gcc/avr/4.6.1/../../../../avr/include/util/delay_basic.h ****     count per loop iteration.  As such, no other processing can
+  54:/usr/lib/gcc/avr/4.6.1/../../../../avr/include/util/delay_basic.h ****     occur simultaneously.  It should be kept in mind that the
+  55:/usr/lib/gcc/avr/4.6.1/../../../../avr/include/util/delay_basic.h ****     functions described here do not disable interrupts.
+  56:/usr/lib/gcc/avr/4.6.1/../../../../avr/include/util/delay_basic.h **** 
+  57:/usr/lib/gcc/avr/4.6.1/../../../../avr/include/util/delay_basic.h ****     In general, for long delays, the use of hardware timers is
+  58:/usr/lib/gcc/avr/4.6.1/../../../../avr/include/util/delay_basic.h ****     much preferrable, as they free the CPU, and allow for
+  59:/usr/lib/gcc/avr/4.6.1/../../../../avr/include/util/delay_basic.h ****     concurrent processing of other events while the timer is
+  60:/usr/lib/gcc/avr/4.6.1/../../../../avr/include/util/delay_basic.h ****     running.  However, in particular for very short delays, the
+  61:/usr/lib/gcc/avr/4.6.1/../../../../avr/include/util/delay_basic.h ****     overhead of setting up a hardware timer is too much compared
+  62:/usr/lib/gcc/avr/4.6.1/../../../../avr/include/util/delay_basic.h ****     to the overall delay time.
+  63:/usr/lib/gcc/avr/4.6.1/../../../../avr/include/util/delay_basic.h **** 
+  64:/usr/lib/gcc/avr/4.6.1/../../../../avr/include/util/delay_basic.h ****     Two inline functions are provided for the actual delay algorithms.
+  65:/usr/lib/gcc/avr/4.6.1/../../../../avr/include/util/delay_basic.h **** 
+  66:/usr/lib/gcc/avr/4.6.1/../../../../avr/include/util/delay_basic.h **** */
+  67:/usr/lib/gcc/avr/4.6.1/../../../../avr/include/util/delay_basic.h **** 
+  68:/usr/lib/gcc/avr/4.6.1/../../../../avr/include/util/delay_basic.h **** /** \ingroup util_delay_basic
+  69:/usr/lib/gcc/avr/4.6.1/../../../../avr/include/util/delay_basic.h **** 
+  70:/usr/lib/gcc/avr/4.6.1/../../../../avr/include/util/delay_basic.h ****     Delay loop using an 8-bit counter \c __count, so up to 256
+  71:/usr/lib/gcc/avr/4.6.1/../../../../avr/include/util/delay_basic.h ****     iterations are possible.  (The value 256 would have to be passed
+  72:/usr/lib/gcc/avr/4.6.1/../../../../avr/include/util/delay_basic.h ****     as 0.)  The loop executes three CPU cycles per iteration, not
+  73:/usr/lib/gcc/avr/4.6.1/../../../../avr/include/util/delay_basic.h ****     including the overhead the compiler needs to setup the counter
+  74:/usr/lib/gcc/avr/4.6.1/../../../../avr/include/util/delay_basic.h ****     register.
+  75:/usr/lib/gcc/avr/4.6.1/../../../../avr/include/util/delay_basic.h **** 
+  76:/usr/lib/gcc/avr/4.6.1/../../../../avr/include/util/delay_basic.h ****     Thus, at a CPU speed of 1 MHz, delays of up to 768 microseconds
+  77:/usr/lib/gcc/avr/4.6.1/../../../../avr/include/util/delay_basic.h ****     can be achieved.
+  78:/usr/lib/gcc/avr/4.6.1/../../../../avr/include/util/delay_basic.h **** */
+  79:/usr/lib/gcc/avr/4.6.1/../../../../avr/include/util/delay_basic.h **** void
+  80:/usr/lib/gcc/avr/4.6.1/../../../../avr/include/util/delay_basic.h **** _delay_loop_1(uint8_t __count)
+  81:/usr/lib/gcc/avr/4.6.1/../../../../avr/include/util/delay_basic.h **** {
+  82:/usr/lib/gcc/avr/4.6.1/../../../../avr/include/util/delay_basic.h **** 	__asm__ volatile (
+ 101               	.LM1:
+ 102 0000 32E0      		ldi r19,lo8(2)
+ 103               	.LBE33:
+ 104               	.LBE32:
+ 105               	.LBE31:
+ 106               	.LBE30:
+ 108               	.Ltext2:
+  15:util.c        **** 	while(delah)
+ 110               	.LM2:
+ 111 0002 00C0      		rjmp .L2
+ 112               	.L3:
+ 113               	.LBB37:
+ 114               	.LBB36:
+ 115               	.LBB35:
+ 116               	.LBB34:
+ 118               	.Ltext3:
+ 120               	.LM3:
+ 121 0004 232F      		mov r18,r19
+ 122               	/* #APP */
+ 123               	 ;  83 "/usr/lib/gcc/avr/4.6.1/../../../../avr/include/util/delay_basic.h" 1
+ 124 0006 2A95      		1: dec r18
+ 125 0008 01F4      		brne 1b
+ 126               	 ;  0 "" 2
+ 127               	/* #NOAPP */
+ 128               	.LBE34:
+ 129               	.LBE35:
+ 130               	.LBE36:
+ 131               	.LBE37:
+ 133               	.Ltext4:
+  16:util.c        **** 	{
+  17:util.c        **** 		_delay_us(1);
+  18:util.c        **** 		delah--;
+ 135               	.LM4:
+ 136 000a 0197      		sbiw r24,1
+ 137               	.L2:
+  16:util.c        **** 	{
+ 139               	.LM5:
+ 140 000c 0097      		sbiw r24,0
+ 141 000e 01F4      		brne .L3
+ 142               	/* epilogue start */
+  19:util.c        **** 	}
+  20:util.c        **** }
+ 144               	.LM6:
+ 145 0010 0895      		ret
+ 147               	.Lscope1:
+ 149               		.stabd	78,0,0
+ 152               	.global	delay_ms
+ 154               	delay_ms:
+ 155               		.stabd	46,0,0
+  21:util.c        **** 
+  22:util.c        **** void delay_ms(uint16_t delah)
+  23:util.c        **** {
+ 157               	.LM7:
+ 158               	.LFBB2:
+ 159               	/* prologue: function */
+ 160               	/* frame size = 0 */
+ 161               	/* stack size = 0 */
+ 162               	.L__stack_usage = 0
+ 163               	.LBB38:
+ 164               	.LBB39:
+ 165               	.LBB40:
+ 166               	.LBB41:
+ 168               	.Ltext5:
+  83:/usr/lib/gcc/avr/4.6.1/../../../../avr/include/util/delay_basic.h **** 		"1: dec %0" "\n\t"
+  84:/usr/lib/gcc/avr/4.6.1/../../../../avr/include/util/delay_basic.h **** 		"brne 1b"
+  85:/usr/lib/gcc/avr/4.6.1/../../../../avr/include/util/delay_basic.h **** 		: "=r" (__count)
+  86:/usr/lib/gcc/avr/4.6.1/../../../../avr/include/util/delay_basic.h **** 		: "0" (__count)
+  87:/usr/lib/gcc/avr/4.6.1/../../../../avr/include/util/delay_basic.h **** 	);
+  88:/usr/lib/gcc/avr/4.6.1/../../../../avr/include/util/delay_basic.h **** }
+  89:/usr/lib/gcc/avr/4.6.1/../../../../avr/include/util/delay_basic.h **** 
+  90:/usr/lib/gcc/avr/4.6.1/../../../../avr/include/util/delay_basic.h **** /** \ingroup util_delay_basic
+  91:/usr/lib/gcc/avr/4.6.1/../../../../avr/include/util/delay_basic.h **** 
+  92:/usr/lib/gcc/avr/4.6.1/../../../../avr/include/util/delay_basic.h ****     Delay loop using a 16-bit counter \c __count, so up to 65536
+  93:/usr/lib/gcc/avr/4.6.1/../../../../avr/include/util/delay_basic.h ****     iterations are possible.  (The value 65536 would have to be
+  94:/usr/lib/gcc/avr/4.6.1/../../../../avr/include/util/delay_basic.h ****     passed as 0.)  The loop executes four CPU cycles per iteration,
+  95:/usr/lib/gcc/avr/4.6.1/../../../../avr/include/util/delay_basic.h ****     not including the overhead the compiler requires to setup the
+  96:/usr/lib/gcc/avr/4.6.1/../../../../avr/include/util/delay_basic.h ****     counter register pair.
+  97:/usr/lib/gcc/avr/4.6.1/../../../../avr/include/util/delay_basic.h **** 
+  98:/usr/lib/gcc/avr/4.6.1/../../../../avr/include/util/delay_basic.h ****     Thus, at a CPU speed of 1 MHz, delays of up to about 262.1
+  99:/usr/lib/gcc/avr/4.6.1/../../../../avr/include/util/delay_basic.h ****     milliseconds can be achieved.
+ 100:/usr/lib/gcc/avr/4.6.1/../../../../avr/include/util/delay_basic.h ****  */
+ 101:/usr/lib/gcc/avr/4.6.1/../../../../avr/include/util/delay_basic.h **** void
+ 102:/usr/lib/gcc/avr/4.6.1/../../../../avr/include/util/delay_basic.h **** _delay_loop_2(uint16_t __count)
+ 103:/usr/lib/gcc/avr/4.6.1/../../../../avr/include/util/delay_basic.h **** {
+ 104:/usr/lib/gcc/avr/4.6.1/../../../../avr/include/util/delay_basic.h **** 	__asm__ volatile (
+ 170               	.LM8:
+ 171 0012 20ED      		ldi r18,lo8(2000)
+ 172 0014 37E0      		ldi r19,hi8(2000)
+ 173               	.LBE41:
+ 174               	.LBE40:
+ 175               	.LBE39:
+ 176               	.LBE38:
+ 178               	.Ltext6:
+  24:util.c        **** 	while(delah)
+ 180               	.LM9:
+ 181 0016 00C0      		rjmp .L5
+ 182               	.L6:
+ 183               	.LBB45:
+ 184               	.LBB44:
+ 185               	.LBB43:
+ 186               	.LBB42:
+ 188               	.Ltext7:
+ 190               	.LM10:
+ 191 0018 F901      		movw r30,r18
+ 192               	/* #APP */
+ 193               	 ;  105 "/usr/lib/gcc/avr/4.6.1/../../../../avr/include/util/delay_basic.h" 1
+ 194 001a 3197      		1: sbiw r30,1
+ 195 001c 01F4      		brne 1b
+ 196               	 ;  0 "" 2
+ 197               	/* #NOAPP */
+ 198               	.LBE42:
+ 199               	.LBE43:
+ 200               	.LBE44:
+ 201               	.LBE45:
+ 203               	.Ltext8:
+  25:util.c        **** 	{
+  26:util.c        **** 		_delay_ms(1);
+  27:util.c        **** 		delah--;
+ 205               	.LM11:
+ 206 001e 0197      		sbiw r24,1
+ 207               	.L5:
+  25:util.c        **** 	{
+ 209               	.LM12:
+ 210 0020 0097      		sbiw r24,0
+ 211 0022 01F4      		brne .L6
+ 212               	/* epilogue start */
+  28:util.c        **** 	}
+  29:util.c        **** }
+ 214               	.LM13:
+ 215 0024 0895      		ret
+ 217               	.Lscope2:
+ 219               		.stabd	78,0,0
+ 222               	.global	rxDataHandler
+ 224               	rxDataHandler:
+ 225               		.stabd	46,0,0
+  30:util.c        **** 
+  31:util.c        **** void rxDataHandler(uint8_t data)
+  32:util.c        **** {
+ 227               	.LM14:
+ 228               	.LFBB3:
+ 229               	/* prologue: function */
+ 230               	/* frame size = 0 */
+ 231               	/* stack size = 0 */
+ 232               	.L__stack_usage = 0
+  33:util.c        **** 	if(i2cMode == 0)
+ 234               	.LM15:
+ 235 0026 9091 0000 		lds r25,i2cMode
+ 236 002a 9923      		tst r25
+ 237 002c 01F4      		brne .L8
+  34:util.c        **** 	{
+  35:util.c        **** 		i2cMode = data;
+ 239               	.LM16:
+ 240 002e 8093 0000 		sts i2cMode,r24
+ 241 0032 0895      		ret
+ 242               	.L8:
+  36:util.c        **** 		//setServo(1,21);
+  37:util.c        **** 	}
+  38:util.c        **** 	else
+  39:util.c        **** 	{
+  40:util.c        **** 		switch (i2cMode)
+ 244               	.LM17:
+ 245 0034 9130      		cpi r25,lo8(1)
+ 246 0036 01F0      		breq .L11
+ 247 0038 9930      		cpi r25,lo8(9)
+ 248 003a 01F4      		brne .L13
+ 249 003c 00C0      		rjmp .L15
+ 250               	.L11:
+  41:util.c        **** 		{
+  42:util.c        **** 			case 1:
+  43:util.c        **** 				gState = data;
+ 252               	.LM18:
+ 253 003e 8093 0000 		sts gState,r24
+ 254 0042 00C0      		rjmp .L14
+ 255               	.L15:
+  44:util.c        **** 				bytesCount = 0;
+  45:util.c        **** 				i2cMode = 0;
+  46:util.c        **** 				break;
+  47:util.c        **** 			case 9: // Slave TX mode set.
+  48:util.c        **** 				i2cTxMode = data;
+ 257               	.LM19:
+ 258 0044 8093 0000 		sts i2cTxMode,r24
+ 259               	.L14:
+  49:util.c        **** 				bytesCount = 0;
+ 261               	.LM20:
+ 262 0048 1092 0000 		sts bytesCount,__zero_reg__
+  50:util.c        **** 				i2cMode = 0;
+ 264               	.LM21:
+ 265 004c 1092 0000 		sts i2cMode,__zero_reg__
+  51:util.c        **** 				break;
+ 267               	.LM22:
+ 268 0050 0895      		ret
+ 269               	.L13:
+  52:util.c        **** 			default: // Unknown command
+  53:util.c        **** 				i2cMode = 0;
+ 271               	.LM23:
+ 272 0052 1092 0000 		sts i2cMode,__zero_reg__
+  54:util.c        **** 				globalError = 2;
+ 274               	.LM24:
+ 275 0056 82E0      		ldi r24,lo8(2)
+ 276 0058 8093 0000 		sts globalError,r24
+ 277 005c 0895      		ret
+ 279               	.Lscope3:
+ 281               		.stabd	78,0,0
+ 283               	.global	txDataHandler
+ 285               	txDataHandler:
+ 286               		.stabd	46,0,0
+  55:util.c        **** 				break;
+  56:util.c        **** 		}
+  57:util.c        **** 	}
+  58:util.c        **** }
+  59:util.c        **** 
+  60:util.c        **** uint32_t holder = 0;
+  61:util.c        **** 
+  62:util.c        **** void txDataHandler(void) // Generates the data to be transmitted over i2c.
+  63:util.c        **** {
+ 288               	.LM25:
+ 289               	.LFBB4:
+ 290               	/* prologue: function */
+ 291               	/* frame size = 0 */
+ 292               	/* stack size = 0 */
+ 293               	.L__stack_usage = 0
+  64:util.c        **** 	switch (i2cTxMode)
+ 295               	.LM26:
+ 296 005e 8091 0000 		lds r24,i2cTxMode
+ 297 0062 8F35      		cpi r24,lo8(95)
+ 298 0064 01F0      		breq .L18
+ 299 0066 8336      		cpi r24,lo8(99)
+ 300 0068 01F4      		brne .L21
+ 301 006a 0895      		ret
+ 302               	.L18:
+  65:util.c        **** 	{
+  66:util.c        **** 		/*case 43: // IR array data
+  67:util.c        **** 			switch (bytesCount)
+  68:util.c        **** 			{
+  69:util.c        **** 				case 0:
+  70:util.c        **** 					holder = (arcIR4[0] + arcIR4[1] + arcIR4[2] + arcIR4[3]);
+  71:util.c        **** 					holder /= 4;
+  72:util.c        **** 					TWDR = (uint8_t)(holder >> 8);
+  73:util.c        **** 					TWCR |= (1<<TWEA);
+  74:util.c        **** 					break;
+  75:util.c        **** 				case 1:
+  76:util.c        **** 					TWDR = (uint8_t)holder;
+  77:util.c        **** 					TWCR |= (1<<TWEA);
+  78:util.c        **** 					break;
+  79:util.c        **** 				case 2:
+  80:util.c        **** 					holder = (arcIR5[0] + arcIR5[1] + arcIR5[2] + arcIR5[3]);
+  81:util.c        **** 					holder /= 4;
+  82:util.c        **** 					TWDR = (uint8_t)(holder >> 8);
+  83:util.c        **** 					TWCR |= (1<<TWEA);
+  84:util.c        **** 					break;
+  85:util.c        **** 				case 3:
+  86:util.c        **** 					TWDR = (uint8_t)holder;
+  87:util.c        **** 					TWCR |= (1<<TWEA);
+  88:util.c        **** 					break;
+  89:util.c        **** 				case 4:
+  90:util.c        **** 					holder = (arcIR6[0] + arcIR6[1] + arcIR6[2] + arcIR6[3]);
+  91:util.c        **** 					holder /= 4;
+  92:util.c        **** 					TWDR = (uint8_t)(holder >> 8);
+  93:util.c        **** 					TWCR |= (1<<TWEA);
+  94:util.c        **** 					break;
+  95:util.c        **** 				case 5:
+  96:util.c        **** 					TWDR = (uint8_t)holder;
+  97:util.c        **** 					TWCR |= (1<<TWEA);
+  98:util.c        **** 					break;
+  99:util.c        **** 				case 6:
+ 100:util.c        **** 					holder = (arcIR7[0] + arcIR7[1] + arcIR7[2] + arcIR7[3]);
+ 101:util.c        **** 					holder /= 4;
+ 102:util.c        **** 					TWDR = (uint8_t)(holder >> 8);
+ 103:util.c        **** 					TWCR |= (1<<TWEA);
+ 104:util.c        **** 					break;
+ 105:util.c        **** 				case 7:
+ 106:util.c        **** 					TWDR = (uint8_t)holder;
+ 107:util.c        **** 					TWCR &= ~(1<<TWEA); // Last byte, expect NACK.
+ 108:util.c        **** 					i2cTxMode = 0; // And we're done.
+ 109:util.c        **** 					break;
+ 110:util.c        **** 			}
+ 111:util.c        **** 			bytesCount++;
+ 112:util.c        **** 			break;*/
+ 113:util.c        **** 		case 95:
+ 114:util.c        **** 			if(!bytesCount)
+ 304               	.LM27:
+ 305 006c 8091 0000 		lds r24,bytesCount
+ 306 0070 8823      		tst r24
+ 307 0072 01F4      		brne .L20
+ 115:util.c        **** 			{
+ 116:util.c        **** 				TWDR =  (uint8_t)(sonar[0] >> 8);
+ 309               	.LM28:
+ 310 0074 8091 0000 		lds r24,sonar+1
+ 311 0078 8093 BB00 		sts 187,r24
+ 117:util.c        **** 				TWCR |= (1<<TWEA);
+ 313               	.LM29:
+ 314 007c 8091 BC00 		lds r24,188
+ 315 0080 8064      		ori r24,lo8(64)
+ 316 0082 8093 BC00 		sts 188,r24
+ 118:util.c        **** 				bytesCount++;
+ 318               	.LM30:
+ 319 0086 81E0      		ldi r24,lo8(1)
+ 320 0088 8093 0000 		sts bytesCount,r24
+ 321 008c 0895      		ret
+ 322               	.L20:
+ 119:util.c        **** 			}
+ 120:util.c        **** 			else
+ 121:util.c        **** 			{
+ 122:util.c        **** 				TWDR = (uint8_t)(sonar[0]);
+ 324               	.LM31:
+ 325 008e 8091 0000 		lds r24,sonar
+ 326 0092 8093 BB00 		sts 187,r24
+ 123:util.c        **** 				TWCR &= ~(1<<TWEA);
+ 328               	.LM32:
+ 329 0096 8091 BC00 		lds r24,188
+ 330 009a 8F7B      		andi r24,lo8(-65)
+ 331 009c 8093 BC00 		sts 188,r24
+ 124:util.c        **** 				i2cTxMode = 0;
+ 333               	.LM33:
+ 334 00a0 1092 0000 		sts i2cTxMode,__zero_reg__
+ 125:util.c        **** 				bytesCount = 0;
+ 336               	.LM34:
+ 337 00a4 1092 0000 		sts bytesCount,__zero_reg__
+ 338 00a8 0895      		ret
+ 339               	.L21:
+ 126:util.c        **** 			}
+ 127:util.c        **** 			break;
+ 128:util.c        **** 		case 99: // Send error condition, if any.
+ 129:util.c        **** 			break;
+ 130:util.c        **** 		default:
+ 131:util.c        **** 			globalError = 3;
+ 341               	.LM35:
+ 342 00aa 83E0      		ldi r24,lo8(3)
+ 343 00ac 8093 0000 		sts globalError,r24
+ 344 00b0 0895      		ret
+ 346               	.Lscope4:
+ 348               		.stabd	78,0,0
+ 349               	.global	holder
+ 350               	.global	holder
+ 351               		.section .bss
+ 354               	holder:
+ 355 0000 0000 0000 		.skip 4,0
+ 356               	.global	bytesCount
+ 357               	.global	bytesCount
+ 360               	bytesCount:
+ 361 0004 00        		.skip 1,0
+ 362               	.global	i2cTxMode
+ 363               	.global	i2cTxMode
+ 366               	i2cTxMode:
+ 367 0005 00        		.skip 1,0
+ 368               	.global	gState
+ 369               	.global	gState
+ 372               	gState:
+ 373 0006 00        		.skip 1,0
+ 374               	.global	i2cMode
+ 375               	.global	i2cMode
+ 378               	i2cMode:
+ 379 0007 00        		.skip 1,0
+ 380               	.global	globalError
+ 381               	.global	globalError
+ 384               	globalError:
+ 385 0008 00        		.skip 1,0
+ 392               		.text
+ 394               	.Letext0:
+DEFINED SYMBOLS
+                            *ABS*:00000000 util.c
+     /tmp/ccgUplK0.s:2      *ABS*:0000003f __SREG__
+     /tmp/ccgUplK0.s:3      *ABS*:0000003e __SP_H__
+     /tmp/ccgUplK0.s:4      *ABS*:0000003d __SP_L__
+     /tmp/ccgUplK0.s:5      *ABS*:00000000 __tmp_reg__
+     /tmp/ccgUplK0.s:6      *ABS*:00000001 __zero_reg__
+     /tmp/ccgUplK0.s:85     .text:00000000 delay_us
+     /tmp/ccgUplK0.s:154    .text:00000012 delay_ms
+     /tmp/ccgUplK0.s:224    .text:00000026 rxDataHandler
+     /tmp/ccgUplK0.s:378    .bss:00000007 i2cMode
+     /tmp/ccgUplK0.s:372    .bss:00000006 gState
+     /tmp/ccgUplK0.s:366    .bss:00000005 i2cTxMode
+     /tmp/ccgUplK0.s:360    .bss:00000004 bytesCount
+     /tmp/ccgUplK0.s:384    .bss:00000008 globalError
+     /tmp/ccgUplK0.s:285    .text:0000005e txDataHandler
+     /tmp/ccgUplK0.s:354    .bss:00000000 holder
+
+UNDEFINED SYMBOLS
+__do_copy_data
+__do_clear_bss
+sonar

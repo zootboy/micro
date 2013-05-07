@@ -1,0 +1,470 @@
+
+main.elf:     file format elf32-avr
+
+Sections:
+Idx Name          Size      VMA       LMA       File off  Algn
+  0 .text         000001aa  00000000  00000000  00000094  2**1
+                  CONTENTS, ALLOC, LOAD, READONLY, CODE
+  1 .data         00000004  00800060  000001aa  0000023e  2**0
+                  CONTENTS, ALLOC, LOAD, DATA
+  2 .bss          00000004  00800064  00800064  00000242  2**0
+                  ALLOC
+  3 .debug_aranges 00000020  00000000  00000000  00000242  2**0
+                  CONTENTS, READONLY, DEBUGGING
+  4 .debug_pubnames 00000076  00000000  00000000  00000262  2**0
+                  CONTENTS, READONLY, DEBUGGING
+  5 .debug_info   000003e2  00000000  00000000  000002d8  2**0
+                  CONTENTS, READONLY, DEBUGGING
+  6 .debug_abbrev 00000150  00000000  00000000  000006ba  2**0
+                  CONTENTS, READONLY, DEBUGGING
+  7 .debug_line   000002f6  00000000  00000000  0000080a  2**0
+                  CONTENTS, READONLY, DEBUGGING
+  8 .debug_frame  00000050  00000000  00000000  00000b00  2**2
+                  CONTENTS, READONLY, DEBUGGING
+  9 .debug_str    000000da  00000000  00000000  00000b50  2**0
+                  CONTENTS, READONLY, DEBUGGING
+ 10 .debug_loc    000001b0  00000000  00000000  00000c2a  2**0
+                  CONTENTS, READONLY, DEBUGGING
+ 11 .debug_ranges 00000060  00000000  00000000  00000dda  2**0
+                  CONTENTS, READONLY, DEBUGGING
+
+Disassembly of section .text:
+
+00000000 <__vectors>:
+   0:	0e c0       	rjmp	.+28     	; 0x1e <__ctors_end>
+   2:	26 c0       	rjmp	.+76     	; 0x50 <__bad_interrupt>
+   4:	25 c0       	rjmp	.+74     	; 0x50 <__bad_interrupt>
+   6:	24 c0       	rjmp	.+72     	; 0x50 <__bad_interrupt>
+   8:	23 c0       	rjmp	.+70     	; 0x50 <__bad_interrupt>
+   a:	2d c0       	rjmp	.+90     	; 0x66 <__vector_5>
+   c:	21 c0       	rjmp	.+66     	; 0x50 <__bad_interrupt>
+   e:	20 c0       	rjmp	.+64     	; 0x50 <__bad_interrupt>
+  10:	1f c0       	rjmp	.+62     	; 0x50 <__bad_interrupt>
+  12:	1e c0       	rjmp	.+60     	; 0x50 <__bad_interrupt>
+  14:	3f c0       	rjmp	.+126    	; 0x94 <__vector_10>
+  16:	1c c0       	rjmp	.+56     	; 0x50 <__bad_interrupt>
+  18:	1b c0       	rjmp	.+54     	; 0x50 <__bad_interrupt>
+  1a:	1a c0       	rjmp	.+52     	; 0x50 <__bad_interrupt>
+  1c:	19 c0       	rjmp	.+50     	; 0x50 <__bad_interrupt>
+
+0000001e <__ctors_end>:
+  1e:	11 24       	eor	r1, r1
+  20:	1f be       	out	0x3f, r1	; 63
+  22:	cf ed       	ldi	r28, 0xDF	; 223
+  24:	cd bf       	out	0x3d, r28	; 61
+
+00000026 <__do_copy_data>:
+  26:	10 e0       	ldi	r17, 0x00	; 0
+  28:	a0 e6       	ldi	r26, 0x60	; 96
+  2a:	b0 e0       	ldi	r27, 0x00	; 0
+  2c:	ea ea       	ldi	r30, 0xAA	; 170
+  2e:	f1 e0       	ldi	r31, 0x01	; 1
+  30:	02 c0       	rjmp	.+4      	; 0x36 <.do_copy_data_start>
+
+00000032 <.do_copy_data_loop>:
+  32:	05 90       	lpm	r0, Z+
+  34:	0d 92       	st	X+, r0
+
+00000036 <.do_copy_data_start>:
+  36:	a4 36       	cpi	r26, 0x64	; 100
+  38:	b1 07       	cpc	r27, r17
+  3a:	d9 f7       	brne	.-10     	; 0x32 <.do_copy_data_loop>
+
+0000003c <__do_clear_bss>:
+  3c:	10 e0       	ldi	r17, 0x00	; 0
+  3e:	a4 e6       	ldi	r26, 0x64	; 100
+  40:	b0 e0       	ldi	r27, 0x00	; 0
+  42:	01 c0       	rjmp	.+2      	; 0x46 <.do_clear_bss_start>
+
+00000044 <.do_clear_bss_loop>:
+  44:	1d 92       	st	X+, r1
+
+00000046 <.do_clear_bss_start>:
+  46:	a8 36       	cpi	r26, 0x68	; 104
+  48:	b1 07       	cpc	r27, r17
+  4a:	e1 f7       	brne	.-8      	; 0x44 <.do_clear_bss_loop>
+  4c:	3b d0       	rcall	.+118    	; 0xc4 <main>
+  4e:	ab c0       	rjmp	.+342    	; 0x1a6 <_exit>
+
+00000050 <__bad_interrupt>:
+  50:	d7 cf       	rjmp	.-82     	; 0x0 <__vectors>
+
+00000052 <delay_ms>:
+    milliseconds can be achieved.
+ */
+void
+_delay_loop_2(uint16_t __count)
+{
+	__asm__ volatile (
+  52:	2a ef       	ldi	r18, 0xFA	; 250
+  54:	30 e0       	ldi	r19, 0x00	; 0
+  56:	04 c0       	rjmp	.+8      	; 0x60 <delay_ms+0xe>
+  58:	f9 01       	movw	r30, r18
+  5a:	31 97       	sbiw	r30, 0x01	; 1
+  5c:	f1 f7       	brne	.-4      	; 0x5a <delay_ms+0x8>
+void delay_ms(unsigned int ms)
+{
+	// Apparently this makes the delay cheaper? (Yeah, I dunno either.)
+    while(ms){
+        _delay_ms(1);
+        ms--;
+  5e:	01 97       	sbiw	r24, 0x01	; 1
+
+
+void delay_ms(unsigned int ms)
+{
+	// Apparently this makes the delay cheaper? (Yeah, I dunno either.)
+    while(ms){
+  60:	00 97       	sbiw	r24, 0x00	; 0
+  62:	d1 f7       	brne	.-12     	; 0x58 <delay_ms+0x6>
+        _delay_ms(1);
+        ms--;
+    }
+}
+  64:	08 95       	ret
+
+00000066 <__vector_5>:
+	// And we're done. Main loop will now resume.
+	
+}
+*/
+ISR(SIG_OVERFLOW0)
+{
+  66:	1f 92       	push	r1
+  68:	0f 92       	push	r0
+  6a:	0f b6       	in	r0, 0x3f	; 63
+  6c:	0f 92       	push	r0
+  6e:	11 24       	eor	r1, r1
+  70:	2f 93       	push	r18
+  72:	8f 93       	push	r24
+  74:	9f 93       	push	r25
+	// When the pulse timer completes one cycle.
+	PORTB |= pulseLED; // Turn on the LED.
+  76:	28 b3       	in	r18, 0x18	; 24
+  78:	80 91 66 00 	lds	r24, 0x0066
+  7c:	90 91 67 00 	lds	r25, 0x0067
+  80:	28 2b       	or	r18, r24
+  82:	28 bb       	out	0x18, r18	; 24
+		
+		OCR0A = brightness; // Set the timer interrupt to the desired brightness.
+		
+		counter = 0;
+	}*/
+}
+  84:	9f 91       	pop	r25
+  86:	8f 91       	pop	r24
+  88:	2f 91       	pop	r18
+  8a:	0f 90       	pop	r0
+  8c:	0f be       	out	0x3f, r0	; 63
+  8e:	0f 90       	pop	r0
+  90:	1f 90       	pop	r1
+  92:	18 95       	reti
+
+00000094 <__vector_10>:
+
+ISR(SIG_OUTPUT_COMPARE0A)
+{
+  94:	1f 92       	push	r1
+  96:	0f 92       	push	r0
+  98:	0f b6       	in	r0, 0x3f	; 63
+  9a:	0f 92       	push	r0
+  9c:	11 24       	eor	r1, r1
+  9e:	2f 93       	push	r18
+  a0:	8f 93       	push	r24
+  a2:	9f 93       	push	r25
+	// When the pulse timer hits the brightness value.
+	PORTB &= ~pulseLED; // Shut off the LED.
+  a4:	28 b3       	in	r18, 0x18	; 24
+  a6:	80 91 66 00 	lds	r24, 0x0066
+  aa:	90 91 67 00 	lds	r25, 0x0067
+  ae:	80 95       	com	r24
+  b0:	82 23       	and	r24, r18
+  b2:	88 bb       	out	0x18, r24	; 24
+}
+  b4:	9f 91       	pop	r25
+  b6:	8f 91       	pop	r24
+  b8:	2f 91       	pop	r18
+  ba:	0f 90       	pop	r0
+  bc:	0f be       	out	0x3f, r0	; 63
+  be:	0f 90       	pop	r0
+  c0:	1f 90       	pop	r1
+  c2:	18 95       	reti
+
+000000c4 <main>:
+
+
+
+
+int main(void)
+{
+  c4:	1f 93       	push	r17
+  c6:	cf 93       	push	r28
+  c8:	df 93       	push	r29
+  ca:	8a e0       	ldi	r24, 0x0A	; 10
+  cc:	90 e0       	ldi	r25, 0x00	; 0
+  ce:	2a ef       	ldi	r18, 0xFA	; 250
+  d0:	30 e0       	ldi	r19, 0x00	; 0
+  d2:	f9 01       	movw	r30, r18
+  d4:	31 97       	sbiw	r30, 0x01	; 1
+  d6:	f1 f7       	brne	.-4      	; 0xd4 <main+0x10>
+void delay_ms(unsigned int ms)
+{
+	// Apparently this makes the delay cheaper? (Yeah, I dunno either.)
+    while(ms){
+        _delay_ms(1);
+        ms--;
+  d8:	01 97       	sbiw	r24, 0x01	; 1
+
+
+void delay_ms(unsigned int ms)
+{
+	// Apparently this makes the delay cheaper? (Yeah, I dunno either.)
+    while(ms){
+  da:	d9 f7       	brne	.-10     	; 0xd2 <main+0xe>
+
+int main(void)
+{
+	delay_ms(10); // Let the power stabilize.
+	
+	cli(); // Disable interrupts.
+  dc:	f8 94       	cli
+	
+	DDRB = (1<<LED1)|(1<<LED2)|(1<<LED3)|(1<<LED4); // Enable the LED ports.
+  de:	87 e1       	ldi	r24, 0x17	; 23
+  e0:	87 bb       	out	0x17, r24	; 23
+	PORTB = (1<<LED1)|(1<<LED2)|(1<<LED3)|(1<<LED4);
+  e2:	88 bb       	out	0x18, r24	; 24
+	
+	// Set up the pulse timer.
+	TCCR0B = (1<<CS00); // Enable tim0 with clk/1024 prescale.
+  e4:	81 e0       	ldi	r24, 0x01	; 1
+  e6:	83 bf       	out	0x33, r24	; 51
+	OCR0A = brightness; // Set the timer interrupt to the desired brightness.
+  e8:	80 91 60 00 	lds	r24, 0x0060
+  ec:	90 91 61 00 	lds	r25, 0x0061
+  f0:	89 bd       	out	0x29, r24	; 41
+	
+	// Set dimmed led.
+	pulseLED = (1<<LED1);
+  f2:	81 e0       	ldi	r24, 0x01	; 1
+  f4:	90 e0       	ldi	r25, 0x00	; 0
+  f6:	90 93 67 00 	sts	0x0067, r25
+  fa:	80 93 66 00 	sts	0x0066, r24
+	
+	LEDPORT = 0;
+	delay_ms(2*LONGWAIT);
+	// End test patterns.	*/
+	
+	sei(); // Enable interrupts.
+  fe:	78 94       	sei
+ 100:	2a ef       	ldi	r18, 0xFA	; 250
+ 102:	30 e0       	ldi	r19, 0x00	; 0
+		{
+			delay_ms(20);
+			if(bit_is_set(PINB,PB3))
+			{
+				TIMSK |= (1<<OCIE0A)|(1<<TOIE0);
+				TCCR0B = (1<<CS00);
+ 104:	11 e0       	ldi	r17, 0x01	; 1
+			
+				pulseLED = (1<<LED1);
+ 106:	c1 e0       	ldi	r28, 0x01	; 1
+ 108:	d0 e0       	ldi	r29, 0x00	; 0
+				delay_ms(SHORTWAIT);
+				pulseLED = (1<<LED2);
+ 10a:	a2 e0       	ldi	r26, 0x02	; 2
+ 10c:	b0 e0       	ldi	r27, 0x00	; 0
+				delay_ms(SHORTWAIT);
+				pulseLED = (1<<LED3);
+ 10e:	64 e0       	ldi	r22, 0x04	; 4
+ 110:	70 e0       	ldi	r23, 0x00	; 0
+				delay_ms(SHORTWAIT);
+				pulseLED = (1<<LED4);
+ 112:	40 e1       	ldi	r20, 0x10	; 16
+ 114:	50 e0       	ldi	r21, 0x00	; 0
+	//PORTB |= (1<<PB4); // Turn on the IR LEDs.
+	
+	
+	while(1) // Main program loop.
+	{
+		if(bit_is_set(PINB,PB3))
+ 116:	b3 9b       	sbis	0x16, 3	; 22
+ 118:	39 c0       	rjmp	.+114    	; 0x18c <__stack+0xad>
+ 11a:	84 e1       	ldi	r24, 0x14	; 20
+ 11c:	90 e0       	ldi	r25, 0x00	; 0
+ 11e:	f9 01       	movw	r30, r18
+ 120:	31 97       	sbiw	r30, 0x01	; 1
+ 122:	f1 f7       	brne	.-4      	; 0x120 <__stack+0x41>
+void delay_ms(unsigned int ms)
+{
+	// Apparently this makes the delay cheaper? (Yeah, I dunno either.)
+    while(ms){
+        _delay_ms(1);
+        ms--;
+ 124:	01 97       	sbiw	r24, 0x01	; 1
+
+
+void delay_ms(unsigned int ms)
+{
+	// Apparently this makes the delay cheaper? (Yeah, I dunno either.)
+    while(ms){
+ 126:	d9 f7       	brne	.-10     	; 0x11e <__stack+0x3f>
+	while(1) // Main program loop.
+	{
+		if(bit_is_set(PINB,PB3))
+		{
+			delay_ms(20);
+			if(bit_is_set(PINB,PB3))
+ 128:	b3 9b       	sbis	0x16, 3	; 22
+ 12a:	30 c0       	rjmp	.+96     	; 0x18c <__stack+0xad>
+			{
+				TIMSK |= (1<<OCIE0A)|(1<<TOIE0);
+ 12c:	89 b7       	in	r24, 0x39	; 57
+ 12e:	82 61       	ori	r24, 0x12	; 18
+ 130:	89 bf       	out	0x39, r24	; 57
+				TCCR0B = (1<<CS00);
+ 132:	13 bf       	out	0x33, r17	; 51
+			
+				pulseLED = (1<<LED1);
+ 134:	d0 93 67 00 	sts	0x0067, r29
+ 138:	c0 93 66 00 	sts	0x0066, r28
+ 13c:	8b e4       	ldi	r24, 0x4B	; 75
+ 13e:	90 e0       	ldi	r25, 0x00	; 0
+ 140:	f9 01       	movw	r30, r18
+ 142:	31 97       	sbiw	r30, 0x01	; 1
+ 144:	f1 f7       	brne	.-4      	; 0x142 <__stack+0x63>
+void delay_ms(unsigned int ms)
+{
+	// Apparently this makes the delay cheaper? (Yeah, I dunno either.)
+    while(ms){
+        _delay_ms(1);
+        ms--;
+ 146:	01 97       	sbiw	r24, 0x01	; 1
+
+
+void delay_ms(unsigned int ms)
+{
+	// Apparently this makes the delay cheaper? (Yeah, I dunno either.)
+    while(ms){
+ 148:	d9 f7       	brne	.-10     	; 0x140 <__stack+0x61>
+				TIMSK |= (1<<OCIE0A)|(1<<TOIE0);
+				TCCR0B = (1<<CS00);
+			
+				pulseLED = (1<<LED1);
+				delay_ms(SHORTWAIT);
+				pulseLED = (1<<LED2);
+ 14a:	b0 93 67 00 	sts	0x0067, r27
+ 14e:	a0 93 66 00 	sts	0x0066, r26
+ 152:	8b e4       	ldi	r24, 0x4B	; 75
+ 154:	90 e0       	ldi	r25, 0x00	; 0
+ 156:	f9 01       	movw	r30, r18
+ 158:	31 97       	sbiw	r30, 0x01	; 1
+ 15a:	f1 f7       	brne	.-4      	; 0x158 <__stack+0x79>
+void delay_ms(unsigned int ms)
+{
+	// Apparently this makes the delay cheaper? (Yeah, I dunno either.)
+    while(ms){
+        _delay_ms(1);
+        ms--;
+ 15c:	01 97       	sbiw	r24, 0x01	; 1
+
+
+void delay_ms(unsigned int ms)
+{
+	// Apparently this makes the delay cheaper? (Yeah, I dunno either.)
+    while(ms){
+ 15e:	d9 f7       	brne	.-10     	; 0x156 <__stack+0x77>
+			
+				pulseLED = (1<<LED1);
+				delay_ms(SHORTWAIT);
+				pulseLED = (1<<LED2);
+				delay_ms(SHORTWAIT);
+				pulseLED = (1<<LED3);
+ 160:	70 93 67 00 	sts	0x0067, r23
+ 164:	60 93 66 00 	sts	0x0066, r22
+ 168:	8b e4       	ldi	r24, 0x4B	; 75
+ 16a:	90 e0       	ldi	r25, 0x00	; 0
+ 16c:	f9 01       	movw	r30, r18
+ 16e:	31 97       	sbiw	r30, 0x01	; 1
+ 170:	f1 f7       	brne	.-4      	; 0x16e <__stack+0x8f>
+void delay_ms(unsigned int ms)
+{
+	// Apparently this makes the delay cheaper? (Yeah, I dunno either.)
+    while(ms){
+        _delay_ms(1);
+        ms--;
+ 172:	01 97       	sbiw	r24, 0x01	; 1
+
+
+void delay_ms(unsigned int ms)
+{
+	// Apparently this makes the delay cheaper? (Yeah, I dunno either.)
+    while(ms){
+ 174:	d9 f7       	brne	.-10     	; 0x16c <__stack+0x8d>
+				delay_ms(SHORTWAIT);
+				pulseLED = (1<<LED2);
+				delay_ms(SHORTWAIT);
+				pulseLED = (1<<LED3);
+				delay_ms(SHORTWAIT);
+				pulseLED = (1<<LED4);
+ 176:	50 93 67 00 	sts	0x0067, r21
+ 17a:	40 93 66 00 	sts	0x0066, r20
+ 17e:	8b e4       	ldi	r24, 0x4B	; 75
+ 180:	90 e0       	ldi	r25, 0x00	; 0
+ 182:	f9 01       	movw	r30, r18
+ 184:	31 97       	sbiw	r30, 0x01	; 1
+ 186:	f1 f7       	brne	.-4      	; 0x184 <__stack+0xa5>
+void delay_ms(unsigned int ms)
+{
+	// Apparently this makes the delay cheaper? (Yeah, I dunno either.)
+    while(ms){
+        _delay_ms(1);
+        ms--;
+ 188:	01 97       	sbiw	r24, 0x01	; 1
+
+
+void delay_ms(unsigned int ms)
+{
+	// Apparently this makes the delay cheaper? (Yeah, I dunno either.)
+    while(ms){
+ 18a:	d9 f7       	brne	.-10     	; 0x182 <__stack+0xa3>
+				pulseLED = (1<<LED4);
+				delay_ms(SHORTWAIT);
+				
+			}
+		}
+		LEDPORT = 0;
+ 18c:	18 ba       	out	0x18, r1	; 24
+		
+		TIMSK &= ~((1<<OCIE0A)|(1<<TOIE0));
+ 18e:	89 b7       	in	r24, 0x39	; 57
+ 190:	8d 7e       	andi	r24, 0xED	; 237
+ 192:	89 bf       	out	0x39, r24	; 57
+		TCCR0B = 0;
+ 194:	13 be       	out	0x33, r1	; 51
+ 196:	8a e0       	ldi	r24, 0x0A	; 10
+ 198:	90 e0       	ldi	r25, 0x00	; 0
+ 19a:	f9 01       	movw	r30, r18
+ 19c:	31 97       	sbiw	r30, 0x01	; 1
+ 19e:	f1 f7       	brne	.-4      	; 0x19c <__stack+0xbd>
+void delay_ms(unsigned int ms)
+{
+	// Apparently this makes the delay cheaper? (Yeah, I dunno either.)
+    while(ms){
+        _delay_ms(1);
+        ms--;
+ 1a0:	01 97       	sbiw	r24, 0x01	; 1
+
+
+void delay_ms(unsigned int ms)
+{
+	// Apparently this makes the delay cheaper? (Yeah, I dunno either.)
+    while(ms){
+ 1a2:	d9 f7       	brne	.-10     	; 0x19a <__stack+0xbb>
+ 1a4:	b8 cf       	rjmp	.-144    	; 0x116 <__stack+0x37>
+
+000001a6 <_exit>:
+ 1a6:	f8 94       	cli
+
+000001a8 <__stop_program>:
+ 1a8:	ff cf       	rjmp	.-2      	; 0x1a8 <__stop_program>

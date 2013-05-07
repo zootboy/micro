@@ -1,0 +1,4 @@
+--cpu Cortex-M3 ".\obj\ledswitch.o" ".\obj\net_config.o" ".\obj\startup_lpc17xx.o" "C:\Keil\ARM\RV31\LIB\TCP_CM3.lib" ".\obj\emac_lpc17xx.o" ".\obj\glcd_spi_lpc1700.o" ".\obj\system_lpc17xx.o" --library_type=microlib --strict --scatter ".\Obj\LEDswitch.sct" 
+--autoat --summary_stderr --info summarysizes --map --xref --callgraph --symbols 
+--info sizes --info totals --info unused --info veneers 
+ --list ".\Lst\LEDswitch.map" -o ".\Obj\LEDswitch.axf"

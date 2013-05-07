@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?><?xml-stylesheet type='text/xsl' href='_UpgradeReport_Files/UpgradeReport.xslt'?><UpgradeLog>
+<Properties><Property Name="Solution" Value="LEDMixer">
+</Property><Property Name="Solution File" Value="C:\Data\micro\LUFA101122\Projects\LEDNotifier\LEDMixerApp\LEDMixer.sln">
+</Property><Property Name="Date" Value="Saturday, April 09, 2011">
+</Property><Property Name="Time" Value="19:47:34 PM">
+</Property></Properties><Event ErrorLevel="0" Project="LEDMixer" Source="LEDMixer.csproj" Description="Project file successfully backed up as C:\Data\micro\LUFA101122\Projects\LEDNotifier\LEDMixerApp\Backup\LEDMixer.csproj">
+</Event><Event ErrorLevel="0" Project="LEDMixer" Source="LEDMixer.cs" Description="File successfully backed up as C:\Data\micro\LUFA101122\Projects\LEDNotifier\LEDMixerApp\Backup\LEDMixer.cs">
+</Event><Event ErrorLevel="0" Project="LEDMixer" Source="LEDMixer.Designer.cs" Description="File successfully backed up as C:\Data\micro\LUFA101122\Projects\LEDNotifier\LEDMixerApp\Backup\LEDMixer.Designer.cs">
+</Event><Event ErrorLevel="0" Project="LEDMixer" Source="Program.cs" Description="File successfully backed up as C:\Data\micro\LUFA101122\Projects\LEDNotifier\LEDMixerApp\Backup\Program.cs">
+</Event><Event ErrorLevel="0" Project="LEDMixer" Source="Properties\AssemblyInfo.cs" Description="File successfully backed up as C:\Data\micro\LUFA101122\Projects\LEDNotifier\LEDMixerApp\Backup\Properties\AssemblyInfo.cs">
+</Event><Event ErrorLevel="0" Project="LEDMixer" Source="Properties\Resources.Designer.cs" Description="File successfully backed up as C:\Data\micro\LUFA101122\Projects\LEDNotifier\LEDMixerApp\Backup\Properties\Resources.Designer.cs">
+</Event><Event ErrorLevel="0" Project="LEDMixer" Source="Properties\Settings.Designer.cs" Description="File successfully backed up as C:\Data\micro\LUFA101122\Projects\LEDNotifier\LEDMixerApp\Backup\Properties\Settings.Designer.cs">
+</Event><Event ErrorLevel="0" Project="LEDMixer" Source="Properties\Settings.settings" Description="File successfully backed up as C:\Data\micro\LUFA101122\Projects\LEDNotifier\LEDMixerApp\Backup\Properties\Settings.settings">
+</Event><Event ErrorLevel="0" Project="LEDMixer" Source="LEDMixer.resx" Description="File successfully backed up as C:\Data\micro\LUFA101122\Projects\LEDNotifier\LEDMixerApp\Backup\LEDMixer.resx">
+</Event><Event ErrorLevel="0" Project="LEDMixer" Source="Properties\Resources.resx" Description="File successfully backed up as C:\Data\micro\LUFA101122\Projects\LEDNotifier\LEDMixerApp\Backup\Properties\Resources.resx">
+</Event><Event ErrorLevel="0" Project="LEDMixer" Source="LEDMixer.csproj" Description="Project converted successfully">
+</Event><Event ErrorLevel="3" Project="LEDMixer" Source="LEDMixer.csproj" Description="Converted">
+</Event><Event ErrorLevel="0" Project="LEDMixer" Source="LEDMixer.csproj" Description="Scan complete: Upgrade not required for project files.">
+</Event></UpgradeLog>

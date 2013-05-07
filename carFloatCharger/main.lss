@@ -1,0 +1,1417 @@
+
+main.elf:     file format elf32-avr
+
+Sections:
+Idx Name          Size      VMA       LMA       File off  Algn
+  0 .text         0000071a  00000000  00000000  00000094  2**1
+                  CONTENTS, ALLOC, LOAD, READONLY, CODE
+  1 .data         00000002  00800060  0000071a  000007ae  2**0
+                  CONTENTS, ALLOC, LOAD, DATA
+  2 .bss          00000009  00800062  00800062  000007b0  2**0
+                  ALLOC
+  3 .debug_aranges 00000040  00000000  00000000  000007b0  2**0
+                  CONTENTS, READONLY, DEBUGGING
+  4 .debug_pubnames 000000fa  00000000  00000000  000007f0  2**0
+                  CONTENTS, READONLY, DEBUGGING
+  5 .debug_info   0000076b  00000000  00000000  000008ea  2**0
+                  CONTENTS, READONLY, DEBUGGING
+  6 .debug_abbrev 000001ca  00000000  00000000  00001055  2**0
+                  CONTENTS, READONLY, DEBUGGING
+  7 .debug_line   000006c8  00000000  00000000  0000121f  2**0
+                  CONTENTS, READONLY, DEBUGGING
+  8 .debug_frame  000000a0  00000000  00000000  000018e8  2**2
+                  CONTENTS, READONLY, DEBUGGING
+  9 .debug_str    00000152  00000000  00000000  00001988  2**0
+                  CONTENTS, READONLY, DEBUGGING
+ 10 .debug_loc    0000031f  00000000  00000000  00001ada  2**0
+                  CONTENTS, READONLY, DEBUGGING
+ 11 .debug_ranges 00000060  00000000  00000000  00001df9  2**0
+                  CONTENTS, READONLY, DEBUGGING
+
+Disassembly of section .text:
+
+00000000 <__vectors>:
+   0:	10 c0       	rjmp	.+32     	; 0x22 <__ctors_end>
+   2:	2a c0       	rjmp	.+84     	; 0x58 <__bad_interrupt>
+   4:	29 c0       	rjmp	.+82     	; 0x58 <__bad_interrupt>
+   6:	28 c0       	rjmp	.+80     	; 0x58 <__bad_interrupt>
+   8:	27 c0       	rjmp	.+78     	; 0x58 <__bad_interrupt>
+   a:	26 c0       	rjmp	.+76     	; 0x58 <__bad_interrupt>
+   c:	25 c0       	rjmp	.+74     	; 0x58 <__bad_interrupt>
+   e:	24 c0       	rjmp	.+72     	; 0x58 <__bad_interrupt>
+  10:	23 c0       	rjmp	.+70     	; 0x58 <__bad_interrupt>
+  12:	22 c0       	rjmp	.+68     	; 0x58 <__bad_interrupt>
+  14:	21 c0       	rjmp	.+66     	; 0x58 <__bad_interrupt>
+  16:	20 c0       	rjmp	.+64     	; 0x58 <__bad_interrupt>
+  18:	1f c0       	rjmp	.+62     	; 0x58 <__bad_interrupt>
+  1a:	29 c0       	rjmp	.+82     	; 0x6e <__vector_13>
+  1c:	1d c0       	rjmp	.+58     	; 0x58 <__bad_interrupt>
+  1e:	1c c0       	rjmp	.+56     	; 0x58 <__bad_interrupt>
+  20:	1b c0       	rjmp	.+54     	; 0x58 <__bad_interrupt>
+
+00000022 <__ctors_end>:
+  22:	11 24       	eor	r1, r1
+  24:	1f be       	out	0x3f, r1	; 63
+  26:	cf e5       	ldi	r28, 0x5F	; 95
+  28:	d1 e0       	ldi	r29, 0x01	; 1
+  2a:	de bf       	out	0x3e, r29	; 62
+  2c:	cd bf       	out	0x3d, r28	; 61
+
+0000002e <__do_copy_data>:
+  2e:	10 e0       	ldi	r17, 0x00	; 0
+  30:	a0 e6       	ldi	r26, 0x60	; 96
+  32:	b0 e0       	ldi	r27, 0x00	; 0
+  34:	ea e1       	ldi	r30, 0x1A	; 26
+  36:	f7 e0       	ldi	r31, 0x07	; 7
+  38:	02 c0       	rjmp	.+4      	; 0x3e <.do_copy_data_start>
+
+0000003a <.do_copy_data_loop>:
+  3a:	05 90       	lpm	r0, Z+
+  3c:	0d 92       	st	X+, r0
+
+0000003e <.do_copy_data_start>:
+  3e:	a2 36       	cpi	r26, 0x62	; 98
+  40:	b1 07       	cpc	r27, r17
+  42:	d9 f7       	brne	.-10     	; 0x3a <.do_copy_data_loop>
+
+00000044 <__do_clear_bss>:
+  44:	10 e0       	ldi	r17, 0x00	; 0
+  46:	a2 e6       	ldi	r26, 0x62	; 98
+  48:	b0 e0       	ldi	r27, 0x00	; 0
+  4a:	01 c0       	rjmp	.+2      	; 0x4e <.do_clear_bss_start>
+
+0000004c <.do_clear_bss_loop>:
+  4c:	1d 92       	st	X+, r1
+
+0000004e <.do_clear_bss_start>:
+  4e:	ab 36       	cpi	r26, 0x6B	; 107
+  50:	b1 07       	cpc	r27, r17
+  52:	e1 f7       	brne	.-8      	; 0x4c <.do_clear_bss_loop>
+  54:	42 d0       	rcall	.+132    	; 0xda <main>
+  56:	5f c3       	rjmp	.+1726   	; 0x716 <_exit>
+
+00000058 <__bad_interrupt>:
+  58:	d3 cf       	rjmp	.-90     	; 0x0 <__vectors>
+
+0000005a <delay_ms>:
+    milliseconds can be achieved.
+ */
+void
+_delay_loop_2(uint16_t __count)
+{
+	__asm__ volatile (
+  5a:	2a ef       	ldi	r18, 0xFA	; 250
+  5c:	30 e0       	ldi	r19, 0x00	; 0
+  5e:	04 c0       	rjmp	.+8      	; 0x68 <delay_ms+0xe>
+  60:	f9 01       	movw	r30, r18
+  62:	31 97       	sbiw	r30, 0x01	; 1
+  64:	f1 f7       	brne	.-4      	; 0x62 <delay_ms+0x8>
+void delay_ms(uint16_t ms)
+{
+	// Apparently this makes the delay cheaper? (Yeah, I dunno either.)
+    while(ms){
+        _delay_ms(1);
+        ms--;
+  66:	01 97       	sbiw	r24, 0x01	; 1
+
+
+void delay_ms(uint16_t ms)
+{
+	// Apparently this makes the delay cheaper? (Yeah, I dunno either.)
+    while(ms){
+  68:	00 97       	sbiw	r24, 0x00	; 0
+  6a:	d1 f7       	brne	.-12     	; 0x60 <delay_ms+0x6>
+        _delay_ms(1);
+        ms--;
+    }
+}
+  6c:	08 95       	ret
+
+0000006e <__vector_13>:
+
+ISR(SIG_ADC) // ADC interrupt. Simply pulls the value and returns, letting the program process the data later.
+{
+  6e:	1f 92       	push	r1
+  70:	0f 92       	push	r0
+  72:	0f b6       	in	r0, 0x3f	; 63
+  74:	0f 92       	push	r0
+  76:	11 24       	eor	r1, r1
+  78:	2f 93       	push	r18
+  7a:	3f 93       	push	r19
+  7c:	8f 93       	push	r24
+  7e:	9f 93       	push	r25
+  80:	ef 93       	push	r30
+  82:	ff 93       	push	r31
+	//PORTB ^= (1<<PB0);
+	if(adcExpected == 1)
+  84:	80 91 62 00 	lds	r24, 0x0062
+  88:	81 30       	cpi	r24, 0x01	; 1
+  8a:	39 f4       	brne	.+14     	; 0x9a <__vector_13+0x2c>
+		result1 = ADC; 
+  8c:	84 b1       	in	r24, 0x04	; 4
+  8e:	95 b1       	in	r25, 0x05	; 5
+  90:	90 93 68 00 	sts	0x0068, r25
+  94:	80 93 67 00 	sts	0x0067, r24
+  98:	0a c0       	rjmp	.+20     	; 0xae <__vector_13+0x40>
+	else if(adcExpected == 2)
+  9a:	80 91 62 00 	lds	r24, 0x0062
+  9e:	82 30       	cpi	r24, 0x02	; 2
+  a0:	31 f4       	brne	.+12     	; 0xae <__vector_13+0x40>
+		result2 = ADC;
+  a2:	84 b1       	in	r24, 0x04	; 4
+  a4:	95 b1       	in	r25, 0x05	; 5
+  a6:	90 93 6a 00 	sts	0x006A, r25
+  aa:	80 93 69 00 	sts	0x0069, r24
+	
+	adcExpected = 0;
+  ae:	10 92 62 00 	sts	0x0062, r1
+  b2:	84 e6       	ldi	r24, 0x64	; 100
+  b4:	90 e0       	ldi	r25, 0x00	; 0
+  b6:	2a ef       	ldi	r18, 0xFA	; 250
+  b8:	30 e0       	ldi	r19, 0x00	; 0
+  ba:	f9 01       	movw	r30, r18
+  bc:	31 97       	sbiw	r30, 0x01	; 1
+  be:	f1 f7       	brne	.-4      	; 0xbc <__vector_13+0x4e>
+void delay_ms(uint16_t ms)
+{
+	// Apparently this makes the delay cheaper? (Yeah, I dunno either.)
+    while(ms){
+        _delay_ms(1);
+        ms--;
+  c0:	01 97       	sbiw	r24, 0x01	; 1
+
+
+void delay_ms(uint16_t ms)
+{
+	// Apparently this makes the delay cheaper? (Yeah, I dunno either.)
+    while(ms){
+  c2:	d9 f7       	brne	.-10     	; 0xba <__vector_13+0x4c>
+		result2 = ADC;
+	
+	adcExpected = 0;
+	delay_ms(100);
+	//PORTB ^= (1<<PB0);
+}
+  c4:	ff 91       	pop	r31
+  c6:	ef 91       	pop	r30
+  c8:	9f 91       	pop	r25
+  ca:	8f 91       	pop	r24
+  cc:	3f 91       	pop	r19
+  ce:	2f 91       	pop	r18
+  d0:	0f 90       	pop	r0
+  d2:	0f be       	out	0x3f, r0	; 63
+  d4:	0f 90       	pop	r0
+  d6:	1f 90       	pop	r1
+  d8:	18 95       	reti
+
+000000da <main>:
+	delay_ms(100);
+	PORTA ^= (1<<PA3);
+}*/
+
+int main(void)
+{
+  da:	ff 92       	push	r15
+  dc:	0f 93       	push	r16
+  de:	1f 93       	push	r17
+  e0:	cf 93       	push	r28
+  e2:	df 93       	push	r29
+  e4:	8a e0       	ldi	r24, 0x0A	; 10
+  e6:	90 e0       	ldi	r25, 0x00	; 0
+  e8:	2a ef       	ldi	r18, 0xFA	; 250
+  ea:	30 e0       	ldi	r19, 0x00	; 0
+  ec:	f9 01       	movw	r30, r18
+  ee:	31 97       	sbiw	r30, 0x01	; 1
+  f0:	f1 f7       	brne	.-4      	; 0xee <main+0x14>
+void delay_ms(uint16_t ms)
+{
+	// Apparently this makes the delay cheaper? (Yeah, I dunno either.)
+    while(ms){
+        _delay_ms(1);
+        ms--;
+  f2:	01 97       	sbiw	r24, 0x01	; 1
+
+
+void delay_ms(uint16_t ms)
+{
+	// Apparently this makes the delay cheaper? (Yeah, I dunno either.)
+    while(ms){
+  f4:	d9 f7       	brne	.-10     	; 0xec <main+0x12>
+
+int main(void)
+{
+	delay_ms(10); // Let the power stabilize.
+	
+	cli(); // Disable interrupts.
+  f6:	f8 94       	cli
+		
+	// Initialize the ADC.
+	// Note that an interrupt is generated when the ADC finishes.
+	// This interrupt is handled in main.c, not analog.c.
+	adcOn();
+  f8:	4a d1       	rcall	.+660    	; 0x38e <adcOn>
+	
+	// Initialize the LEDs and relay, then run test patterns.
+	DDRA = (1<<PA2)|(1<<PA3); // Chg, fault.
+  fa:	8c e0       	ldi	r24, 0x0C	; 12
+  fc:	8a bb       	out	0x1a, r24	; 26
+	DDRB = (1<<PB0)|(1<<PB2); // Pwr, relay.
+  fe:	85 e0       	ldi	r24, 0x05	; 5
+ 100:	87 bb       	out	0x17, r24	; 23
+
+	PORTA |= (1<<PA2)|(1<<PA3);
+ 102:	8b b3       	in	r24, 0x1b	; 27
+ 104:	8c 60       	ori	r24, 0x0C	; 12
+ 106:	8b bb       	out	0x1b, r24	; 27
+	PORTB |= (1<<PB0); 
+ 108:	c0 9a       	sbi	0x18, 0	; 24
+ 10a:	80 e9       	ldi	r24, 0x90	; 144
+ 10c:	91 e0       	ldi	r25, 0x01	; 1
+ 10e:	2a ef       	ldi	r18, 0xFA	; 250
+ 110:	30 e0       	ldi	r19, 0x00	; 0
+ 112:	f9 01       	movw	r30, r18
+ 114:	31 97       	sbiw	r30, 0x01	; 1
+ 116:	f1 f7       	brne	.-4      	; 0x114 <main+0x3a>
+void delay_ms(uint16_t ms)
+{
+	// Apparently this makes the delay cheaper? (Yeah, I dunno either.)
+    while(ms){
+        _delay_ms(1);
+        ms--;
+ 118:	01 97       	sbiw	r24, 0x01	; 1
+
+
+void delay_ms(uint16_t ms)
+{
+	// Apparently this makes the delay cheaper? (Yeah, I dunno either.)
+    while(ms){
+ 11a:	d9 f7       	brne	.-10     	; 0x112 <main+0x38>
+	DDRB = (1<<PB0)|(1<<PB2); // Pwr, relay.
+
+	PORTA |= (1<<PA2)|(1<<PA3);
+	PORTB |= (1<<PB0); 
+	delay_ms(400); // All 3 lights on.	
+	PORTA &= ~((1<<PA2)|(1<<PA3));
+ 11c:	8b b3       	in	r24, 0x1b	; 27
+ 11e:	83 7f       	andi	r24, 0xF3	; 243
+ 120:	8b bb       	out	0x1b, r24	; 27
+	PORTB |= (1<<PB2);
+ 122:	c2 9a       	sbi	0x18, 2	; 24
+ 124:	88 ec       	ldi	r24, 0xC8	; 200
+ 126:	90 e0       	ldi	r25, 0x00	; 0
+ 128:	2a ef       	ldi	r18, 0xFA	; 250
+ 12a:	30 e0       	ldi	r19, 0x00	; 0
+ 12c:	f9 01       	movw	r30, r18
+ 12e:	31 97       	sbiw	r30, 0x01	; 1
+ 130:	f1 f7       	brne	.-4      	; 0x12e <main+0x54>
+void delay_ms(uint16_t ms)
+{
+	// Apparently this makes the delay cheaper? (Yeah, I dunno either.)
+    while(ms){
+        _delay_ms(1);
+        ms--;
+ 132:	01 97       	sbiw	r24, 0x01	; 1
+
+
+void delay_ms(uint16_t ms)
+{
+	// Apparently this makes the delay cheaper? (Yeah, I dunno either.)
+    while(ms){
+ 134:	d9 f7       	brne	.-10     	; 0x12c <main+0x52>
+	PORTB |= (1<<PB0); 
+	delay_ms(400); // All 3 lights on.	
+	PORTA &= ~((1<<PA2)|(1<<PA3));
+	PORTB |= (1<<PB2);
+	delay_ms(200); // Pwr on, relay closed.	
+	PORTB &= ~(1<<PB2);
+ 136:	c2 98       	cbi	0x18, 2	; 24
+ 138:	88 ec       	ldi	r24, 0xC8	; 200
+ 13a:	90 e0       	ldi	r25, 0x00	; 0
+ 13c:	2a ef       	ldi	r18, 0xFA	; 250
+ 13e:	30 e0       	ldi	r19, 0x00	; 0
+ 140:	f9 01       	movw	r30, r18
+ 142:	31 97       	sbiw	r30, 0x01	; 1
+ 144:	f1 f7       	brne	.-4      	; 0x142 <main+0x68>
+void delay_ms(uint16_t ms)
+{
+	// Apparently this makes the delay cheaper? (Yeah, I dunno either.)
+    while(ms){
+        _delay_ms(1);
+        ms--;
+ 146:	01 97       	sbiw	r24, 0x01	; 1
+
+
+void delay_ms(uint16_t ms)
+{
+	// Apparently this makes the delay cheaper? (Yeah, I dunno either.)
+    while(ms){
+ 148:	d9 f7       	brne	.-10     	; 0x140 <main+0x66>
+	PORTA &= ~((1<<PA2)|(1<<PA3));
+	PORTB |= (1<<PB2);
+	delay_ms(200); // Pwr on, relay closed.	
+	PORTB &= ~(1<<PB2);
+	delay_ms(200); // Pwr on, relay open.	
+	PORTB &= ~(1<<PB0);
+ 14a:	c0 98       	cbi	0x18, 0	; 24
+	PORTB |= (1<<PB2);
+ 14c:	c2 9a       	sbi	0x18, 2	; 24
+	PORTA |= (1<<PA2);
+ 14e:	da 9a       	sbi	0x1b, 2	; 27
+ 150:	88 ec       	ldi	r24, 0xC8	; 200
+ 152:	90 e0       	ldi	r25, 0x00	; 0
+ 154:	2a ef       	ldi	r18, 0xFA	; 250
+ 156:	30 e0       	ldi	r19, 0x00	; 0
+ 158:	f9 01       	movw	r30, r18
+ 15a:	31 97       	sbiw	r30, 0x01	; 1
+ 15c:	f1 f7       	brne	.-4      	; 0x15a <main+0x80>
+void delay_ms(uint16_t ms)
+{
+	// Apparently this makes the delay cheaper? (Yeah, I dunno either.)
+    while(ms){
+        _delay_ms(1);
+        ms--;
+ 15e:	01 97       	sbiw	r24, 0x01	; 1
+
+
+void delay_ms(uint16_t ms)
+{
+	// Apparently this makes the delay cheaper? (Yeah, I dunno either.)
+    while(ms){
+ 160:	d9 f7       	brne	.-10     	; 0x158 <main+0x7e>
+	delay_ms(200); // Pwr on, relay open.	
+	PORTB &= ~(1<<PB0);
+	PORTB |= (1<<PB2);
+	PORTA |= (1<<PA2);
+	delay_ms(200); // Chg on, relay closed.
+	PORTB &= ~(1<<PB2);
+ 162:	c2 98       	cbi	0x18, 2	; 24
+ 164:	88 ec       	ldi	r24, 0xC8	; 200
+ 166:	90 e0       	ldi	r25, 0x00	; 0
+ 168:	2a ef       	ldi	r18, 0xFA	; 250
+ 16a:	30 e0       	ldi	r19, 0x00	; 0
+ 16c:	f9 01       	movw	r30, r18
+ 16e:	31 97       	sbiw	r30, 0x01	; 1
+ 170:	f1 f7       	brne	.-4      	; 0x16e <__stack+0xf>
+void delay_ms(uint16_t ms)
+{
+	// Apparently this makes the delay cheaper? (Yeah, I dunno either.)
+    while(ms){
+        _delay_ms(1);
+        ms--;
+ 172:	01 97       	sbiw	r24, 0x01	; 1
+
+
+void delay_ms(uint16_t ms)
+{
+	// Apparently this makes the delay cheaper? (Yeah, I dunno either.)
+    while(ms){
+ 174:	d9 f7       	brne	.-10     	; 0x16c <__stack+0xd>
+	PORTB |= (1<<PB2);
+	PORTA |= (1<<PA2);
+	delay_ms(200); // Chg on, relay closed.
+	PORTB &= ~(1<<PB2);
+	delay_ms(200); // Chg on, relay open.
+	PORTA &= ~(1<<PA2);
+ 176:	da 98       	cbi	0x1b, 2	; 27
+	PORTA |= (1<<PA3);
+ 178:	db 9a       	sbi	0x1b, 3	; 27
+	PORTB |= (1<<PB2);
+ 17a:	c2 9a       	sbi	0x18, 2	; 24
+ 17c:	88 ec       	ldi	r24, 0xC8	; 200
+ 17e:	90 e0       	ldi	r25, 0x00	; 0
+ 180:	2a ef       	ldi	r18, 0xFA	; 250
+ 182:	30 e0       	ldi	r19, 0x00	; 0
+ 184:	f9 01       	movw	r30, r18
+ 186:	31 97       	sbiw	r30, 0x01	; 1
+ 188:	f1 f7       	brne	.-4      	; 0x186 <__stack+0x27>
+void delay_ms(uint16_t ms)
+{
+	// Apparently this makes the delay cheaper? (Yeah, I dunno either.)
+    while(ms){
+        _delay_ms(1);
+        ms--;
+ 18a:	01 97       	sbiw	r24, 0x01	; 1
+
+
+void delay_ms(uint16_t ms)
+{
+	// Apparently this makes the delay cheaper? (Yeah, I dunno either.)
+    while(ms){
+ 18c:	d9 f7       	brne	.-10     	; 0x184 <__stack+0x25>
+	delay_ms(200); // Chg on, relay open.
+	PORTA &= ~(1<<PA2);
+	PORTA |= (1<<PA3);
+	PORTB |= (1<<PB2);
+	delay_ms(200); // Fault on, relay closed.
+	PORTB &= ~(1<<PB2);
+ 18e:	c2 98       	cbi	0x18, 2	; 24
+ 190:	88 ec       	ldi	r24, 0xC8	; 200
+ 192:	90 e0       	ldi	r25, 0x00	; 0
+ 194:	2a ef       	ldi	r18, 0xFA	; 250
+ 196:	30 e0       	ldi	r19, 0x00	; 0
+ 198:	f9 01       	movw	r30, r18
+ 19a:	31 97       	sbiw	r30, 0x01	; 1
+ 19c:	f1 f7       	brne	.-4      	; 0x19a <__stack+0x3b>
+void delay_ms(uint16_t ms)
+{
+	// Apparently this makes the delay cheaper? (Yeah, I dunno either.)
+    while(ms){
+        _delay_ms(1);
+        ms--;
+ 19e:	01 97       	sbiw	r24, 0x01	; 1
+
+
+void delay_ms(uint16_t ms)
+{
+	// Apparently this makes the delay cheaper? (Yeah, I dunno either.)
+    while(ms){
+ 1a0:	d9 f7       	brne	.-10     	; 0x198 <__stack+0x39>
+	PORTA |= (1<<PA3);
+	PORTB |= (1<<PB2);
+	delay_ms(200); // Fault on, relay closed.
+	PORTB &= ~(1<<PB2);
+	delay_ms(200); // Fault on, relay open.
+	PORTA &= ~(1<<PA3); // Fault off. 
+ 1a2:	db 98       	cbi	0x1b, 3	; 27
+	PORTB |= (1<<PB0); // Power on.
+ 1a4:	c0 9a       	sbi	0x18, 0	; 24
+	//TCCR1B = (1<<CS12);
+	//TIMSK1 |= (1<<TOIE1); // Enable overflow interrupt.
+
+	
+	// Enable interrupts.
+	sei();
+ 1a6:	78 94       	sei
+ 1a8:	82 e3       	ldi	r24, 0x32	; 50
+ 1aa:	90 e0       	ldi	r25, 0x00	; 0
+ 1ac:	2a ef       	ldi	r18, 0xFA	; 250
+ 1ae:	30 e0       	ldi	r19, 0x00	; 0
+ 1b0:	f9 01       	movw	r30, r18
+ 1b2:	31 97       	sbiw	r30, 0x01	; 1
+ 1b4:	f1 f7       	brne	.-4      	; 0x1b2 <__stack+0x53>
+void delay_ms(uint16_t ms)
+{
+	// Apparently this makes the delay cheaper? (Yeah, I dunno either.)
+    while(ms){
+        _delay_ms(1);
+        ms--;
+ 1b6:	01 97       	sbiw	r24, 0x01	; 1
+
+
+void delay_ms(uint16_t ms)
+{
+	// Apparently this makes the delay cheaper? (Yeah, I dunno either.)
+    while(ms){
+ 1b8:	d9 f7       	brne	.-10     	; 0x1b0 <__stack+0x51>
+	sei();
+	
+	delay_ms(50);
+	
+	// Get some initial reads.
+	adcExpected = 1;
+ 1ba:	81 e0       	ldi	r24, 0x01	; 1
+ 1bc:	80 93 62 00 	sts	0x0062, r24
+	startConvert(0);
+ 1c0:	80 e0       	ldi	r24, 0x00	; 0
+ 1c2:	15 d1       	rcall	.+554    	; 0x3ee <startConvert>
+	while(adcExpected);
+ 1c4:	80 91 62 00 	lds	r24, 0x0062
+ 1c8:	88 23       	and	r24, r24
+ 1ca:	e1 f7       	brne	.-8      	; 0x1c4 <__stack+0x65>
+	adcExpected = 2;
+ 1cc:	82 e0       	ldi	r24, 0x02	; 2
+ 1ce:	80 93 62 00 	sts	0x0062, r24
+	startConvert(1);
+ 1d2:	81 e0       	ldi	r24, 0x01	; 1
+ 1d4:	0c d1       	rcall	.+536    	; 0x3ee <startConvert>
+	while(adcExpected);
+ 1d6:	80 91 62 00 	lds	r24, 0x0062
+ 1da:	88 23       	and	r24, r24
+ 1dc:	e1 f7       	brne	.-8      	; 0x1d6 <__stack+0x77>
+	newData = 1;
+ 1de:	81 e0       	ldi	r24, 0x01	; 1
+ 1e0:	80 93 63 00 	sts	0x0063, r24
+ 1e4:	82 e3       	ldi	r24, 0x32	; 50
+ 1e6:	90 e0       	ldi	r25, 0x00	; 0
+ 1e8:	2a ef       	ldi	r18, 0xFA	; 250
+ 1ea:	30 e0       	ldi	r19, 0x00	; 0
+ 1ec:	f9 01       	movw	r30, r18
+ 1ee:	31 97       	sbiw	r30, 0x01	; 1
+ 1f0:	f1 f7       	brne	.-4      	; 0x1ee <__stack+0x8f>
+void delay_ms(uint16_t ms)
+{
+	// Apparently this makes the delay cheaper? (Yeah, I dunno either.)
+    while(ms){
+        _delay_ms(1);
+        ms--;
+ 1f2:	01 97       	sbiw	r24, 0x01	; 1
+
+
+void delay_ms(uint16_t ms)
+{
+	// Apparently this makes the delay cheaper? (Yeah, I dunno either.)
+    while(ms){
+ 1f4:	d9 f7       	brne	.-10     	; 0x1ec <__stack+0x8d>
+					sleep_cpu(); // And nappy time. Wake up only on power cycle / external reset.	
+				}
+			}
+			else if(voltageOut < 100) // If there's less than 10v on the output, there's probably no battery attached.
+			{
+				faultBlink = 1;
+ 1f6:	11 e0       	ldi	r17, 0x01	; 1
+ 1f8:	ca ef       	ldi	r28, 0xFA	; 250
+ 1fa:	d0 e0       	ldi	r29, 0x00	; 0
+			goodCount = 0; // Reset the good count. If it was a false alarm (very possible), the next ADC run will
+		}				  // catch it and start up charging again. There's no good way to check charge while charging...
+		
+		delay_ms(500); // Keep everything at a good pace and let the voltages stablize before doing more readings.
+		
+		if(faultBlink) PORTA ^= (1<<PA3); // Fault LED toggle.
+ 1fc:	88 e0       	ldi	r24, 0x08	; 8
+ 1fe:	f8 2e       	mov	r15, r24
+		
+		// And run another round of ADC.
+		adcExpected = 1;
+		startConvert(0);
+		while(adcExpected);
+		adcExpected = 2;
+ 200:	02 e0       	ldi	r16, 0x02	; 2
+	
+
+	while(1) // Main loop.
+	{
+	
+		if(newData)
+ 202:	80 91 63 00 	lds	r24, 0x0063
+ 206:	88 23       	and	r24, r24
+ 208:	09 f4       	brne	.+2      	; 0x20c <__stack+0xad>
+ 20a:	91 c0       	rjmp	.+290    	; 0x32e <__stack+0x1cf>
+		{
+			// Get the actual voltage values.
+			voltageIn  = analog2v1(result1);
+ 20c:	80 91 67 00 	lds	r24, 0x0067
+ 210:	90 91 68 00 	lds	r25, 0x0068
+ 214:	c6 d0       	rcall	.+396    	; 0x3a2 <analog2v1>
+ 216:	80 93 60 00 	sts	0x0060, r24
+			voltageOut = analog2v2(result2);
+ 21a:	80 91 69 00 	lds	r24, 0x0069
+ 21e:	90 91 6a 00 	lds	r25, 0x006A
+ 222:	d2 d0       	rcall	.+420    	; 0x3c8 <analog2v2>
+ 224:	80 93 61 00 	sts	0x0061, r24
+			faultBlink = 0; // If there's still a fault, we'll keep blinking.
+ 228:	10 92 66 00 	sts	0x0066, r1
+			
+			if(voltageIn < 124) // If the input voltage is too low, we must stop consuming power.
+ 22c:	80 91 60 00 	lds	r24, 0x0060
+ 230:	8c 37       	cpi	r24, 0x7C	; 124
+ 232:	a0 f5       	brcc	.+104    	; 0x29c <__stack+0x13d>
+			{
+				PORTB &= ~(1<<PB2); // Turn off the relay.
+ 234:	c2 98       	cbi	0x18, 2	; 24
+				PORTA &= ~(1<<PA2); // Turn off the chg LED.
+ 236:	da 98       	cbi	0x1b, 2	; 27
+ 238:	80 e1       	ldi	r24, 0x10	; 16
+ 23a:	97 e2       	ldi	r25, 0x27	; 39
+ 23c:	fe 01       	movw	r30, r28
+ 23e:	31 97       	sbiw	r30, 0x01	; 1
+ 240:	f1 f7       	brne	.-4      	; 0x23e <__stack+0xdf>
+void delay_ms(uint16_t ms)
+{
+	// Apparently this makes the delay cheaper? (Yeah, I dunno either.)
+    while(ms){
+        _delay_ms(1);
+        ms--;
+ 242:	01 97       	sbiw	r24, 0x01	; 1
+
+
+void delay_ms(uint16_t ms)
+{
+	// Apparently this makes the delay cheaper? (Yeah, I dunno either.)
+    while(ms){
+ 244:	d9 f7       	brne	.-10     	; 0x23c <__stack+0xdd>
+			{
+				PORTB &= ~(1<<PB2); // Turn off the relay.
+				PORTA &= ~(1<<PA2); // Turn off the chg LED.
+				delay_ms(10000); // Wait 10 seconds, this may just be that car starting...
+				// Check voltageIn again.
+				adcExpected = 1;
+ 246:	10 93 62 00 	sts	0x0062, r17
+				startConvert(0);
+ 24a:	80 e0       	ldi	r24, 0x00	; 0
+ 24c:	d0 d0       	rcall	.+416    	; 0x3ee <startConvert>
+				while(adcExpected);
+ 24e:	80 91 62 00 	lds	r24, 0x0062
+ 252:	88 23       	and	r24, r24
+ 254:	e1 f7       	brne	.-8      	; 0x24e <__stack+0xef>
+				voltageIn  = analog2v1(result1);
+ 256:	80 91 67 00 	lds	r24, 0x0067
+ 25a:	90 91 68 00 	lds	r25, 0x0068
+ 25e:	a1 d0       	rcall	.+322    	; 0x3a2 <analog2v1>
+ 260:	80 93 60 00 	sts	0x0060, r24
+				
+				if(voltageIn < 124) // And if we're still low, go ahead and shut down.
+ 264:	80 91 60 00 	lds	r24, 0x0060
+ 268:	8c 37       	cpi	r24, 0x7C	; 124
+ 26a:	08 f0       	brcs	.+2      	; 0x26e <__stack+0x10f>
+ 26c:	56 c0       	rjmp	.+172    	; 0x31a <__stack+0x1bb>
+				{
+					PORTA |= (1<<PA3); // Fault LED on.
+ 26e:	db 9a       	sbi	0x1b, 3	; 27
+ 270:	88 ee       	ldi	r24, 0xE8	; 232
+ 272:	93 e0       	ldi	r25, 0x03	; 3
+ 274:	fe 01       	movw	r30, r28
+ 276:	31 97       	sbiw	r30, 0x01	; 1
+ 278:	f1 f7       	brne	.-4      	; 0x276 <__stack+0x117>
+void delay_ms(uint16_t ms)
+{
+	// Apparently this makes the delay cheaper? (Yeah, I dunno either.)
+    while(ms){
+        _delay_ms(1);
+        ms--;
+ 27a:	01 97       	sbiw	r24, 0x01	; 1
+
+
+void delay_ms(uint16_t ms)
+{
+	// Apparently this makes the delay cheaper? (Yeah, I dunno either.)
+    while(ms){
+ 27c:	d9 f7       	brne	.-10     	; 0x274 <__stack+0x115>
+				
+				if(voltageIn < 124) // And if we're still low, go ahead and shut down.
+				{
+					PORTA |= (1<<PA3); // Fault LED on.
+					delay_ms(1000);
+					PORTA = 0;
+ 27e:	1b ba       	out	0x1b, r1	; 27
+					PORTB = 0;
+ 280:	18 ba       	out	0x18, r1	; 24
+					
+					// Sleep mode...
+					cli(); // Disable interrupts.
+ 282:	f8 94       	cli
+					adcOff(); // Shut down ADC.
+ 284:	8a d0       	rcall	.+276    	; 0x39a <adcOff>
+					DDRA = 0; DDRB = 0; // Set all ports to hi-Z.
+ 286:	1a ba       	out	0x1a, r1	; 26
+ 288:	17 ba       	out	0x17, r1	; 23
+					set_sleep_mode(SLEEP_MODE_PWR_DOWN); // Set sleep level to practically off.
+ 28a:	85 b7       	in	r24, 0x35	; 53
+ 28c:	87 7e       	andi	r24, 0xE7	; 231
+ 28e:	80 61       	ori	r24, 0x10	; 16
+ 290:	85 bf       	out	0x35, r24	; 53
+					sleep_enable(); // Duh.
+ 292:	85 b7       	in	r24, 0x35	; 53
+ 294:	80 62       	ori	r24, 0x20	; 32
+ 296:	85 bf       	out	0x35, r24	; 53
+					sleep_cpu(); // And nappy time. Wake up only on power cycle / external reset.	
+ 298:	88 95       	sleep
+ 29a:	3f c0       	rjmp	.+126    	; 0x31a <__stack+0x1bb>
+				}
+			}
+			else if(voltageOut < 100) // If there's less than 10v on the output, there's probably no battery attached.
+ 29c:	80 91 61 00 	lds	r24, 0x0061
+ 2a0:	84 36       	cpi	r24, 0x64	; 100
+ 2a2:	28 f4       	brcc	.+10     	; 0x2ae <__stack+0x14f>
+			{
+				faultBlink = 1;
+ 2a4:	10 93 66 00 	sts	0x0066, r17
+				PORTB &= ~(1<<PB2); // Turn off the relay.
+ 2a8:	c2 98       	cbi	0x18, 2	; 24
+				PORTA &= ~(1<<PA2); // Turn off the chg LED.
+ 2aa:	da 98       	cbi	0x1b, 2	; 27
+ 2ac:	36 c0       	rjmp	.+108    	; 0x31a <__stack+0x1bb>
+			}
+			else if(abs(voltageIn - voltageOut) > 10) // If the voltage difference between in and out is greater then 1v, don't charge.
+ 2ae:	80 91 60 00 	lds	r24, 0x0060
+ 2b2:	90 91 61 00 	lds	r25, 0x0061
+ 2b6:	28 2f       	mov	r18, r24
+ 2b8:	30 e0       	ldi	r19, 0x00	; 0
+ 2ba:	29 1b       	sub	r18, r25
+ 2bc:	31 09       	sbc	r19, r1
+ 2be:	37 ff       	sbrs	r19, 7
+ 2c0:	03 c0       	rjmp	.+6      	; 0x2c8 <__stack+0x169>
+ 2c2:	30 95       	com	r19
+ 2c4:	21 95       	neg	r18
+ 2c6:	3f 4f       	sbci	r19, 0xFF	; 255
+ 2c8:	2b 30       	cpi	r18, 0x0B	; 11
+ 2ca:	31 05       	cpc	r19, r1
+ 2cc:	44 f0       	brlt	.+16     	; 0x2de <__stack+0x17f>
+			{										  //  That's a recepie for blown traces.
+				PORTA |= (1<<PA3); // Fault light on.
+ 2ce:	db 9a       	sbi	0x1b, 3	; 27
+				PORTB &= ~(1<<PB2); // Turn off the relay.
+ 2d0:	c2 98       	cbi	0x18, 2	; 24
+				PORTA &= ~(1<<PA2); // Turn off the chg LED.
+ 2d2:	da 98       	cbi	0x1b, 2	; 27
+				goodCount = 0;
+ 2d4:	10 92 65 00 	sts	0x0065, r1
+ 2d8:	10 92 64 00 	sts	0x0064, r1
+ 2dc:	1e c0       	rjmp	.+60     	; 0x31a <__stack+0x1bb>
+				
+			}
+			else if(voltageOut > 128) // If the battery has been sufficently charged, prepare to stop charging it.
+ 2de:	80 91 61 00 	lds	r24, 0x0061
+ 2e2:	81 38       	cpi	r24, 0x81	; 129
+ 2e4:	50 f0       	brcs	.+20     	; 0x2fa <__stack+0x19b>
+			{
+				goodCount++;
+ 2e6:	80 91 64 00 	lds	r24, 0x0064
+ 2ea:	90 91 65 00 	lds	r25, 0x0065
+ 2ee:	01 96       	adiw	r24, 0x01	; 1
+ 2f0:	90 93 65 00 	sts	0x0065, r25
+ 2f4:	80 93 64 00 	sts	0x0064, r24
+ 2f8:	0e c0       	rjmp	.+28     	; 0x316 <__stack+0x1b7>
+				faultBlink = 0;
+			}
+			else if((voltageOut < 124) && (voltageIn > 124)) // If the battery needs charging and we have 
+ 2fa:	80 91 61 00 	lds	r24, 0x0061
+ 2fe:	8c 37       	cpi	r24, 0x7C	; 124
+ 300:	60 f4       	brcc	.+24     	; 0x31a <__stack+0x1bb>
+ 302:	80 91 60 00 	lds	r24, 0x0060
+ 306:	8d 37       	cpi	r24, 0x7D	; 125
+ 308:	40 f0       	brcs	.+16     	; 0x31a <__stack+0x1bb>
+			{												  // sufficent voltage to charge, begin charging.
+				PORTB |= (1<<PB2); // Turn on the relay.
+ 30a:	c2 9a       	sbi	0x18, 2	; 24
+				PORTA |= (1<<PA2); // Turn on the chg LED.
+ 30c:	da 9a       	sbi	0x1b, 2	; 27
+				goodCount = 0;
+ 30e:	10 92 65 00 	sts	0x0065, r1
+ 312:	10 92 64 00 	sts	0x0064, r1
+				faultBlink = 0;
+ 316:	10 92 66 00 	sts	0x0066, r1
+			}
+			
+			
+			if(voltageOut < 128) goodCount = 0; // Reset the good count if we get a too-low voltage.
+ 31a:	80 91 61 00 	lds	r24, 0x0061
+ 31e:	87 fd       	sbrc	r24, 7
+ 320:	04 c0       	rjmp	.+8      	; 0x32a <__stack+0x1cb>
+ 322:	10 92 65 00 	sts	0x0065, r1
+ 326:	10 92 64 00 	sts	0x0064, r1
+			
+			newData = 0; // We're done processing the new data.
+ 32a:	10 92 63 00 	sts	0x0063, r1
+		}
+		
+		if(goodCount > (120 * 5)) // If the battery reads good for over 5 minutes, disconnect it from the charge power.
+ 32e:	80 91 64 00 	lds	r24, 0x0064
+ 332:	90 91 65 00 	lds	r25, 0x0065
+ 336:	89 55       	subi	r24, 0x59	; 89
+ 338:	92 40       	sbci	r25, 0x02	; 2
+ 33a:	30 f0       	brcs	.+12     	; 0x348 <__stack+0x1e9>
+		{					
+			PORTB &= ~(1<<PB2); // Turn off the relay.
+ 33c:	c2 98       	cbi	0x18, 2	; 24
+			PORTA &= ~(1<<PA2); // Turn off the chg LED.
+ 33e:	da 98       	cbi	0x1b, 2	; 27
+			goodCount = 0; // Reset the good count. If it was a false alarm (very possible), the next ADC run will
+ 340:	10 92 65 00 	sts	0x0065, r1
+ 344:	10 92 64 00 	sts	0x0064, r1
+ 348:	84 ef       	ldi	r24, 0xF4	; 244
+ 34a:	91 e0       	ldi	r25, 0x01	; 1
+ 34c:	fe 01       	movw	r30, r28
+ 34e:	31 97       	sbiw	r30, 0x01	; 1
+ 350:	f1 f7       	brne	.-4      	; 0x34e <__stack+0x1ef>
+void delay_ms(uint16_t ms)
+{
+	// Apparently this makes the delay cheaper? (Yeah, I dunno either.)
+    while(ms){
+        _delay_ms(1);
+        ms--;
+ 352:	01 97       	sbiw	r24, 0x01	; 1
+
+
+void delay_ms(uint16_t ms)
+{
+	// Apparently this makes the delay cheaper? (Yeah, I dunno either.)
+    while(ms){
+ 354:	d9 f7       	brne	.-10     	; 0x34c <__stack+0x1ed>
+			goodCount = 0; // Reset the good count. If it was a false alarm (very possible), the next ADC run will
+		}				  // catch it and start up charging again. There's no good way to check charge while charging...
+		
+		delay_ms(500); // Keep everything at a good pace and let the voltages stablize before doing more readings.
+		
+		if(faultBlink) PORTA ^= (1<<PA3); // Fault LED toggle.
+ 356:	80 91 66 00 	lds	r24, 0x0066
+ 35a:	88 23       	and	r24, r24
+ 35c:	21 f0       	breq	.+8      	; 0x366 <__stack+0x207>
+ 35e:	8b b3       	in	r24, 0x1b	; 27
+ 360:	8f 25       	eor	r24, r15
+ 362:	8b bb       	out	0x1b, r24	; 27
+ 364:	01 c0       	rjmp	.+2      	; 0x368 <__stack+0x209>
+		else PORTA &= ~(1<<PA3); // If we're not blinking, make sure it's off.
+ 366:	db 98       	cbi	0x1b, 3	; 27
+		
+		// And run another round of ADC.
+		adcExpected = 1;
+ 368:	10 93 62 00 	sts	0x0062, r17
+		startConvert(0);
+ 36c:	80 e0       	ldi	r24, 0x00	; 0
+ 36e:	3f d0       	rcall	.+126    	; 0x3ee <startConvert>
+		while(adcExpected);
+ 370:	80 91 62 00 	lds	r24, 0x0062
+ 374:	88 23       	and	r24, r24
+ 376:	e1 f7       	brne	.-8      	; 0x370 <__stack+0x211>
+		adcExpected = 2;
+ 378:	00 93 62 00 	sts	0x0062, r16
+		startConvert(1);
+ 37c:	81 e0       	ldi	r24, 0x01	; 1
+ 37e:	37 d0       	rcall	.+110    	; 0x3ee <startConvert>
+		while(adcExpected);
+ 380:	80 91 62 00 	lds	r24, 0x0062
+ 384:	88 23       	and	r24, r24
+ 386:	e1 f7       	brne	.-8      	; 0x380 <__stack+0x221>
+		newData = 1;
+ 388:	10 93 63 00 	sts	0x0063, r17
+ 38c:	3a cf       	rjmp	.-396    	; 0x202 <__stack+0xa3>
+
+0000038e <adcOn>:
+void adcOn(void)
+{
+	// Set up the ADC and enable the interrupt.
+   
+	// Use Vcc as Vref.
+    ADMUX = 0x00;  
+ 38e:	17 b8       	out	0x07, r1	; 7
+	DIDR0 = (1<<ADC0D)|(1<<ADC1D); // Disable the digital circuitry on the ADC inputs.
+ 390:	83 e0       	ldi	r24, 0x03	; 3
+ 392:	81 b9       	out	0x01, r24	; 1
+  
+	// Enable the A/D Converter, set the prescaler div8 (125kHz), enable the interrupt.
+    ADCSRA=(1<<ADEN)|(1<<ADPS1)|(1<<ADPS0)|(1<<ADIE);
+ 394:	8b e8       	ldi	r24, 0x8B	; 139
+ 396:	86 b9       	out	0x06, r24	; 6
+
+
+}
+ 398:	08 95       	ret
+
+0000039a <adcOff>:
+
+void adcOff(void)
+{
+	ADCSRA &= ~((1<<ADEN)|(1<<ADIE)); 
+ 39a:	86 b1       	in	r24, 0x06	; 6
+ 39c:	87 77       	andi	r24, 0x77	; 119
+ 39e:	86 b9       	out	0x06, r24	; 6
+	// Shut off the ADC and disable the interrupt. 
+	// This lowers the power consumption of the uC.
+}
+ 3a0:	08 95       	ret
+
+000003a2 <analog2v1>:
+
+// convert adc reading to voltage (readout is multiplied by 10)
+uint8_t analog2v1(uint16_t aval)
+{
+ 3a2:	a0 e0       	ldi	r26, 0x00	; 0
+ 3a4:	b0 e0       	ldi	r27, 0x00	; 0
+ 3a6:	bc 01       	movw	r22, r24
+ 3a8:	cd 01       	movw	r24, r26
+ 3aa:	bc d0       	rcall	.+376    	; 0x524 <__floatunsisf>
+ 3ac:	2d e5       	ldi	r18, 0x5D	; 93
+ 3ae:	3c ed       	ldi	r19, 0xDC	; 220
+ 3b0:	46 e3       	ldi	r20, 0x36	; 54
+ 3b2:	5f e3       	ldi	r21, 0x3F	; 63
+ 3b4:	45 d1       	rcall	.+650    	; 0x640 <__mulsf3>
+ 3b6:	23 ea       	ldi	r18, 0xA3	; 163
+ 3b8:	33 e2       	ldi	r19, 0x23	; 35
+ 3ba:	49 ec       	ldi	r20, 0xC9	; 201
+ 3bc:	5f e3       	ldi	r21, 0x3F	; 63
+ 3be:	22 d0       	rcall	.+68     	; 0x404 <__addsf3>
+ 3c0:	85 d0       	rcall	.+266    	; 0x4cc <__fixunssfsi>
+ 3c2:	dc 01       	movw	r26, r24
+ 3c4:	cb 01       	movw	r24, r22
+	//                     1024
+	//
+	//return (uint8_t)(((double)aval * 1.2) - 73.6); // These numbers were generated by calibrating against two known voltage reads.
+	return (uint8_t)(((double)aval * (double)0.7143) + (double)1.5714);
+	//return((uint8_t)r);
+}
+ 3c6:	08 95       	ret
+
+000003c8 <analog2v2>:
+
+uint8_t analog2v2(uint16_t aval)
+{
+ 3c8:	a0 e0       	ldi	r26, 0x00	; 0
+ 3ca:	b0 e0       	ldi	r27, 0x00	; 0
+ 3cc:	bc 01       	movw	r22, r24
+ 3ce:	cd 01       	movw	r24, r26
+ 3d0:	a9 d0       	rcall	.+338    	; 0x524 <__floatunsisf>
+ 3d2:	2d e5       	ldi	r18, 0x5D	; 93
+ 3d4:	3c ed       	ldi	r19, 0xDC	; 220
+ 3d6:	46 e3       	ldi	r20, 0x36	; 54
+ 3d8:	5f e3       	ldi	r21, 0x3F	; 63
+ 3da:	32 d1       	rcall	.+612    	; 0x640 <__mulsf3>
+ 3dc:	23 ea       	ldi	r18, 0xA3	; 163
+ 3de:	33 e2       	ldi	r19, 0x23	; 35
+ 3e0:	49 ec       	ldi	r20, 0xC9	; 201
+ 3e2:	5f e3       	ldi	r21, 0x3F	; 63
+ 3e4:	0f d0       	rcall	.+30     	; 0x404 <__addsf3>
+ 3e6:	72 d0       	rcall	.+228    	; 0x4cc <__fixunssfsi>
+ 3e8:	dc 01       	movw	r26, r24
+ 3ea:	cb 01       	movw	r24, r22
+	return (uint8_t)(((double)aval * (double)0.7143) + (double)1.5714); // These numbers were generated by calibrating against two known voltage reads.
+}
+ 3ec:	08 95       	ret
+
+000003ee <startConvert>:
+
+// Start the ADC conversion. Results are handled by an interrupt in main.c.
+void startConvert(uint8_t channel) 
+{
+	// Set channel
+	ADMUX &= ~0x1F; // Clear out existing channel value.
+ 3ee:	97 b1       	in	r25, 0x07	; 7
+ 3f0:	90 7e       	andi	r25, 0xE0	; 224
+ 3f2:	97 b9       	out	0x07, r25	; 7
+	ADMUX |= (channel & 0x1F); // Fill in new channel.
+ 3f4:	97 b1       	in	r25, 0x07	; 7
+ 3f6:	8f 71       	andi	r24, 0x1F	; 31
+ 3f8:	89 2b       	or	r24, r25
+ 3fa:	87 b9       	out	0x07, r24	; 7
+	
+    //  start conversion 
+	if(bit_is_clear(ADCSRA,ADSC))
+ 3fc:	36 9b       	sbis	0x06, 6	; 6
+		ADCSRA |= (1<<ADSC); 
+ 3fe:	36 9a       	sbi	0x06, 6	; 6
+ 400:	08 95       	ret
+
+00000402 <__subsf3>:
+ 402:	50 58       	subi	r21, 0x80	; 128
+
+00000404 <__addsf3>:
+ 404:	bb 27       	eor	r27, r27
+ 406:	aa 27       	eor	r26, r26
+ 408:	0e d0       	rcall	.+28     	; 0x426 <__addsf3x>
+ 40a:	e0 c0       	rjmp	.+448    	; 0x5cc <__fp_round>
+ 40c:	d1 d0       	rcall	.+418    	; 0x5b0 <__fp_pscA>
+ 40e:	30 f0       	brcs	.+12     	; 0x41c <__addsf3+0x18>
+ 410:	d6 d0       	rcall	.+428    	; 0x5be <__fp_pscB>
+ 412:	20 f0       	brcs	.+8      	; 0x41c <__addsf3+0x18>
+ 414:	31 f4       	brne	.+12     	; 0x422 <__addsf3+0x1e>
+ 416:	9f 3f       	cpi	r25, 0xFF	; 255
+ 418:	11 f4       	brne	.+4      	; 0x41e <__addsf3+0x1a>
+ 41a:	1e f4       	brtc	.+6      	; 0x422 <__addsf3+0x1e>
+ 41c:	c6 c0       	rjmp	.+396    	; 0x5aa <__fp_nan>
+ 41e:	0e f4       	brtc	.+2      	; 0x422 <__addsf3+0x1e>
+ 420:	e0 95       	com	r30
+ 422:	e7 fb       	bst	r30, 7
+ 424:	bc c0       	rjmp	.+376    	; 0x59e <__fp_inf>
+
+00000426 <__addsf3x>:
+ 426:	e9 2f       	mov	r30, r25
+ 428:	e2 d0       	rcall	.+452    	; 0x5ee <__fp_split3>
+ 42a:	80 f3       	brcs	.-32     	; 0x40c <__addsf3+0x8>
+ 42c:	ba 17       	cp	r27, r26
+ 42e:	62 07       	cpc	r22, r18
+ 430:	73 07       	cpc	r23, r19
+ 432:	84 07       	cpc	r24, r20
+ 434:	95 07       	cpc	r25, r21
+ 436:	18 f0       	brcs	.+6      	; 0x43e <__addsf3x+0x18>
+ 438:	71 f4       	brne	.+28     	; 0x456 <__addsf3x+0x30>
+ 43a:	9e f5       	brtc	.+102    	; 0x4a2 <__addsf3x+0x7c>
+ 43c:	fa c0       	rjmp	.+500    	; 0x632 <__fp_zero>
+ 43e:	0e f4       	brtc	.+2      	; 0x442 <__addsf3x+0x1c>
+ 440:	e0 95       	com	r30
+ 442:	0b 2e       	mov	r0, r27
+ 444:	ba 2f       	mov	r27, r26
+ 446:	a0 2d       	mov	r26, r0
+ 448:	0b 01       	movw	r0, r22
+ 44a:	b9 01       	movw	r22, r18
+ 44c:	90 01       	movw	r18, r0
+ 44e:	0c 01       	movw	r0, r24
+ 450:	ca 01       	movw	r24, r20
+ 452:	a0 01       	movw	r20, r0
+ 454:	11 24       	eor	r1, r1
+ 456:	ff 27       	eor	r31, r31
+ 458:	59 1b       	sub	r21, r25
+ 45a:	99 f0       	breq	.+38     	; 0x482 <__addsf3x+0x5c>
+ 45c:	59 3f       	cpi	r21, 0xF9	; 249
+ 45e:	50 f4       	brcc	.+20     	; 0x474 <__addsf3x+0x4e>
+ 460:	50 3e       	cpi	r21, 0xE0	; 224
+ 462:	68 f1       	brcs	.+90     	; 0x4be <__addsf3x+0x98>
+ 464:	1a 16       	cp	r1, r26
+ 466:	f0 40       	sbci	r31, 0x00	; 0
+ 468:	a2 2f       	mov	r26, r18
+ 46a:	23 2f       	mov	r18, r19
+ 46c:	34 2f       	mov	r19, r20
+ 46e:	44 27       	eor	r20, r20
+ 470:	58 5f       	subi	r21, 0xF8	; 248
+ 472:	f3 cf       	rjmp	.-26     	; 0x45a <__addsf3x+0x34>
+ 474:	46 95       	lsr	r20
+ 476:	37 95       	ror	r19
+ 478:	27 95       	ror	r18
+ 47a:	a7 95       	ror	r26
+ 47c:	f0 40       	sbci	r31, 0x00	; 0
+ 47e:	53 95       	inc	r21
+ 480:	c9 f7       	brne	.-14     	; 0x474 <__addsf3x+0x4e>
+ 482:	7e f4       	brtc	.+30     	; 0x4a2 <__addsf3x+0x7c>
+ 484:	1f 16       	cp	r1, r31
+ 486:	ba 0b       	sbc	r27, r26
+ 488:	62 0b       	sbc	r22, r18
+ 48a:	73 0b       	sbc	r23, r19
+ 48c:	84 0b       	sbc	r24, r20
+ 48e:	ba f0       	brmi	.+46     	; 0x4be <__addsf3x+0x98>
+ 490:	91 50       	subi	r25, 0x01	; 1
+ 492:	a1 f0       	breq	.+40     	; 0x4bc <__addsf3x+0x96>
+ 494:	ff 0f       	add	r31, r31
+ 496:	bb 1f       	adc	r27, r27
+ 498:	66 1f       	adc	r22, r22
+ 49a:	77 1f       	adc	r23, r23
+ 49c:	88 1f       	adc	r24, r24
+ 49e:	c2 f7       	brpl	.-16     	; 0x490 <__addsf3x+0x6a>
+ 4a0:	0e c0       	rjmp	.+28     	; 0x4be <__addsf3x+0x98>
+ 4a2:	ba 0f       	add	r27, r26
+ 4a4:	62 1f       	adc	r22, r18
+ 4a6:	73 1f       	adc	r23, r19
+ 4a8:	84 1f       	adc	r24, r20
+ 4aa:	48 f4       	brcc	.+18     	; 0x4be <__addsf3x+0x98>
+ 4ac:	87 95       	ror	r24
+ 4ae:	77 95       	ror	r23
+ 4b0:	67 95       	ror	r22
+ 4b2:	b7 95       	ror	r27
+ 4b4:	f7 95       	ror	r31
+ 4b6:	9e 3f       	cpi	r25, 0xFE	; 254
+ 4b8:	08 f0       	brcs	.+2      	; 0x4bc <__addsf3x+0x96>
+ 4ba:	b3 cf       	rjmp	.-154    	; 0x422 <__addsf3+0x1e>
+ 4bc:	93 95       	inc	r25
+ 4be:	88 0f       	add	r24, r24
+ 4c0:	08 f0       	brcs	.+2      	; 0x4c4 <__addsf3x+0x9e>
+ 4c2:	99 27       	eor	r25, r25
+ 4c4:	ee 0f       	add	r30, r30
+ 4c6:	97 95       	ror	r25
+ 4c8:	87 95       	ror	r24
+ 4ca:	08 95       	ret
+
+000004cc <__fixunssfsi>:
+ 4cc:	98 d0       	rcall	.+304    	; 0x5fe <__fp_splitA>
+ 4ce:	88 f0       	brcs	.+34     	; 0x4f2 <__fixunssfsi+0x26>
+ 4d0:	9f 57       	subi	r25, 0x7F	; 127
+ 4d2:	90 f0       	brcs	.+36     	; 0x4f8 <__fixunssfsi+0x2c>
+ 4d4:	b9 2f       	mov	r27, r25
+ 4d6:	99 27       	eor	r25, r25
+ 4d8:	b7 51       	subi	r27, 0x17	; 23
+ 4da:	a0 f0       	brcs	.+40     	; 0x504 <__fixunssfsi+0x38>
+ 4dc:	d1 f0       	breq	.+52     	; 0x512 <__fixunssfsi+0x46>
+ 4de:	66 0f       	add	r22, r22
+ 4e0:	77 1f       	adc	r23, r23
+ 4e2:	88 1f       	adc	r24, r24
+ 4e4:	99 1f       	adc	r25, r25
+ 4e6:	1a f0       	brmi	.+6      	; 0x4ee <__fixunssfsi+0x22>
+ 4e8:	ba 95       	dec	r27
+ 4ea:	c9 f7       	brne	.-14     	; 0x4de <__fixunssfsi+0x12>
+ 4ec:	12 c0       	rjmp	.+36     	; 0x512 <__fixunssfsi+0x46>
+ 4ee:	b1 30       	cpi	r27, 0x01	; 1
+ 4f0:	81 f0       	breq	.+32     	; 0x512 <__fixunssfsi+0x46>
+ 4f2:	9f d0       	rcall	.+318    	; 0x632 <__fp_zero>
+ 4f4:	b1 e0       	ldi	r27, 0x01	; 1
+ 4f6:	08 95       	ret
+ 4f8:	9c c0       	rjmp	.+312    	; 0x632 <__fp_zero>
+ 4fa:	67 2f       	mov	r22, r23
+ 4fc:	78 2f       	mov	r23, r24
+ 4fe:	88 27       	eor	r24, r24
+ 500:	b8 5f       	subi	r27, 0xF8	; 248
+ 502:	39 f0       	breq	.+14     	; 0x512 <__fixunssfsi+0x46>
+ 504:	b9 3f       	cpi	r27, 0xF9	; 249
+ 506:	cc f3       	brlt	.-14     	; 0x4fa <__fixunssfsi+0x2e>
+ 508:	86 95       	lsr	r24
+ 50a:	77 95       	ror	r23
+ 50c:	67 95       	ror	r22
+ 50e:	b3 95       	inc	r27
+ 510:	d9 f7       	brne	.-10     	; 0x508 <__fixunssfsi+0x3c>
+ 512:	3e f4       	brtc	.+14     	; 0x522 <__fixunssfsi+0x56>
+ 514:	90 95       	com	r25
+ 516:	80 95       	com	r24
+ 518:	70 95       	com	r23
+ 51a:	61 95       	neg	r22
+ 51c:	7f 4f       	sbci	r23, 0xFF	; 255
+ 51e:	8f 4f       	sbci	r24, 0xFF	; 255
+ 520:	9f 4f       	sbci	r25, 0xFF	; 255
+ 522:	08 95       	ret
+
+00000524 <__floatunsisf>:
+ 524:	e8 94       	clt
+ 526:	09 c0       	rjmp	.+18     	; 0x53a <__floatsisf+0x12>
+
+00000528 <__floatsisf>:
+ 528:	97 fb       	bst	r25, 7
+ 52a:	3e f4       	brtc	.+14     	; 0x53a <__floatsisf+0x12>
+ 52c:	90 95       	com	r25
+ 52e:	80 95       	com	r24
+ 530:	70 95       	com	r23
+ 532:	61 95       	neg	r22
+ 534:	7f 4f       	sbci	r23, 0xFF	; 255
+ 536:	8f 4f       	sbci	r24, 0xFF	; 255
+ 538:	9f 4f       	sbci	r25, 0xFF	; 255
+ 53a:	99 23       	and	r25, r25
+ 53c:	a9 f0       	breq	.+42     	; 0x568 <__floatsisf+0x40>
+ 53e:	f9 2f       	mov	r31, r25
+ 540:	96 e9       	ldi	r25, 0x96	; 150
+ 542:	bb 27       	eor	r27, r27
+ 544:	93 95       	inc	r25
+ 546:	f6 95       	lsr	r31
+ 548:	87 95       	ror	r24
+ 54a:	77 95       	ror	r23
+ 54c:	67 95       	ror	r22
+ 54e:	b7 95       	ror	r27
+ 550:	f1 11       	cpse	r31, r1
+ 552:	f8 cf       	rjmp	.-16     	; 0x544 <__floatsisf+0x1c>
+ 554:	fa f4       	brpl	.+62     	; 0x594 <__floatsisf+0x6c>
+ 556:	bb 0f       	add	r27, r27
+ 558:	11 f4       	brne	.+4      	; 0x55e <__floatsisf+0x36>
+ 55a:	60 ff       	sbrs	r22, 0
+ 55c:	1b c0       	rjmp	.+54     	; 0x594 <__floatsisf+0x6c>
+ 55e:	6f 5f       	subi	r22, 0xFF	; 255
+ 560:	7f 4f       	sbci	r23, 0xFF	; 255
+ 562:	8f 4f       	sbci	r24, 0xFF	; 255
+ 564:	9f 4f       	sbci	r25, 0xFF	; 255
+ 566:	16 c0       	rjmp	.+44     	; 0x594 <__floatsisf+0x6c>
+ 568:	88 23       	and	r24, r24
+ 56a:	11 f0       	breq	.+4      	; 0x570 <__floatsisf+0x48>
+ 56c:	96 e9       	ldi	r25, 0x96	; 150
+ 56e:	11 c0       	rjmp	.+34     	; 0x592 <__floatsisf+0x6a>
+ 570:	77 23       	and	r23, r23
+ 572:	21 f0       	breq	.+8      	; 0x57c <__floatsisf+0x54>
+ 574:	9e e8       	ldi	r25, 0x8E	; 142
+ 576:	87 2f       	mov	r24, r23
+ 578:	76 2f       	mov	r23, r22
+ 57a:	05 c0       	rjmp	.+10     	; 0x586 <__floatsisf+0x5e>
+ 57c:	66 23       	and	r22, r22
+ 57e:	71 f0       	breq	.+28     	; 0x59c <__floatsisf+0x74>
+ 580:	96 e8       	ldi	r25, 0x86	; 134
+ 582:	86 2f       	mov	r24, r22
+ 584:	70 e0       	ldi	r23, 0x00	; 0
+ 586:	60 e0       	ldi	r22, 0x00	; 0
+ 588:	2a f0       	brmi	.+10     	; 0x594 <__floatsisf+0x6c>
+ 58a:	9a 95       	dec	r25
+ 58c:	66 0f       	add	r22, r22
+ 58e:	77 1f       	adc	r23, r23
+ 590:	88 1f       	adc	r24, r24
+ 592:	da f7       	brpl	.-10     	; 0x58a <__floatsisf+0x62>
+ 594:	88 0f       	add	r24, r24
+ 596:	96 95       	lsr	r25
+ 598:	87 95       	ror	r24
+ 59a:	97 f9       	bld	r25, 7
+ 59c:	08 95       	ret
+
+0000059e <__fp_inf>:
+ 59e:	97 f9       	bld	r25, 7
+ 5a0:	9f 67       	ori	r25, 0x7F	; 127
+ 5a2:	80 e8       	ldi	r24, 0x80	; 128
+ 5a4:	70 e0       	ldi	r23, 0x00	; 0
+ 5a6:	60 e0       	ldi	r22, 0x00	; 0
+ 5a8:	08 95       	ret
+
+000005aa <__fp_nan>:
+ 5aa:	9f ef       	ldi	r25, 0xFF	; 255
+ 5ac:	80 ec       	ldi	r24, 0xC0	; 192
+ 5ae:	08 95       	ret
+
+000005b0 <__fp_pscA>:
+ 5b0:	00 24       	eor	r0, r0
+ 5b2:	0a 94       	dec	r0
+ 5b4:	16 16       	cp	r1, r22
+ 5b6:	17 06       	cpc	r1, r23
+ 5b8:	18 06       	cpc	r1, r24
+ 5ba:	09 06       	cpc	r0, r25
+ 5bc:	08 95       	ret
+
+000005be <__fp_pscB>:
+ 5be:	00 24       	eor	r0, r0
+ 5c0:	0a 94       	dec	r0
+ 5c2:	12 16       	cp	r1, r18
+ 5c4:	13 06       	cpc	r1, r19
+ 5c6:	14 06       	cpc	r1, r20
+ 5c8:	05 06       	cpc	r0, r21
+ 5ca:	08 95       	ret
+
+000005cc <__fp_round>:
+ 5cc:	09 2e       	mov	r0, r25
+ 5ce:	03 94       	inc	r0
+ 5d0:	00 0c       	add	r0, r0
+ 5d2:	11 f4       	brne	.+4      	; 0x5d8 <__fp_round+0xc>
+ 5d4:	88 23       	and	r24, r24
+ 5d6:	52 f0       	brmi	.+20     	; 0x5ec <__fp_round+0x20>
+ 5d8:	bb 0f       	add	r27, r27
+ 5da:	40 f4       	brcc	.+16     	; 0x5ec <__fp_round+0x20>
+ 5dc:	bf 2b       	or	r27, r31
+ 5de:	11 f4       	brne	.+4      	; 0x5e4 <__fp_round+0x18>
+ 5e0:	60 ff       	sbrs	r22, 0
+ 5e2:	04 c0       	rjmp	.+8      	; 0x5ec <__fp_round+0x20>
+ 5e4:	6f 5f       	subi	r22, 0xFF	; 255
+ 5e6:	7f 4f       	sbci	r23, 0xFF	; 255
+ 5e8:	8f 4f       	sbci	r24, 0xFF	; 255
+ 5ea:	9f 4f       	sbci	r25, 0xFF	; 255
+ 5ec:	08 95       	ret
+
+000005ee <__fp_split3>:
+ 5ee:	57 fd       	sbrc	r21, 7
+ 5f0:	90 58       	subi	r25, 0x80	; 128
+ 5f2:	44 0f       	add	r20, r20
+ 5f4:	55 1f       	adc	r21, r21
+ 5f6:	59 f0       	breq	.+22     	; 0x60e <__fp_splitA+0x10>
+ 5f8:	5f 3f       	cpi	r21, 0xFF	; 255
+ 5fa:	71 f0       	breq	.+28     	; 0x618 <__fp_splitA+0x1a>
+ 5fc:	47 95       	ror	r20
+
+000005fe <__fp_splitA>:
+ 5fe:	88 0f       	add	r24, r24
+ 600:	97 fb       	bst	r25, 7
+ 602:	99 1f       	adc	r25, r25
+ 604:	61 f0       	breq	.+24     	; 0x61e <__fp_splitA+0x20>
+ 606:	9f 3f       	cpi	r25, 0xFF	; 255
+ 608:	79 f0       	breq	.+30     	; 0x628 <__fp_splitA+0x2a>
+ 60a:	87 95       	ror	r24
+ 60c:	08 95       	ret
+ 60e:	12 16       	cp	r1, r18
+ 610:	13 06       	cpc	r1, r19
+ 612:	14 06       	cpc	r1, r20
+ 614:	55 1f       	adc	r21, r21
+ 616:	f2 cf       	rjmp	.-28     	; 0x5fc <__fp_split3+0xe>
+ 618:	46 95       	lsr	r20
+ 61a:	f1 df       	rcall	.-30     	; 0x5fe <__fp_splitA>
+ 61c:	08 c0       	rjmp	.+16     	; 0x62e <__fp_splitA+0x30>
+ 61e:	16 16       	cp	r1, r22
+ 620:	17 06       	cpc	r1, r23
+ 622:	18 06       	cpc	r1, r24
+ 624:	99 1f       	adc	r25, r25
+ 626:	f1 cf       	rjmp	.-30     	; 0x60a <__fp_splitA+0xc>
+ 628:	86 95       	lsr	r24
+ 62a:	71 05       	cpc	r23, r1
+ 62c:	61 05       	cpc	r22, r1
+ 62e:	08 94       	sec
+ 630:	08 95       	ret
+
+00000632 <__fp_zero>:
+ 632:	e8 94       	clt
+
+00000634 <__fp_szero>:
+ 634:	bb 27       	eor	r27, r27
+ 636:	66 27       	eor	r22, r22
+ 638:	77 27       	eor	r23, r23
+ 63a:	cb 01       	movw	r24, r22
+ 63c:	97 f9       	bld	r25, 7
+ 63e:	08 95       	ret
+
+00000640 <__mulsf3>:
+ 640:	0a d0       	rcall	.+20     	; 0x656 <__mulsf3x>
+ 642:	c4 cf       	rjmp	.-120    	; 0x5cc <__fp_round>
+ 644:	b5 df       	rcall	.-150    	; 0x5b0 <__fp_pscA>
+ 646:	28 f0       	brcs	.+10     	; 0x652 <__mulsf3+0x12>
+ 648:	ba df       	rcall	.-140    	; 0x5be <__fp_pscB>
+ 64a:	18 f0       	brcs	.+6      	; 0x652 <__mulsf3+0x12>
+ 64c:	95 23       	and	r25, r21
+ 64e:	09 f0       	breq	.+2      	; 0x652 <__mulsf3+0x12>
+ 650:	a6 cf       	rjmp	.-180    	; 0x59e <__fp_inf>
+ 652:	ab cf       	rjmp	.-170    	; 0x5aa <__fp_nan>
+ 654:	ef cf       	rjmp	.-34     	; 0x634 <__fp_szero>
+
+00000656 <__mulsf3x>:
+ 656:	cb df       	rcall	.-106    	; 0x5ee <__fp_split3>
+ 658:	a8 f3       	brcs	.-22     	; 0x644 <__mulsf3+0x4>
+
+0000065a <__mulsf3_pse>:
+ 65a:	99 23       	and	r25, r25
+ 65c:	d9 f3       	breq	.-10     	; 0x654 <__mulsf3+0x14>
+ 65e:	55 23       	and	r21, r21
+ 660:	c9 f3       	breq	.-14     	; 0x654 <__mulsf3+0x14>
+ 662:	95 0f       	add	r25, r21
+ 664:	50 e0       	ldi	r21, 0x00	; 0
+ 666:	55 1f       	adc	r21, r21
+ 668:	aa 27       	eor	r26, r26
+ 66a:	ee 27       	eor	r30, r30
+ 66c:	ff 27       	eor	r31, r31
+ 66e:	bb 27       	eor	r27, r27
+ 670:	00 24       	eor	r0, r0
+ 672:	08 94       	sec
+ 674:	67 95       	ror	r22
+ 676:	20 f4       	brcc	.+8      	; 0x680 <__mulsf3_pse+0x26>
+ 678:	e2 0f       	add	r30, r18
+ 67a:	f3 1f       	adc	r31, r19
+ 67c:	b4 1f       	adc	r27, r20
+ 67e:	0a 1e       	adc	r0, r26
+ 680:	22 0f       	add	r18, r18
+ 682:	33 1f       	adc	r19, r19
+ 684:	44 1f       	adc	r20, r20
+ 686:	aa 1f       	adc	r26, r26
+ 688:	66 95       	lsr	r22
+ 68a:	a9 f7       	brne	.-22     	; 0x676 <__mulsf3_pse+0x1c>
+ 68c:	77 95       	ror	r23
+ 68e:	30 f4       	brcc	.+12     	; 0x69c <__mulsf3_pse+0x42>
+ 690:	f3 0f       	add	r31, r19
+ 692:	b4 1f       	adc	r27, r20
+ 694:	0a 1e       	adc	r0, r26
+ 696:	12 1e       	adc	r1, r18
+ 698:	08 f4       	brcc	.+2      	; 0x69c <__mulsf3_pse+0x42>
+ 69a:	63 95       	inc	r22
+ 69c:	33 0f       	add	r19, r19
+ 69e:	44 1f       	adc	r20, r20
+ 6a0:	aa 1f       	adc	r26, r26
+ 6a2:	22 1f       	adc	r18, r18
+ 6a4:	76 95       	lsr	r23
+ 6a6:	99 f7       	brne	.-26     	; 0x68e <__mulsf3_pse+0x34>
+ 6a8:	87 95       	ror	r24
+ 6aa:	20 f4       	brcc	.+8      	; 0x6b4 <__mulsf3_pse+0x5a>
+ 6ac:	b4 0f       	add	r27, r20
+ 6ae:	0a 1e       	adc	r0, r26
+ 6b0:	12 1e       	adc	r1, r18
+ 6b2:	63 1f       	adc	r22, r19
+ 6b4:	44 0f       	add	r20, r20
+ 6b6:	aa 1f       	adc	r26, r26
+ 6b8:	22 1f       	adc	r18, r18
+ 6ba:	33 1f       	adc	r19, r19
+ 6bc:	86 95       	lsr	r24
+ 6be:	a9 f7       	brne	.-22     	; 0x6aa <__mulsf3_pse+0x50>
+ 6c0:	86 2f       	mov	r24, r22
+ 6c2:	71 2d       	mov	r23, r1
+ 6c4:	60 2d       	mov	r22, r0
+ 6c6:	11 24       	eor	r1, r1
+ 6c8:	9f 57       	subi	r25, 0x7F	; 127
+ 6ca:	50 40       	sbci	r21, 0x00	; 0
+ 6cc:	8a f0       	brmi	.+34     	; 0x6f0 <__mulsf3_pse+0x96>
+ 6ce:	e1 f0       	breq	.+56     	; 0x708 <__mulsf3_pse+0xae>
+ 6d0:	88 23       	and	r24, r24
+ 6d2:	4a f0       	brmi	.+18     	; 0x6e6 <__mulsf3_pse+0x8c>
+ 6d4:	ee 0f       	add	r30, r30
+ 6d6:	ff 1f       	adc	r31, r31
+ 6d8:	bb 1f       	adc	r27, r27
+ 6da:	66 1f       	adc	r22, r22
+ 6dc:	77 1f       	adc	r23, r23
+ 6de:	88 1f       	adc	r24, r24
+ 6e0:	91 50       	subi	r25, 0x01	; 1
+ 6e2:	50 40       	sbci	r21, 0x00	; 0
+ 6e4:	a9 f7       	brne	.-22     	; 0x6d0 <__mulsf3_pse+0x76>
+ 6e6:	9e 3f       	cpi	r25, 0xFE	; 254
+ 6e8:	51 05       	cpc	r21, r1
+ 6ea:	70 f0       	brcs	.+28     	; 0x708 <__mulsf3_pse+0xae>
+ 6ec:	58 cf       	rjmp	.-336    	; 0x59e <__fp_inf>
+ 6ee:	a2 cf       	rjmp	.-188    	; 0x634 <__fp_szero>
+ 6f0:	5f 3f       	cpi	r21, 0xFF	; 255
+ 6f2:	ec f3       	brlt	.-6      	; 0x6ee <__mulsf3_pse+0x94>
+ 6f4:	98 3e       	cpi	r25, 0xE8	; 232
+ 6f6:	dc f3       	brlt	.-10     	; 0x6ee <__mulsf3_pse+0x94>
+ 6f8:	86 95       	lsr	r24
+ 6fa:	77 95       	ror	r23
+ 6fc:	67 95       	ror	r22
+ 6fe:	b7 95       	ror	r27
+ 700:	f7 95       	ror	r31
+ 702:	e7 95       	ror	r30
+ 704:	9f 5f       	subi	r25, 0xFF	; 255
+ 706:	c1 f7       	brne	.-16     	; 0x6f8 <__mulsf3_pse+0x9e>
+ 708:	fe 2b       	or	r31, r30
+ 70a:	88 0f       	add	r24, r24
+ 70c:	91 1d       	adc	r25, r1
+ 70e:	96 95       	lsr	r25
+ 710:	87 95       	ror	r24
+ 712:	97 f9       	bld	r25, 7
+ 714:	08 95       	ret
+
+00000716 <_exit>:
+ 716:	f8 94       	cli
+
+00000718 <__stop_program>:
+ 718:	ff cf       	rjmp	.-2      	; 0x718 <__stop_program>

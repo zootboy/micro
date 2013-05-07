@@ -1,0 +1,10 @@
+.\Obj\http_upload.o: HTTP_upload.c
+.\Obj\http_upload.o: d:\Keil\\ARM\RV31\INC\stdio.h
+.\Obj\http_upload.o: d:\Keil\\ARM\RV31\INC\RTL.h
+.\Obj\http_upload.o: d:\Keil\\ARM\RV31\INC\Net_Config.h
+.\Obj\http_upload.o: d:\Keil\ARM\INC\NXP\LPC17xx\LPC17xx.H
+.\Obj\http_upload.o: d:\Keil\\ARM\RV31\INC\core_cm3.h
+.\Obj\http_upload.o: d:\Keil\\ARM\RV31\INC\stdint.h
+.\Obj\http_upload.o: d:\Keil\ARM\INC\NXP\LPC17xx\system_LPC17xx.h
+.\Obj\http_upload.o: ..\Library\GLCD.h
+.\Obj\http_upload.o: d:\Keil\\ARM\RV31\INC\string.h

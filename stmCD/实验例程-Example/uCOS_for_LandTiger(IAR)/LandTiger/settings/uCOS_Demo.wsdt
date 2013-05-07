@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+
+<Workspace>
+  <ConfigDictionary>
+    
+  <CurrentConfigs><Project>uCOS_Demo/Debug</Project></CurrentConfigs></ConfigDictionary>
+  <Desktop>
+    <Static>
+      <Workspace>
+        <ColumnWidths>
+          
+          
+          
+          
+        <Column0>234</Column0><Column1>27</Column1><Column2>27</Column2><Column3>27</Column3></ColumnWidths>
+      </Workspace>
+    <Build><ColumnWidth0>20</ColumnWidth0><ColumnWidth1>1005</ColumnWidth1><ColumnWidth2>268</ColumnWidth2><ColumnWidth3>67</ColumnWidth3></Build><TerminalIO/></Static>
+    <Windows>
+      
+    <Wnd2>
+        <Tabs>
+          <Tab>
+            <Identity>TabID-26261-22741</Identity>
+            <TabName>Workspace</TabName>
+            <Factory>Workspace</Factory>
+            <Session>
+              
+            <NodeDict><ExpandedNode>uCOS_Demo</ExpandedNode><ExpandedNode>uCOS_Demo/Output</ExpandedNode></NodeDict></Session>
+          </Tab>
+        </Tabs>
+        
+      <SelectedTab>0</SelectedTab></Wnd2><Wnd3><Tabs><Tab><Identity>TabID-16395-21270</Identity><TabName>Build</TabName><Factory>Build</Factory><Session/></Tab></Tabs><SelectedTab>0</SelectedTab></Wnd3></Windows>
+    <Editor>
+      
+      
+      
+      
+    <Pane><Tab><Factory>TextEditor</Factory><Filename>$WS_DIR$\..\BSP\GLCD\drv_glcd.h</Filename><XPos>0</XPos><YPos>3</YPos><SelStart>490</SelStart><SelEnd>490</SelEnd></Tab><Tab><Factory>TextEditor</Factory><Filename>$WS_DIR$\..\APP\includes.h</Filename><XPos>0</XPos><YPos>41</YPos><SelStart>2580</SelStart><SelEnd>2580</SelEnd></Tab><Tab><Factory>TextEditor</Factory><Filename>$WS_DIR$\..\uCOS-II\uC-Probe\Target\Communication\Generic\RS-232\Ports\probe_rs232c.c</Filename><XPos>0</XPos><YPos>0</YPos><SelStart>1431</SelStart><SelEnd>1431</SelEnd></Tab><Tab><Factory>TextEditor</Factory><Filename>$WS_DIR$\..\uCOS-II\uC-Probe\Target\Communication\Generic\RS-232\OS\uCOS-II\probe_rs232_os.c</Filename><XPos>0</XPos><YPos>0</YPos><SelStart>1719</SelStart><SelEnd>1719</SelEnd></Tab><Tab><Factory>TextEditor</Factory><Filename>$WS_DIR$\..\uCOS-II\uC-Probe\Target\Communication\Generic\RS-232\Source\probe_rs232.c</Filename><XPos>0</XPos><YPos>0</YPos><SelStart>1777</SelStart><SelEnd>1777</SelEnd></Tab><Tab><Factory>TextEditor</Factory><Filename>$WS_DIR$\..\uCOS-II\uC-CPU\cpu_core.c</Filename><XPos>0</XPos><YPos>181</YPos><SelStart>9868</SelStart><SelEnd>9868</SelEnd></Tab><Tab><Factory>TextEditor</Factory><Filename>$WS_DIR$\..\APP\app_vect.c</Filename><XPos>0</XPos><YPos>183</YPos><SelStart>11250</SelStart><SelEnd>11250</SelEnd></Tab><Tab><Factory>TextEditor</Factory><Filename>$WS_DIR$\..\uCOS-II\uCOS-II\Source\os_core.c</Filename><XPos>0</XPos><YPos>1719</YPos><SelStart>73088</SelStart><SelEnd>73088</SelEnd></Tab><Tab><Factory>TextEditor</Factory><Filename>$WS_DIR$\..\BSP\GLCD\glcd_ll.c</Filename><XPos>0</XPos><YPos>0</YPos><SelStart>6166</SelStart><SelEnd>6166</SelEnd></Tab><Tab><Factory>TextEditor</Factory><Filename>$WS_DIR$\..\BSP\GLCD\drv_glcd.c</Filename><XPos>0</XPos><YPos>529</YPos><SelStart>223</SelStart><SelEnd>223</SelEnd></Tab><Tab><Factory>TextEditor</Factory><Filename>$WS_DIR$\..\BSP\GLCD\board.h</Filename><XPos>0</XPos><YPos>0</YPos><SelStart>554</SelStart><SelEnd>554</SelEnd></Tab><Tab><Factory>TextEditor</Factory><Filename>$WS_DIR$\..\BSP\GLCD\drv_glcd_cnfg.h</Filename><XPos>0</XPos><YPos>0</YPos><SelStart>0</SelStart><SelEnd>0</SelEnd></Tab><Tab><Factory>TextEditor</Factory><Filename>$WS_DIR$\..\BSP\OS-v2\bsp_os.c</Filename><XPos>0</XPos><YPos>234</YPos><SelStart>0</SelStart><SelEnd>0</SelEnd></Tab><Tab><Factory>TextEditor</Factory><Filename>$WS_DIR$\..\BSP\bsp_gpio.c</Filename><XPos>0</XPos><YPos>0</YPos><SelStart>0</SelStart><SelEnd>0</SelEnd></Tab><Tab><Factory>TextEditor</Factory><Filename>$WS_DIR$\..\APP\app_hooks.c</Filename><XPos>0</XPos><YPos>0</YPos><SelStart>0</SelStart><SelEnd>0</SelEnd></Tab><Tab><Factory>TextEditor</Factory><Filename>$WS_DIR$\..\APP\app_cfg.h</Filename><XPos>0</XPos><YPos>126</YPos><SelStart>0</SelStart><SelEnd>0</SelEnd></Tab><Tab><Factory>TextEditor</Factory><Filename>$WS_DIR$\..\APP\probe_com_cfg.h</Filename><XPos>0</XPos><YPos>0</YPos><SelStart>0</SelStart><SelEnd>0</SelEnd></Tab><ActiveTab>16</ActiveTab><Tab><Factory>TextEditor</Factory><Filename>$WS_DIR$\..\APP\app_probe.c</Filename><XPos>0</XPos><YPos>111</YPos><SelStart>0</SelStart><SelEnd>0</SelEnd></Tab><Tab><Factory>TextEditor</Factory><Filename>$WS_DIR$\..\APP\app_probe.h</Filename><XPos>0</XPos><YPos>54</YPos><SelStart>0</SelStart><SelEnd>0</SelEnd></Tab><Tab><Factory>TextEditor</Factory><Filename>$WS_DIR$\..\BSP\bsp.c</Filename><XPos>0</XPos><YPos>577</YPos><SelStart>23518</SelStart><SelEnd>23518</SelEnd></Tab><Tab><Factory>TextEditor</Factory><Filename>$WS_DIR$\..\APP\app.c</Filename><XPos>0</XPos><YPos>12</YPos><SelStart>13123</SelStart><SelEnd>13123</SelEnd></Tab><Tab><Factory>TextEditor</Factory><Filename>$WS_DIR$\..\BSP\bsp.h</Filename><XPos>0</XPos><YPos>190</YPos><SelStart>0</SelStart><SelEnd>0</SelEnd></Tab><Tab><Factory>TextEditor</Factory><Filename>$WS_DIR$\..\uCOS-II\uCOS-II\Ports\ARM-Cortex-M3\Generic\IAR\os_cpu_c.c</Filename><XPos>0</XPos><YPos>130</YPos><SelStart>5673</SelStart><SelEnd>5673</SelEnd></Tab><Tab><Factory>TextEditor</Factory><Filename>$WS_DIR$\..\BSP\GLCD\arm_comm.h</Filename><XPos>0</XPos><YPos>18</YPos><SelStart>0</SelStart><SelEnd>0</SelEnd></Tab><Tab><Factory>TextEditor</Factory><Filename>$WS_DIR$\..\BSP\bsp_int.c</Filename><XPos>0</XPos><YPos>357</YPos><SelStart>0</SelStart><SelEnd>0</SelEnd></Tab><Tab><Factory>TextEditor</Factory><Filename>$WS_DIR$\..\APP\os_cfg.h</Filename><XPos>0</XPos><YPos>99</YPos><SelStart>0</SelStart><SelEnd>0</SelEnd></Tab><Tab><Factory>TextEditor</Factory><Filename>$WS_DIR$\..\APP\cpu_cfg.h</Filename><XPos>0</XPos><YPos>96</YPos><SelStart>0</SelStart><SelEnd>0</SelEnd></Tab></Pane><ActivePane>0</ActivePane><Sizes><Pane><X>1000000</X><Y>1000000</Y></Pane></Sizes><SplitMode>1</SplitMode></Editor>
+    <Positions>
+      
+      
+      
+      
+      
+    <Top><Row0><Sizes><Toolbar-00b0b088><key>iaridepm.enu1</key></Toolbar-00b0b088></Sizes></Row0><Row1><Sizes/></Row1></Top><Left><Row0><Sizes><Wnd2><Rect><Top>-2</Top><Left>-2</Left><Bottom>731</Bottom><Right>308</Right><x>-2</x><y>-2</y><xscreen>200</xscreen><yscreen>200</yscreen><sizeHorzCX>142857</sizeHorzCX><sizeHorzCY>205339</sizeHorzCY><sizeVertCX>221429</sizeVertCX><sizeVertCY>752567</sizeVertCY></Rect></Wnd2></Sizes></Row0></Left><Right><Row0><Sizes/></Row0></Right><Bottom><Row0><Sizes><Wnd3><Rect><Top>-2</Top><Left>-2</Left><Bottom>198</Bottom><Right>1402</Right><x>-2</x><y>-2</y><xscreen>1404</xscreen><yscreen>200</yscreen><sizeHorzCX>1002857</sizeHorzCX><sizeHorzCY>205339</sizeHorzCY><sizeVertCX>142857</sizeVertCX><sizeVertCY>205339</sizeVertCY></Rect></Wnd3></Sizes></Row0></Bottom><Float><Sizes/></Float></Positions>
+  </Desktop>
+</Workspace>
+
+

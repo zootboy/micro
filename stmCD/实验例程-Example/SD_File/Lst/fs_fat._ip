@@ -1,0 +1,1 @@
+"FlashFS\fs_fat.c" -E -c --cpu Cortex-M3 -O3 --apcs=interwork -I.\FlashFS -I "d:\Keil\ARM\INC" -I "d:\Keil\ARM\INC\NXP\LPC17xx" -o ".\Lst\fs_fat.i"

@@ -1,0 +1,95 @@
+   1               		.file	"LED_Demo.c"
+   2               	__SREG__ = 0x3f
+   3               	__SP_H__ = 0x3e
+   4               	__SP_L__ = 0x3d
+   5               	__CCP__  = 0x34
+   6               	__tmp_reg__ = 0
+   7               	__zero_reg__ = 1
+   8               		.global __do_copy_data
+   9               		.global __do_clear_bss
+  17               	.Ltext0:
+  18               	.global	__vector_9
+  20               	__vector_9:
+  21               	.LFB6:
+  22               	.LM1:
+  23 0000 1F92      		push __zero_reg__
+  24 0002 0F92      		push r0
+  25 0004 0FB6      		in r0,__SREG__
+  26 0006 0F92      		push r0
+  27 0008 1124      		clr __zero_reg__
+  28 000a 8F93      		push r24
+  29 000c 9F93      		push r25
+  30               	/* prologue: Signal */
+  31               	/* frame size = 0 */
+  32               	.LM2:
+  33 000e 8091 0000 		lds r24,pin
+  34 0012 9091 0000 		lds r25,(pin)+1
+  35 0016 0196      		adiw r24,1
+  36 0018 9093 0000 		sts (pin)+1,r25
+  37 001c 8093 0000 		sts pin,r24
+  38               	.LM3:
+  39 0020 81E0      		ldi r24,lo8(1)
+  40 0022 82BB      		out 50-32,r24
+  41               	/* epilogue start */
+  42               	.LM4:
+  43 0024 9F91      		pop r25
+  44 0026 8F91      		pop r24
+  45 0028 0F90      		pop r0
+  46 002a 0FBE      		out __SREG__,r0
+  47 002c 0F90      		pop r0
+  48 002e 1F90      		pop __zero_reg__
+  49 0030 1895      		reti
+  50               	.LFE6:
+  52               	.global	main
+  54               	main:
+  55               	.LFB7:
+  56               	.LM5:
+  57               	/* prologue: function */
+  58               	/* frame size = 0 */
+  59               	.LM6:
+  60 0032 8FEF      		ldi r24,lo8(-1)
+  61 0034 81BB      		out 49-32,r24
+  62               	.LM7:
+  63 0036 8091 0000 		lds r24,pin
+  64 003a 82BB      		out 50-32,r24
+  65               	.LM8:
+  66 003c 88E0      		ldi r24,lo8(8)
+  67 003e 83BF      		out 83-32,r24
+  68               	.LM9:
+  69 0040 1CBE      		out 92-32,__zero_reg__
+  70               	.LM10:
+  71 0042 82E0      		ldi r24,lo8(2)
+  72 0044 89BF      		out 89-32,r24
+  73               	.LM11:
+  74               	/* #APP */
+  75               	 ;  28 "LED_Demo.c" 1
+  76 0046 7894      		sei
+  77               	 ;  0 "" 2
+  78               	.LM12:
+  79               	/* #NOAPP */
+  80 0048 80E0      		ldi r24,lo8(0)
+  81 004a 90E0      		ldi r25,hi8(0)
+  82               	/* epilogue start */
+  83 004c 0895      		ret
+  84               	.LFE7:
+  86               	.global	pin
+  87               	.global	pin
+  88               		.section .bss
+  91               	pin:
+  92 0000 0000      		.skip 2,0
+ 125               	.Letext0:
+DEFINED SYMBOLS
+                            *ABS*:00000000 LED_Demo.c
+C:\DOCUME~1\ADMINI~1.WIN\LOCALS~1\Temp/ccazY0o9.s:2      *ABS*:0000003f __SREG__
+C:\DOCUME~1\ADMINI~1.WIN\LOCALS~1\Temp/ccazY0o9.s:3      *ABS*:0000003e __SP_H__
+C:\DOCUME~1\ADMINI~1.WIN\LOCALS~1\Temp/ccazY0o9.s:4      *ABS*:0000003d __SP_L__
+C:\DOCUME~1\ADMINI~1.WIN\LOCALS~1\Temp/ccazY0o9.s:5      *ABS*:00000034 __CCP__
+C:\DOCUME~1\ADMINI~1.WIN\LOCALS~1\Temp/ccazY0o9.s:6      *ABS*:00000000 __tmp_reg__
+C:\DOCUME~1\ADMINI~1.WIN\LOCALS~1\Temp/ccazY0o9.s:7      *ABS*:00000001 __zero_reg__
+C:\DOCUME~1\ADMINI~1.WIN\LOCALS~1\Temp/ccazY0o9.s:20     .text:00000000 __vector_9
+C:\DOCUME~1\ADMINI~1.WIN\LOCALS~1\Temp/ccazY0o9.s:91     .bss:00000000 pin
+C:\DOCUME~1\ADMINI~1.WIN\LOCALS~1\Temp/ccazY0o9.s:54     .text:00000032 main
+
+UNDEFINED SYMBOLS
+__do_copy_data
+__do_clear_bss

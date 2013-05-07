@@ -1,0 +1,277 @@
+   1               		.file	"analog.c"
+   2               	__SREG__ = 0x3f
+   3               	__SP_H__ = 0x3e
+   4               	__SP_L__ = 0x3d
+   5               	__tmp_reg__ = 0
+   6               	__zero_reg__ = 1
+   7               		.global __do_copy_data
+   8               		.global __do_clear_bss
+  11               		.text
+  12               	.Ltext0:
+  84               	.global	adcInit
+  86               	adcInit:
+  87               		.stabd	46,0,0
+   0:analog.c      **** /* Co-Pilot - analog.c */
+   1:analog.c      **** 
+   2:analog.c      **** #include <avr/io.h>
+   3:analog.c      **** //#include <avr/iom328p.h>
+   4:analog.c      **** #include <avr/interrupt.h>
+   5:analog.c      **** #include "analog.h"
+   6:analog.c      **** #include "util.h"
+   7:analog.c      **** 
+   8:analog.c      **** uint8_t arrayIndex = 0; // Which index in the arrays we're on.
+   9:analog.c      **** 
+  10:analog.c      **** void adcInit(void)
+  11:analog.c      **** {
+  89               	.LM0:
+  90               	.LFBB1:
+  91               	/* prologue: function */
+  92               	/* frame size = 0 */
+  93               	/* stack size = 0 */
+  94               	.L__stack_usage = 0
+  12:analog.c      **** 	ADMUX = ADC_MUX;
+  96               	.LM1:
+  97 0000 80E4      		ldi r24,lo8(64)
+  98 0002 8093 7C00 		sts 124,r24
+  13:analog.c      **** 	ADCSRA = ADC_SRA; 
+ 100               	.LM2:
+ 101 0006 86E8      		ldi r24,lo8(-122)
+ 102 0008 8093 7A00 		sts 122,r24
+  14:analog.c      **** 	DIDR0 = 0b00001111;
+ 104               	.LM3:
+ 105 000c 8FE0      		ldi r24,lo8(15)
+ 106 000e 8093 7E00 		sts 126,r24
+  15:analog.c      **** 	sei(); // Enable interrupts globally.
+ 108               	.LM4:
+ 109               	/* #APP */
+ 110               	 ;  16 "analog.c" 1
+ 111 0012 7894      		sei
+ 112               	 ;  0 "" 2
+ 113               	/* epilogue start */
+  16:analog.c      **** }
+ 115               	.LM5:
+ 116               	/* #NOAPP */
+ 117 0014 0895      		ret
+ 119               	.Lscope1:
+ 121               		.stabd	78,0,0
+ 123               	.global	analogGather
+ 125               	analogGather:
+ 126               		.stabd	46,0,0
+  17:analog.c      **** 
+  18:analog.c      **** void analogGather(void)
+  19:analog.c      **** {
+ 128               	.LM6:
+ 129               	.LFBB2:
+ 130 0016 1F93      		push r17
+ 131               	/* prologue: function */
+ 132               	/* frame size = 0 */
+ 133               	/* stack size = 1 */
+ 134               	.L__stack_usage = 1
+  20:analog.c      **** 	for(uint8_t i=0;i<8;i++)
+ 136               	.LM7:
+ 137 0018 10E0      		ldi r17,lo8(0)
+ 138               	.L11:
+ 139               	.LBB2:
+  21:analog.c      **** 	{
+  22:analog.c      **** 		ADCSRA |= (1<<ADSC); // Start next conversion.
+ 141               	.LM8:
+ 142 001a 8091 7A00 		lds r24,122
+ 143 001e 8064      		ori r24,lo8(64)
+ 144 0020 8093 7A00 		sts 122,r24
+  23:analog.c      **** 		while(!(ADCSRA & (1<<ADIF))) delay_us(1);
+ 146               	.LM9:
+ 147 0024 00C0      		rjmp .L3
+ 148               	.L4:
+ 150               	.LM10:
+ 151 0026 81E0      		ldi r24,lo8(1)
+ 152 0028 90E0      		ldi r25,hi8(1)
+ 153 002a 0E94 0000 		call delay_us
+ 154               	.L3:
+ 156               	.LM11:
+ 157 002e 8091 7A00 		lds r24,122
+ 158 0032 84FF      		sbrs r24,4
+ 159 0034 00C0      		rjmp .L4
+  24:analog.c      **** 		switch(i)
+ 161               	.LM12:
+ 162 0036 1330      		cpi r17,lo8(3)
+ 163 0038 01F0      		breq .L7
+ 164 003a 1430      		cpi r17,lo8(4)
+ 165 003c 00F4      		brsh .L10
+ 166 003e 1130      		cpi r17,lo8(1)
+ 167 0040 01F0      		breq .+2
+ 168 0042 00C0      		rjmp .L5
+ 169 0044 00C0      		rjmp .L15
+ 170               	.L10:
+ 171 0046 1530      		cpi r17,lo8(5)
+ 172 0048 01F0      		breq .L8
+ 173 004a 1730      		cpi r17,lo8(7)
+ 174 004c 01F0      		breq .+2
+ 175 004e 00C0      		rjmp .L5
+ 176 0050 00C0      		rjmp .L16
+ 177               	.L15:
+  25:analog.c      **** 		{
+  26:analog.c      **** 			case 0: // ArcIR4 toss.
+  27:analog.c      **** 			case 2: // ArcIR5 toss.
+  28:analog.c      **** 			case 4: // ArcIR6 toss.
+  29:analog.c      **** 			case 6: // ArcIR7 toss.
+  30:analog.c      **** 				break;
+  31:analog.c      **** 			case 1: // ArcIR4 keep.
+  32:analog.c      **** 				arcIR4[arrayIndex] = ADC;
+ 179               	.LM13:
+ 180 0052 8091 7800 		lds r24,120
+ 181 0056 9091 7900 		lds r25,120+1
+ 182 005a E091 0000 		lds r30,arrayIndex
+ 183 005e F0E0      		ldi r31,lo8(0)
+ 184 0060 EE0F      		lsl r30
+ 185 0062 FF1F      		rol r31
+ 186 0064 E050      		subi r30,lo8(-(arcIR4))
+ 187 0066 F040      		sbci r31,hi8(-(arcIR4))
+ 188 0068 9183      		std Z+1,r25
+ 189 006a 8083      		st Z,r24
+  33:analog.c      **** 				ADMUX = ((ADMUX & 0xE0) | ARCIR5); // Switch to IR5.
+ 191               	.LM14:
+ 192 006c 8091 7C00 		lds r24,124
+ 193 0070 807E      		andi r24,lo8(-32)
+ 194 0072 8160      		ori r24,lo8(1)
+ 195 0074 00C0      		rjmp .L14
+ 196               	.L7:
+  34:analog.c      **** 				break;
+  35:analog.c      **** 			case 3: // ArcIR5 keep.
+  36:analog.c      **** 				arcIR5[arrayIndex] = ADC;
+ 198               	.LM15:
+ 199 0076 8091 7800 		lds r24,120
+ 200 007a 9091 7900 		lds r25,120+1
+ 201 007e E091 0000 		lds r30,arrayIndex
+ 202 0082 F0E0      		ldi r31,lo8(0)
+ 203 0084 EE0F      		lsl r30
+ 204 0086 FF1F      		rol r31
+ 205 0088 E050      		subi r30,lo8(-(arcIR5))
+ 206 008a F040      		sbci r31,hi8(-(arcIR5))
+ 207 008c 9183      		std Z+1,r25
+ 208 008e 8083      		st Z,r24
+  37:analog.c      **** 				ADMUX = ((ADMUX & 0xE0) | ARCIR6); // Switch to IR6.
+ 210               	.LM16:
+ 211 0090 8091 7C00 		lds r24,124
+ 212 0094 807E      		andi r24,lo8(-32)
+ 213 0096 8260      		ori r24,lo8(2)
+ 214 0098 00C0      		rjmp .L14
+ 215               	.L8:
+  38:analog.c      **** 				break;
+  39:analog.c      **** 			case 5: // ArcIR6 keep.
+  40:analog.c      **** 				arcIR6[arrayIndex] = ADC;
+ 217               	.LM17:
+ 218 009a 8091 7800 		lds r24,120
+ 219 009e 9091 7900 		lds r25,120+1
+ 220 00a2 E091 0000 		lds r30,arrayIndex
+ 221 00a6 F0E0      		ldi r31,lo8(0)
+ 222 00a8 EE0F      		lsl r30
+ 223 00aa FF1F      		rol r31
+ 224 00ac E050      		subi r30,lo8(-(arcIR6))
+ 225 00ae F040      		sbci r31,hi8(-(arcIR6))
+ 226 00b0 9183      		std Z+1,r25
+ 227 00b2 8083      		st Z,r24
+  41:analog.c      **** 				ADMUX = ((ADMUX & 0xE0) | ARCIR7); // Switch to IR7.
+ 229               	.LM18:
+ 230 00b4 8091 7C00 		lds r24,124
+ 231 00b8 807E      		andi r24,lo8(-32)
+ 232 00ba 8360      		ori r24,lo8(3)
+ 233 00bc 00C0      		rjmp .L14
+ 234               	.L16:
+  42:analog.c      **** 				break;
+  43:analog.c      **** 			case 7: // ArcIR7 keep.
+  44:analog.c      **** 				arcIR7[arrayIndex] = ADC;
+ 236               	.LM19:
+ 237 00be 8091 7800 		lds r24,120
+ 238 00c2 9091 7900 		lds r25,120+1
+ 239 00c6 E091 0000 		lds r30,arrayIndex
+ 240 00ca F0E0      		ldi r31,lo8(0)
+ 241 00cc EE0F      		lsl r30
+ 242 00ce FF1F      		rol r31
+ 243 00d0 E050      		subi r30,lo8(-(arcIR7))
+ 244 00d2 F040      		sbci r31,hi8(-(arcIR7))
+ 245 00d4 9183      		std Z+1,r25
+ 246 00d6 8083      		st Z,r24
+  45:analog.c      **** 				ADMUX = ((ADMUX & 0xE0) | ARCIR4); // Switch to IR4
+ 248               	.LM20:
+ 249 00d8 8091 7C00 		lds r24,124
+ 250 00dc 807E      		andi r24,lo8(-32)
+ 251               	.L14:
+ 252 00de 8093 7C00 		sts 124,r24
+ 253               	.L5:
+  21:analog.c      **** 	for(uint8_t i=0;i<8;i++)
+ 255               	.LM21:
+ 256 00e2 1F5F      		subi r17,lo8(-(1))
+ 257 00e4 1830      		cpi r17,lo8(8)
+ 258 00e6 01F0      		breq .+2
+ 259 00e8 00C0      		rjmp .L11
+ 260               	.LBE2:
+  46:analog.c      **** 				break;
+  47:analog.c      **** 		}
+  48:analog.c      **** 		
+  49:analog.c      **** 	}
+  50:analog.c      **** 	arrayIndex++;
+ 262               	.LM22:
+ 263 00ea 8091 0000 		lds r24,arrayIndex
+ 264 00ee 8F5F      		subi r24,lo8(-(1))
+ 265 00f0 8093 0000 		sts arrayIndex,r24
+  51:analog.c      **** 		if(arrayIndex >= AVG_COUNT) arrayIndex = 0;
+ 267               	.LM23:
+ 268 00f4 8430      		cpi r24,lo8(4)
+ 269 00f6 00F0      		brlo .L2
+ 271               	.LM24:
+ 272 00f8 1092 0000 		sts arrayIndex,__zero_reg__
+ 273               	.L2:
+ 274               	/* epilogue start */
+  52:analog.c      **** 	
+  53:analog.c      **** }...
+ 276               	.LM25:
+ 277 00fc 1F91      		pop r17
+ 278 00fe 0895      		ret
+ 283               	.Lscope2:
+ 285               		.stabd	78,0,0
+ 286               		.comm holder,4,1
+ 287               		.comm bytesCount,1,1
+ 288               		.comm i2cTxMode,1,1
+ 289               		.comm stepperCountRight,4,1
+ 290               		.comm stepperCountLeft,4,1
+ 291               		.comm gState,1,1
+ 292               		.comm i2cMode,1,1
+ 293               		.comm globalError,1,1
+ 294               		.comm arcIR7,8,1
+ 295               		.comm arcIR6,8,1
+ 296               		.comm arcIR5,8,1
+ 297               		.comm arcIR4,8,1
+ 298               	.global	arrayIndex
+ 299               	.global	arrayIndex
+ 300               		.section .bss
+ 303               	arrayIndex:
+ 304 0000 00        		.skip 1,0
+ 318               		.text
+ 320               	.Letext0:
+DEFINED SYMBOLS
+                            *ABS*:00000000 analog.c
+     /tmp/ccOnsQEH.s:2      *ABS*:0000003f __SREG__
+     /tmp/ccOnsQEH.s:3      *ABS*:0000003e __SP_H__
+     /tmp/ccOnsQEH.s:4      *ABS*:0000003d __SP_L__
+     /tmp/ccOnsQEH.s:5      *ABS*:00000000 __tmp_reg__
+     /tmp/ccOnsQEH.s:6      *ABS*:00000001 __zero_reg__
+     /tmp/ccOnsQEH.s:86     .text:00000000 adcInit
+     /tmp/ccOnsQEH.s:125    .text:00000016 analogGather
+     /tmp/ccOnsQEH.s:303    .bss:00000000 arrayIndex
+                            *COM*:00000008 arcIR4
+                            *COM*:00000008 arcIR5
+                            *COM*:00000008 arcIR6
+                            *COM*:00000008 arcIR7
+                            *COM*:00000004 holder
+                            *COM*:00000001 bytesCount
+                            *COM*:00000001 i2cTxMode
+                            *COM*:00000004 stepperCountRight
+                            *COM*:00000004 stepperCountLeft
+                            *COM*:00000001 gState
+                            *COM*:00000001 i2cMode
+                            *COM*:00000001 globalError
+
+UNDEFINED SYMBOLS
+__do_copy_data
+__do_clear_bss
+delay_us

@@ -1,0 +1,1 @@
+-c --cpu Cortex-M3 -D__MICROLIB -g -O3 --apcs=interwork -I..\Library -I "d:\Keil\\ARM\INC" -I "d:\Keil\\ARM\INC\NXP\LPC17xx" -o ".\Obj\web.o" --omf_browse ".\Obj\web.crf" --depend ".\Obj\web.d" "Web\WEB.C"

@@ -1,0 +1,9 @@
+C:\Data\micro\LUFA101122\Projects\LEDNotifier\CPUUsageApp\bin\Debug\CPUMonitor.exe
+C:\Data\micro\LUFA101122\Projects\LEDNotifier\CPUUsageApp\bin\Debug\CPUMonitor.pdb
+C:\Data\micro\LUFA101122\Projects\LEDNotifier\CPUUsageApp\obj\Debug\ResolveAssemblyReference.cache
+C:\Data\micro\LUFA101122\Projects\LEDNotifier\CPUUsageApp\obj\Debug\CPUMonitor.frmCPU.resources
+C:\Data\micro\LUFA101122\Projects\LEDNotifier\CPUUsageApp\obj\Debug\CPUMonitor.Properties.Resources.resources
+C:\Data\micro\LUFA101122\Projects\LEDNotifier\CPUUsageApp\obj\Debug\GenerateResource.read.1.tlog
+C:\Data\micro\LUFA101122\Projects\LEDNotifier\CPUUsageApp\obj\Debug\GenerateResource.write.1.tlog
+C:\Data\micro\LUFA101122\Projects\LEDNotifier\CPUUsageApp\obj\Debug\CPUMonitor.exe
+C:\Data\micro\LUFA101122\Projects\LEDNotifier\CPUUsageApp\obj\Debug\CPUMonitor.pdb

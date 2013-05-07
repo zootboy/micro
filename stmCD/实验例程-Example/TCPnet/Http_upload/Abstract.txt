@@ -1,0 +1,24 @@
+This is a HTTP File Upload example. It allows you to upload
+files to SD Card from a Web browser.
+
+Use this example to connect MCB1700 Board to a LAN with DHCP
+server (most LANs have this). This example will configure the 
+LAN network parameters automatically using a DHCP protocol.
+
+You may connect MCB1700 Board to PC directly over a crosslink
+network cable. In this case configure a PC to use a static 
+IP address 192.168.0.1
+
+If after a timeout of 5 seconds DHCP did not obtain an IP address,
+this example will use a static IP address 192.168.0.100
+
+To test this example, open your web browser and enter the 
+address http://mcb1700/ or http://<boards IP address>
+
+Default user    : admin
+Default password: <none>
+
+The HTTP_upload example is available for one target:
+
+MCB1700:       Standalone (no RTX Kernel) application.
+               Program code is loaded into on-chip flash.

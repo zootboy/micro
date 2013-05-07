@@ -1,0 +1,9 @@
+.\Obj\mscuser.o: mscuser.c
+.\Obj\mscuser.o: type.h
+.\Obj\mscuser.o: usb.h
+.\Obj\mscuser.o: msc.h
+.\Obj\mscuser.o: usbcfg.h
+.\Obj\mscuser.o: usbhw.h
+.\Obj\mscuser.o: usbcore.h
+.\Obj\mscuser.o: mscuser.h
+.\Obj\mscuser.o: memory.h

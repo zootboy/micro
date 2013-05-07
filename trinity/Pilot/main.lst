@@ -1,0 +1,513 @@
+   1               		.file	"main.c"
+   2               	__SREG__ = 0x3f
+   3               	__SP_H__ = 0x3e
+   4               	__SP_L__ = 0x3d
+   5               	__tmp_reg__ = 0
+   6               	__zero_reg__ = 1
+   7               		.global __do_copy_data
+   8               		.global __do_clear_bss
+  11               		.text
+  12               	.Ltext0:
+  82               	.global	__vector_11
+  84               	__vector_11:
+  85               		.stabd	46,0,0
+   0:main.c        **** /* Trinity Bot - Pilot */
+   1:main.c        **** 
+   2:main.c        **** #include <avr/io.h>
+   3:main.c        **** //#include <avr/iom328p.h>
+   4:main.c        **** #include <avr/interrupt.h>   
+   5:main.c        **** #include <util/twi.h>
+   6:main.c        **** #include <stdlib.h>
+   7:main.c        **** #include "util.h"
+   8:main.c        **** #include "analog.h"
+   9:main.c        **** 
+  10:main.c        **** /* --- Pins ---
+  11:main.c        ****  * PORT B:        | PORT C:       | PORT D: 
+  12:main.c        ****  * PBO - SERVO 1  | PC0 - ArcIR1  | PD0 - 
+  13:main.c        ****  * PB1 - SERVO 2  | PC1 - ArcIR2  | PD1 - 
+  14:main.c        ****  * PB2 -          | PC2 - ArcIR3  | PD2 - 
+  15:main.c        ****  * PB3 -          | PC3 - BatSens | PD3 - 
+  16:main.c        ****  * PB4 -          | PC4 - i2c     | PD4 - 
+  17:main.c        ****  * PB5 -          | PC5 - i2c     | PD5 - 
+  18:main.c        ****  * PB6 -          |               | PD6 - 
+  19:main.c        ****  * PB7 -          |               | PD7 - 
+  20:main.c        ****  * 
+  21:main.c        ****  */
+  22:main.c        **** 
+  23:main.c        **** // PWM timer defines.
+  24:main.c        **** // CTC mode, clear on ICR1.
+  25:main.c        **** #define PWM_TIMER_PRESCALE 64 // CS11 & CS10.
+  26:main.c        **** #define PWM_TIMER_TOP 6000 // ICR set to this.
+  27:main.c        **** #define PWM_REG1 (0<<WGM11)|(0<<WGM10) // TCCR1A
+  28:main.c        **** #define PWM_REG2 (1<<WGM13)|(1<<WGM12)|(1<<CS11)|(1<<CS10) // TCCR1B
+  29:main.c        **** #define PWM_REG3 (1<<OCIE1A)|(1<<OCIE1B) // TIMSK1
+  30:main.c        **** #define PWM_PORT PORTB
+  31:main.c        **** #define PWM_PIN1 PB0
+  32:main.c        **** #define PWM_PIN2 PB1
+  33:main.c        **** 
+  34:main.c        **** // i2c defines
+  35:main.c        **** #define I2C_ADDR 0b01000110 // last bit determines response to general call; 0=ignore.
+  36:main.c        **** #define I2C_REG1 (1<<TWEN)|(1<<TWEA)|(1<<TWIE) // TWCR
+  37:main.c        **** #define I2C_REG2 0x02 // TWBR - 400 KHz mode.
+  38:main.c        **** #define I2C_REG3 (1<<TWPS0) // TWSR - Prescale of 4x.
+  39:main.c        **** 
+  40:main.c        **** extern uint16_t battMon[4];
+  41:main.c        **** 
+  42:main.c        **** 
+  43:main.c        **** /// Interupt Service Routines ///
+  44:main.c        **** ISR(TIMER1_COMPA_vect)
+  45:main.c        **** {
+  87               	.LM0:
+  88               	.LFBB1:
+  89 0000 1F92      		push r1
+  90 0002 0F92      		push r0
+  91 0004 0FB6      		in r0,__SREG__
+  92 0006 0F92      		push r0
+  93 0008 1124      		clr __zero_reg__
+  94 000a 8F93      		push r24
+  95 000c 9F93      		push r25
+  96               	/* prologue: Signal */
+  97               	/* frame size = 0 */
+  98               	/* stack size = 5 */
+  99               	.L__stack_usage = 5
+  46:main.c        **** 	if(!OCR1A) // We're at zero.
+ 101               	.LM1:
+ 102 000e 8091 8800 		lds r24,136
+ 103 0012 9091 8900 		lds r25,136+1
+ 104 0016 0097      		sbiw r24,0
+ 105 0018 01F4      		brne .L2
+  47:main.c        **** 	{
+  48:main.c        **** 		PWM_PORT |= (1<<PWM_PIN1); // Set PWM to one.
+ 107               	.LM2:
+ 108 001a 289A      		sbi 37-0x20,0
+  49:main.c        **** 		if(servoPos1) OCR1A = servoPos1;
+ 110               	.LM3:
+ 111 001c 8091 0000 		lds r24,servoPos1
+ 112 0020 9091 0000 		lds r25,servoPos1+1
+ 113 0024 0097      		sbiw r24,0
+ 114 0026 01F0      		breq .L3
+ 116               	.LM4:
+ 117 0028 9093 8900 		sts 136+1,r25
+ 118 002c 8093 8800 		sts 136,r24
+ 119 0030 00C0      		rjmp .L1
+ 120               	.L3:
+  50:main.c        **** 		else globalError = 1;
+ 122               	.LM5:
+ 123 0032 81E0      		ldi r24,lo8(1)
+ 124 0034 8093 0000 		sts globalError,r24
+ 125 0038 00C0      		rjmp .L1
+ 126               	.L2:
+  51:main.c        **** 	}
+  52:main.c        **** 	else // We're at the point.
+  53:main.c        **** 	{
+  54:main.c        **** 		PWM_PORT &= ~(1<<PWM_PIN1); // Set PWM to zero.
+ 128               	.LM6:
+ 129 003a 2898      		cbi 37-0x20,0
+  55:main.c        **** 		OCR1A = 0; // Trigger at rollover.
+ 131               	.LM7:
+ 132 003c 1092 8900 		sts 136+1,__zero_reg__
+ 133 0040 1092 8800 		sts 136,__zero_reg__
+ 134               	.L1:
+ 135               	/* epilogue start */
+  56:main.c        **** 	}
+  57:main.c        **** }
+ 137               	.LM8:
+ 138 0044 9F91      		pop r25
+ 139 0046 8F91      		pop r24
+ 140 0048 0F90      		pop r0
+ 141 004a 0FBE      		out __SREG__,r0
+ 142 004c 0F90      		pop r0
+ 143 004e 1F90      		pop r1
+ 144 0050 1895      		reti
+ 146               	.Lscope1:
+ 148               		.stabd	78,0,0
+ 150               	.global	__vector_12
+ 152               	__vector_12:
+ 153               		.stabd	46,0,0
+  58:main.c        **** 
+  59:main.c        **** ISR(TIMER1_COMPB_vect)
+  60:main.c        **** {
+ 155               	.LM9:
+ 156               	.LFBB2:
+ 157 0052 1F92      		push r1
+ 158 0054 0F92      		push r0
+ 159 0056 0FB6      		in r0,__SREG__
+ 160 0058 0F92      		push r0
+ 161 005a 1124      		clr __zero_reg__
+ 162 005c 8F93      		push r24
+ 163 005e 9F93      		push r25
+ 164               	/* prologue: Signal */
+ 165               	/* frame size = 0 */
+ 166               	/* stack size = 5 */
+ 167               	.L__stack_usage = 5
+  61:main.c        **** 	if(!OCR1B) // We're at zero.
+ 169               	.LM10:
+ 170 0060 8091 8A00 		lds r24,138
+ 171 0064 9091 8B00 		lds r25,138+1
+ 172 0068 0097      		sbiw r24,0
+ 173 006a 01F4      		brne .L6
+  62:main.c        **** 	{
+  63:main.c        **** 		PWM_PORT |= (1<<PWM_PIN2); // Set PWM to one.
+ 175               	.LM11:
+ 176 006c 299A      		sbi 37-0x20,1
+  64:main.c        **** 		if(servoPos2) OCR1B = servoPos2;
+ 178               	.LM12:
+ 179 006e 8091 0000 		lds r24,servoPos2
+ 180 0072 9091 0000 		lds r25,servoPos2+1
+ 181 0076 0097      		sbiw r24,0
+ 182 0078 01F0      		breq .L7
+ 184               	.LM13:
+ 185 007a 9093 8B00 		sts 138+1,r25
+ 186 007e 8093 8A00 		sts 138,r24
+ 187 0082 00C0      		rjmp .L5
+ 188               	.L7:
+  65:main.c        **** 		else globalError = 1;
+ 190               	.LM14:
+ 191 0084 81E0      		ldi r24,lo8(1)
+ 192 0086 8093 0000 		sts globalError,r24
+ 193 008a 00C0      		rjmp .L5
+ 194               	.L6:
+  66:main.c        **** 	}
+  67:main.c        **** 	else // We're at the point.
+  68:main.c        **** 	{
+  69:main.c        **** 		PWM_PORT &= ~(1<<PWM_PIN2); // Set PWM to zero.
+ 196               	.LM15:
+ 197 008c 2998      		cbi 37-0x20,1
+  70:main.c        **** 		OCR1B = 0; // Trigger at rollover.
+ 199               	.LM16:
+ 200 008e 1092 8B00 		sts 138+1,__zero_reg__
+ 201 0092 1092 8A00 		sts 138,__zero_reg__
+ 202               	.L5:
+ 203               	/* epilogue start */
+  71:main.c        **** 	}
+  72:main.c        **** }
+ 205               	.LM17:
+ 206 0096 9F91      		pop r25
+ 207 0098 8F91      		pop r24
+ 208 009a 0F90      		pop r0
+ 209 009c 0FBE      		out __SREG__,r0
+ 210 009e 0F90      		pop r0
+ 211 00a0 1F90      		pop r1
+ 212 00a2 1895      		reti
+ 214               	.Lscope2:
+ 216               		.stabd	78,0,0
+ 218               	.global	__vector_24
+ 220               	__vector_24:
+ 221               		.stabd	46,0,0
+  73:main.c        **** 
+  74:main.c        **** ISR(TWI_vect)
+  75:main.c        **** {
+ 223               	.LM18:
+ 224               	.LFBB3:
+ 225 00a4 1F92      		push r1
+ 226 00a6 0F92      		push r0
+ 227 00a8 0FB6      		in r0,__SREG__
+ 228 00aa 0F92      		push r0
+ 229 00ac 1124      		clr __zero_reg__
+ 230 00ae 2F93      		push r18
+ 231 00b0 3F93      		push r19
+ 232 00b2 4F93      		push r20
+ 233 00b4 5F93      		push r21
+ 234 00b6 6F93      		push r22
+ 235 00b8 7F93      		push r23
+ 236 00ba 8F93      		push r24
+ 237 00bc 9F93      		push r25
+ 238 00be AF93      		push r26
+ 239 00c0 BF93      		push r27
+ 240 00c2 EF93      		push r30
+ 241 00c4 FF93      		push r31
+ 242               	/* prologue: Signal */
+ 243               	/* frame size = 0 */
+ 244               	/* stack size = 15 */
+ 245               	.L__stack_usage = 15
+  76:main.c        **** 	//servoPos2 += 10;
+  77:main.c        **** 	uint8_t status = TW_STATUS; // Get status register.
+ 247               	.LM19:
+ 248 00c6 8091 B900 		lds r24,185
+ 249 00ca 887F      		andi r24,lo8(-8)
+  78:main.c        **** 	
+  79:main.c        **** 	/// RX ///
+  80:main.c        **** 	if(status == TW_SR_SLA_ACK) // SLA+W received, ACK response sent.
+ 251               	.LM20:
+ 252 00cc 8036      		cpi r24,lo8(96)
+ 253 00ce 01F0      		breq .L17
+ 254               	.L10:
+  81:main.c        **** 	{
+  82:main.c        **** 		TWCR |= (1<<TWEA); // Read and ACK the next byte.
+  83:main.c        **** 	}
+  84:main.c        **** 	else if(status == TW_SR_DATA_ACK) // Data from SLA+W received, ACK'd.
+ 256               	.LM21:
+ 257 00d0 8038      		cpi r24,lo8(-128)
+ 258 00d2 01F4      		brne .L12
+  85:main.c        **** 	{
+  86:main.c        **** 		rxDataHandler(TWDR); // Handle the received data.
+ 260               	.LM22:
+ 261 00d4 8091 BB00 		lds r24,187
+ 262 00d8 0E94 0000 		call rxDataHandler
+ 263 00dc 00C0      		rjmp .L11
+ 264               	.L12:
+  87:main.c        **** 	}
+  88:main.c        **** 	else if(status == TW_SR_STOP)
+ 266               	.LM23:
+ 267 00de 803A      		cpi r24,lo8(-96)
+ 268 00e0 01F4      		brne .L13
+  89:main.c        **** 	{
+  90:main.c        **** 		//servoPos2 = 180;
+  91:main.c        **** 		TWCR |= (1<<TWEA); // ACK it.
+ 270               	.LM24:
+ 271 00e2 8091 BC00 		lds r24,188
+ 272 00e6 8064      		ori r24,lo8(64)
+ 273 00e8 8093 BC00 		sts 188,r24
+  92:main.c        **** 		i2cMode = 0;
+ 275               	.LM25:
+ 276 00ec 1092 0000 		sts i2cMode,__zero_reg__
+ 277 00f0 00C0      		rjmp .L11
+ 278               	.L13:
+  93:main.c        **** 		// And we're done.
+  94:main.c        **** 	}
+  95:main.c        **** 	
+  96:main.c        **** 	/// TX ///
+  97:main.c        **** 	else if(status == TW_ST_SLA_ACK) // SLA+R received, ACK'd.
+ 280               	.LM26:
+ 281 00f2 883A      		cpi r24,lo8(-88)
+ 282 00f4 01F4      		brne .L14
+  98:main.c        **** 	{
+  99:main.c        **** 		bytesCount = 0;
+ 284               	.LM27:
+ 285 00f6 1092 0000 		sts bytesCount,__zero_reg__
+ 286 00fa 00C0      		rjmp .L18
+ 287               	.L14:
+ 100:main.c        **** 		txDataHandler(); // This auto-fills TWDR.
+ 101:main.c        **** 	}
+ 102:main.c        **** 	else if(status == TW_ST_DATA_ACK) // Data ACK'd.
+ 289               	.LM28:
+ 290 00fc 883B      		cpi r24,lo8(-72)
+ 291 00fe 01F4      		brne .L15
+ 292               	.L18:
+ 103:main.c        **** 	{
+ 104:main.c        **** 		txDataHandler();
+ 294               	.LM29:
+ 295 0100 0E94 0000 		call txDataHandler
+ 296 0104 00C0      		rjmp .L11
+ 297               	.L15:
+ 105:main.c        **** 	}
+ 106:main.c        **** 	else if(status == TW_ST_LAST_DATA || status == TW_ST_DATA_NACK) // Data NACK'd or last byte ACK'd.
+ 299               	.LM30:
+ 300 0106 883C      		cpi r24,lo8(-56)
+ 301 0108 01F0      		breq .L16
+ 303               	.LM31:
+ 304 010a 803C      		cpi r24,lo8(-64)
+ 305 010c 01F4      		brne .L11
+ 306               	.L16:
+ 107:main.c        **** 	{
+ 108:main.c        **** 		i2cMode = 0;
+ 308               	.LM32:
+ 309 010e 1092 0000 		sts i2cMode,__zero_reg__
+ 109:main.c        **** 		bytesCount = 0;
+ 311               	.LM33:
+ 312 0112 1092 0000 		sts bytesCount,__zero_reg__
+ 313               	.L17:
+ 110:main.c        **** 		TWCR |= (1<<TWEA);
+ 315               	.LM34:
+ 316 0116 8091 BC00 		lds r24,188
+ 317 011a 8064      		ori r24,lo8(64)
+ 318 011c 8093 BC00 		sts 188,r24
+ 319               	.L11:
+ 111:main.c        **** 	}
+ 112:main.c        **** 	
+ 113:main.c        **** 	TWCR |= (1<<TWINT)|(1<<TWIE); // Clear the interrupt flag (seriously), allowing the TWI to continu
+ 321               	.LM35:
+ 322 0120 8091 BC00 		lds r24,188
+ 323 0124 8168      		ori r24,lo8(-127)
+ 324 0126 8093 BC00 		sts 188,r24
+ 325               	/* epilogue start */
+ 114:main.c        **** }
+ 327               	.LM36:
+ 328 012a FF91      		pop r31
+ 329 012c EF91      		pop r30
+ 330 012e BF91      		pop r27
+ 331 0130 AF91      		pop r26
+ 332 0132 9F91      		pop r25
+ 333 0134 8F91      		pop r24
+ 334 0136 7F91      		pop r23
+ 335 0138 6F91      		pop r22
+ 336 013a 5F91      		pop r21
+ 337 013c 4F91      		pop r20
+ 338 013e 3F91      		pop r19
+ 339 0140 2F91      		pop r18
+ 340 0142 0F90      		pop r0
+ 341 0144 0FBE      		out __SREG__,r0
+ 342 0146 0F90      		pop r0
+ 343 0148 1F90      		pop r1
+ 344 014a 1895      		reti
+ 349               	.Lscope3:
+ 351               		.stabd	78,0,0
+ 352               		.section	.text.startup,"ax",@progbits
+ 354               	.global	main
+ 356               	main:
+ 357               		.stabd	46,0,0
+ 115:main.c        **** 
+ 116:main.c        **** /// Functions ///
+ 117:main.c        **** int main(void)
+ 118:main.c        **** {
+ 359               	.LM37:
+ 360               	.LFBB4:
+ 361               	/* prologue: function */
+ 362               	/* frame size = 0 */
+ 363               	/* stack size = 0 */
+ 364               	.L__stack_usage = 0
+ 119:main.c        **** 	// Initialize inputs and outputs.
+ 120:main.c        **** 	DDRB = 0b00000011; 
+ 366               	.LM38:
+ 367 0000 83E0      		ldi r24,lo8(3)
+ 368 0002 84B9      		out 36-0x20,r24
+ 121:main.c        **** 	
+ 122:main.c        **** 	// Servo timer initialization.
+ 123:main.c        **** 	ICR1 = PWM_TIMER_TOP;
+ 370               	.LM39:
+ 371 0004 80E7      		ldi r24,lo8(6000)
+ 372 0006 97E1      		ldi r25,hi8(6000)
+ 373 0008 9093 8700 		sts 134+1,r25
+ 374 000c 8093 8600 		sts 134,r24
+ 124:main.c        **** 	OCR1A = servoPos1;
+ 376               	.LM40:
+ 377 0010 8091 0000 		lds r24,servoPos1
+ 378 0014 9091 0000 		lds r25,servoPos1+1
+ 379 0018 9093 8900 		sts 136+1,r25
+ 380 001c 8093 8800 		sts 136,r24
+ 125:main.c        **** 	OCR1B = servoPos2;
+ 382               	.LM41:
+ 383 0020 8091 0000 		lds r24,servoPos2
+ 384 0024 9091 0000 		lds r25,servoPos2+1
+ 385 0028 9093 8B00 		sts 138+1,r25
+ 386 002c 8093 8A00 		sts 138,r24
+ 126:main.c        **** 	TCCR1A = PWM_REG1;
+ 388               	.LM42:
+ 389 0030 1092 8000 		sts 128,__zero_reg__
+ 127:main.c        **** 	TCCR1B = PWM_REG2;
+ 391               	.LM43:
+ 392 0034 8BE1      		ldi r24,lo8(27)
+ 393 0036 8093 8100 		sts 129,r24
+ 128:main.c        **** 	TIMSK1 = PWM_REG3;
+ 395               	.LM44:
+ 396 003a 86E0      		ldi r24,lo8(6)
+ 397 003c 8093 6F00 		sts 111,r24
+ 129:main.c        **** 	
+ 130:main.c        **** 	// i2c initialization.
+ 131:main.c        **** 	TWAR = I2C_ADDR; // Set slave address.
+ 399               	.LM45:
+ 400 0040 86E4      		ldi r24,lo8(70)
+ 401 0042 8093 BA00 		sts 186,r24
+ 132:main.c        **** 	TWBR = I2C_REG2; // Set bit-rate.
+ 403               	.LM46:
+ 404 0046 82E0      		ldi r24,lo8(2)
+ 405 0048 8093 B800 		sts 184,r24
+ 133:main.c        **** 	TWSR = I2C_REG3; // Set prescale.
+ 407               	.LM47:
+ 408 004c 81E0      		ldi r24,lo8(1)
+ 409 004e 8093 B900 		sts 185,r24
+ 134:main.c        **** 	TWCR = I2C_REG1; // Enable TWI.
+ 411               	.LM48:
+ 412 0052 85E4      		ldi r24,lo8(69)
+ 413 0054 8093 BC00 		sts 188,r24
+ 135:main.c        **** 	
+ 136:main.c        **** 	adcInit();
+ 415               	.LM49:
+ 416 0058 0E94 0000 		call adcInit
+ 137:main.c        **** 	
+ 138:main.c        **** 	PRR = 0x00;
+ 418               	.LM50:
+ 419 005c 1092 6400 		sts 100,__zero_reg__
+ 139:main.c        **** 	
+ 140:main.c        **** 	delay_ms(10);
+ 421               	.LM51:
+ 422 0060 8AE0      		ldi r24,lo8(10)
+ 423 0062 90E0      		ldi r25,hi8(10)
+ 424 0064 0E94 0000 		call delay_ms
+ 141:main.c        **** 	
+ 142:main.c        **** 	sei(); // Enable interrupts globally.
+ 426               	.LM52:
+ 427               	/* #APP */
+ 428               	 ;  143 "main.c" 1
+ 429 0068 7894      		sei
+ 430               	 ;  0 "" 2
+ 143:main.c        **** 	
+ 144:main.c        **** 	delay_ms(100);
+ 432               	.LM53:
+ 433               	/* #NOAPP */
+ 434 006a 84E6      		ldi r24,lo8(100)
+ 435 006c 90E0      		ldi r25,hi8(100)
+ 436 006e 0E94 0000 		call delay_ms
+ 437               	.L20:
+ 145:main.c        **** 	
+ 146:main.c        **** 	/*setServo(1,200);
+ 147:main.c        **** 	delay_ms(1000);
+ 148:main.c        **** 	setServo(1,100);
+ 149:main.c        **** 	delay_ms(1000);
+ 150:main.c        **** 	*/
+ 151:main.c        **** 	
+ 152:main.c        **** 	while(1)
+ 153:main.c        **** 	{
+ 154:main.c        **** 		//servoPos1 = 60;
+ 155:main.c        **** 		//delay_ms(1000);
+ 156:main.c        **** 		//servoPos1 = 260;
+ 157:main.c        **** 		//delay_ms(1000);
+ 158:main.c        **** 		delay_ms(10);
+ 439               	.LM54:
+ 440 0072 8AE0      		ldi r24,lo8(10)
+ 441 0074 90E0      		ldi r25,hi8(10)
+ 442 0076 0E94 0000 		call delay_ms
+ 159:main.c        **** 		analogGather();
+ 444               	.LM55:
+ 445 007a 0E94 0000 		call analogGather
+ 446 007e 00C0      		rjmp .L20
+ 448               	.Lscope4:
+ 450               		.stabd	78,0,0
+ 451               		.comm battMon,8,1
+ 452               		.comm arcIR3,8,1
+ 453               		.comm arcIR2,8,1
+ 454               		.comm arcIR1,8,1
+ 455               		.comm arrayIndex,1,1
+ 456               		.comm holder,4,1
+ 457               		.comm bytesCount,1,1
+ 458               		.comm i2cTxMode,1,1
+ 459               		.comm gStatus,1,1
+ 460               		.comm i2cMode,1,1
+ 461               		.comm globalError,1,1
+ 462               		.comm servoPos2,2,1
+ 463               		.comm servoPos1,2,1
+ 477               		.text
+ 479               	.Letext0:
+DEFINED SYMBOLS
+                            *ABS*:00000000 main.c
+     /tmp/ccWGOYDs.s:2      *ABS*:0000003f __SREG__
+     /tmp/ccWGOYDs.s:3      *ABS*:0000003e __SP_H__
+     /tmp/ccWGOYDs.s:4      *ABS*:0000003d __SP_L__
+     /tmp/ccWGOYDs.s:5      *ABS*:00000000 __tmp_reg__
+     /tmp/ccWGOYDs.s:6      *ABS*:00000001 __zero_reg__
+     /tmp/ccWGOYDs.s:84     .text:00000000 __vector_11
+                            *COM*:00000002 servoPos1
+                            *COM*:00000001 globalError
+     /tmp/ccWGOYDs.s:152    .text:00000052 __vector_12
+                            *COM*:00000002 servoPos2
+     /tmp/ccWGOYDs.s:220    .text:000000a4 __vector_24
+                            *COM*:00000001 i2cMode
+                            *COM*:00000001 bytesCount
+     /tmp/ccWGOYDs.s:356    .text.startup:00000000 main
+                            *COM*:00000008 battMon
+                            *COM*:00000008 arcIR3
+                            *COM*:00000008 arcIR2
+                            *COM*:00000008 arcIR1
+                            *COM*:00000001 arrayIndex
+                            *COM*:00000004 holder
+                            *COM*:00000001 i2cTxMode
+                            *COM*:00000001 gStatus
+
+UNDEFINED SYMBOLS
+__do_copy_data
+__do_clear_bss
+rxDataHandler
+txDataHandler
+adcInit
+delay_ms
+analogGather

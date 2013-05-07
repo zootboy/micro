@@ -1,0 +1,1 @@
+-c --cpu Cortex-M3 -g -O3 --apcs=interwork -I..\Library -I "d:\Keil\\ARM\INC" -I "d:\Keil\\ARM\INC\NXP\LPC17xx" -o ".\Obj\glcd_lpc1700.o" --depend ".\Obj\glcd_lpc1700.d" "..\Library\GLCD_LPC1700.c"

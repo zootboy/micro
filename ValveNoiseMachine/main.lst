@@ -1,0 +1,446 @@
+   1               		.file	"main.c"
+   2               	__SP_L__ = 0x3d
+   3               	__SREG__ = 0x3f
+   4               	__tmp_reg__ = 0
+   5               	__zero_reg__ = 1
+   8               		.text
+   9               	.Ltext0:
+  87               	.global	delay_ms
+  89               	delay_ms:
+  90               		.stabd	46,0,0
+   1:main.c        **** /* Valve Noise Circuit */
+   2:main.c        **** 
+   3:main.c        **** /* Include useful pre-defined functions */
+   4:main.c        **** #include <avr/interrupt.h>    // Enable interrupt functions.
+   5:main.c        **** #define F_CPU 9600000	      // Sets up the default speed for delay.h
+   6:main.c        **** #include <avr/io.h>           // Defines pins, ports, etc to make programs easier to read
+   7:main.c        **** #include <util/delay.h>
+   8:main.c        **** #include <stdlib.h>
+   9:main.c        **** #include <avr/sleep.h>
+  10:main.c        **** #include <avr/eeprom.h>
+  11:main.c        **** 
+  12:main.c        **** /*
+  13:main.c        ****  * PB0 - MOSI - 
+  14:main.c        ****  * PB1 - MISO - Reed Switch input
+  15:main.c        ****  * PB2 - SCK  - 
+  16:main.c        ****  * PB3 - Relay output
+  17:main.c        ****  * PB4 - Play Button output
+  18:main.c        ****  * PB5 - RESET
+  19:main.c        ****  */
+  20:main.c        **** 
+  21:main.c        **** #define BTNPRESSTIME 250
+  22:main.c        **** volatile uint16_t timerTick;
+  23:main.c        **** 
+  24:main.c        **** void delay_ms(uint16_t ms)
+  25:main.c        **** {
+  92               	.LM0:
+  93               	.LFBB1:
+  94               	/* prologue: function */
+  95               	/* frame size = 0 */
+  96               	/* stack size = 0 */
+  97               	.L__stack_usage = 0
+  26:main.c        ****     while(ms){
+  99               	.LM1:
+ 100 0000 00C0      		rjmp .L2
+ 101               	.L3:
+ 102               	.LBB4:
+ 103               	.LBB5:
+ 105               	.Ltext1:
+   1:/usr/lib/gcc/avr/4.7.1/../../../../avr/include/util/delay.h **** /* Copyright (c) 2002, Marek Michalkiewicz
+   2:/usr/lib/gcc/avr/4.7.1/../../../../avr/include/util/delay.h ****    Copyright (c) 2004,2005,2007 Joerg Wunsch
+   3:/usr/lib/gcc/avr/4.7.1/../../../../avr/include/util/delay.h ****    Copyright (c) 2007  Florin-Viorel Petrov
+   4:/usr/lib/gcc/avr/4.7.1/../../../../avr/include/util/delay.h ****    All rights reserved.
+   5:/usr/lib/gcc/avr/4.7.1/../../../../avr/include/util/delay.h **** 
+   6:/usr/lib/gcc/avr/4.7.1/../../../../avr/include/util/delay.h ****    Redistribution and use in source and binary forms, with or without
+   7:/usr/lib/gcc/avr/4.7.1/../../../../avr/include/util/delay.h ****    modification, are permitted provided that the following conditions are met:
+   8:/usr/lib/gcc/avr/4.7.1/../../../../avr/include/util/delay.h **** 
+   9:/usr/lib/gcc/avr/4.7.1/../../../../avr/include/util/delay.h ****    * Redistributions of source code must retain the above copyright
+  10:/usr/lib/gcc/avr/4.7.1/../../../../avr/include/util/delay.h ****      notice, this list of conditions and the following disclaimer.
+  11:/usr/lib/gcc/avr/4.7.1/../../../../avr/include/util/delay.h **** 
+  12:/usr/lib/gcc/avr/4.7.1/../../../../avr/include/util/delay.h ****    * Redistributions in binary form must reproduce the above copyright
+  13:/usr/lib/gcc/avr/4.7.1/../../../../avr/include/util/delay.h ****      notice, this list of conditions and the following disclaimer in
+  14:/usr/lib/gcc/avr/4.7.1/../../../../avr/include/util/delay.h ****      the documentation and/or other materials provided with the
+  15:/usr/lib/gcc/avr/4.7.1/../../../../avr/include/util/delay.h ****      distribution.
+  16:/usr/lib/gcc/avr/4.7.1/../../../../avr/include/util/delay.h **** 
+  17:/usr/lib/gcc/avr/4.7.1/../../../../avr/include/util/delay.h ****    * Neither the name of the copyright holders nor the names of
+  18:/usr/lib/gcc/avr/4.7.1/../../../../avr/include/util/delay.h ****      contributors may be used to endorse or promote products derived
+  19:/usr/lib/gcc/avr/4.7.1/../../../../avr/include/util/delay.h ****      from this software without specific prior written permission.
+  20:/usr/lib/gcc/avr/4.7.1/../../../../avr/include/util/delay.h **** 
+  21:/usr/lib/gcc/avr/4.7.1/../../../../avr/include/util/delay.h ****   THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+  22:/usr/lib/gcc/avr/4.7.1/../../../../avr/include/util/delay.h ****   AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+  23:/usr/lib/gcc/avr/4.7.1/../../../../avr/include/util/delay.h ****   IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+  24:/usr/lib/gcc/avr/4.7.1/../../../../avr/include/util/delay.h ****   ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE
+  25:/usr/lib/gcc/avr/4.7.1/../../../../avr/include/util/delay.h ****   LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+  26:/usr/lib/gcc/avr/4.7.1/../../../../avr/include/util/delay.h ****   CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+  27:/usr/lib/gcc/avr/4.7.1/../../../../avr/include/util/delay.h ****   SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+  28:/usr/lib/gcc/avr/4.7.1/../../../../avr/include/util/delay.h ****   INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+  29:/usr/lib/gcc/avr/4.7.1/../../../../avr/include/util/delay.h ****   CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+  30:/usr/lib/gcc/avr/4.7.1/../../../../avr/include/util/delay.h ****   ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+  31:/usr/lib/gcc/avr/4.7.1/../../../../avr/include/util/delay.h ****   POSSIBILITY OF SUCH DAMAGE. */
+  32:/usr/lib/gcc/avr/4.7.1/../../../../avr/include/util/delay.h **** 
+  33:/usr/lib/gcc/avr/4.7.1/../../../../avr/include/util/delay.h **** /* $Id: delay.h.in 2251 2011-09-14 08:20:33Z joerg_wunsch $ */
+  34:/usr/lib/gcc/avr/4.7.1/../../../../avr/include/util/delay.h **** 
+  35:/usr/lib/gcc/avr/4.7.1/../../../../avr/include/util/delay.h **** #ifndef _UTIL_DELAY_H_
+  36:/usr/lib/gcc/avr/4.7.1/../../../../avr/include/util/delay.h **** #define _UTIL_DELAY_H_ 1
+  37:/usr/lib/gcc/avr/4.7.1/../../../../avr/include/util/delay.h **** 
+  38:/usr/lib/gcc/avr/4.7.1/../../../../avr/include/util/delay.h **** #ifndef __HAS_DELAY_CYCLES
+  39:/usr/lib/gcc/avr/4.7.1/../../../../avr/include/util/delay.h **** #define __HAS_DELAY_CYCLES 1
+  40:/usr/lib/gcc/avr/4.7.1/../../../../avr/include/util/delay.h **** #endif
+  41:/usr/lib/gcc/avr/4.7.1/../../../../avr/include/util/delay.h **** 
+  42:/usr/lib/gcc/avr/4.7.1/../../../../avr/include/util/delay.h **** #include <inttypes.h>
+  43:/usr/lib/gcc/avr/4.7.1/../../../../avr/include/util/delay.h **** #include <util/delay_basic.h>
+  44:/usr/lib/gcc/avr/4.7.1/../../../../avr/include/util/delay.h **** #include <math.h>
+  45:/usr/lib/gcc/avr/4.7.1/../../../../avr/include/util/delay.h **** 
+  46:/usr/lib/gcc/avr/4.7.1/../../../../avr/include/util/delay.h **** /** \file */
+  47:/usr/lib/gcc/avr/4.7.1/../../../../avr/include/util/delay.h **** /** \defgroup util_delay <util/delay.h>: Convenience functions for busy-wait delay loops
+  48:/usr/lib/gcc/avr/4.7.1/../../../../avr/include/util/delay.h ****     \code
+  49:/usr/lib/gcc/avr/4.7.1/../../../../avr/include/util/delay.h ****     #define F_CPU 1000000UL  // 1 MHz
+  50:/usr/lib/gcc/avr/4.7.1/../../../../avr/include/util/delay.h ****     //#define F_CPU 14.7456E6
+  51:/usr/lib/gcc/avr/4.7.1/../../../../avr/include/util/delay.h ****     #include <util/delay.h>
+  52:/usr/lib/gcc/avr/4.7.1/../../../../avr/include/util/delay.h ****     \endcode
+  53:/usr/lib/gcc/avr/4.7.1/../../../../avr/include/util/delay.h **** 
+  54:/usr/lib/gcc/avr/4.7.1/../../../../avr/include/util/delay.h ****     \note As an alternative method, it is possible to pass the
+  55:/usr/lib/gcc/avr/4.7.1/../../../../avr/include/util/delay.h ****     F_CPU macro down to the compiler from the Makefile.
+  56:/usr/lib/gcc/avr/4.7.1/../../../../avr/include/util/delay.h ****     Obviously, in that case, no \c \#define statement should be
+  57:/usr/lib/gcc/avr/4.7.1/../../../../avr/include/util/delay.h ****     used.
+  58:/usr/lib/gcc/avr/4.7.1/../../../../avr/include/util/delay.h **** 
+  59:/usr/lib/gcc/avr/4.7.1/../../../../avr/include/util/delay.h ****     The functions in this header file are wrappers around the basic
+  60:/usr/lib/gcc/avr/4.7.1/../../../../avr/include/util/delay.h ****     busy-wait functions from <util/delay_basic.h>.  They are meant as
+  61:/usr/lib/gcc/avr/4.7.1/../../../../avr/include/util/delay.h ****     convenience functions where actual time values can be specified
+  62:/usr/lib/gcc/avr/4.7.1/../../../../avr/include/util/delay.h ****     rather than a number of cycles to wait for.  The idea behind is
+  63:/usr/lib/gcc/avr/4.7.1/../../../../avr/include/util/delay.h ****     that compile-time constant expressions will be eliminated by
+  64:/usr/lib/gcc/avr/4.7.1/../../../../avr/include/util/delay.h ****     compiler optimization so floating-point expressions can be used
+  65:/usr/lib/gcc/avr/4.7.1/../../../../avr/include/util/delay.h ****     to calculate the number of delay cycles needed based on the CPU
+  66:/usr/lib/gcc/avr/4.7.1/../../../../avr/include/util/delay.h ****     frequency passed by the macro F_CPU.
+  67:/usr/lib/gcc/avr/4.7.1/../../../../avr/include/util/delay.h **** 
+  68:/usr/lib/gcc/avr/4.7.1/../../../../avr/include/util/delay.h ****     \note In order for these functions to work as intended, compiler
+  69:/usr/lib/gcc/avr/4.7.1/../../../../avr/include/util/delay.h ****     optimizations <em>must</em> be enabled, and the delay time
+  70:/usr/lib/gcc/avr/4.7.1/../../../../avr/include/util/delay.h ****     <em>must</em> be an expression that is a known constant at
+  71:/usr/lib/gcc/avr/4.7.1/../../../../avr/include/util/delay.h ****     compile-time.  If these requirements are not met, the resulting
+  72:/usr/lib/gcc/avr/4.7.1/../../../../avr/include/util/delay.h ****     delay will be much longer (and basically unpredictable), and
+  73:/usr/lib/gcc/avr/4.7.1/../../../../avr/include/util/delay.h ****     applications that otherwise do not use floating-point calculations
+  74:/usr/lib/gcc/avr/4.7.1/../../../../avr/include/util/delay.h ****     will experience severe code bloat by the floating-point library
+  75:/usr/lib/gcc/avr/4.7.1/../../../../avr/include/util/delay.h ****     routines linked into the application.
+  76:/usr/lib/gcc/avr/4.7.1/../../../../avr/include/util/delay.h **** 
+  77:/usr/lib/gcc/avr/4.7.1/../../../../avr/include/util/delay.h ****     The functions available allow the specification of microsecond, and
+  78:/usr/lib/gcc/avr/4.7.1/../../../../avr/include/util/delay.h ****     millisecond delays directly, using the application-supplied macro
+  79:/usr/lib/gcc/avr/4.7.1/../../../../avr/include/util/delay.h ****     F_CPU as the CPU clock frequency (in Hertz).
+  80:/usr/lib/gcc/avr/4.7.1/../../../../avr/include/util/delay.h **** 
+  81:/usr/lib/gcc/avr/4.7.1/../../../../avr/include/util/delay.h **** */
+  82:/usr/lib/gcc/avr/4.7.1/../../../../avr/include/util/delay.h **** 
+  83:/usr/lib/gcc/avr/4.7.1/../../../../avr/include/util/delay.h **** #if !defined(__DOXYGEN__)
+  84:/usr/lib/gcc/avr/4.7.1/../../../../avr/include/util/delay.h **** static inline void _delay_us(double __us) __attribute__((always_inline));
+  85:/usr/lib/gcc/avr/4.7.1/../../../../avr/include/util/delay.h **** static inline void _delay_ms(double __ms) __attribute__((always_inline));
+  86:/usr/lib/gcc/avr/4.7.1/../../../../avr/include/util/delay.h **** #endif
+  87:/usr/lib/gcc/avr/4.7.1/../../../../avr/include/util/delay.h **** 
+  88:/usr/lib/gcc/avr/4.7.1/../../../../avr/include/util/delay.h **** #ifndef F_CPU
+  89:/usr/lib/gcc/avr/4.7.1/../../../../avr/include/util/delay.h **** /* prevent compiler error by supplying a default */
+  90:/usr/lib/gcc/avr/4.7.1/../../../../avr/include/util/delay.h **** # warning "F_CPU not defined for <util/delay.h>"
+  91:/usr/lib/gcc/avr/4.7.1/../../../../avr/include/util/delay.h **** # define F_CPU 1000000UL
+  92:/usr/lib/gcc/avr/4.7.1/../../../../avr/include/util/delay.h **** #endif
+  93:/usr/lib/gcc/avr/4.7.1/../../../../avr/include/util/delay.h **** 
+  94:/usr/lib/gcc/avr/4.7.1/../../../../avr/include/util/delay.h **** #ifndef __OPTIMIZE__
+  95:/usr/lib/gcc/avr/4.7.1/../../../../avr/include/util/delay.h **** # warning "Compiler optimizations disabled; functions from <util/delay.h> won't work as designed"
+  96:/usr/lib/gcc/avr/4.7.1/../../../../avr/include/util/delay.h **** #endif
+  97:/usr/lib/gcc/avr/4.7.1/../../../../avr/include/util/delay.h **** 
+  98:/usr/lib/gcc/avr/4.7.1/../../../../avr/include/util/delay.h **** #if __HAS_DELAY_CYCLES && defined(__OPTIMIZE__) && \
+  99:/usr/lib/gcc/avr/4.7.1/../../../../avr/include/util/delay.h ****   !defined(__DELAY_BACKWARD_COMPATIBLE__) &&	   \
+ 100:/usr/lib/gcc/avr/4.7.1/../../../../avr/include/util/delay.h ****   __STDC_HOSTED__
+ 101:/usr/lib/gcc/avr/4.7.1/../../../../avr/include/util/delay.h **** #  include <math.h>
+ 102:/usr/lib/gcc/avr/4.7.1/../../../../avr/include/util/delay.h **** #endif
+ 103:/usr/lib/gcc/avr/4.7.1/../../../../avr/include/util/delay.h **** 
+ 104:/usr/lib/gcc/avr/4.7.1/../../../../avr/include/util/delay.h **** /**
+ 105:/usr/lib/gcc/avr/4.7.1/../../../../avr/include/util/delay.h ****    \ingroup util_delay
+ 106:/usr/lib/gcc/avr/4.7.1/../../../../avr/include/util/delay.h **** 
+ 107:/usr/lib/gcc/avr/4.7.1/../../../../avr/include/util/delay.h ****    Perform a delay of \c __ms milliseconds, using _delay_loop_2().
+ 108:/usr/lib/gcc/avr/4.7.1/../../../../avr/include/util/delay.h **** 
+ 109:/usr/lib/gcc/avr/4.7.1/../../../../avr/include/util/delay.h ****    The macro F_CPU is supposed to be defined to a
+ 110:/usr/lib/gcc/avr/4.7.1/../../../../avr/include/util/delay.h ****    constant defining the CPU clock frequency (in Hertz).
+ 111:/usr/lib/gcc/avr/4.7.1/../../../../avr/include/util/delay.h **** 
+ 112:/usr/lib/gcc/avr/4.7.1/../../../../avr/include/util/delay.h ****    The maximal possible delay is 262.14 ms / F_CPU in MHz.
+ 113:/usr/lib/gcc/avr/4.7.1/../../../../avr/include/util/delay.h **** 
+ 114:/usr/lib/gcc/avr/4.7.1/../../../../avr/include/util/delay.h ****    When the user request delay which exceed the maximum possible one,
+ 115:/usr/lib/gcc/avr/4.7.1/../../../../avr/include/util/delay.h ****    _delay_ms() provides a decreased resolution functionality. In this
+ 116:/usr/lib/gcc/avr/4.7.1/../../../../avr/include/util/delay.h ****    mode _delay_ms() will work with a resolution of 1/10 ms, providing
+ 117:/usr/lib/gcc/avr/4.7.1/../../../../avr/include/util/delay.h ****    delays up to 6.5535 seconds (independent from CPU frequency).  The
+ 118:/usr/lib/gcc/avr/4.7.1/../../../../avr/include/util/delay.h ****    user will not be informed about decreased resolution.
+ 119:/usr/lib/gcc/avr/4.7.1/../../../../avr/include/util/delay.h **** 
+ 120:/usr/lib/gcc/avr/4.7.1/../../../../avr/include/util/delay.h ****    If the avr-gcc toolchain has __builtin_avr_delay_cycles(unsigned long)
+ 121:/usr/lib/gcc/avr/4.7.1/../../../../avr/include/util/delay.h ****    support, maximal possible delay is 4294967.295 ms/ F_CPU in MHz. For
+ 122:/usr/lib/gcc/avr/4.7.1/../../../../avr/include/util/delay.h ****    values greater than the maximal possible delay, overflows results in
+ 123:/usr/lib/gcc/avr/4.7.1/../../../../avr/include/util/delay.h ****    no delay i.e., 0ms.
+ 124:/usr/lib/gcc/avr/4.7.1/../../../../avr/include/util/delay.h **** 
+ 125:/usr/lib/gcc/avr/4.7.1/../../../../avr/include/util/delay.h ****    Conversion of __us into clock cycles may not always result in integer.
+ 126:/usr/lib/gcc/avr/4.7.1/../../../../avr/include/util/delay.h ****    By default, the clock cycles rounded up to next integer. This ensures that
+ 127:/usr/lib/gcc/avr/4.7.1/../../../../avr/include/util/delay.h ****    the user gets atleast __us microseconds of delay.
+ 128:/usr/lib/gcc/avr/4.7.1/../../../../avr/include/util/delay.h **** 
+ 129:/usr/lib/gcc/avr/4.7.1/../../../../avr/include/util/delay.h ****    Alternatively, user can define __DELAY_ROUND_DOWN__ and __DELAY_ROUND_CLOSEST__
+ 130:/usr/lib/gcc/avr/4.7.1/../../../../avr/include/util/delay.h ****    to round down and round to closest integer.
+ 131:/usr/lib/gcc/avr/4.7.1/../../../../avr/include/util/delay.h **** 
+ 132:/usr/lib/gcc/avr/4.7.1/../../../../avr/include/util/delay.h ****    Note: The new implementation of _delay_ms(double __ms) with 
+ 133:/usr/lib/gcc/avr/4.7.1/../../../../avr/include/util/delay.h ****     __builtin_avr_delay_cycles(unsigned long) support is not backward compatible. 
+ 134:/usr/lib/gcc/avr/4.7.1/../../../../avr/include/util/delay.h ****    User can define __DELAY_BACKWARD_COMPATIBLE__ to get a backward compatible delay.
+ 135:/usr/lib/gcc/avr/4.7.1/../../../../avr/include/util/delay.h ****    Also, the backward compatible
+ 136:/usr/lib/gcc/avr/4.7.1/../../../../avr/include/util/delay.h ****    algorithm will be chosen if the code is compiled in a <em>freestanding
+ 137:/usr/lib/gcc/avr/4.7.1/../../../../avr/include/util/delay.h ****    environment</em> (GCC option \c -ffreestanding), as the math functions
+ 138:/usr/lib/gcc/avr/4.7.1/../../../../avr/include/util/delay.h ****    required for rounding are not available to the compiler then.
+ 139:/usr/lib/gcc/avr/4.7.1/../../../../avr/include/util/delay.h **** 
+ 140:/usr/lib/gcc/avr/4.7.1/../../../../avr/include/util/delay.h ****  */
+ 141:/usr/lib/gcc/avr/4.7.1/../../../../avr/include/util/delay.h **** void
+ 142:/usr/lib/gcc/avr/4.7.1/../../../../avr/include/util/delay.h **** _delay_ms(double __ms)
+ 143:/usr/lib/gcc/avr/4.7.1/../../../../avr/include/util/delay.h **** {
+ 144:/usr/lib/gcc/avr/4.7.1/../../../../avr/include/util/delay.h **** 	uint16_t __ticks;
+ 145:/usr/lib/gcc/avr/4.7.1/../../../../avr/include/util/delay.h **** 	double __tmp ; 
+ 146:/usr/lib/gcc/avr/4.7.1/../../../../avr/include/util/delay.h **** #if __HAS_DELAY_CYCLES && defined(__OPTIMIZE__) && \
+ 147:/usr/lib/gcc/avr/4.7.1/../../../../avr/include/util/delay.h ****   !defined(__DELAY_BACKWARD_COMPATIBLE__) &&	   \
+ 148:/usr/lib/gcc/avr/4.7.1/../../../../avr/include/util/delay.h ****   __STDC_HOSTED__
+ 149:/usr/lib/gcc/avr/4.7.1/../../../../avr/include/util/delay.h **** 	uint32_t __ticks_dc;
+ 150:/usr/lib/gcc/avr/4.7.1/../../../../avr/include/util/delay.h **** 	extern void __builtin_avr_delay_cycles(unsigned long);
+ 151:/usr/lib/gcc/avr/4.7.1/../../../../avr/include/util/delay.h **** 	__tmp = ((F_CPU) / 1e3) * __ms;
+ 152:/usr/lib/gcc/avr/4.7.1/../../../../avr/include/util/delay.h **** 
+ 153:/usr/lib/gcc/avr/4.7.1/../../../../avr/include/util/delay.h **** 	#if defined(__DELAY_ROUND_DOWN__)
+ 154:/usr/lib/gcc/avr/4.7.1/../../../../avr/include/util/delay.h **** 		__ticks_dc = (uint32_t)fabs(__tmp);
+ 155:/usr/lib/gcc/avr/4.7.1/../../../../avr/include/util/delay.h **** 
+ 156:/usr/lib/gcc/avr/4.7.1/../../../../avr/include/util/delay.h **** 	#elif defined(__DELAY_ROUND_CLOSEST__)
+ 157:/usr/lib/gcc/avr/4.7.1/../../../../avr/include/util/delay.h **** 		__ticks_dc = (uint32_t)(fabs(__tmp)+0.5);
+ 158:/usr/lib/gcc/avr/4.7.1/../../../../avr/include/util/delay.h **** 
+ 159:/usr/lib/gcc/avr/4.7.1/../../../../avr/include/util/delay.h **** 	#else
+ 160:/usr/lib/gcc/avr/4.7.1/../../../../avr/include/util/delay.h **** 		//round up by default
+ 161:/usr/lib/gcc/avr/4.7.1/../../../../avr/include/util/delay.h **** 		__ticks_dc = (uint32_t)(ceil(fabs(__tmp)));
+ 162:/usr/lib/gcc/avr/4.7.1/../../../../avr/include/util/delay.h **** 	#endif
+ 163:/usr/lib/gcc/avr/4.7.1/../../../../avr/include/util/delay.h **** 
+ 164:/usr/lib/gcc/avr/4.7.1/../../../../avr/include/util/delay.h **** 	__builtin_avr_delay_cycles(__ticks_dc);
+ 107               	.LM2:
+ 108 0002 EFE5      		ldi r30,lo8(2399)
+ 109 0004 F9E0      		ldi r31,hi8(2399)
+ 110 0006 3197      		1: sbiw r30,1
+ 111 0008 01F4      		brne 1b
+ 112 000a 00C0      		rjmp .
+ 113 000c 0000      		nop
+ 114               	.LBE5:
+ 115               	.LBE4:
+ 117               	.Ltext2:
+  27:main.c        ****         _delay_ms(1);
+  28:main.c        ****         ms--;
+ 119               	.LM3:
+ 120 000e 0197      		sbiw r24,1
+ 121               	.L2:
+  26:main.c        ****     while(ms){
+ 123               	.LM4:
+ 124 0010 0097      		sbiw r24,0
+ 125 0012 01F4      		brne .L3
+ 126               	/* epilogue start */
+  29:main.c        ****     }
+  30:main.c        **** }
+ 128               	.LM5:
+ 129 0014 0895      		ret
+ 131               	.Lscope1:
+ 133               		.stabd	78,0,0
+ 135               	.global	__vector_3
+ 137               	__vector_3:
+ 138               		.stabd	46,0,0
+  31:main.c        **** 
+  32:main.c        **** ISR(TIM0_OVF_vect)
+  33:main.c        **** {
+ 140               	.LM6:
+ 141               	.LFBB2:
+ 142 0016 1F92      		push r1
+ 143 0018 0F92      		push r0
+ 144 001a 0FB6      		in r0,__SREG__
+ 145 001c 0F92      		push r0
+ 146 001e 1124      		clr __zero_reg__
+ 147 0020 2F93      		push r18
+ 148 0022 8F93      		push r24
+ 149 0024 9F93      		push r25
+ 150               	/* prologue: Signal */
+ 151               	/* frame size = 0 */
+ 152               	/* stack size = 6 */
+ 153               	.L__stack_usage = 6
+  34:main.c        ****     if(timerTick) 
+ 155               	.LM7:
+ 156 0026 8091 0000 		lds r24,timerTick
+ 157 002a 9091 0000 		lds r25,timerTick+1
+ 158 002e 892B      		or r24,r25
+ 159 0030 01F0      		breq .L4
+  35:main.c        ****     {
+  36:main.c        ****         timerTick += 26; // Milliseconds.
+ 161               	.LM8:
+ 162 0032 8091 0000 		lds r24,timerTick
+ 163 0036 9091 0000 		lds r25,timerTick+1
+ 164 003a 4A96      		adiw r24,26
+ 165 003c 9093 0000 		sts timerTick+1,r25
+ 166 0040 8093 0000 		sts timerTick,r24
+  37:main.c        ****         
+  38:main.c        ****         if(timerTick > 60000)
+ 168               	.LM9:
+ 169 0044 8091 0000 		lds r24,timerTick
+ 170 0048 9091 0000 		lds r25,timerTick+1
+ 171 004c 8136      		cpi r24,97
+ 172 004e 9A4E      		sbci r25,-22
+ 173 0050 00F0      		brlo .L4
+  39:main.c        ****         {
+  40:main.c        ****             timerTick = 0;
+ 175               	.LM10:
+ 176 0052 1092 0000 		sts timerTick+1,__zero_reg__
+ 177 0056 1092 0000 		sts timerTick,__zero_reg__
+  41:main.c        ****             PORTB &= ~(1<<PB3); // Turn relay off.
+ 179               	.LM11:
+ 180 005a C398      		cbi 0x18,3
+ 181               	.L4:
+ 182               	/* epilogue start */
+  42:main.c        ****         }
+  43:main.c        ****     }
+  44:main.c        **** }
+ 184               	.LM12:
+ 185 005c 9F91      		pop r25
+ 186 005e 8F91      		pop r24
+ 187 0060 2F91      		pop r18
+ 188 0062 0F90      		pop r0
+ 189 0064 0FBE      		out __SREG__,r0
+ 190 0066 0F90      		pop r0
+ 191 0068 1F90      		pop r1
+ 192 006a 1895      		reti
+ 194               	.Lscope2:
+ 196               		.stabd	78,0,0
+ 197               		.section	.text.startup,"ax",@progbits
+ 199               	.global	main
+ 201               	main:
+ 202               		.stabd	46,0,0
+  45:main.c        **** 
+  46:main.c        **** int main(void)
+  47:main.c        **** {
+ 204               	.LM13:
+ 205               	.LFBB3:
+ 206               	/* prologue: function */
+ 207               	/* frame size = 0 */
+ 208               	/* stack size = 0 */
+ 209               	.L__stack_usage = 0
+  48:main.c        **** 	delay_ms(10); // Let the power stabilize.
+ 211               	.LM14:
+ 212 0000 8AE0      		ldi r24,lo8(10)
+ 213 0002 90E0      		ldi r25,0
+ 214 0004 00D0      		rcall delay_ms
+  49:main.c        **** 	cli(); // Disable interrupts.
+ 216               	.LM15:
+ 217               	/* #APP */
+ 218               	 ;  49 "main.c" 1
+ 219 0006 F894      		cli
+ 220               	 ;  0 "" 2
+  50:main.c        ****         
+  51:main.c        ****         DDRB = (1<<PB3)|(1<<PB4); // Two outputs.
+ 222               	.LM16:
+ 223               	/* #NOAPP */
+ 224 0008 88E1      		ldi r24,lo8(24)
+ 225 000a 87BB      		out 0x17,r24
+  52:main.c        **** 	PORTB = (1<<PB1); // Enable internal pullup on reed switch.
+ 227               	.LM17:
+ 228 000c 82E0      		ldi r24,lo8(2)
+ 229 000e 88BB      		out 0x18,r24
+  53:main.c        ****         timerTick = 0;
+ 231               	.LM18:
+ 232 0010 1092 0000 		sts timerTick+1,__zero_reg__
+ 233 0014 1092 0000 		sts timerTick,__zero_reg__
+  54:main.c        ****         
+  55:main.c        ****         TCCR0A = 0;
+ 235               	.LM19:
+ 236 0018 1FBC      		out 0x2f,__zero_reg__
+  56:main.c        ****         TCCR0B = (1<<CS02)|(1<<CS00); // Prescale /1024
+ 238               	.LM20:
+ 239 001a 95E0      		ldi r25,lo8(5)
+ 240 001c 93BF      		out 0x33,r25
+  57:main.c        ****         TIMSK0 = (1<<TOIE0); // Overflow interrupt.
+ 242               	.LM21:
+ 243 001e 89BF      		out 0x39,r24
+  58:main.c        ****         // Interrupt should occur every ~25 ms.
+  59:main.c        ****         
+  60:main.c        **** 	sei(); // Enable interrupts.
+ 245               	.LM22:
+ 246               	/* #APP */
+ 247               	 ;  60 "main.c" 1
+ 248 0020 7894      		sei
+ 249               	 ;  0 "" 2
+  61:main.c        **** 	
+  62:main.c        **** 	delay_ms(50);
+ 251               	.LM23:
+ 252               	/* #NOAPP */
+ 253 0022 82E3      		ldi r24,lo8(50)
+ 254 0024 90E0      		ldi r25,0
+ 255 0026 00C0      		rjmp .L17
+ 256               	.L10:
+  63:main.c        **** 	
+  64:main.c        **** 	while(1) // Main loop.
+  65:main.c        **** 	{
+  66:main.c        ****             while(bit_is_clear(PINB,PB1)) delay_ms(5);
+ 258               	.LM24:
+ 259 0028 85E0      		ldi r24,lo8(5)
+ 260 002a 90E0      		ldi r25,0
+ 261               	.L17:
+ 262 002c 00D0      		rcall delay_ms
+ 263               	.L16:
+ 265               	.LM25:
+ 266 002e B19B      		sbis 0x16,1
+ 267 0030 00C0      		rjmp .L10
+  67:main.c        ****             delay_ms(20);
+ 269               	.LM26:
+ 270 0032 84E1      		ldi r24,lo8(20)
+ 271 0034 90E0      		ldi r25,0
+ 272 0036 00D0      		rcall delay_ms
+  68:main.c        ****             if(bit_is_set(PINB,PB1))
+ 274               	.LM27:
+ 275 0038 B19B      		sbis 0x16,1
+ 276 003a 00C0      		rjmp .L16
+  69:main.c        ****             {
+  70:main.c        ****                 PORTB |= (1<<PB4)|(1<<PB3); // Relay and Play Button on.
+ 278               	.LM28:
+ 279 003c 88B3      		in r24,0x18
+ 280 003e 8861      		ori r24,lo8(24)
+ 281 0040 88BB      		out 0x18,r24
+  71:main.c        ****                 delay_ms(BTNPRESSTIME);
+ 283               	.LM29:
+ 284 0042 8AEF      		ldi r24,lo8(-6)
+ 285 0044 90E0      		ldi r25,0
+ 286 0046 00D0      		rcall delay_ms
+  72:main.c        ****                 PORTB &= ~(1<<PB4);
+ 288               	.LM30:
+ 289 0048 C498      		cbi 0x18,4
+  73:main.c        ****                 timerTick = BTNPRESSTIME;
+ 291               	.LM31:
+ 292 004a 8AEF      		ldi r24,lo8(-6)
+ 293 004c 90E0      		ldi r25,0
+ 294 004e 9093 0000 		sts timerTick+1,r25
+ 295 0052 8093 0000 		sts timerTick,r24
+  74:main.c        ****                 delay_ms(15000); // Wait for sound to play out.
+ 297               	.LM32:
+ 298 0056 88E9      		ldi r24,lo8(-104)
+ 299 0058 9AE3      		ldi r25,lo8(58)
+ 300 005a 00C0      		rjmp .L18
+ 301               	.L14:
+  75:main.c        ****                 while(bit_is_set(PINB,PB1)) delay_ms(5);
+ 303               	.LM33:
+ 304 005c 85E0      		ldi r24,lo8(5)
+ 305 005e 90E0      		ldi r25,0
+ 306               	.L18:
+ 307 0060 00D0      		rcall delay_ms
+ 308 0062 B199      		sbic 0x16,1
+ 309 0064 00C0      		rjmp .L14
+ 310 0066 00C0      		rjmp .L16
+ 312               	.Lscope3:
+ 314               		.stabd	78,0,0
+ 315               		.comm	timerTick,2,1
+ 317               		.text
+ 319               	.Letext0:
+ 320               		.ident	"GCC: (GNU) 4.7.1"
+ 321               	.global __do_clear_bss
+DEFINED SYMBOLS
+                            *ABS*:00000000 main.c
+     /tmp/cc1Jque6.s:2      *ABS*:0000003d __SP_L__
+     /tmp/cc1Jque6.s:3      *ABS*:0000003f __SREG__
+     /tmp/cc1Jque6.s:4      *ABS*:00000000 __tmp_reg__
+     /tmp/cc1Jque6.s:5      *ABS*:00000001 __zero_reg__
+     /tmp/cc1Jque6.s:89     .text:00000000 delay_ms
+     /tmp/cc1Jque6.s:137    .text:00000016 __vector_3
+                            *COM*:00000002 timerTick
+     /tmp/cc1Jque6.s:201    .text.startup:00000000 main
+
+UNDEFINED SYMBOLS
+__do_clear_bss

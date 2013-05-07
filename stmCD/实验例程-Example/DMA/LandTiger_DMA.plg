@@ -1,0 +1,64 @@
+<html>
+<body>
+<pre>
+<h1>µVision Build Log</h1>
+<h2>Project:</h2>
+C:\Documents and Settings\PowerARM\◊¿√Ê\LPC1768≤‚ ‘≥Ã–Ú\DMA\LandTiger_DMA.uvproj
+Project File Date:  05/12/2010
+
+<h2>Output:</h2>
+Build target 'LandTiger_DMA'
+compiling core_cm3.c...
+compiling system_LPC17xx.c...
+assembling startup_LPC17xx.s...
+compiling dma.c...
+Source\App\dma.c(82): error:  #20: identifier "FALSE" is undefined
+Source\App\dma.c:       return ( FALSE );
+Source\App\dma.c:                ^
+Source\App\dma.c(89): error:  #20: identifier "TRUE" is undefined
+Source\App\dma.c:     return (TRUE);
+Source\App\dma.c:             ^
+Source\App\dma.c: Source\App\dma.c: 0 warnings, 2 errors
+compiling main.c...
+Source\App\main.c(19): error:  #5: cannot open source input file "uart.h": No such file or directory
+Source\App\main.c:   #include "uart.h"
+Source\App\main.c:                    ^
+Source\App\main.c: Source\App\main.c: 0 warnings, 1 error
+Target not created
+Build target 'LandTiger_DMA'
+compiling dma.c...
+Source\App\dma.c(82): error:  #20: identifier "FALSE" is undefined
+Source\App\dma.c:       return ( FALSE );
+Source\App\dma.c:                ^
+Source\App\dma.c(89): error:  #20: identifier "TRUE" is undefined
+Source\App\dma.c:     return (TRUE);
+Source\App\dma.c:             ^
+Source\App\dma.c: Source\App\dma.c: 0 warnings, 2 errors
+compiling main.c...
+Target not created
+Build target 'LandTiger_DMA'
+compiling dma.c...
+Source\App\dma.c(82): error:  #20: identifier "FALSE" is undefined
+Source\App\dma.c:       return ( FALSE );
+Source\App\dma.c:                ^
+Source\App\dma.c(89): error:  #20: identifier "TRUE" is undefined
+Source\App\dma.c:     return (TRUE);
+Source\App\dma.c:             ^
+Source\App\dma.c: Source\App\dma.c: 0 warnings, 2 errors
+compiling main.c...
+Target not created
+Build target 'LandTiger_DMA'
+compiling dma.c...
+Source\App\dma.c(82): error:  #20: identifier "FALSE" is undefined
+Source\App\dma.c:       return ( FALSE );
+Source\App\dma.c:                ^
+Source\App\dma.c(89): error:  #20: identifier "TRUE" is undefined
+Source\App\dma.c:     return (TRUE);
+Source\App\dma.c:             ^
+Source\App\dma.c: Source\App\dma.c: 0 warnings, 2 errors
+Target not created
+Build target 'LandTiger_DMA'
+compiling dma.c...
+linking...
+Program Size: Code=1252 RO-data=228 RW-data=12 ZI-data=612  
+".\Obj\LandTiger_DMA.axf" - 0 Error(s), 0 Warning(s).

@@ -1,0 +1,9 @@
+.\Obj\ledswitch.o: LEDSwitch.c
+.\Obj\ledswitch.o: d:\Keil\ARM\RV31\INC\RTL.h
+.\Obj\ledswitch.o: d:\Keil\ARM\RV31\INC\stdio.h
+.\Obj\ledswitch.o: d:\Keil\ARM\INC\NXP\LPC17xx\LPC17xx.h
+.\Obj\ledswitch.o: d:\Keil\ARM\RV31\INC\core_cm3.h
+.\Obj\ledswitch.o: d:\Keil\ARM\RV31\INC\stdint.h
+.\Obj\ledswitch.o: d:\Keil\ARM\INC\NXP\LPC17xx\system_LPC17xx.h
+.\Obj\ledswitch.o: ..\Library\GLCD.h
+.\Obj\ledswitch.o: d:\Keil\ARM\RV31\INC\string.h

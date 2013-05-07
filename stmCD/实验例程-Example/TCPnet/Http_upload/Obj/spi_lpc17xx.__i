@@ -1,0 +1,1 @@
+-c --cpu Cortex-M3 -g -O3 --apcs=interwork -I..\Library -I "d:\Keil\\ARM\INC" -I "d:\Keil\\ARM\INC\NXP\LPC17xx" -o ".\Obj\spi_lpc17xx.o" --omf_browse ".\Obj\spi_lpc17xx.crf" --depend ".\Obj\spi_lpc17xx.d" "..\Library\SPI_LPC17xx.c"

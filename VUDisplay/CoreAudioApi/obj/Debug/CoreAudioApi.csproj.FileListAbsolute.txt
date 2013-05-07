@@ -1,0 +1,5 @@
+C:\Users\Simon Inns\Documents\Visual Studio 2010\Projects\Development\CoreAudio2_Src\CoreAudioApi\bin\Debug\CoreAudioApi.dll
+C:\Users\Simon Inns\Documents\Visual Studio 2010\Projects\Development\CoreAudio2_Src\CoreAudioApi\bin\Debug\CoreAudioApi.pdb
+C:\Users\Simon Inns\Documents\Visual Studio 2010\Projects\Development\CoreAudio2_Src\CoreAudioApi\obj\Debug\ResolveAssemblyReference.cache
+C:\Users\Simon Inns\Documents\Visual Studio 2010\Projects\Development\CoreAudio2_Src\CoreAudioApi\obj\Debug\CoreAudioApi.dll
+C:\Users\Simon Inns\Documents\Visual Studio 2010\Projects\Development\CoreAudio2_Src\CoreAudioApi\obj\Debug\CoreAudioApi.pdb

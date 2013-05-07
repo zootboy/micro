@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?><?xml-stylesheet type='text/xsl' href='_UpgradeReport_Files/UpgradeReport.xslt'?><UpgradeLog>
+<Properties><Property Name="Solution" Value="CPUMonitor">
+</Property><Property Name="Solution File" Value="C:\Data\micro\LUFA101122\Projects\LEDNotifier\CPUUsageApp\CPUMonitor.sln">
+</Property><Property Name="Date" Value="Saturday, April 09, 2011">
+</Property><Property Name="Time" Value="19:29:21 PM">
+</Property></Properties><Event ErrorLevel="0" Project="CPUMonitor" Source="CPUMonitor.csproj" Description="Project converted successfully">
+</Event><Event ErrorLevel="3" Project="CPUMonitor" Source="CPUMonitor.csproj" Description="Converted">
+</Event><Event ErrorLevel="0" Project="CPUMonitor" Source="CPUMonitor.csproj" Description="Scan complete: Upgrade not required for project files.">
+</Event></UpgradeLog>

@@ -1,0 +1,626 @@
+   1               		.file	"main.c"
+   2               	__SREG__ = 0x3f
+   3               	__SP_H__ = 0x3e
+   4               	__SP_L__ = 0x3d
+   5               	__tmp_reg__ = 0
+   6               	__zero_reg__ = 1
+   7               		.global __do_copy_data
+   8               		.global __do_clear_bss
+  11               		.text
+  12               	.Ltext0:
+  82               	.global	__vector_24
+  84               	__vector_24:
+  85               		.stabd	46,0,0
+   0:main.c        **** /* Trinity Bot - Co-Pilot */
+   1:main.c        **** 
+   2:main.c        **** #include <avr/io.h>
+   3:main.c        **** //#include <avr/iom328p.h>
+   4:main.c        **** #include <avr/interrupt.h>   
+   5:main.c        **** #include <util/twi.h>
+   6:main.c        **** #include <stdlib.h>
+   7:main.c        **** #include "util.h"
+   8:main.c        **** #include "analog.h"
+   9:main.c        **** 
+  10:main.c        **** /* --- Pins ---
+  11:main.c        ****  * PORT B:        | PORT C:       | PORT D: 
+  12:main.c        ****  * PBO - Step L1  | PC0 - ArcIR4  | PD0 - 
+  13:main.c        ****  * PB1 - Step L2  | PC1 - ArcIR5  | PD1 - 
+  14:main.c        ****  * PB2 - Step L3  | PC2 - ArcIR6  | PD2 - 
+  15:main.c        ****  * PB3 - Step L4  | PC3 - ArcIR7  | PD3 - 
+  16:main.c        ****  * PB4 - Step R1  | PC4 - [i2c]   | PD4 - 
+  17:main.c        ****  * PB5 - Step R2  | PC5 - [i2c]   | PD5 - 
+  18:main.c        ****  * PB6 - Step R3  |               | PD6 - 
+  19:main.c        ****  * PB7 - Step R4  |               | PD7 - 
+  20:main.c        ****  * 
+  21:main.c        ****  */
+  22:main.c        **** 
+  23:main.c        **** // i2c defines
+  24:main.c        **** #define I2C_ADDR 0b01001000 // last bit determines response to general call; 0=ignore.
+  25:main.c        **** #define I2C_REG1 (1<<TWEN)|(1<<TWEA)|(1<<TWIE) // TWCR
+  26:main.c        **** #define I2C_REG2 0x02 // TWBR - 400 KHz mode.
+  27:main.c        **** #define I2C_REG3 (1<<TWPS0) // TWSR - Prescale of 4x.
+  28:main.c        **** 
+  29:main.c        **** // Timer 1 - 1024x prescale, CTC on ICR1
+  30:main.c        **** #define TIM1_CRA 0x00 // TCCR1A
+  31:main.c        **** #define TIM1_CRB (1<<WGM13)|(1<<WGM12)|(1<<CS12)|(1<<CS10); // TCCR1B
+  32:main.c        **** //#define TIM1_TOP_DEF 0x003F // Default top - ICR1
+  33:main.c        **** #define TIM1_TOP_DEF 0x005D
+  34:main.c        **** #define TIM1_MSK (1<<ICIE1) // TIMSK1
+  35:main.c        **** 
+  36:main.c        **** // Globals.
+  37:main.c        **** uint8_t stepPatternL[4] = { 0b00000001, 0b00000010, 0b00000100, 0b00001000 };
+  38:main.c        **** uint8_t stepPatternR[4] = { 0b10000000, 0b01000000, 0b00100000, 0b00010000 };
+  39:main.c        **** #define STEP_INDEX_SIZE 4
+  40:main.c        **** uint8_t stepStateL = 0;
+  41:main.c        **** uint8_t stepStateR = 0;
+  42:main.c        **** uint32_t prevStepL = 0xFFF; // Holds the differential values for the stepper timer.
+  43:main.c        **** uint32_t prevStepR = 0xFFF; // These should only be modified by the ISR.
+  44:main.c        **** 
+  45:main.c        **** /// Interupt Service Routines ///
+  46:main.c        **** ISR(TWI_vect)
+  47:main.c        **** {
+  87               	.LM0:
+  88               	.LFBB1:
+  89 0000 1F92      		push r1
+  90 0002 0F92      		push r0
+  91 0004 0FB6      		in r0,__SREG__
+  92 0006 0F92      		push r0
+  93 0008 1124      		clr __zero_reg__
+  94 000a 2F93      		push r18
+  95 000c 3F93      		push r19
+  96 000e 4F93      		push r20
+  97 0010 5F93      		push r21
+  98 0012 6F93      		push r22
+  99 0014 7F93      		push r23
+ 100 0016 8F93      		push r24
+ 101 0018 9F93      		push r25
+ 102 001a AF93      		push r26
+ 103 001c BF93      		push r27
+ 104 001e EF93      		push r30
+ 105 0020 FF93      		push r31
+ 106               	/* prologue: Signal */
+ 107               	/* frame size = 0 */
+ 108               	/* stack size = 15 */
+ 109               	.L__stack_usage = 15
+  48:main.c        **** 	uint8_t status = TW_STATUS; // Get status register.
+ 111               	.LM1:
+ 112 0022 8091 B900 		lds r24,185
+ 113 0026 887F      		andi r24,lo8(-8)
+  49:main.c        **** 	
+  50:main.c        **** 	/// RX ///
+  51:main.c        **** 	if(status == TW_SR_SLA_ACK) // SLA+W received, ACK response sent.
+ 115               	.LM2:
+ 116 0028 8036      		cpi r24,lo8(96)
+ 117 002a 01F0      		breq .L9
+ 118               	.L2:
+  52:main.c        **** 	{
+  53:main.c        **** 		TWCR |= (1<<TWEA); // Read and ACK the next byte.
+  54:main.c        **** 	}
+  55:main.c        **** 	else if(status == TW_SR_DATA_ACK) // Data from SLA+W received, ACK'd.
+ 120               	.LM3:
+ 121 002c 8038      		cpi r24,lo8(-128)
+ 122 002e 01F4      		brne .L4
+  56:main.c        **** 	{
+  57:main.c        **** 		rxDataHandler(TWDR); // Handle the received data.
+ 124               	.LM4:
+ 125 0030 8091 BB00 		lds r24,187
+ 126 0034 0E94 0000 		call rxDataHandler
+ 127 0038 00C0      		rjmp .L3
+ 128               	.L4:
+  58:main.c        **** 	}
+  59:main.c        **** 	else if(status == TW_SR_STOP)
+ 130               	.LM5:
+ 131 003a 803A      		cpi r24,lo8(-96)
+ 132 003c 01F0      		breq .L9
+ 133               	.L5:
+  60:main.c        **** 	{
+  61:main.c        **** 		TWCR |= (1<<TWEA); // ACK it.
+  62:main.c        **** 		// And we're done.
+  63:main.c        **** 	}
+  64:main.c        **** 	
+  65:main.c        **** 	/// TX ///
+  66:main.c        **** 	else if(status == TW_ST_SLA_ACK) // SLA+R received, ACK'd.
+ 135               	.LM6:
+ 136 003e 883A      		cpi r24,lo8(-88)
+ 137 0040 01F4      		brne .L6
+  67:main.c        **** 	{
+  68:main.c        **** 		bytesCount = 0;
+ 139               	.LM7:
+ 140 0042 1092 0000 		sts bytesCount,__zero_reg__
+ 141 0046 00C0      		rjmp .L10
+ 142               	.L6:
+  69:main.c        **** 		txDataHandler(); // This auto-fills TWDR.
+  70:main.c        **** 	}
+  71:main.c        **** 	else if(status == TW_ST_DATA_ACK) // Data ACK'd.
+ 144               	.LM8:
+ 145 0048 883B      		cpi r24,lo8(-72)
+ 146 004a 01F4      		brne .L7
+ 147               	.L10:
+  72:main.c        **** 	{
+  73:main.c        **** 		txDataHandler();
+ 149               	.LM9:
+ 150 004c 0E94 0000 		call txDataHandler
+ 151 0050 00C0      		rjmp .L3
+ 152               	.L7:
+  74:main.c        **** 	}
+  75:main.c        **** 	else if(status == TW_ST_LAST_DATA || status == TW_ST_DATA_NACK) // Data NACK'd or last byte ACK'd.
+ 154               	.LM10:
+ 155 0052 883C      		cpi r24,lo8(-56)
+ 156 0054 01F0      		breq .L8
+ 158               	.LM11:
+ 159 0056 803C      		cpi r24,lo8(-64)
+ 160 0058 01F4      		brne .L3
+ 161               	.L8:
+  76:main.c        **** 	{
+  77:main.c        **** 		i2cMode = 0;
+ 163               	.LM12:
+ 164 005a 1092 0000 		sts i2cMode,__zero_reg__
+  78:main.c        **** 		bytesCount = 0;
+ 166               	.LM13:
+ 167 005e 1092 0000 		sts bytesCount,__zero_reg__
+ 168               	.L9:
+  79:main.c        **** 		TWCR |= (1<<TWEA);
+ 170               	.LM14:
+ 171 0062 8091 BC00 		lds r24,188
+ 172 0066 8064      		ori r24,lo8(64)
+ 173 0068 8093 BC00 		sts 188,r24
+ 174               	.L3:
+  80:main.c        **** 	}
+  81:main.c        **** 	
+  82:main.c        **** 	TWCR |= (1<<TWINT)|(1<<TWIE); // Clear the interrupt flag (seriously), allowing the TWI to continu
+ 176               	.LM15:
+ 177 006c 8091 BC00 		lds r24,188
+ 178 0070 8168      		ori r24,lo8(-127)
+ 179 0072 8093 BC00 		sts 188,r24
+ 180               	/* epilogue start */
+  83:main.c        **** }
+ 182               	.LM16:
+ 183 0076 FF91      		pop r31
+ 184 0078 EF91      		pop r30
+ 185 007a BF91      		pop r27
+ 186 007c AF91      		pop r26
+ 187 007e 9F91      		pop r25
+ 188 0080 8F91      		pop r24
+ 189 0082 7F91      		pop r23
+ 190 0084 6F91      		pop r22
+ 191 0086 5F91      		pop r21
+ 192 0088 4F91      		pop r20
+ 193 008a 3F91      		pop r19
+ 194 008c 2F91      		pop r18
+ 195 008e 0F90      		pop r0
+ 196 0090 0FBE      		out __SREG__,r0
+ 197 0092 0F90      		pop r0
+ 198 0094 1F90      		pop r1
+ 199 0096 1895      		reti
+ 204               	.Lscope1:
+ 206               		.stabd	78,0,0
+ 208               	.global	__vector_10
+ 210               	__vector_10:
+ 211               		.stabd	46,0,0
+  84:main.c        **** 
+  85:main.c        **** ISR(TIMER1_CAPT_vect) // Stepper timer.
+  86:main.c        **** {
+ 213               	.LM17:
+ 214               	.LFBB2:
+ 215 0098 1F92      		push r1
+ 216 009a 0F92      		push r0
+ 217 009c 0FB6      		in r0,__SREG__
+ 218 009e 0F92      		push r0
+ 219 00a0 1124      		clr __zero_reg__
+ 220 00a2 2F93      		push r18
+ 221 00a4 3F93      		push r19
+ 222 00a6 4F93      		push r20
+ 223 00a8 5F93      		push r21
+ 224 00aa 6F93      		push r22
+ 225 00ac 7F93      		push r23
+ 226 00ae 8F93      		push r24
+ 227 00b0 9F93      		push r25
+ 228 00b2 AF93      		push r26
+ 229 00b4 BF93      		push r27
+ 230 00b6 EF93      		push r30
+ 231 00b8 FF93      		push r31
+ 232               	/* prologue: Signal */
+ 233               	/* frame size = 0 */
+ 234               	/* stack size = 15 */
+ 235               	.L__stack_usage = 15
+  87:main.c        **** 	// Left side.
+  88:main.c        **** 	if(stepperCountLeft > prevStepL)
+ 237               	.LM18:
+ 238 00ba 4091 0000 		lds r20,stepperCountLeft
+ 239 00be 5091 0000 		lds r21,stepperCountLeft+1
+ 240 00c2 6091 0000 		lds r22,stepperCountLeft+2
+ 241 00c6 7091 0000 		lds r23,stepperCountLeft+3
+ 242 00ca 8091 0000 		lds r24,prevStepL
+ 243 00ce 9091 0000 		lds r25,prevStepL+1
+ 244 00d2 A091 0000 		lds r26,prevStepL+2
+ 245 00d6 B091 0000 		lds r27,prevStepL+3
+ 246 00da 8417      		cp r24,r20
+ 247 00dc 9507      		cpc r25,r21
+ 248 00de A607      		cpc r26,r22
+ 249 00e0 B707      		cpc r27,r23
+ 250 00e2 00F4      		brsh .L12
+  89:main.c        **** 	{
+  90:main.c        **** 		stepStateL++;
+ 252               	.LM19:
+ 253 00e4 2091 0000 		lds r18,stepStateL
+ 254 00e8 2F5F      		subi r18,lo8(-(1))
+ 255 00ea 2093 0000 		sts stepStateL,r18
+  91:main.c        **** 		if(stepStateL >= 4) stepStateL = 0;
+ 257               	.LM20:
+ 258 00ee 2430      		cpi r18,lo8(4)
+ 259 00f0 00F0      		brlo .L13
+ 261               	.LM21:
+ 262 00f2 1092 0000 		sts stepStateL,__zero_reg__
+ 263               	.L13:
+  92:main.c        **** 		PORTB = ((PORTB & 0xF0) | stepPatternL[stepStateL]); // Preserve high nibble (right state), overw
+ 265               	.LM22:
+ 266 00f6 25B1      		in r18,37-0x20
+ 267 00f8 E091 0000 		lds r30,stepStateL
+ 268 00fc F0E0      		ldi r31,lo8(0)
+ 269 00fe E050      		subi r30,lo8(-(stepPatternL))
+ 270 0100 F040      		sbci r31,hi8(-(stepPatternL))
+ 271 0102 207F      		andi r18,lo8(-16)
+ 272 0104 3081      		ld r19,Z
+ 273 0106 232B      		or r18,r19
+ 274 0108 25B9      		out 37-0x20,r18
+  93:main.c        **** 		prevStepL++;
+ 276               	.LM23:
+ 277 010a 0196      		adiw r24,1
+ 278 010c A11D      		adc r26,__zero_reg__
+ 279 010e B11D      		adc r27,__zero_reg__
+ 280 0110 00C0      		rjmp .L23
+ 281               	.L12:
+  94:main.c        **** 	}
+  95:main.c        **** 	else if(stepperCountLeft < prevStepL)
+ 283               	.LM24:
+ 284 0112 4817      		cp r20,r24
+ 285 0114 5907      		cpc r21,r25
+ 286 0116 6A07      		cpc r22,r26
+ 287 0118 7B07      		cpc r23,r27
+ 288 011a 00F4      		brsh .L14
+  96:main.c        **** 	{
+  97:main.c        **** 		if(!stepStateL) stepStateL = 3;
+ 290               	.LM25:
+ 291 011c 2091 0000 		lds r18,stepStateL
+ 292 0120 2223      		tst r18
+ 293 0122 01F4      		brne .L15
+ 295               	.LM26:
+ 296 0124 23E0      		ldi r18,lo8(3)
+ 297 0126 00C0      		rjmp .L22
+ 298               	.L15:
+  98:main.c        **** 		else stepStateL--;
+ 300               	.LM27:
+ 301 0128 2150      		subi r18,lo8(-(-1))
+ 302               	.L22:
+ 303 012a 2093 0000 		sts stepStateL,r18
+  99:main.c        **** 		PORTB = ((PORTB & 0xF0) | stepPatternL[stepStateL]);
+ 305               	.LM28:
+ 306 012e 25B1      		in r18,37-0x20
+ 307 0130 E091 0000 		lds r30,stepStateL
+ 308 0134 F0E0      		ldi r31,lo8(0)
+ 309 0136 E050      		subi r30,lo8(-(stepPatternL))
+ 310 0138 F040      		sbci r31,hi8(-(stepPatternL))
+ 311 013a 207F      		andi r18,lo8(-16)
+ 312 013c 3081      		ld r19,Z
+ 313 013e 232B      		or r18,r19
+ 314 0140 25B9      		out 37-0x20,r18
+ 100:main.c        **** 		prevStepL--;
+ 316               	.LM29:
+ 317 0142 0197      		sbiw r24,1
+ 318 0144 A109      		sbc r26,__zero_reg__
+ 319 0146 B109      		sbc r27,__zero_reg__
+ 320               	.L23:
+ 321 0148 8093 0000 		sts prevStepL,r24
+ 322 014c 9093 0000 		sts prevStepL+1,r25
+ 323 0150 A093 0000 		sts prevStepL+2,r26
+ 324 0154 B093 0000 		sts prevStepL+3,r27
+ 325               	.L14:
+ 101:main.c        **** 	}
+ 102:main.c        **** 	
+ 103:main.c        **** 	// Right side.
+ 104:main.c        **** 	if(stepperCountRight > prevStepR)
+ 327               	.LM30:
+ 328 0158 4091 0000 		lds r20,stepperCountRight
+ 329 015c 5091 0000 		lds r21,stepperCountRight+1
+ 330 0160 6091 0000 		lds r22,stepperCountRight+2
+ 331 0164 7091 0000 		lds r23,stepperCountRight+3
+ 332 0168 8091 0000 		lds r24,prevStepR
+ 333 016c 9091 0000 		lds r25,prevStepR+1
+ 334 0170 A091 0000 		lds r26,prevStepR+2
+ 335 0174 B091 0000 		lds r27,prevStepR+3
+ 336 0178 8417      		cp r24,r20
+ 337 017a 9507      		cpc r25,r21
+ 338 017c A607      		cpc r26,r22
+ 339 017e B707      		cpc r27,r23
+ 340 0180 00F4      		brsh .L17
+ 105:main.c        **** 	{
+ 106:main.c        **** 		stepStateR++;
+ 342               	.LM31:
+ 343 0182 2091 0000 		lds r18,stepStateR
+ 344 0186 2F5F      		subi r18,lo8(-(1))
+ 345 0188 2093 0000 		sts stepStateR,r18
+ 107:main.c        **** 		if(stepStateR >= 4) stepStateR = 0;
+ 347               	.LM32:
+ 348 018c 2430      		cpi r18,lo8(4)
+ 349 018e 00F0      		brlo .L18
+ 351               	.LM33:
+ 352 0190 1092 0000 		sts stepStateR,__zero_reg__
+ 353               	.L18:
+ 108:main.c        **** 		PORTB = ((PORTB & 0x0F) | stepPatternR[stepStateR]); 
+ 355               	.LM34:
+ 356 0194 25B1      		in r18,37-0x20
+ 357 0196 E091 0000 		lds r30,stepStateR
+ 358 019a F0E0      		ldi r31,lo8(0)
+ 359 019c E050      		subi r30,lo8(-(stepPatternR))
+ 360 019e F040      		sbci r31,hi8(-(stepPatternR))
+ 361 01a0 2F70      		andi r18,lo8(15)
+ 362 01a2 3081      		ld r19,Z
+ 363 01a4 232B      		or r18,r19
+ 364 01a6 25B9      		out 37-0x20,r18
+ 109:main.c        **** 		prevStepR++;
+ 366               	.LM35:
+ 367 01a8 0196      		adiw r24,1
+ 368 01aa A11D      		adc r26,__zero_reg__
+ 369 01ac B11D      		adc r27,__zero_reg__
+ 370 01ae 00C0      		rjmp .L25
+ 371               	.L17:
+ 110:main.c        **** 	}
+ 111:main.c        **** 	else if(stepperCountRight < prevStepR)
+ 373               	.LM36:
+ 374 01b0 4817      		cp r20,r24
+ 375 01b2 5907      		cpc r21,r25
+ 376 01b4 6A07      		cpc r22,r26
+ 377 01b6 7B07      		cpc r23,r27
+ 378 01b8 00F4      		brsh .L11
+ 112:main.c        **** 	{
+ 113:main.c        **** 		if(!stepStateR) stepStateR = 3;
+ 380               	.LM37:
+ 381 01ba 2091 0000 		lds r18,stepStateR
+ 382 01be 2223      		tst r18
+ 383 01c0 01F4      		brne .L20
+ 385               	.LM38:
+ 386 01c2 23E0      		ldi r18,lo8(3)
+ 387 01c4 00C0      		rjmp .L24
+ 388               	.L20:
+ 114:main.c        **** 		else stepStateR--;
+ 390               	.LM39:
+ 391 01c6 2150      		subi r18,lo8(-(-1))
+ 392               	.L24:
+ 393 01c8 2093 0000 		sts stepStateR,r18
+ 115:main.c        **** 		PORTB = ((PORTB & 0x0F) | stepPatternR[stepStateR]);
+ 395               	.LM40:
+ 396 01cc 25B1      		in r18,37-0x20
+ 397 01ce E091 0000 		lds r30,stepStateR
+ 398 01d2 F0E0      		ldi r31,lo8(0)
+ 399 01d4 E050      		subi r30,lo8(-(stepPatternR))
+ 400 01d6 F040      		sbci r31,hi8(-(stepPatternR))
+ 401 01d8 2F70      		andi r18,lo8(15)
+ 402 01da 3081      		ld r19,Z
+ 403 01dc 232B      		or r18,r19
+ 404 01de 25B9      		out 37-0x20,r18
+ 116:main.c        **** 		prevStepR--;
+ 406               	.LM41:
+ 407 01e0 0197      		sbiw r24,1
+ 408 01e2 A109      		sbc r26,__zero_reg__
+ 409 01e4 B109      		sbc r27,__zero_reg__
+ 410               	.L25:
+ 411 01e6 8093 0000 		sts prevStepR,r24
+ 412 01ea 9093 0000 		sts prevStepR+1,r25
+ 413 01ee A093 0000 		sts prevStepR+2,r26
+ 414 01f2 B093 0000 		sts prevStepR+3,r27
+ 415               	.L11:
+ 416               	/* epilogue start */
+ 117:main.c        **** 	}
+ 118:main.c        **** }
+ 418               	.LM42:
+ 419 01f6 FF91      		pop r31
+ 420 01f8 EF91      		pop r30
+ 421 01fa BF91      		pop r27
+ 422 01fc AF91      		pop r26
+ 423 01fe 9F91      		pop r25
+ 424 0200 8F91      		pop r24
+ 425 0202 7F91      		pop r23
+ 426 0204 6F91      		pop r22
+ 427 0206 5F91      		pop r21
+ 428 0208 4F91      		pop r20
+ 429 020a 3F91      		pop r19
+ 430 020c 2F91      		pop r18
+ 431 020e 0F90      		pop r0
+ 432 0210 0FBE      		out __SREG__,r0
+ 433 0212 0F90      		pop r0
+ 434 0214 1F90      		pop r1
+ 435 0216 1895      		reti
+ 437               	.Lscope2:
+ 439               		.stabd	78,0,0
+ 440               		.section	.text.startup,"ax",@progbits
+ 442               	.global	main
+ 444               	main:
+ 445               		.stabd	46,0,0
+ 119:main.c        **** 
+ 120:main.c        **** /// Functions ///
+ 121:main.c        **** int main(void)
+ 122:main.c        **** {
+ 447               	.LM43:
+ 448               	.LFBB3:
+ 449               	/* prologue: function */
+ 450               	/* frame size = 0 */
+ 451               	/* stack size = 0 */
+ 452               	.L__stack_usage = 0
+ 123:main.c        **** 	// Initialize inputs and outputs.
+ 124:main.c        **** 	DDRB = 0xff; // All outputs.
+ 454               	.LM44:
+ 455 0000 8FEF      		ldi r24,lo8(-1)
+ 456 0002 84B9      		out 36-0x20,r24
+ 125:main.c        **** 	
+ 126:main.c        **** 	// i2c initialization.
+ 127:main.c        **** 	TWAR = I2C_ADDR; // Set slave address.
+ 458               	.LM45:
+ 459 0004 88E4      		ldi r24,lo8(72)
+ 460 0006 8093 BA00 		sts 186,r24
+ 128:main.c        **** 	TWBR = I2C_REG2; // Set bit-rate.
+ 462               	.LM46:
+ 463 000a 82E0      		ldi r24,lo8(2)
+ 464 000c 8093 B800 		sts 184,r24
+ 129:main.c        **** 	TWSR = I2C_REG3; // Set prescale.
+ 466               	.LM47:
+ 467 0010 81E0      		ldi r24,lo8(1)
+ 468 0012 8093 B900 		sts 185,r24
+ 130:main.c        **** 	TWCR = I2C_REG1; // Enable TWI.
+ 470               	.LM48:
+ 471 0016 85E4      		ldi r24,lo8(69)
+ 472 0018 8093 BC00 		sts 188,r24
+ 131:main.c        **** 	
+ 132:main.c        **** 	// Stepper timer initialization.
+ 133:main.c        **** 	TCCR1A = TIM1_CRA;
+ 474               	.LM49:
+ 475 001c 1092 8000 		sts 128,__zero_reg__
+ 134:main.c        **** 	TCCR1B = TIM1_CRB;
+ 477               	.LM50:
+ 478 0020 8DE1      		ldi r24,lo8(29)
+ 479 0022 8093 8100 		sts 129,r24
+ 135:main.c        **** 	ICR1 = TIM1_TOP_DEF; // Just a default...
+ 481               	.LM51:
+ 482 0026 8DE5      		ldi r24,lo8(93)
+ 483 0028 90E0      		ldi r25,hi8(93)
+ 484 002a 9093 8700 		sts 134+1,r25
+ 485 002e 8093 8600 		sts 134,r24
+ 136:main.c        **** 	TIMSK1 = TIM1_MSK; // AND THAT TOO!
+ 487               	.LM52:
+ 488 0032 80E2      		ldi r24,lo8(32)
+ 489 0034 8093 6F00 		sts 111,r24
+ 137:main.c        **** 	
+ 138:main.c        **** 	adcInit();
+ 491               	.LM53:
+ 492 0038 0E94 0000 		call adcInit
+ 139:main.c        **** 	
+ 140:main.c        **** 	delay_ms(100);
+ 494               	.LM54:
+ 495 003c 84E6      		ldi r24,lo8(100)
+ 496 003e 90E0      		ldi r25,hi8(100)
+ 497 0040 0E94 0000 		call delay_ms
+ 141:main.c        **** 
+ 142:main.c        **** 	
+ 143:main.c        **** 	sei(); // Enable interrupts globally.
+ 499               	.LM55:
+ 500               	/* #APP */
+ 501               	 ;  144 "main.c" 1
+ 502 0044 7894      		sei
+ 503               	 ;  0 "" 2
+ 504               	/* #NOAPP */
+ 505               	.L27:
+ 144:main.c        **** 	
+ 145:main.c        **** 	uint16_t mem = 0;
+ 146:main.c        **** 	
+ 147:main.c        **** 	while(1)
+ 148:main.c        **** 	{
+ 149:main.c        **** 		//servoPos1 = 60;
+ 150:main.c        **** 		//delay_ms(1000);
+ 151:main.c        **** 		//servoPos1 = 260;
+ 152:main.c        **** 		//delay_ms(1000);
+ 153:main.c        **** 		//stepperCountLeft++;
+ 154:main.c        **** 		
+ 155:main.c        **** 		analogGather();
+ 507               	.LM56:
+ 508 0046 0E94 0000 		call analogGather
+ 156:main.c        **** 		/*if(mem != arcIR4[0])
+ 157:main.c        **** 		{
+ 158:main.c        **** 			mem = arcIR4[0];
+ 159:main.c        **** 			stepperCountLeft+=mem;
+ 160:main.c        **** 			delay_ms(10000);
+ 161:main.c        **** 		}*/
+ 162:main.c        **** 		delay_ms(20);
+ 510               	.LM57:
+ 511 004a 84E1      		ldi r24,lo8(20)
+ 512 004c 90E0      		ldi r25,hi8(20)
+ 513 004e 0E94 0000 		call delay_ms
+ 514 0052 00C0      		rjmp .L27
+ 516               	.Lscope3:
+ 518               		.stabd	78,0,0
+ 519               	.global	prevStepR
+ 520               		.data
+ 523               	prevStepR:
+ 524 0000 FF        		.byte	-1
+ 525 0001 0F        		.byte	15
+ 526 0002 00        		.byte	0
+ 527 0003 00        		.byte	0
+ 528               	.global	prevStepL
+ 531               	prevStepL:
+ 532 0004 FF        		.byte	-1
+ 533 0005 0F        		.byte	15
+ 534 0006 00        		.byte	0
+ 535 0007 00        		.byte	0
+ 536               	.global	stepStateR
+ 537               	.global	stepStateR
+ 538               		.section .bss
+ 541               	stepStateR:
+ 542 0000 00        		.skip 1,0
+ 543               	.global	stepStateL
+ 544               	.global	stepStateL
+ 547               	stepStateL:
+ 548 0001 00        		.skip 1,0
+ 549               	.global	stepPatternR
+ 550               		.data
+ 553               	stepPatternR:
+ 554 0008 80        		.byte	-128
+ 555 0009 40        		.byte	64
+ 556 000a 20        		.byte	32
+ 557 000b 10        		.byte	16
+ 558               	.global	stepPatternL
+ 561               	stepPatternL:
+ 562 000c 01        		.byte	1
+ 563 000d 02        		.byte	2
+ 564 000e 04        		.byte	4
+ 565 000f 08        		.byte	8
+ 566               		.comm arcIR7,8,1
+ 567               		.comm arcIR6,8,1
+ 568               		.comm arcIR5,8,1
+ 569               		.comm arcIR4,8,1
+ 570               		.comm arrayIndex,1,1
+ 571               		.comm holder,4,1
+ 572               		.comm bytesCount,1,1
+ 573               		.comm i2cTxMode,1,1
+ 574               		.comm stepperCountRight,4,1
+ 575               		.comm stepperCountLeft,4,1
+ 576               		.comm gState,1,1
+ 577               		.comm i2cMode,1,1
+ 578               		.comm globalError,1,1
+ 598               		.text
+ 600               	.Letext0:
+DEFINED SYMBOLS
+                            *ABS*:00000000 main.c
+     /tmp/ccVt7q8j.s:2      *ABS*:0000003f __SREG__
+     /tmp/ccVt7q8j.s:3      *ABS*:0000003e __SP_H__
+     /tmp/ccVt7q8j.s:4      *ABS*:0000003d __SP_L__
+     /tmp/ccVt7q8j.s:5      *ABS*:00000000 __tmp_reg__
+     /tmp/ccVt7q8j.s:6      *ABS*:00000001 __zero_reg__
+     /tmp/ccVt7q8j.s:84     .text:00000000 __vector_24
+                            *COM*:00000001 bytesCount
+                            *COM*:00000001 i2cMode
+     /tmp/ccVt7q8j.s:210    .text:00000098 __vector_10
+                            *COM*:00000004 stepperCountLeft
+     /tmp/ccVt7q8j.s:531    .data:00000004 prevStepL
+     /tmp/ccVt7q8j.s:547    .bss:00000001 stepStateL
+     /tmp/ccVt7q8j.s:561    .data:0000000c stepPatternL
+                            *COM*:00000004 stepperCountRight
+     /tmp/ccVt7q8j.s:523    .data:00000000 prevStepR
+     /tmp/ccVt7q8j.s:541    .bss:00000000 stepStateR
+     /tmp/ccVt7q8j.s:553    .data:00000008 stepPatternR
+     /tmp/ccVt7q8j.s:444    .text.startup:00000000 main
+                            *COM*:00000008 arcIR7
+                            *COM*:00000008 arcIR6
+                            *COM*:00000008 arcIR5
+                            *COM*:00000008 arcIR4
+                            *COM*:00000001 arrayIndex
+                            *COM*:00000004 holder
+                            *COM*:00000001 i2cTxMode
+                            *COM*:00000001 gState
+                            *COM*:00000001 globalError
+
+UNDEFINED SYMBOLS
+__do_copy_data
+__do_clear_bss
+rxDataHandler
+txDataHandler
+adcInit
+delay_ms
+analogGather

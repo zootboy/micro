@@ -1,0 +1,67 @@
+   1               		.file	"pwm.c"
+   2               	__SP_L__ = 0x3d
+   3               	__SREG__ = 0x3f
+   4               	__tmp_reg__ = 0
+   5               	__zero_reg__ = 1
+   8               		.text
+   9               	.Ltext0:
+ 101               		.section	.text.startup,"ax",@progbits
+ 103               	.global	main
+ 105               	main:
+ 106               		.stabd	46,0,0
+   1:pwm.c         **** /* Tiny PWM */
+   2:pwm.c         **** 
+   3:pwm.c         **** /* Include useful pre-defined functions */
+   4:pwm.c         **** #include <avr/io.h>
+   5:pwm.c         **** #include <avr/interrupt.h>   
+   6:pwm.c         **** #define F_CPU 8000000   
+   7:pwm.c         **** 
+   8:pwm.c         **** // Target frequency: 38kHz
+   9:pwm.c         **** 
+  10:pwm.c         **** int main(void)
+  11:pwm.c         **** {
+ 108               	.LM0:
+ 109               	.LFBB1:
+ 110               	/* prologue: function */
+ 111               	/* frame size = 0 */
+ 112               	/* stack size = 0 */
+ 113               	.L__stack_usage = 0
+  12:pwm.c         **** 	// Timer0 settings.
+  13:pwm.c         **** 	TCCR0A = (1<<COM0A0)|(1<<WGM01); // Toggle OC0A on compare.
+ 115               	.LM1:
+ 116 0000 82E4      		ldi r24,lo8(66)
+ 117 0002 8FBD      		out 0x2f,r24
+  14:pwm.c         **** 	TCCR0B = (1<<CS00); // Enable system clock to timer, no prescale.
+ 119               	.LM2:
+ 120 0004 81E0      		ldi r24,lo8(1)
+ 121 0006 83BF      		out 0x33,r24
+  15:pwm.c         **** 	OCR0A = 211;
+ 123               	.LM3:
+ 124 0008 83ED      		ldi r24,lo8(-45)
+ 125 000a 86BF      		out 0x36,r24
+ 126               	.L2:
+  16:pwm.c         **** 
+  17:pwm.c         **** 	while(1)
+  18:pwm.c         **** 	{
+  19:pwm.c         **** 		asm("nop");	
+ 128               	.LM4:
+ 129               	/* #APP */
+ 130               	 ;  19 "pwm.c" 1
+ 131 000c 0000      		nop
+ 132               	 ;  0 "" 2
+ 133               	/* #NOAPP */
+ 134 000e 00C0      		rjmp .L2
+ 136               	.Lscope1:
+ 138               		.stabd	78,0,0
+ 139               		.text
+ 141               	.Letext0:
+ 142               		.ident	"GCC: (GNU) 4.8.0"
+DEFINED SYMBOLS
+                            *ABS*:0000000000000000 pwm.c
+     /tmp/cc1eAA0S.s:2      *ABS*:000000000000003d __SP_L__
+     /tmp/cc1eAA0S.s:3      *ABS*:000000000000003f __SREG__
+     /tmp/cc1eAA0S.s:4      *ABS*:0000000000000000 __tmp_reg__
+     /tmp/cc1eAA0S.s:5      *ABS*:0000000000000001 __zero_reg__
+     /tmp/cc1eAA0S.s:105    .text.startup:0000000000000000 main
+
+NO UNDEFINED SYMBOLS

@@ -1,0 +1,55 @@
+<html>
+<body>
+<pre>
+<h1>礦ision Build Log</h1>
+<h2>Project:</h2>
+F:\路虎开发板光盘\实验例程\Joystick\LandTiger_Joystick.uvproj
+Project File Date:  <unknown>
+
+<h2>Output:</h2>
+Build target 'LandTiger_Joystick'
+compiling main.c...
+Source\APP\main.c(11): error:  #5: cannot open source input file "LPC17xx.h": No such file or directory
+Source\APP\main.c:   #include "LPC17xx.h"
+Source\APP\main.c:                       ^
+Source\APP\main.c: Source\APP\main.c: 0 warnings, 1 error
+Target not created
+Build target 'LandTiger_Joystick'
+compiling core_cm3.c...
+compiling system_LPC17xx.c...
+compiling main.c...
+Source\APP\main.c(11): error:  #5: cannot open source input file "LPC17xx.h": No such file or directory
+Source\APP\main.c:   #include "LPC17xx.h"
+Source\APP\main.c:                       ^
+Source\APP\main.c: Source\APP\main.c: 0 warnings, 1 error
+Target not created
+Build target 'LandTiger_Joystick'
+compiling main.c...
+Source\APP\main.c(11): error:  #5: cannot open source input file "lpc17xx.h": No such file or directory
+Source\APP\main.c:   #include "lpc17xx.h"
+Source\APP\main.c:                       ^
+Source\APP\main.c: Source\APP\main.c: 0 warnings, 1 error
+Target not created
+Build target 'LandTiger_Joystick'
+compiling main.c...
+Source\APP\main.c(11): error:  #5: cannot open source input file "lpc17xx.h": No such file or directory
+Source\APP\main.c:   #include "lpc17xx.h"
+Source\APP\main.c:                       ^
+Source\APP\main.c: Source\APP\main.c: 0 warnings, 1 error
+Target not created
+Build target 'LandTiger_Joystick'
+compiling main.c...
+Source\APP\main.c(11): error:  #5: cannot open source input file "lpc17xx.h": No such file or directory
+Source\APP\main.c:   #include "lpc17xx.h"
+Source\APP\main.c:                       ^
+Source\APP\main.c: Source\APP\main.c: 0 warnings, 1 error
+Target not created
+Build target 'LandTiger_Joystick'
+compiling core_cm3.c...
+compiling system_LPC17xx.c...
+compiling main.c...
+Source\APP\main.c(11): error:  #5: cannot open source input file "lpc17xx.h": No such file or directory
+Source\APP\main.c:   #include "lpc17xx.h"
+Source\APP\main.c:                       ^
+Source\APP\main.c: Source\APP\main.c: 0 warnings, 1 error
+Target not created

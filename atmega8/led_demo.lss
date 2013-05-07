@@ -1,0 +1,171 @@
+
+led_demo.elf:     file format elf32-avr
+
+Sections:
+Idx Name          Size      VMA       LMA       File off  Algn
+  0 .data         00000002  00800100  0000013e  000001d2  2**0
+                  CONTENTS, ALLOC, LOAD, DATA
+  1 .text         0000013e  00000000  00000000  00000094  2**1
+                  CONTENTS, ALLOC, LOAD, READONLY, CODE
+  2 .bss          00000001  00800102  00800102  000001d4  2**0
+                  ALLOC
+  3 .stab         00000d2c  00000000  00000000  000001d4  2**2
+                  CONTENTS, READONLY, DEBUGGING
+  4 .stabstr      00000888  00000000  00000000  00000f00  2**0
+                  CONTENTS, READONLY, DEBUGGING
+
+Disassembly of section .text:
+
+00000000 <__vectors>:
+   0:	0c 94 34 00 	jmp	0x68	; 0x68 <__ctors_end>
+   4:	0c 94 51 00 	jmp	0xa2	; 0xa2 <__bad_interrupt>
+   8:	0c 94 51 00 	jmp	0xa2	; 0xa2 <__bad_interrupt>
+   c:	0c 94 51 00 	jmp	0xa2	; 0xa2 <__bad_interrupt>
+  10:	0c 94 51 00 	jmp	0xa2	; 0xa2 <__bad_interrupt>
+  14:	0c 94 51 00 	jmp	0xa2	; 0xa2 <__bad_interrupt>
+  18:	0c 94 51 00 	jmp	0xa2	; 0xa2 <__bad_interrupt>
+  1c:	0c 94 51 00 	jmp	0xa2	; 0xa2 <__bad_interrupt>
+  20:	0c 94 51 00 	jmp	0xa2	; 0xa2 <__bad_interrupt>
+  24:	0c 94 51 00 	jmp	0xa2	; 0xa2 <__bad_interrupt>
+  28:	0c 94 51 00 	jmp	0xa2	; 0xa2 <__bad_interrupt>
+  2c:	0c 94 51 00 	jmp	0xa2	; 0xa2 <__bad_interrupt>
+  30:	0c 94 51 00 	jmp	0xa2	; 0xa2 <__bad_interrupt>
+  34:	0c 94 51 00 	jmp	0xa2	; 0xa2 <__bad_interrupt>
+  38:	0c 94 51 00 	jmp	0xa2	; 0xa2 <__bad_interrupt>
+  3c:	0c 94 51 00 	jmp	0xa2	; 0xa2 <__bad_interrupt>
+  40:	0c 94 51 00 	jmp	0xa2	; 0xa2 <__bad_interrupt>
+  44:	0c 94 51 00 	jmp	0xa2	; 0xa2 <__bad_interrupt>
+  48:	0c 94 51 00 	jmp	0xa2	; 0xa2 <__bad_interrupt>
+  4c:	0c 94 51 00 	jmp	0xa2	; 0xa2 <__bad_interrupt>
+  50:	0c 94 51 00 	jmp	0xa2	; 0xa2 <__bad_interrupt>
+  54:	0c 94 51 00 	jmp	0xa2	; 0xa2 <__bad_interrupt>
+  58:	0c 94 51 00 	jmp	0xa2	; 0xa2 <__bad_interrupt>
+  5c:	0c 94 51 00 	jmp	0xa2	; 0xa2 <__bad_interrupt>
+  60:	0c 94 51 00 	jmp	0xa2	; 0xa2 <__bad_interrupt>
+  64:	0c 94 51 00 	jmp	0xa2	; 0xa2 <__bad_interrupt>
+
+00000068 <__ctors_end>:
+  68:	11 24       	eor	r1, r1
+  6a:	1f be       	out	0x3f, r1	; 63
+  6c:	cf ef       	ldi	r28, 0xFF	; 255
+  6e:	d8 e0       	ldi	r29, 0x08	; 8
+  70:	de bf       	out	0x3e, r29	; 62
+  72:	cd bf       	out	0x3d, r28	; 61
+
+00000074 <__do_copy_data>:
+  74:	11 e0       	ldi	r17, 0x01	; 1
+  76:	a0 e0       	ldi	r26, 0x00	; 0
+  78:	b1 e0       	ldi	r27, 0x01	; 1
+  7a:	ee e3       	ldi	r30, 0x3E	; 62
+  7c:	f1 e0       	ldi	r31, 0x01	; 1
+  7e:	02 c0       	rjmp	.+4      	; 0x84 <__do_copy_data+0x10>
+  80:	05 90       	lpm	r0, Z+
+  82:	0d 92       	st	X+, r0
+  84:	a2 30       	cpi	r26, 0x02	; 2
+  86:	b1 07       	cpc	r27, r17
+  88:	d9 f7       	brne	.-10     	; 0x80 <__do_copy_data+0xc>
+
+0000008a <__do_clear_bss>:
+  8a:	11 e0       	ldi	r17, 0x01	; 1
+  8c:	a2 e0       	ldi	r26, 0x02	; 2
+  8e:	b1 e0       	ldi	r27, 0x01	; 1
+  90:	01 c0       	rjmp	.+2      	; 0x94 <.do_clear_bss_start>
+
+00000092 <.do_clear_bss_loop>:
+  92:	1d 92       	st	X+, r1
+
+00000094 <.do_clear_bss_start>:
+  94:	a3 30       	cpi	r26, 0x03	; 3
+  96:	b1 07       	cpc	r27, r17
+  98:	e1 f7       	brne	.-8      	; 0x92 <.do_clear_bss_loop>
+  9a:	0e 94 5c 00 	call	0xb8	; 0xb8 <main>
+  9e:	0c 94 9d 00 	jmp	0x13a	; 0x13a <_exit>
+
+000000a2 <__bad_interrupt>:
+  a2:	0c 94 00 00 	jmp	0	; 0x0 <__vectors>
+
+000000a6 <delay_us>:
+    can be achieved.
+*/
+void
+_delay_loop_1(uint8_t __count)
+{
+	__asm__ volatile (
+  a6:	32 e0       	ldi	r19, 0x02	; 2
+
+//uint16_t waittime = 600;
+
+void delay_us(uint16_t delah)
+{
+	while(delah)
+  a8:	04 c0       	rjmp	.+8      	; 0xb2 <delay_us+0xc>
+  aa:	23 2f       	mov	r18, r19
+  ac:	2a 95       	dec	r18
+  ae:	f1 f7       	brne	.-4      	; 0xac <delay_us+0x6>
+	{
+		_delay_us(1);
+		delah--;
+  b0:	01 97       	sbiw	r24, 0x01	; 1
+
+//uint16_t waittime = 600;
+
+void delay_us(uint16_t delah)
+{
+	while(delah)
+  b2:	00 97       	sbiw	r24, 0x00	; 0
+  b4:	d1 f7       	brne	.-12     	; 0xaa <delay_us+0x4>
+	{
+		_delay_us(1);
+		delah--;
+	}
+}
+  b6:	08 95       	ret
+
+000000b8 <main>:
+  b8:	8f ef       	ldi	r24, 0xFF	; 255
+  ba:	84 b9       	out	0x04, r24	; 4
+  bc:	89 e9       	ldi	r24, 0x99	; 153
+  be:	e8 2e       	mov	r14, r24
+  c0:	9c e3       	ldi	r25, 0x3C	; 60
+  c2:	f9 2e       	mov	r15, r25
+  c4:	06 e6       	ldi	r16, 0x66	; 102
+  c6:	13 ec       	ldi	r17, 0xC3	; 195
+  c8:	e5 b8       	out	0x05, r14	; 5
+  ca:	80 91 00 01 	lds	r24, 0x0100
+  ce:	90 91 01 01 	lds	r25, 0x0101
+  d2:	0e 94 53 00 	call	0xa6	; 0xa6 <delay_us>
+  d6:	e5 b8       	out	0x05, r14	; 5
+  d8:	80 91 00 01 	lds	r24, 0x0100
+  dc:	90 91 01 01 	lds	r25, 0x0101
+  e0:	0e 94 53 00 	call	0xa6	; 0xa6 <delay_us>
+  e4:	f5 b8       	out	0x05, r15	; 5
+  e6:	80 91 00 01 	lds	r24, 0x0100
+  ea:	90 91 01 01 	lds	r25, 0x0101
+  ee:	0e 94 53 00 	call	0xa6	; 0xa6 <delay_us>
+  f2:	f5 b8       	out	0x05, r15	; 5
+  f4:	80 91 00 01 	lds	r24, 0x0100
+  f8:	90 91 01 01 	lds	r25, 0x0101
+  fc:	0e 94 53 00 	call	0xa6	; 0xa6 <delay_us>
+ 100:	05 b9       	out	0x05, r16	; 5
+ 102:	80 91 00 01 	lds	r24, 0x0100
+ 106:	90 91 01 01 	lds	r25, 0x0101
+ 10a:	0e 94 53 00 	call	0xa6	; 0xa6 <delay_us>
+ 10e:	05 b9       	out	0x05, r16	; 5
+ 110:	80 91 00 01 	lds	r24, 0x0100
+ 114:	90 91 01 01 	lds	r25, 0x0101
+ 118:	0e 94 53 00 	call	0xa6	; 0xa6 <delay_us>
+ 11c:	15 b9       	out	0x05, r17	; 5
+ 11e:	80 91 00 01 	lds	r24, 0x0100
+ 122:	90 91 01 01 	lds	r25, 0x0101
+ 126:	0e 94 53 00 	call	0xa6	; 0xa6 <delay_us>
+ 12a:	15 b9       	out	0x05, r17	; 5
+ 12c:	80 91 00 01 	lds	r24, 0x0100
+ 130:	90 91 01 01 	lds	r25, 0x0101
+ 134:	0e 94 53 00 	call	0xa6	; 0xa6 <delay_us>
+ 138:	c7 cf       	rjmp	.-114    	; 0xc8 <main+0x10>
+
+0000013a <_exit>:
+ 13a:	f8 94       	cli
+
+0000013c <__stop_program>:
+ 13c:	ff cf       	rjmp	.-2      	; 0x13c <__stop_program>
