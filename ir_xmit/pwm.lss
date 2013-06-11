@@ -3,15 +3,15 @@ pwm.elf:     file format elf32-avr
 
 Sections:
 Idx Name          Size      VMA       LMA       File off  Algn
-  0 .text         00000036  00000000  00000000  00000074  2**1
+  0 .text         00000056  00000000  00000000  00000074  2**1
                   CONTENTS, ALLOC, LOAD, READONLY, CODE
-  1 .data         00000000  00800060  00000036  000000aa  2**0
+  1 .data         00000000  00800060  00000056  000000ca  2**0
                   CONTENTS, ALLOC, LOAD, DATA
-  2 .stab         00000b88  00000000  00000000  000000ac  2**2
+  2 .stab         00000c24  00000000  00000000  000000cc  2**2
                   CONTENTS, READONLY, DEBUGGING
-  3 .stabstr      00000bd2  00000000  00000000  00000c34  2**0
+  3 .stabstr      00000bf9  00000000  00000000  00000cf0  2**0
                   CONTENTS, READONLY, DEBUGGING
-  4 .comment      00000011  00000000  00000000  00001806  2**0
+  4 .comment      00000011  00000000  00000000  000018e9  2**0
                   CONTENTS, READONLY
 
 Disassembly of section .text:
@@ -34,7 +34,7 @@ Disassembly of section .text:
   18:	cf e9       	ldi	r28, 0x9F	; 159
   1a:	cd bf       	out	0x3d, r28	; 61
   1c:	02 d0       	rcall	.+4      	; 0x22 <main>
-  1e:	09 c0       	rjmp	.+18     	; 0x32 <_exit>
+  1e:	19 c0       	rjmp	.+50     	; 0x52 <_exit>
 
 00000020 <__bad_interrupt>:
   20:	ef cf       	rjmp	.-34     	; 0x0 <__vectors>
@@ -51,18 +51,72 @@ int main(void)
 	TCCR0B = (1<<CS00); // Enable system clock to timer, no prescale.
   26:	81 e0       	ldi	r24, 0x01	; 1
   28:	83 bf       	out	0x33, r24	; 51
-	OCR0A = 211;
-  2a:	83 ed       	ldi	r24, 0xD3	; 211
-  2c:	86 bf       	out	0x36, r24	; 54
+	OCR0A = 245/2;
+  2a:	9a e7       	ldi	r25, 0x7A	; 122
+  2c:	96 bf       	out	0x36, r25	; 54
+	DDRB = (1<<0); // PB0 = output
+  2e:	87 bb       	out	0x17, r24	; 23
 
+	uint8_t i;
+		
 	while(1)
 	{
-		asm("nop");	
-  2e:	00 00       	nop
-  30:	fe cf       	rjmp	.-4      	; 0x2e <main+0xc>
+		i=20; // ms delay
+  30:	84 e1       	ldi	r24, 0x14	; 20
+		while(i)
+		{
+			_delay_ms(1);
+			i--;
+		}
+		DDRB ^= (1<<0);
+  32:	91 e0       	ldi	r25, 0x01	; 1
+	uint8_t i;
+		
+	while(1)
+	{
+		i=20; // ms delay
+		while(i)
+  34:	88 23       	and	r24, r24
+  36:	41 f0       	breq	.+16     	; 0x48 <__SREG__+0x9>
+	#else
+		//round up by default
+		__ticks_dc = (uint32_t)(ceil(fabs(__tmp)));
+	#endif
 
-00000032 <_exit>:
-  32:	f8 94       	cli
+	__builtin_avr_delay_cycles(__ticks_dc);
+  38:	ef e5       	ldi	r30, 0x5F	; 95
+  3a:	f9 e0       	ldi	r31, 0x09	; 9
+  3c:	31 97       	sbiw	r30, 0x01	; 1
+  3e:	f1 f7       	brne	.-4      	; 0x3c <main+0x1a>
+  40:	00 c0       	rjmp	.+0      	; 0x42 <__SREG__+0x3>
+  42:	00 00       	nop
+		{
+			_delay_ms(1);
+			i--;
+  44:	81 50       	subi	r24, 0x01	; 1
+  46:	f6 cf       	rjmp	.-20     	; 0x34 <main+0x12>
+		}
+		DDRB ^= (1<<0);
+  48:	87 b3       	in	r24, 0x17	; 23
+  4a:	89 27       	eor	r24, r25
+  4c:	87 bb       	out	0x17, r24	; 23
 
-00000034 <__stop_program>:
-  34:	ff cf       	rjmp	.-2      	; 0x34 <__stop_program>
+	uint8_t i;
+		
+	while(1)
+	{
+		i=20; // ms delay
+  4e:	84 e1       	ldi	r24, 0x14	; 20
+		{
+			_delay_ms(1);
+			i--;
+		}
+		DDRB ^= (1<<0);
+    }
+  50:	f3 cf       	rjmp	.-26     	; 0x38 <main+0x16>
+
+00000052 <_exit>:
+  52:	f8 94       	cli
+
+00000054 <__stop_program>:
+  54:	ff cf       	rjmp	.-2      	; 0x54 <__stop_program>
